@@ -1,9 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
   //TODO: Implement HomeController
 
-  final count = 0.obs;
+  int _currentIndex = 0;
+
+  // List halaman yang ingin ditampilkan
+  final List<Widget> _pages = [
+    Get.to,
+    TryOutPage(),
+    BimbelPage(),
+    PlatinumPage(),
+    AkunPage(),
+  ];
   @override
   void onInit() {
     super.onInit();
