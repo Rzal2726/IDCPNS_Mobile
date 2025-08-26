@@ -419,7 +419,7 @@ Widget _buildHelpContainer({
         borderRadius: BorderRadius.circular(10.0),
         border: Border.all(color: Colors.grey.shade300, width: 1),
         boxShadow: [
-          BoxShadow(
+          BoxShadow(g
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 5,
