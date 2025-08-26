@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
-class LoginController extends GetxController {
-  RxBool isAgreed = false.obs;
+class AccountController extends GetxController {
+  //TODO: Implement AccountController
 
   final count = 0.obs;
   @override
@@ -19,7 +19,5 @@ class LoginController extends GetxController {
     super.onClose();
   }
 
-  void toggleTermsAndConditions(bool newValue) {
-    isAgreed.value = newValue;
-  }
+  void increment() => count.value++;
 }
