@@ -10,6 +10,12 @@ class TryoutView extends GetView<TryoutController> {
 
   final controller = Get.put(TryoutController());
 
+  VoidCallback goToDetail(BuildContext context) {
+    return () {
+      controller.showDetailTryout(context);
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -41,39 +47,44 @@ class TryoutView extends GetView<TryoutController> {
           // 🚀 Hapus Expanded
           children: [
             // Tryout Saya box
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.greenAccent.shade100,
-                  width: 1.5,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                color: Color.fromRGBO(238, 255, 250, 1),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              margin: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      SvgPicture.network(
-                        "https://idcpns.com/app/assets/elearning-118a04aa.svg",
-                        width: 32,
-                        height: 32,
-                      ),
-                      SizedBox(width: 16),
-                      Text(
-                        "Tryout Saya",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios,
+            InkWell(
+              onTap: () {
+                Get.toNamed("tryout-saya");
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
                     color: Colors.greenAccent.shade100,
+                    width: 1.5,
                   ),
-                ],
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  color: Color.fromRGBO(238, 255, 250, 1),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                margin: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        SvgPicture.network(
+                          "https://idcpns.com/app/assets/elearning-118a04aa.svg",
+                          width: 32,
+                          height: 32,
+                        ),
+                        SizedBox(width: 16),
+                        Text(
+                          "Tryout Saya",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.greenAccent.shade100,
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -230,7 +241,8 @@ class TryoutView extends GetView<TryoutController> {
                                     ),
 
                                     const SizedBox(height: 12),
-                                    Center(
+                                    SizedBox(
+                                      width: double.infinity,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
@@ -248,10 +260,7 @@ class TryoutView extends GetView<TryoutController> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          // Navigator.pop(
-                                          //   context,
-                                          //   selectedOption,
-                                          // );
+                                          Navigator.pop(context);
                                           // kirim balik pilihan
                                         },
                                         child: const Text("Cari"),
@@ -482,7 +491,8 @@ class TryoutView extends GetView<TryoutController> {
                                     ),
 
                                     const SizedBox(height: 12),
-                                    Center(
+                                    SizedBox(
+                                      width: double.infinity,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
@@ -500,10 +510,7 @@ class TryoutView extends GetView<TryoutController> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          // Navigator.pop(
-                                          //   context,
-                                          //   selectedOption,
-                                          // );
+                                          Navigator.pop(context);
                                           // kirim balik pilihan
                                         },
                                         child: const Text("Cari"),
@@ -539,11 +546,13 @@ class TryoutView extends GetView<TryoutController> {
                     itemBuilder: (context, index) {
                       final data = controller.paketTryout[index];
                       return _cardPaketTryout(
+                        data['uuid'],
                         data['image'],
                         data['title'],
                         data['harga-full'],
                         data['harga-diskon'],
                         data['kategori'],
+                        context,
                       );
                     },
                   )
@@ -568,100 +577,107 @@ class TryoutView extends GetView<TryoutController> {
 }
 
 Widget _cardPaketTryout(
+  String uuid,
   String image,
   String title,
   String hargaFull,
   String hargaDiskon,
   String kategori,
+  BuildContext context,
 ) {
-  return Card(
-    color: Colors.white,
-    margin: EdgeInsets.all(32),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    elevation: 4,
-    child: Container(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Bagian kiri: gambar
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8),
-              bottomLeft: Radius.circular(8),
+  return InkWell(
+    onTap: () {
+      Get.toNamed("/detail-tryout");
+    },
+    child: Card(
+      color: Colors.white,
+      margin: EdgeInsets.all(32),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      child: Container(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Bagian kiri: gambar
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8),
+                bottomLeft: Radius.circular(8),
+              ),
+              child: Image.network(
+                image, // ganti dengan gambar kamu
+                width: 100,
+                height: 120,
+                fit: BoxFit.cover,
+              ),
             ),
-            child: Image.network(
-              image, // ganti dengan gambar kamu
-              width: 100,
-              height: 120,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(width: 12),
+            const SizedBox(width: 12),
 
-          // Bagian kanan: teks
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  hargaFull,
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 13,
-                    decoration: TextDecoration.lineThrough,
+            // Bagian kanan: teks
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  hargaDiskon,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 4),
+                  Text(
+                    hargaFull,
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 13,
+                      decoration: TextDecoration.lineThrough,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
+                  const SizedBox(height: 2),
+                  Text(
+                    hargaDiskon,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
 
-                // Label CPNS
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          kategori,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                  // Label CPNS
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            kategori,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(Icons.circle, size: 12),
-                      SizedBox(width: 8),
-                      Icon(Icons.star, color: Colors.orangeAccent),
-                      Text("5"),
-                    ],
+                        SizedBox(width: 8),
+                        Icon(Icons.circle, size: 12),
+                        SizedBox(width: 8),
+                        Icon(Icons.star, color: Colors.orangeAccent),
+                        Text("5"),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );

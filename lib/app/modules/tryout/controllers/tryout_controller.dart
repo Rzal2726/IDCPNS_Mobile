@@ -1,10 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 
 class TryoutController extends GetxController {
   //TODO: Implement TryoutController
 
-  RxList<String> options = ["Semua", "CPNS"].obs;
+  RxList<String> options = ["Semua", "CPNS", "BUMN", "Kedinasan", "PPPK"].obs;
+  RxBool isLoading = false.obs;
   RxList<Map<String, dynamic>> eventTryout =
       <Map<String, dynamic>>[
         {
@@ -45,6 +47,7 @@ class TryoutController extends GetxController {
       ].obs;
   RxString selectedPaketKategori = "Semua".obs;
   RxString selectedEventKategori = "Semua".obs;
+  RxString selectedUuid = "".obs;
   final count = 0.obs;
   @override
   void onInit() {
@@ -89,5 +92,13 @@ class TryoutController extends GetxController {
     } else {
       print('Error: ${response.statusText}');
     }
+  }
+
+  void showDetailTryout(BuildContext context) {
+    Navigator.pushNamed(context, '/detail-tryout');
+  }
+
+  void setSelectedUuid(String uuid) {
+    selectedUuid.value = uuid;
   }
 }
