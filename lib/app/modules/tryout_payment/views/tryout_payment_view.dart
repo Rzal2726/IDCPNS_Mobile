@@ -35,7 +35,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                   const Row(
                     spacing: 4,
                     children: [
-                      Icon(Icons.check_box, color: Colors.green),
+                      Icon(Icons.check_box, color: Colors.teal),
                       Text("Paket Tryout SKD"),
                     ],
                   ),
@@ -80,7 +80,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                           controller.selectedPaymentMethod.value == ""
                               ? _menuTile(
                                 leading: Icon(Icons.payments),
-                                iconColor: Colors.green,
+                                iconColor: Colors.teal,
                                 text: "Pilih Pembayaran",
                               )
                               : _menuTile(
@@ -89,7 +89,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                       .selectedPaymentMethod
                                       .value]!['image'],
                                 ),
-                                iconColor: Colors.green,
+                                iconColor: Colors.teal,
                                 text:
                                     controller.selectedPaymentMethod.value
                                         .toUpperCase(),
@@ -177,12 +177,12 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
-                        backgroundColor: Colors.green.shade300,
+                        backgroundColor: Colors.teal.shade300,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                           side: BorderSide(
-                            color: Colors.green.shade300,
+                            color: Colors.teal.shade300,
                             width: 1.5,
                           ),
                         ),
@@ -239,11 +239,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                 ),
                 IconButton(
                   onPressed: () {},
-                  icon: const Icon(
-                    Icons.add_box,
-                    color: Colors.green,
-                    size: 32,
-                  ),
+                  icon: const Icon(Icons.add_box, color: Colors.teal, size: 32),
                 ),
               ],
             ),
@@ -482,14 +478,14 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
               labelText: "Masukkan Kode Promo",
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: Colors.greenAccent.shade100,
+                  color: Colors.tealAccent.shade100,
                   width: 1.5,
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: Colors.greenAccent.shade100,
+                  color: Colors.tealAccent.shade100,
                   width: 2.0,
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -502,11 +498,11 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 elevation: 0,
-                backgroundColor: Colors.green.shade300,
+                backgroundColor: Colors.teal.shade300,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: Colors.green.shade300, width: 1.5),
+                  side: BorderSide(color: Colors.teal.shade300, width: 1.5),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),

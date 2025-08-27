@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
+import 'package:intl/intl.dart';
 
 class TryoutController extends GetxController {
   //TODO: Implement TryoutController
@@ -24,36 +25,17 @@ class TryoutController extends GetxController {
           "periode": "Pengerjaan",
         },
       ].obs;
-  RxList<Map<String, dynamic>> paketTryout =
-      <Map<String, dynamic>>[
-        {
-          "uuid": "abc123",
-          "image":
-              "https://cms.idcpns.com/storage/upload/tryout-formasi/2023-09/1694683777-thumb_cpns.png",
-          "title": "Paket Tryout SKD CPNS",
-          "harga-full": "Rp.149.000",
-          "harga-diskon": "Rp.99.000",
-          "kategori": "CPNS",
-        },
-        {
-          "uuid": "abc1234",
-          "image":
-              "https://cms.idcpns.com/storage/upload/tryout-formasi/2023-09/1694683777-thumb_cpns.png",
-          "title": "Paket Tryout SKD CPNS",
-          "harga-full": "Rp.149.000",
-          "harga-diskon": "Rp.99.000",
-          "kategori": "CPNS",
-        },
-      ].obs;
+  RxList<Map<String, dynamic>> paketTryout = <Map<String, dynamic>>[].obs;
   RxString selectedPaketKategori = "Semua".obs;
   RxString selectedEventKategori = "Semua".obs;
   RxString selectedUuid = "".obs;
   final count = 0.obs;
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     fetchEventsTryout();
-    fetchPaketTryout();
+    fetchPaketTryout(perPage: "3");
+    print(paketTryout);
   }
 
   @override
@@ -69,7 +51,10 @@ class TryoutController extends GetxController {
   void fetchEventsTryout() async {
     final client = Get.find<RestClientProvider>();
     final response = await client.get(
-      headers: {"Authorization": ""},
+      headers: {
+        "Authorization":
+            "Bearer 56759|KK0mqNkVsumxcvbvS48Ee3my8hvITEJi6YZuYmnqdf8b5cf3",
+      },
       '/tryout/event',
     );
 
@@ -80,22 +65,58 @@ class TryoutController extends GetxController {
     }
   }
 
-  void fetchPaketTryout() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {"Authorization": ""},
-      '/tryout/formasi',
-    );
+  void fetchPaketTryout({
+    String perPage = "",
+    String menuCategory = "",
+    String subMenuCategory = "",
+    String search = "",
+  }) async {
+    try {
+      isLoading.value = true;
 
-    if (response.statusCode == 200) {
-      print('Data: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
+      final client = Get.find<RestClientProvider>();
+      final response = await client.post(
+        '/tryout/formasi',
+        {
+          "perpage": perPage,
+          "menu_category_id": menuCategory,
+          "submenu_category_id": subMenuCategory,
+          "search": search,
+        },
+        headers: {
+          "Authorization":
+              "Bearer 56759|KK0mqNkVsumxcvbvS48Ee3my8hvITEJi6YZuYmnqdf8b5cf3", // ambil dari storage
+        },
+      );
+
+      if (response.statusCode == 200 && response.body != null) {
+        final List<Map<String, dynamic>> paket =
+            List<Map<String, dynamic>>.from(response.body['data']['data']);
+        paketTryout.assignAll(paket);
+        print(paketTryout);
+        // print("✅ Paket Tryout: ${paketTryout.length.toString()} items");
+      } else {
+        Get.snackbar("Error", response.statusText ?? "Gagal ambil data");
+      }
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 
+  String formatCurrency(dynamic number) {
+    var customFormatter = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp.',
+      decimalDigits: 0,
+    );
+    var formattedValue = customFormatter.format(int.parse(number));
+    return formattedValue.toString();
+  }
+
   void showDetailTryout(BuildContext context) {
-    Navigator.pushNamed(context, '/detail-tryout');
+    Get.toNamed('/detail-tryout');
   }
 
   void setSelectedUuid(String uuid) {
