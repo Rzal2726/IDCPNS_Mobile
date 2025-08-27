@@ -28,10 +28,8 @@ class TryoutView extends GetView<TryoutController> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Image.asset(
-          'assets/logo.png', // Dummy logo
-          height: 40,
-        ),
+        scrolledUnderElevation: 0,
+        title: const Text('Tryout'),
         actions: [
           Stack(
             children: [
@@ -72,7 +70,7 @@ class TryoutView extends GetView<TryoutController> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Colors.greenAccent.shade100,
+                    color: Colors.tealAccent.shade100,
                     width: 1.5,
                   ),
                   borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -99,7 +97,7 @@ class TryoutView extends GetView<TryoutController> {
                     ),
                     Icon(
                       Icons.arrow_forward_ios,
-                      color: Colors.greenAccent.shade100,
+                      color: Colors.tealAccent.shade100,
                     ),
                   ],
                 ),
@@ -155,14 +153,14 @@ class TryoutView extends GetView<TryoutController> {
                           labelText: "Cari",
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: Colors.greenAccent.shade100,
+                              color: Colors.tealAccent.shade100,
                               width: 1.5,
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: Colors.greenAccent.shade100,
+                              color: Colors.tealAccent.shade100,
                               width: 2.0,
                             ),
                             borderRadius: BorderRadius.circular(12),
@@ -224,7 +222,7 @@ class TryoutView extends GetView<TryoutController> {
                                                   style: TextStyle(
                                                     color:
                                                         isSelected
-                                                            ? Colors.green
+                                                            ? Colors.teal
                                                             : Colors.grey[700],
                                                     fontWeight:
                                                         isSelected
@@ -233,14 +231,14 @@ class TryoutView extends GetView<TryoutController> {
                                                   ),
                                                 ),
                                                 selected: isSelected,
-                                                selectedColor: Colors.green
+                                                selectedColor: Colors.teal
                                                     .withOpacity(0.1),
                                                 backgroundColor: Colors.white,
                                                 shape: RoundedRectangleBorder(
                                                   side: BorderSide(
                                                     color:
                                                         isSelected
-                                                            ? Colors.green
+                                                            ? Colors.teal
                                                             : Colors
                                                                 .grey
                                                                 .shade400,
@@ -264,7 +262,7 @@ class TryoutView extends GetView<TryoutController> {
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
-                                              Colors.green, // warna tombol
+                                              Colors.teal, // warna tombol
                                           foregroundColor:
                                               Colors.white, // warna teks/icon
                                           shape: RoundedRectangleBorder(
@@ -294,8 +292,8 @@ class TryoutView extends GetView<TryoutController> {
                     },
                     child: Row(
                       children: [
-                        Text("Filter", style: TextStyle(color: Colors.green)),
-                        Icon(Icons.keyboard_arrow_down, color: Colors.green),
+                        Text("Filter", style: TextStyle(color: Colors.teal)),
+                        Icon(Icons.keyboard_arrow_down, color: Colors.teal),
                       ],
                     ),
                   ),
@@ -383,14 +381,14 @@ class TryoutView extends GetView<TryoutController> {
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                    color: Colors.greenAccent.shade100,
+                                    color: Colors.tealAccent.shade100,
                                     width: 1.5,
                                   ),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                    color: Colors.greenAccent.shade100,
+                                    color: Colors.tealAccent.shade100,
                                     width: 2.0,
                                   ),
                                   borderRadius: BorderRadius.circular(12),
@@ -402,7 +400,7 @@ class TryoutView extends GetView<TryoutController> {
 
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green, // warna tombol
+                              backgroundColor: Colors.teal, // warna tombol
                               foregroundColor: Colors.white, // warna teks/icon
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -474,7 +472,7 @@ class TryoutView extends GetView<TryoutController> {
                                                   style: TextStyle(
                                                     color:
                                                         isSelected
-                                                            ? Colors.green
+                                                            ? Colors.teal
                                                             : Colors.grey[700],
                                                     fontWeight:
                                                         isSelected
@@ -483,14 +481,14 @@ class TryoutView extends GetView<TryoutController> {
                                                   ),
                                                 ),
                                                 selected: isSelected,
-                                                selectedColor: Colors.green
+                                                selectedColor: Colors.teal
                                                     .withOpacity(0.1),
                                                 backgroundColor: Colors.white,
                                                 shape: RoundedRectangleBorder(
                                                   side: BorderSide(
                                                     color:
                                                         isSelected
-                                                            ? Colors.green
+                                                            ? Colors.teal
                                                             : Colors
                                                                 .grey
                                                                 .shade400,
@@ -514,7 +512,7 @@ class TryoutView extends GetView<TryoutController> {
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
-                                              Colors.green, // warna tombol
+                                              Colors.teal, // warna tombol
                                           foregroundColor:
                                               Colors.white, // warna teks/icon
                                           shape: RoundedRectangleBorder(
@@ -544,8 +542,8 @@ class TryoutView extends GetView<TryoutController> {
                     },
                     child: Row(
                       children: [
-                        Text("Filter", style: TextStyle(color: Colors.green)),
-                        Icon(Icons.keyboard_arrow_down, color: Colors.green),
+                        Text("Filter", style: TextStyle(color: Colors.teal)),
+                        Icon(Icons.keyboard_arrow_down, color: Colors.teal),
                       ],
                     ),
                   ),
@@ -554,36 +552,40 @@ class TryoutView extends GetView<TryoutController> {
             ),
 
             SizedBox(height: 16),
+
             Obx(() {
-              return controller.paketTryout.isNotEmpty
-                  ? ListView.builder(
-                    shrinkWrap: true, // ⬅ biar ukurannya ikut isi
-                    physics:
-                        NeverScrollableScrollPhysics(), // ⬅ biar ga bentrok scroll
-                    itemCount: controller.paketTryout.length,
-                    itemBuilder: (context, index) {
-                      final data = controller.paketTryout[index];
-                      return _cardPaketTryout(
-                        data['uuid'],
-                        data['image'],
-                        data['title'],
-                        data['harga-full'],
-                        data['harga-diskon'],
-                        data['kategori'],
-                        context,
-                      );
-                    },
-                  )
-                  : Column(
-                    children: [
-                      SvgPicture.string(noDataSvg),
-                      SizedBox(height: 16),
-                      Text(
-                        "Belum Ada Tryout Tersedia",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
+              if (controller.paketTryout.isEmpty) {
+                return Column(
+                  children: [
+                    SizedBox(height: 200, child: SvgPicture.string(noDataSvg)),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Belum Ada Tryout Tersedia",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                );
+              }
+
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: controller.paketTryout.length,
+                itemBuilder: (context, index) {
+                  final data = controller.paketTryout[index];
+                  final option = controller.options[data['menu_category_id']];
+                  return _cardPaketTryout(
+                    data['uuid'].toString() ?? '',
+                    data['gambar'].toString() ?? '',
+                    data['formasi'].toString() ?? '',
+                    controller.formatCurrency(data['harga'].toString()) ?? '',
+                    controller.formatCurrency(data['harga_fix'].toString()) ??
+                        '',
+                    option,
+                    context,
                   );
+                },
+              );
             }),
 
             SizedBox(height: 32),
@@ -592,153 +594,171 @@ class TryoutView extends GetView<TryoutController> {
       ),
     );
   }
-}
 
-Widget _cardPaketTryout(
-  String uuid,
-  String image,
-  String title,
-  String hargaFull,
-  String hargaDiskon,
-  String kategori,
-  BuildContext context,
-) {
-  return InkWell(
-    onTap: () {
-      Get.toNamed("/detail-tryout");
-    },
-    child: Card(
-      color: Colors.white,
-      margin: EdgeInsets.all(32),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      child: Container(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Bagian kiri: gambar
-            ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                bottomLeft: Radius.circular(8),
+  Widget _cardPaketTryout(
+    String uuid,
+    String image,
+    String title,
+    String hargaFull,
+    String hargaDiskon,
+    String kategori,
+    BuildContext context,
+  ) {
+    return InkWell(
+      onTap: () {
+        controller.selectedUuid.value = uuid;
+        Get.toNamed("/detail-tryout");
+      },
+      child: Card(
+        color: Colors.white,
+        margin: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 4,
+        child: SizedBox(
+          height: 120,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Bagian kiri: gambar
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomLeft: Radius.circular(8),
+                ),
+                child: Image.network(
+                  image, // ganti dengan gambar kamu
+                  width: 100,
+                  height: 120,
+                  fit: BoxFit.cover,
+                ),
               ),
-              child: Image.network(
-                image, // ganti dengan gambar kamu
-                width: 100,
-                height: 120,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 12),
+              const SizedBox(width: 12),
 
-            // Bagian kanan: teks
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    hargaFull,
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 13,
-                      decoration: TextDecoration.lineThrough,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    hargaDiskon,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Label CPNS
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            kategori,
+              // Bagian kanan: teks
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
                             style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
                               fontWeight: FontWeight.bold,
+                              fontSize: 14,
                             ),
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        Icon(Icons.circle, size: 12),
-                        SizedBox(width: 8),
-                        Icon(Icons.star, color: Colors.orangeAccent),
-                        Text("5"),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Text(
+                                hargaFull,
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                hargaDiskon,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
 
-Widget _eventTryoutGratis(
-  String status,
-  String judul,
-  String tanggal,
-  String periode,
-) {
-  return Container(
-    margin: EdgeInsets.all(32),
-    padding: EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Color.fromARGB(255, 242, 255, 251),
-      border: Border.all(
-        color: Colors.transparent, // bisa atur warna border
-        width: 2,
-      ),
-      borderRadius: BorderRadius.all(Radius.circular(8)),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.amber, // pindahkan color ke sini
-            border: Border.all(
-              color: Colors.transparent, // bisa atur warna border
-              width: 2,
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+                      // Label CPNS
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.teal,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                kategori,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Icon(Icons.circle, size: 12),
+                            SizedBox(width: 8),
+                            Icon(Icons.star, color: Colors.orangeAccent),
+                            Text("5"),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-          padding: EdgeInsets.all(2),
-          child: Text(status, style: TextStyle(color: Colors.white)),
         ),
-        SizedBox(height: 8),
-        Text(judul, style: TextStyle(fontWeight: FontWeight.bold)),
-        SizedBox(height: 8),
-        Text(tanggal),
-        Row(children: [Text("Periode :"), Text(" ${periode}")]),
-      ],
-    ),
-  );
+      ),
+    );
+  }
+
+  Widget _eventTryoutGratis(
+    String status,
+    String judul,
+    String tanggal,
+    String periode,
+  ) {
+    return Container(
+      margin: EdgeInsets.all(32),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 242, 255, 251),
+        border: Border.all(
+          color: Colors.transparent, // bisa atur warna border
+          width: 2,
+        ),
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.amber, // pindahkan color ke sini
+              border: Border.all(
+                color: Colors.transparent, // bisa atur warna border
+                width: 2,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            padding: EdgeInsets.all(2),
+            child: Text(status, style: TextStyle(color: Colors.white)),
+          ),
+          SizedBox(height: 8),
+          Text(judul, style: TextStyle(fontWeight: FontWeight.bold)),
+          SizedBox(height: 8),
+          Text(tanggal),
+          Row(children: [Text("Periode :"), Text(" ${periode}")]),
+        ],
+      ),
+    );
+  }
 }

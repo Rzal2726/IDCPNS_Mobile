@@ -11,6 +11,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -49,6 +50,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
         child: Column(
           children: [
             Card(
+              color: Colors.white,
               child: Container(
                 padding: EdgeInsets.all(12),
                 child: Column(
@@ -72,14 +74,14 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                     Text("Masa Aktif"),
                     _badge(
                       isi: "180 Hari Lagi",
-                      backgroundColor: Colors.green.shade200,
+                      backgroundColor: Colors.teal.shade200,
                     ),
 
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade300,
+                          backgroundColor: Colors.teal.shade300,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),

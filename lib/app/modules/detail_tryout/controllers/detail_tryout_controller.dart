@@ -12,6 +12,7 @@ class DetailTryoutController extends GetxController {
 
   RxMap<dynamic, dynamic> detailData = {}.obs;
   RxList<String> option = ['Detail', 'Bundling', 'FAQ'].obs;
+  RxList<dynamic> bundling = <dynamic>[].obs;
   RxBool isLoading = false.obs;
   RxList<Map<String, dynamic>> bundlingList =
       <Map<String, dynamic>>[
@@ -56,6 +57,7 @@ class DetailTryoutController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    initData();
   }
 
   @override
@@ -68,61 +70,117 @@ class DetailTryoutController extends GetxController {
     super.onClose();
   }
 
-  void addToWishList() async {
+  Future<void> initData() async {
+    isLoading.value = true;
+    await getDetailTryout(); // tunggu sampai selesai
+    await checkWishList();
+
+    isLoading.value = false;
+  }
+
+  Future<bool> addToWishList() async {
     try {
       final client = Get.put(RestClientProvider());
-      final response = await client.post(
-        "account/user/wishlist/add",
-        {"tryout_formasi_id": "number", "menu_category_id": "number"},
-        headers: {"Authorization": ""},
-      );
       isLoading.value = true;
-      isOnWishlist.value = true;
+      final response = await client.post(
+        headers: {
+          "Authorization":
+              "Bearer 56759|KK0mqNkVsumxcvbvS48Ee3my8hvITEJi6YZuYmnqdf8b5cf3",
+        },
+        "/account/user/wishlist/add",
+        {
+          "tryout_formasi_id": detailData['id'],
+          "menu_category_id": detailData['menu_category_id'],
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        isOnWishlist.value = true;
+        return true;
+      } else {
+        print("❌ Error: ${response.statusCode}");
+        print("❌ Error: ${response.statusText}");
+
+        return false;
+      }
     } catch (e) {
+      print("Exception: $e");
+      return false;
     } finally {
       isLoading.value = false;
     }
   }
 
-  void removeFromWishList() async {
+  Future<bool> removeFromWishList() async {
     try {
       final client = Get.put(RestClientProvider());
-      final response = await client.post(
-        "account/user/wishlist/delete",
-        {"uuid": "srting"},
-        headers: {"Authorization": ""},
-      );
       isLoading.value = true;
-      isOnWishlist.value = false;
+      final response = await client.post(
+        "/account/user/wishlist/delete",
+        {
+          {"uuid": detailData['uuid']},
+        },
+        headers: {
+          "Authorization":
+              "Bearer 56759|KK0mqNkVsumxcvbvS48Ee3my8hvITEJi6YZuYmnqdf8b5cf3",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        isOnWishlist.value = false;
+        return true;
+      } else {
+        print("❌ Error: ${response.statusCode}");
+        print("❌ Error: ${response.statusText}");
+        return false;
+      }
     } catch (e) {
+      print("Exception: $e");
+      return false;
     } finally {
       isLoading.value = false;
     }
   }
 
-  void checkWishList() async {
+  Future<void> checkWishList() async {
     final client = Get.find<RestClientProvider>();
     final response = await client.get(
-      headers: {"Authorization": ""},
-      '/account/user/wishlist/{uuid}',
+      headers: {
+        "Authorization":
+            "Bearer 56759|KK0mqNkVsumxcvbvS48Ee3my8hvITEJi6YZuYmnqdf8b5cf3",
+      },
+      '/account/user/wishlist/${prevController.selectedUuid}',
     );
 
     if (response.statusCode == 200) {
-      print('Data: ${response.body}');
+      final data = response.body;
+      isOnWishlist.value = data['data'] == null ? false : true;
+      print(data['data']);
     } else {
       print('Error: ${response.statusText}');
     }
   }
 
-  void getDetailTryout() async {
+  Future<void> getDetailTryout() async {
     final client = Get.find<RestClientProvider>();
     final response = await client.get(
-      headers: {"Authorization": ""},
-      '/tryout/formasi/{uuid}',
+      headers: {
+        "Authorization":
+            "Bearer 56759|KK0mqNkVsumxcvbvS48Ee3my8hvITEJi6YZuYmnqdf8b5cf3",
+      },
+      '/tryout/formasi/${prevController.selectedUuid.value}',
     );
 
     if (response.statusCode == 200) {
-      print('Data: ${response.body}');
+      final Map<dynamic, dynamic> paket = Map<dynamic, dynamic>.from(
+        response.body['data'],
+      );
+      detailData.assignAll(paket);
+      FAQ.value = (paket['faq_mobile'] ?? "").toString();
+      Detail.value = (paket['deskripsi_mobile'] ?? "").toString();
+      bundling.value = paket['tryouts'];
     } else {
       print('Error: ${response.statusText}');
     }

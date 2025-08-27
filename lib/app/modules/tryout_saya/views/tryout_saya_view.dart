@@ -60,7 +60,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.greenAccent.shade100,
+                          color: Colors.tealAccent.shade100,
                           width: 2.0,
                         ),
                         borderRadius: BorderRadius.circular(12),
@@ -72,7 +72,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
 
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green, // warna tombol
+                    backgroundColor: Colors.teal, // warna tombol
                     foregroundColor: Colors.white, // warna teks/icon
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -143,7 +143,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                                                 style: TextStyle(
                                                   color:
                                                       isSelected
-                                                          ? Colors.green
+                                                          ? Colors.teal
                                                           : Colors.grey[700],
                                                   fontWeight:
                                                       isSelected
@@ -152,14 +152,14 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                                                 ),
                                               ),
                                               selected: isSelected,
-                                              selectedColor: Colors.green
+                                              selectedColor: Colors.teal
                                                   .withOpacity(0.1),
                                               backgroundColor: Colors.white,
                                               shape: RoundedRectangleBorder(
                                                 side: BorderSide(
                                                   color:
                                                       isSelected
-                                                          ? Colors.green
+                                                          ? Colors.teal
                                                           : Colors
                                                               .grey
                                                               .shade400,
@@ -205,7 +205,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                                                     style: TextStyle(
                                                       color:
                                                           isSelected
-                                                              ? Colors.green
+                                                              ? Colors.teal
                                                               : Colors
                                                                   .grey[700],
                                                       fontWeight:
@@ -216,14 +216,14 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                                                     ),
                                                   ),
                                                   selected: isSelected,
-                                                  selectedColor: Colors.green
+                                                  selectedColor: Colors.teal
                                                       .withOpacity(0.1),
                                                   backgroundColor: Colors.white,
                                                   shape: RoundedRectangleBorder(
                                                     side: BorderSide(
                                                       color:
                                                           isSelected
-                                                              ? Colors.green
+                                                              ? Colors.teal
                                                               : Colors
                                                                   .grey
                                                                   .shade400,
@@ -273,7 +273,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                                                 style: TextStyle(
                                                   color:
                                                       isSelected
-                                                          ? Colors.green
+                                                          ? Colors.teal
                                                           : Colors.grey[700],
                                                   fontWeight:
                                                       isSelected
@@ -282,14 +282,14 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                                                 ),
                                               ),
                                               selected: isSelected,
-                                              selectedColor: Colors.green
+                                              selectedColor: Colors.teal
                                                   .withOpacity(0.1),
                                               backgroundColor: Colors.white,
                                               shape: RoundedRectangleBorder(
                                                 side: BorderSide(
                                                   color:
                                                       isSelected
-                                                          ? Colors.green
+                                                          ? Colors.teal
                                                           : Colors
                                                               .grey
                                                               .shade400,
@@ -312,7 +312,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
-                                            Colors.green, // warna tombol
+                                            Colors.teal, // warna tombol
                                         foregroundColor:
                                             Colors.white, // warna teks/icon
                                         shape: RoundedRectangleBorder(
@@ -342,8 +342,8 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                   },
                   child: Row(
                     children: [
-                      Text("Filter", style: TextStyle(color: Colors.green)),
-                      Icon(Icons.keyboard_arrow_down, color: Colors.green),
+                      Text("Filter", style: TextStyle(color: Colors.teal)),
+                      Icon(Icons.keyboard_arrow_down, color: Colors.teal),
                     ],
                   ),
                 ),
@@ -379,8 +379,8 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Colors.grey.shade200),
-        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade400),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -400,23 +400,23 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
             children: [
               Card(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
                 ),
                 color: controller.categoryColors[kategori],
                 elevation: 0,
                 child: Container(
-                  padding: EdgeInsets.all(3),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: Text(kategori, style: TextStyle(color: Colors.white)),
                 ),
               ),
               Card(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
                 ),
                 color: controller.statusColors[status],
                 elevation: 0,
                 child: Container(
-                  padding: EdgeInsets.all(3),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: Text(status, style: TextStyle(color: Colors.white)),
                 ),
               ),

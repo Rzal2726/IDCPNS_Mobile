@@ -108,7 +108,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
-                          color: Colors.greenAccent,
+                          color: Colors.tealAccent,
                         ),
                       ),
                       SizedBox(height: 16),
@@ -128,12 +128,12 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
-                  backgroundColor: Colors.green.shade300,
+                  backgroundColor: Colors.teal.shade300,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                     side: BorderSide(
-                      color: Colors.green.shade300, // ganti warna border
+                      color: Colors.teal.shade300, // ganti warna border
                       width: 1.5,
                     ),
                   ),
@@ -180,7 +180,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                                           style: TextStyle(
                                             color:
                                                 isSelected
-                                                    ? Colors.green
+                                                    ? Colors.teal
                                                     : Colors.grey[700],
                                             fontWeight:
                                                 isSelected
@@ -193,7 +193,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                                           duration: Duration(milliseconds: 200),
                                           height: 2,
                                           width: isSelected ? 20 : 0,
-                                          color: Colors.green,
+                                          color: Colors.teal,
                                         ),
                                       ],
                                     ),

@@ -13,11 +13,11 @@ import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/detail_pengerjaan_tryout/bindings/detail_pengerjaan_tryout_binding.dart';
 import '../modules/detail_pengerjaan_tryout/views/detail_pengerjaan_tryout_view.dart';
 import '../modules/detail_tryout/bindings/detail_tryout_binding.dart';
+import '../modules/detail_tryout/bindings/detail_tryout_binding.dart';
+import '../modules/detail_tryout/views/detail_tryout_view.dart';
 import '../modules/detail_tryout/views/detail_tryout_view.dart';
 import '../modules/detail_tryout_saya/bindings/detail_tryout_saya_binding.dart';
 import '../modules/detail_tryout_saya/views/detail_tryout_saya_view.dart';
-import '../modules/detail_tryout/bindings/detail_tryout_binding.dart';
-import '../modules/detail_tryout/views/detail_tryout_view.dart';
 import '../modules/emailVerification/bindings/email_verification_binding.dart';
 import '../modules/emailVerification/views/email_verification_view.dart';
 import '../modules/forgetPassword/bindings/forget_password_binding.dart';
@@ -32,6 +32,8 @@ import '../modules/notification/bindings/notification_binding.dart';
 import '../modules/notification/views/notification_view.dart';
 import '../modules/panduan_tryout/bindings/panduan_tryout_binding.dart';
 import '../modules/panduan_tryout/views/panduan_tryout_view.dart';
+import '../modules/pengerjaan_tryout/bindings/pengerjaan_tryout_binding.dart';
+import '../modules/pengerjaan_tryout/views/pengerjaan_tryout_view.dart';
 import '../modules/programSaya/bindings/program_saya_binding.dart';
 import '../modules/programSaya/views/program_saya_view.dart';
 import '../modules/register/bindings/register_binding.dart';
@@ -39,18 +41,18 @@ import '../modules/register/views/register_view.dart';
 import '../modules/transaction/bindings/transaction_binding.dart';
 import '../modules/transaction/views/transaction_view.dart';
 import '../modules/tryout/bindings/tryout_binding.dart';
+import '../modules/tryout/bindings/tryout_binding.dart';
+import '../modules/tryout/views/tryout_view.dart';
 import '../modules/tryout/views/tryout_view.dart';
 import '../modules/tryout_checkout/bindings/tryout_checkout_binding.dart';
 import '../modules/tryout_checkout/views/tryout_checkout_view.dart';
 import '../modules/tryout_payment/bindings/tryout_payment_binding.dart';
-import '../modules/tryout_payment/views/tryout_payment_view.dart';
-import '../modules/tryout_saya/bindings/tryout_saya_binding.dart';
-import '../modules/tryout_saya/views/tryout_saya_view.dart';
-import '../modules/tryout/bindings/tryout_binding.dart';
-import '../modules/tryout/views/tryout_view.dart';
 import '../modules/tryout_payment/bindings/tryout_payment_binding.dart';
 import '../modules/tryout_payment/views/tryout_payment_view.dart';
+import '../modules/tryout_payment/views/tryout_payment_view.dart';
 import '../modules/tryout_saya/bindings/tryout_saya_binding.dart';
+import '../modules/tryout_saya/bindings/tryout_saya_binding.dart';
+import '../modules/tryout_saya/views/tryout_saya_view.dart';
 import '../modules/tryout_saya/views/tryout_saya_view.dart';
 import '../modules/wishlist/bindings/wishlist_binding.dart';
 import '../modules/wishlist/views/wishlist_view.dart';
@@ -177,6 +179,11 @@ class AppPages {
       name: _Paths.COMMISION_DETAIL,
       page: () => const CommisionDetailView(),
       binding: CommisionDetailBinding(),
+    ),
+    GetPage(
+      name: _Paths.PENGERJAAN_TRYOUT,
+      page: () => const PengerjaanTryoutView(),
+      binding: PengerjaanTryoutBinding(),
     ),
   ];
 }
