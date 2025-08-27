@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/detail_tryout/bindings/detail_tryout_binding.dart';
+import '../modules/detail_tryout/views/detail_tryout_view.dart';
 import '../modules/account/bindings/account_binding.dart';
 import '../modules/account/views/account_view.dart';
 import '../modules/affiliate/bindings/affiliate_binding.dart';
@@ -18,6 +20,12 @@ import '../modules/forgetPassword/bindings/forget_password_binding.dart';
 import '../modules/forgetPassword/views/forget_password_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/tryout/bindings/tryout_binding.dart';
+import '../modules/tryout/views/tryout_view.dart';
+import '../modules/tryout_payment/bindings/tryout_payment_binding.dart';
+import '../modules/tryout_payment/views/tryout_payment_view.dart';
+import '../modules/tryout_saya/bindings/tryout_saya_binding.dart';
+import '../modules/tryout_saya/views/tryout_saya_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/myAccount/bindings/my_account_binding.dart';
