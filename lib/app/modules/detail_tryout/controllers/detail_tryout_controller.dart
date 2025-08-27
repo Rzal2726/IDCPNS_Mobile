@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/tryout/controllers/tryout_controller.dart';
 
 class DetailTryoutController extends GetxController {
@@ -69,6 +70,12 @@ class DetailTryoutController extends GetxController {
 
   void addToWishList() async {
     try {
+      final client = Get.put(RestClientProvider());
+      final response = await client.post(
+        "account/user/wishlist/add",
+        {"tryout_formasi_id": "number", "menu_category_id": "number"},
+        headers: {"Authorization": ""},
+      );
       isLoading.value = true;
       isOnWishlist.value = true;
     } catch (e) {
@@ -79,6 +86,12 @@ class DetailTryoutController extends GetxController {
 
   void removeFromWishList() async {
     try {
+      final client = Get.put(RestClientProvider());
+      final response = await client.post(
+        "account/user/wishlist/delete",
+        {"uuid": "srting"},
+        headers: {"Authorization": ""},
+      );
       isLoading.value = true;
       isOnWishlist.value = false;
     } catch (e) {
@@ -87,7 +100,31 @@ class DetailTryoutController extends GetxController {
     }
   }
 
-  void checkWishList() async {}
+  void checkWishList() async {
+    final client = Get.find<RestClientProvider>();
+    final response = await client.get(
+      headers: {"Authorization": ""},
+      '/account/user/wishlist/{uuid}',
+    );
 
-  void getDetailTryout() async {}
+    if (response.statusCode == 200) {
+      print('Data: ${response.body}');
+    } else {
+      print('Error: ${response.statusText}');
+    }
+  }
+
+  void getDetailTryout() async {
+    final client = Get.find<RestClientProvider>();
+    final response = await client.get(
+      headers: {"Authorization": ""},
+      '/tryout/formasi/{uuid}',
+    );
+
+    if (response.statusCode == 200) {
+      print('Data: ${response.body}');
+    } else {
+      print('Error: ${response.statusText}');
+    }
+  }
 }

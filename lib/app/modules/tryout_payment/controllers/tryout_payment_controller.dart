@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:intl/intl.dart';
 
 class TryoutPaymentController extends GetxController {
@@ -52,6 +53,106 @@ class TryoutPaymentController extends GetxController {
     );
     var formattedValue = customFormatter.format(int.parse(number));
     return formattedValue.toString();
+  }
+
+  void fetchDetailTryout() async {
+    final client = Get.find<RestClientProvider>();
+    final response = await client.get(
+      headers: {"Authorization": ""},
+      '/tryout/formasi/{uuid}',
+    );
+
+    if (response.statusCode == 200) {
+      print('Data: ${response.body}');
+    } else {
+      print('Error: ${response.statusText}');
+    }
+  }
+
+  void fetchDetailTryoutEvent() async {
+    final client = Get.find<RestClientProvider>();
+    final response = await client.get(
+      headers: {"Authorization": ""},
+      '/tryout/event/{uuid}',
+    );
+
+    if (response.statusCode == 200) {
+      print('Data: ${response.body}');
+    } else {
+      print('Error: ${response.statusText}');
+    }
+  }
+
+  void fetchDetailTryoutOther() async {
+    final client = Get.find<RestClientProvider>();
+    final response = await client.get(
+      headers: {"Authorization": ""},
+      '/tryout/other-formasi',
+    );
+
+    if (response.statusCode == 200) {
+      print('Data: ${response.body}');
+    } else {
+      print('Error: ${response.statusText}');
+    }
+  }
+
+  void fetchListPayment() async {
+    final client = Get.find<RestClientProvider>();
+    final response = await client.get(
+      headers: {"Authorization": ""},
+      '/transaction/payment-type/list',
+    );
+
+    if (response.statusCode == 200) {
+      print('Data: ${response.body}');
+    } else {
+      print('Error: ${response.statusText}');
+    }
+  }
+
+  void applyCode() async {
+    final client = Get.find<RestClientProvider>();
+    final response = await client.get(
+      headers: {"Authorization": ""},
+      '/tryout/voucher/apply',
+    );
+
+    if (response.statusCode == 200) {
+      print('Data: ${response.body}');
+    } else {
+      print('Error: ${response.statusText}');
+    }
+  }
+
+  void createPayment() async {
+    final client = Get.find<RestClientProvider>();
+    final response = await client.post(
+      headers: {"Authorization": ""},
+      '/transaction/create-payment',
+      {
+        "type": "string",
+        "total_amount": "number",
+        "amount_diskon": "number",
+        "description": "string",
+        "bundling": "boolean",
+        "tryout_formasi_id": "number",
+        "kode_promo": "string",
+        "items": <int>[],
+        "source": "string",
+        "useBalance": "boolean",
+        "payment_method_id": "number",
+        "payment_method": "string",
+        "payment_type": "string",
+        "mobile_number": "number",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Data: ${response.body}');
+    } else {
+      print('Error: ${response.statusText}');
+    }
   }
 
   void initHarga() {

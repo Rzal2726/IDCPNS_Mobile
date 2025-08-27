@@ -68,9 +68,15 @@ class TryoutController extends GetxController {
 
   void fetchEventsTryout() async {
     final client = Get.find<RestClientProvider>();
-    final response = await client.get(
+    final response = await client.post(
       headers: {"Authorization": ""},
       '/tryout/event',
+      {
+        "perpage": "number",
+        "menu_category_id": "string",
+        "submenu_category_id": "string",
+        "search": "string",
+      },
     );
 
     if (response.statusCode == 200) {

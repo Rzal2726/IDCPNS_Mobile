@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 
 class TryoutSayaController extends GetxController {
   //TODO: Implement TryoutSayaController
@@ -46,5 +47,31 @@ class TryoutSayaController extends GetxController {
     super.onClose();
   }
 
-  void increment() => count.value++;
+  void fetchTryoutSaya() async {
+    final client = Get.find<RestClientProvider>();
+    final response = await client.get(
+      headers: {"Authorization": ""},
+      '/tryout/me/list',
+    );
+
+    if (response.statusCode == 200) {
+      print('Data: ${response.body}');
+    } else {
+      print('Error: ${response.statusText}');
+    }
+  }
+
+  void fetchKategori() async {
+    final client = Get.find<RestClientProvider>();
+    final response = await client.get(
+      headers: {"Authorization": ""},
+      '/tryout/menu/category',
+    );
+
+    if (response.statusCode == 200) {
+      print('Data: ${response.body}');
+    } else {
+      print('Error: ${response.statusText}');
+    }
+  }
 }

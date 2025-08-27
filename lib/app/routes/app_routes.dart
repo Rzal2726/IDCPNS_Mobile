@@ -18,6 +18,10 @@ abstract class Routes {
   static const FORGET_PASSWORD = _Paths.FORGET_PASSWORD;
   static const NOTIFICATION = _Paths.NOTIFICATION;
   static const TRANSACTION = _Paths.TRANSACTION;
+  static const TRYOUT_CHECKOUT = _Paths.TRYOUT_CHECKOUT;
+  static const DETAIL_TRYOUT_SAYA = _Paths.DETAIL_TRYOUT_SAYA;
+  static const DETAIL_PENGERJAAN_TRYOUT = _Paths.DETAIL_PENGERJAAN_TRYOUT;
+  static const PANDUAN_TRYOUT = _Paths.PANDUAN_TRYOUT;
 }
 
 abstract class _Paths {
@@ -37,4 +41,8 @@ abstract class _Paths {
   static const DETAIL_TRYOUT = '/detail-tryout';
   static const TRYOUT_PAYMENT = '/tryout-payment';
   static const TRYOUT_SAYA = '/tryout-saya';
+  static const TRYOUT_CHECKOUT = '/tryout-checkout';
+  static const DETAIL_TRYOUT_SAYA = '/detail-tryout-saya';
+  static const DETAIL_PENGERJAAN_TRYOUT = '/detail-pengerjaan-tryout';
+  static const PANDUAN_TRYOUT = '/panduan-tryout';
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 
 import '../controllers/tryout_controller.dart';
 
@@ -25,20 +26,37 @@ class TryoutView extends GetView<TryoutController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
-        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
-        title: Image.network(
-          "https://idcpns.com/app/assets/logo-f74defa6.png",
-          width: 64,
+        elevation: 0,
+        title: Image.asset(
+          'assets/logo.png', // Dummy logo
+          height: 40,
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.notifications_outlined,
-              color: Colors.greenAccent.shade100,
-            ),
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.notifications_rounded, color: Colors.teal),
+                onPressed: () {
+                  Get.to(NotificationView());
+                },
+              ),
+              Positioned(
+                right: 10,
+                top: 10,
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '4',
+                    style: TextStyle(color: Colors.white, fontSize: 10),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
