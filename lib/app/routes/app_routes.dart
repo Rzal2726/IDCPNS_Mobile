@@ -22,11 +22,20 @@ abstract class Routes {
   static const DETAIL_TRYOUT_SAYA = _Paths.DETAIL_TRYOUT_SAYA;
   static const DETAIL_PENGERJAAN_TRYOUT = _Paths.DETAIL_PENGERJAAN_TRYOUT;
   static const PANDUAN_TRYOUT = _Paths.PANDUAN_TRYOUT;
+  static const WISHLIST = _Paths.WISHLIST;
+  static const PROGRAM_SAYA = _Paths.PROGRAM_SAYA;
+  static const AFFILIATE = _Paths.AFFILIATE;
+  static const AFFILIATE_DETAIL = _Paths.AFFILIATE_DETAIL;
+  static const COMMISION_DETAIL = _Paths.COMMISION_DETAIL;
 }
 
 abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
+  static const TRYOUT = '/tryout';
+  static const DETAIL_TRYOUT = '/detail-tryout';
+  static const TRYOUT_PAYMENT = '/tryout-payment';
+  static const TRYOUT_SAYA = '/tryout-saya';
   static const LOGIN = '/login';
   static const REGISTER = '/register';
   static const DASHBOARD = '/dashboard';
@@ -37,12 +46,13 @@ abstract class _Paths {
   static const FORGET_PASSWORD = '/forget-password';
   static const NOTIFICATION = '/notification';
   static const TRANSACTION = '/transaction';
-  static const TRYOUT = '/tryout';
-  static const DETAIL_TRYOUT = '/detail-tryout';
-  static const TRYOUT_PAYMENT = '/tryout-payment';
-  static const TRYOUT_SAYA = '/tryout-saya';
   static const TRYOUT_CHECKOUT = '/tryout-checkout';
   static const DETAIL_TRYOUT_SAYA = '/detail-tryout-saya';
   static const DETAIL_PENGERJAAN_TRYOUT = '/detail-pengerjaan-tryout';
   static const PANDUAN_TRYOUT = '/panduan-tryout';
+  static const WISHLIST = '/wishlist';
+  static const PROGRAM_SAYA = '/program-saya';
+  static const AFFILIATE = '/affiliate';
+  static const AFFILIATE_DETAIL = '/affiliate-detail';
+  static const COMMISION_DETAIL = '/commision-detail';
 }
