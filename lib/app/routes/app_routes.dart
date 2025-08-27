@@ -23,4 +23,18 @@ abstract class Routes {
 abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
+  static const LOGIN = '/login';
+  static const REGISTER = '/register';
+  static const DASHBOARD = '/dashboard';
+  static const EMAIL_VERIFICATION = '/email-verification';
+  static const CHANGE_PASSWORD = '/change-password';
+  static const ACCOUNT = '/account';
+  static const MY_ACCOUNT = '/my-account';
+  static const FORGET_PASSWORD = '/forget-password';
+  static const NOTIFICATION = '/notification';
+  static const TRANSACTION = '/transaction';
+  static const TRYOUT = '/tryout';
+  static const DETAIL_TRYOUT = '/detail-tryout';
+  static const TRYOUT_PAYMENT = '/tryout-payment';
+  static const TRYOUT_SAYA = '/tryout-saya';
 }
