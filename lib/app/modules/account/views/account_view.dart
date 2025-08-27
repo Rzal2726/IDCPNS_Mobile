@@ -92,15 +92,15 @@ class AccountView extends GetView<AccountController> {
                 buildMenuItem(
                   Icons.favorite_border,
                   "Wishlist",
-                  Routes.MY_ACCOUNT,
+                  Routes.WISHLIST,
                 ),
                 buildMenuItem(
                   Icons.receipt_long,
                   "Transaksi",
                   Routes.TRANSACTION,
                 ),
-                buildMenuItem(Icons.book, "Program Saya", Routes.MY_ACCOUNT),
-                buildMenuItem(Icons.group, "Afiliasi", Routes.MY_ACCOUNT),
+                buildMenuItem(Icons.book, "Program Saya", Routes.PROGRAM_SAYA),
+                buildMenuItem(Icons.group, "Afiliasi", Routes.AFFILIATE),
                 buildMenuItem(Icons.phone, "Hubungi Kami", Routes.MY_ACCOUNT),
                 buildMenuItem(Icons.help_outline, "Panduan", Routes.MY_ACCOUNT),
 

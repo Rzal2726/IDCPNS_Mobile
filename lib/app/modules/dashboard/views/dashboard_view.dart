@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 import '../controllers/dashboard_controller.dart';
 
@@ -11,16 +12,16 @@ class DashboardView extends GetView<DashboardController> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(40),
+        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 50),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Highlight Section
             Text(
               'Highlight',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 10),
             Container(
               height: 150,
               decoration: BoxDecoration(
@@ -49,10 +50,15 @@ class DashboardView extends GetView<DashboardController> {
             Row(
               children: [
                 Expanded(
-                  child: _buildServiceCard(
-                    Icons.assignment,
-                    'Tryout',
-                    Colors.teal,
+                  child: InkWell(
+                    onTap: () {
+                      Get.toNamed(Routes.TRYOUT); // ganti dengan route kamu
+                    },
+                    child: _buildServiceCard(
+                      Icons.assignment,
+                      'Tryout',
+                      Colors.teal,
+                    ),
                   ),
                 ),
                 SizedBox(width: 20),

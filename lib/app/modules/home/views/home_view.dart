@@ -17,13 +17,13 @@ class HomeView extends GetView<HomeController> {
         elevation: 0,
         title: Image.asset(
           'assets/logo.png', // Dummy logo
-          height: 40,
+          height: 55,
         ),
         actions: [
           Stack(
             children: [
               IconButton(
-                icon: Icon(Icons.notifications_rounded, color: Colors.teal),
+                icon: Icon(Icons.notifications_none, color: Colors.teal),
                 onPressed: () {
                   Get.to(NotificationView());
                 },
