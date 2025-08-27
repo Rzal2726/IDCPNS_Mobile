@@ -14,21 +14,24 @@ class AccountView extends GetView<AccountController> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16.0), // padding untuk seluruh isi
+            padding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 40,
+            ), // padding untuk seluruh isi
             child: Column(
               children: [
                 // Profile section
                 Container(
                   color: Colors.white,
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16),
                   child: Row(
                     children: [
                       // Avatar
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 35,
                         backgroundImage: AssetImage("assets/avatar.png"),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 18),
                       // Info
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +39,7 @@ class AccountView extends GetView<AccountController> {
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(
+                                padding: EdgeInsets.symmetric(
                                   horizontal: 6,
                                   vertical: 2,
                                 ),
@@ -44,7 +47,7 @@ class AccountView extends GetView<AccountController> {
                                   color: Colors.grey[300],
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   "Basic",
                                   style: TextStyle(
                                     fontSize: 12,
@@ -52,8 +55,8 @@ class AccountView extends GetView<AccountController> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 6),
-                              const Text(
+                              SizedBox(width: 6),
+                              Text(
                                 "Upgrade Akun",
                                 style: TextStyle(
                                   color: Colors.teal,
@@ -62,17 +65,17 @@ class AccountView extends GetView<AccountController> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 6),
-                          const Text(
+                          SizedBox(height: 6),
+                          Text(
                             "radit",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          SizedBox(height: 6),
                           Row(
-                            children: const [
+                            children: [
                               Icon(Icons.wallet, size: 16, color: Colors.grey),
                               SizedBox(width: 4),
                               Text("0"),
@@ -84,30 +87,30 @@ class AccountView extends GetView<AccountController> {
                   ),
                 ),
 
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
 
                 // Menu List
                 buildMenuItem(Icons.person, "Akun", Routes.MY_ACCOUNT),
                 buildMenuItem(Icons.lock, "Kata Sandi", Routes.CHANGE_PASSWORD),
+                buildMenuItem(Icons.favorite, "Wishlist", Routes.WISHLIST),
+                buildMenuItem(Icons.list_alt, "Transaksi", Routes.TRANSACTION),
                 buildMenuItem(
-                  Icons.favorite_border,
-                  "Wishlist",
-                  Routes.WISHLIST,
+                  Icons.list_alt,
+                  "Program Saya",
+                  Routes.PROGRAM_SAYA,
                 ),
-                buildMenuItem(
-                  Icons.receipt_long,
-                  "Transaksi",
-                  Routes.TRANSACTION,
-                ),
-                buildMenuItem(Icons.book, "Program Saya", Routes.PROGRAM_SAYA),
                 buildMenuItem(Icons.group, "Afiliasi", Routes.AFFILIATE),
                 buildMenuItem(Icons.phone, "Hubungi Kami", Routes.MY_ACCOUNT),
-                buildMenuItem(Icons.help_outline, "Panduan", Routes.MY_ACCOUNT),
-
+                buildMenuItem(
+                  Icons.help_outlined,
+                  "Panduan",
+                  Routes.MY_ACCOUNT,
+                ),
+                SizedBox(height: 30),
                 // Keluar
                 buildMenuItem(Icons.logout, "Keluar", Routes.LOGIN),
 
-                const SizedBox(height: 12),
+                SizedBox(height: 30),
 
                 // Banner (Upgrade ke Platinum)
                 Container(

@@ -93,10 +93,15 @@ class TransactionView extends GetView<TransactionController> {
             // ===== LIST PER TAB =====
             Expanded(
               child: TabBarView(
+                // children: [
+                //   _buildList(), // Semua
+                //   _buildList(), // Sukses
+                //   _buildList(), // Menunggu Pembayaran
+                // ],
                 children: [
-                  _buildList(status: null), // Semua
+                  _buildList(), // Semua
                   _buildList(status: 'Sukses'), // Sukses
-                  _buildList(status: 'Menunggu'), // Menunggu Pembayaran
+                  _buildList(status: 'Sukses'), // Menunggu Pembayaran
                 ],
               ),
             ),
@@ -168,18 +173,33 @@ class TransactionView extends GetView<TransactionController> {
   Widget _buildList({String? status}) {
     return GetBuilder<TransactionController>(
       builder: (_) {
-        // ambil data dari controller
-        final all = controller.transactions; // RxList di controller
-        // filter status (kalau null = semua)
+        // filter data sesuai status
         final data =
-            all.where((t) {
-              if (status == null) return true;
-              if (status == 'Menunggu') {
-                // samakan sendiri dengan field status di model-mu (e.g. "Menunggu Pembayaran")
-                return t.status.toLowerCase().contains('menunggu');
-              }
-              return t.status == status;
-            }).toList();
+            status == null
+                ? controller.transactions
+                : controller.transactions
+                    .where((t) => t.status == status)
+                    .toList();
+
+        if (data.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(Icons.receipt_long, size: 60, color: Colors.grey),
+                SizedBox(height: 12),
+                Text(
+                  "Tidak ada transaksi",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
 
         return ListView.separated(
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
@@ -192,7 +212,7 @@ class TransactionView extends GetView<TransactionController> {
               name: trx.name,
               dateTimePrice:
                   '${trx.date} - Rp.${trx.amount.toStringAsFixed(0)}',
-              statusText: trx.status, // "Gagal" / "Sukses" / "Menunggu"
+              statusText: trx.status,
               statusColor:
                   trx.status == 'Sukses'
                       ? _primary

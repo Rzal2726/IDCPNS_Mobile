@@ -23,6 +23,7 @@ abstract class Routes {
   static const AFFILIATE = _Paths.AFFILIATE;
   static const AFFILIATE_DETAIL = _Paths.AFFILIATE_DETAIL;
   static const COMMISION_DETAIL = _Paths.COMMISION_DETAIL;
+  static const SPLASH = _Paths.SPLASH;
 }
 
 abstract class _Paths {
@@ -47,4 +48,5 @@ abstract class _Paths {
   static const AFFILIATE = '/affiliate';
   static const AFFILIATE_DETAIL = '/affiliate-detail';
   static const COMMISION_DETAIL = '/commision-detail';
+  static const SPLASH = '/splash';
 }

@@ -8,34 +8,32 @@ class NotificationView extends GetView<NotificationController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Get.back(),
         ),
-        title: const Text('Notifikasi', style: TextStyle(color: Colors.black)),
+        title: Text('Notifikasi', style: TextStyle(color: Colors.black)),
         centerTitle: false,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16.0),
+            padding: EdgeInsets.only(right: 16.0),
             child: Stack(
               children: [
-                const Icon(Icons.notifications_none, color: Colors.black),
+                Icon(Icons.notifications_none, color: Colors.teal),
                 Positioned(
                   right: 0,
                   child: Container(
-                    padding: const EdgeInsets.all(2),
+                    padding: EdgeInsets.all(2),
                     decoration: BoxDecoration(
                       color: Colors.green,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    constraints: const BoxConstraints(
-                      minWidth: 14,
-                      minHeight: 14,
-                    ),
-                    child: const Text(
+                    constraints: BoxConstraints(minWidth: 14, minHeight: 14),
+                    child: Text(
                       '4',
                       style: TextStyle(
                         color: Colors.white,
@@ -53,11 +51,11 @@ class NotificationView extends GetView<NotificationController> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.0),
 
           // Center(
           //   child: Column(
-          //     children: const [
+          //     children:  [
           //       Icon(Icons.notifications_none,
           //           size: 80, color: Colors.grey),
           //       SizedBox(height: 12),
@@ -75,26 +73,35 @@ class NotificationView extends GetView<NotificationController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildSelectAll(),
-              const SizedBox(height: 16),
-              _buildSectionHeader('Belum dibaca'),
-              const SizedBox(height: 8),
+              SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildSectionHeader('Belum dibaca'),
+                  IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+                ],
+              ),
+
+              SizedBox(height: 8),
               _buildNotificationItem(
                 'Pembayaran Gagal',
                 '23 Aug 2025',
-                borderColor: Colors.green,
+                borderColor: Colors.teal,
               ),
               _buildNotificationItem(
                 'Menunggu Pembayaran',
                 '22 Aug 2025',
-                borderColor: Colors.green,
+                borderColor: Colors.teal,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
+              Divider(color: Colors.grey),
+              SizedBox(height: 16),
               _buildSectionHeader('Sudah dibaca'),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               _buildNotificationItem(
                 'Transaksi Berhasil',
                 '21 Aug 2025',
-                borderColor: Colors.green,
+                borderColor: Colors.teal,
               ),
             ],
           ),
@@ -104,6 +111,7 @@ class NotificationView extends GetView<NotificationController> {
   }
 
   Widget _buildSelectAll() {
+    final NotificationController controller = Get.put(NotificationController());
     return Row(
       children: [
         Checkbox(
@@ -111,9 +119,41 @@ class NotificationView extends GetView<NotificationController> {
           onChanged: (bool? value) {},
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
-        const Text('Select All', style: TextStyle(fontSize: 14)),
-        const Spacer(),
-        IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
+
+        // biar dropdown gak overflow, bungkus dengan Flexible
+        Flexible(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 100), // batas lebar maksimum
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.teal, width: 1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Obx(() {
+                return DropdownButton<String>(
+                  isExpanded: true,
+                  value: controller.selectedFilter.value,
+                  underline: SizedBox(),
+                  items: [
+                    DropdownMenuItem(
+                      value: "Select All",
+                      child: Text("Select all"),
+                    ),
+                    DropdownMenuItem(value: "Read", child: Text("Read")),
+                    DropdownMenuItem(value: "Unread", child: Text("Unread")),
+                  ],
+                  onChanged: (String? value) {
+                    if (value != null) {
+                      controller.selectedFilter.value = value;
+                      print("Selected: $value");
+                    }
+                  },
+                );
+              }),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -121,7 +161,7 @@ class NotificationView extends GetView<NotificationController> {
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
     );
   }
 
@@ -131,11 +171,11 @@ class NotificationView extends GetView<NotificationController> {
     required Color borderColor,
   }) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.symmetric(vertical: 6),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         border: Border.all(color: borderColor, width: 1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(5),
         color: Colors.white,
       ),
       child: Column(
@@ -148,20 +188,25 @@ class NotificationView extends GetView<NotificationController> {
                 onChanged: (bool? value) {},
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+              SizedBox(width: 5),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                ),
+                  Text(
+                    date,
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
               ),
             ],
           ),
-          Text(date, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+
           Divider(color: Colors.grey),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -169,36 +214,33 @@ class NotificationView extends GetView<NotificationController> {
                 onPressed: () {},
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
-                  minimumSize: const Size(40, 20),
+                  minimumSize: Size(40, 20),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text(
-                  "Lihat",
-                  style: TextStyle(color: Colors.cyan),
-                ),
+                child: Text("Lihat", style: TextStyle(color: Colors.cyan)),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               TextButton(
                 onPressed: () {},
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
-                  minimumSize: const Size(40, 20),
+                  minimumSize: Size(40, 20),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text(
+                child: Text(
                   "Tandai sudah dibaca",
-                  style: TextStyle(color: Colors.cyan),
+                  style: TextStyle(color: Colors.teal),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               TextButton(
                 onPressed: () {},
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
-                  minimumSize: const Size(40, 20),
+                  minimumSize: Size(40, 20),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text("Hapus", style: TextStyle(color: Colors.red)),
+                child: Text("Hapus", style: TextStyle(color: Colors.red)),
               ),
             ],
           ),

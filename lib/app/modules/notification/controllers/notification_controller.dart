@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class NotificationController extends GetxController {
-  //TODO: Implement NotificationController
+  RxString selectedFilter = "Select All".obs;
   var unreadNotifications =
       [
         {"title": "Pembayaran Gagal", "date": "23 Aug 2025"},
