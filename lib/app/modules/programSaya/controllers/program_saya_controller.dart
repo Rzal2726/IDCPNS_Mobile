@@ -6,6 +6,16 @@ class ProgramSayaController extends GetxController {
   RxInt selectedTab = 0.obs;
   RxString searchQuery = ''.obs;
 
+  // 🔹 daftar program (sementara hardcode, nanti bisa diisi dari API)
+  var programs =
+      <String>[
+        "TRYOUT SKD CPNS 2025 BATCH 60",
+        "TRYOUT SKD CPNS 2025 BATCH 61",
+        "TRYOUT PPPK 2025 BATCH 1",
+        "BIMBEL INTENSIF CPNS 2025",
+        "BIMBEL P3K GURU 2025",
+      ].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -21,14 +31,17 @@ class ProgramSayaController extends GetxController {
     super.onClose();
   }
 
+  // ganti tab
   void changeTab(int index) {
     selectedTab.value = index;
   }
 
+  // update pencarian
   void updateSearch(String value) {
     searchQuery.value = value;
   }
 
+  // pagination
   void nextPage() {
     if (currentPage.value < totalPages.value) {
       currentPage.value++;
@@ -45,5 +58,13 @@ class ProgramSayaController extends GetxController {
     if (page >= 1 && page <= totalPages.value) {
       currentPage.value = page;
     }
+  }
+
+  // 🔹 filter program berdasarkan search
+  List<String> get filteredPrograms {
+    if (searchQuery.value.isEmpty) return programs;
+    return programs
+        .where((p) => p.toLowerCase().contains(searchQuery.value.toLowerCase()))
+        .toList();
   }
 }

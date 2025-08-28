@@ -105,13 +105,28 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                   ),
                 ],
               ),
-              child: Column(
-                children: [
-                  _buildProgramCard('TRYOUT SKD CPNS 2025\nBATCH 60'),
-                  Divider(color: Colors.grey[200]),
-                  _buildPagination(),
-                ],
-              ),
+              child: Obx(() {
+                final programList = controller.filteredPrograms;
+
+                if (programList.isEmpty) {
+                  return Text(
+                    "Tidak ada program ditemukan",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  );
+                }
+
+                return Column(
+                  children: [
+                    // loop isi program
+                    ...programList.map((title) {
+                      return Column(children: [_buildProgramCard(title)]);
+                    }).toList(),
+                    Divider(color: Colors.grey[200]),
+                    // pagination di bawah
+                    _buildPagination(),
+                  ],
+                );
+              }),
             ),
           ],
         ),
@@ -147,7 +162,20 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
 
   Widget _buildProgramCard(String title) {
     return Container(
-      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1), // warna shadow
+            blurRadius: 6, // tingkat blur
+            spreadRadius: 2, // sebaran shadow
+            offset: Offset(0, 3), // posisi shadow (x, y)
+          ),
+        ],
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -160,16 +188,12 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(6),
-            decoration: const BoxDecoration(
+            padding: EdgeInsets.all(6),
+            decoration: BoxDecoration(
               color: Colors.teal,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
-              Icons.arrow_forward_ios,
-              color: Colors.white,
-              size: 16,
-            ),
+            child: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
           ),
         ],
       ),
@@ -214,7 +238,7 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                   controller.currentPage.value > 1 ? Colors.teal : Colors.grey,
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           ...List.generate(pagesToShow.length, (index) {
             final page = pagesToShow[index];
             final isActive = page == controller.currentPage.value;
@@ -229,11 +253,8 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                 GestureDetector(
                   onTap: () => controller.goToPage(page),
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
+                    margin: EdgeInsets.symmetric(horizontal: 4),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: isActive ? Colors.teal.shade50 : Colors.white,
                       borderRadius: BorderRadius.circular(8),
@@ -252,14 +273,14 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                   ),
                 ),
                 if (addEllipsis)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4),
                     child: Text("..."),
                   ),
               ],
             );
           }),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           GestureDetector(
             onTap: controller.nextPage,
             child: Icon(
