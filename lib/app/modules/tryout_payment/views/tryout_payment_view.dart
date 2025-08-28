@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../controllers/tryout_payment_controller.dart';
 
 class TryoutPaymentView extends GetView<TryoutPaymentController> {
   TryoutPaymentView({super.key});
   final controller = Get.put(TryoutPaymentController());
+  final voucherController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,11 +34,22 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                     "Checkout Paket Tryout",
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
-                  const Row(
+                  Row(
                     spacing: 4,
                     children: [
                       Icon(Icons.check_box, color: Colors.teal),
-                      Text("Paket Tryout SKD"),
+                      Container(
+                        width: 240,
+                        child: Obx(
+                          () =>
+                              controller.dataTryout['formasi'] != null
+                                  ? Text(controller.dataTryout['formasi'])
+                                  : Skeletonizer(
+                                    enabled: true,
+                                    child: Text("Judul TRyout"),
+                                  ),
+                        ),
+                      ),
                     ],
                   ),
                   const Text(
@@ -44,20 +57,33 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Obx(() {
-                    return SizedBox(
-                      height: 140,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: controller.otherTryout.length,
-                        itemBuilder: (context, index) {
-                          final data = controller.otherTryout[index];
-                          return _otherTryoutCard(
-                            data['judul'],
-                            controller.formatCurrency(data['harga']),
-                          );
-                        },
-                      ),
-                    );
+                    Map<String, dynamic> nul = {};
+                    return controller.otherTryout.isEmpty
+                        ? Skeletonizer(
+                          enabled: true,
+                          child: _otherTryoutCard(
+                            "Judul Tryout",
+                            "0000000",
+                            value: nul,
+                          ),
+                        )
+                        : SizedBox(
+                          height: 140,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: controller.otherTryout.length,
+                            itemBuilder: (context, index) {
+                              final data = controller.otherTryout[index];
+                              return _otherTryoutCard(
+                                data['formasi'] ?? "-",
+                                controller.formatCurrency(
+                                  data['final_price']?.toString() ?? "0",
+                                ),
+                                value: data,
+                              );
+                            },
+                          ),
+                        );
                   }),
 
                   const Divider(color: Color.fromARGB(250, 230, 230, 230)),
@@ -77,22 +103,21 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                             },
                           ),
                       child:
-                          controller.selectedPaymentMethod.value == ""
+                          controller.selectedPaymentMethod.isEmpty
                               ? _menuTile(
-                                leading: Icon(Icons.payments),
+                                leading: Icon(
+                                  Icons.payments,
+                                  color: Colors.teal,
+                                ),
                                 iconColor: Colors.teal,
                                 text: "Pilih Pembayaran",
                               )
                               : _menuTile(
                                 leading: SvgPicture.network(
-                                  controller.paymentMethods[controller
-                                      .selectedPaymentMethod
-                                      .value]!['image'],
+                                  controller.selectedPaymentMethod['image_url'],
                                 ),
                                 iconColor: Colors.teal,
-                                text:
-                                    controller.selectedPaymentMethod.value
-                                        .toUpperCase(),
+                                text: controller.selectedPaymentMethod['name'],
                               ),
                     ),
                   ),
@@ -100,19 +125,79 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                     "Kode promo",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  InkWell(
-                    onTap:
-                        () => showModalBottomSheet(
-                          backgroundColor: Colors.white,
-                          context: context,
-                          builder: (_) => _kodePromo(),
-                        ),
-                    child: _menuTile(
-                      leading: Icon(Icons.redeem),
-                      iconColor: Colors.orange,
-                      text: "Gunakan Kode Promo",
-                    ),
-                  ),
+                  Obx(() {
+                    return controller.diskon.value > 0
+                        ? Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap:
+                                  () => showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.white,
+                                    builder:
+                                        (_) => Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: SingleChildScrollView(
+                                            child: _kodePromo(context),
+                                          ),
+                                        ),
+                                  ),
+                              child: _menuTile(
+                                leading: Icon(
+                                  Icons.redeem,
+                                  color: Colors.orange,
+                                ),
+                                iconColor: Colors.orange,
+                                text: controller.promoCode.value,
+                              ),
+                            ),
+                            Row(
+                              spacing: 4,
+                              children: [
+                                Icon(Icons.check_circle, color: Colors.teal),
+                                Text(
+                                  "Kode promo berhasil digunakan",
+                                  style: TextStyle(
+                                    color: Colors.teal,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                        : InkWell(
+                          onTap:
+                              () => showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true, // 🚀 penting
+                                backgroundColor: Colors.white,
+                                builder: (context) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                      bottom:
+                                          MediaQuery.of(
+                                            context,
+                                          ).viewInsets.bottom,
+                                    ),
+                                    child: SingleChildScrollView(
+                                      child: _kodePromo(context),
+                                    ),
+                                  );
+                                },
+                              ),
+
+                          child: _menuTile(
+                            leading: Icon(Icons.redeem, color: Colors.orange),
+                            iconColor: Colors.orange,
+                            text: "Gunakan Kode Promo",
+                          ),
+                        );
+                  }),
+
                   const Text(
                     "Rincian Pesanan",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -133,7 +218,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                   ),
 
                   Obx(() {
-                    return controller.biayaAdmin.value > 0
+                    return controller.biayaAdmin.value > 0.0
                         ? Row(
                           children: [
                             Text("Biaya Admin"),
@@ -143,6 +228,29 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                 controller.biayaAdmin.value.toString(),
                               ),
                               style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        )
+                        : SizedBox();
+                  }),
+                  Obx(() {
+                    return controller.diskon.value > 0.0
+                        ? Row(
+                          children: [
+                            Text(
+                              "Diskon",
+                              style: TextStyle(
+                                color: Colors.teal,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Spacer(),
+                            Text(
+                              "-${controller.formatCurrency(controller.diskon.value.toString())}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.teal,
+                              ),
                             ),
                           ],
                         )
@@ -172,24 +280,33 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                     ),
                   ),
 
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: Colors.teal.shade300,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(
-                            color: Colors.teal.shade300,
-                            width: 1.5,
+                  Obx(
+                    () => SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: Colors.teal.shade300,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: Colors.teal.shade300,
+                              width: 1.5,
+                            ),
                           ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        onPressed: () {},
+                        child:
+                            controller.loading['bayar'] == false
+                                ? Text("Bayar Sekarang")
+                                : Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
                       ),
-                      onPressed: () {},
-                      child: const Text("Bayar Sekarang"),
                     ),
                   ),
                 ],
@@ -202,49 +319,73 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
   }
 
   /// --- Card Tryout lainnya ---
-  static Widget _otherTryoutCard(String judul, String harga) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(
+  Widget _otherTryoutCard(
+    String judul,
+    String harga, {
+    required Map<String, dynamic> value,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
           color: Color.fromARGB(250, 230, 230, 230),
-          width: 1.5,
+          width: 1.0,
         ),
+        borderRadius: BorderRadius.circular(8),
       ),
-      elevation: 0,
-      color: Colors.white,
-      child: Container(
-        width: 160,
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              judul,
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
+      width: 160,
+      padding: const EdgeInsets.only(left: 8, top: 8),
+      margin: EdgeInsets.all(16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            judul,
+            softWrap: true,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
 
-              style: const TextStyle(fontSize: 14),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  harga,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 14),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(harga, style: const TextStyle(fontWeight: FontWeight.bold)),
+              IconButton(
+                tooltip:
+                    value['is_purchase'] == true
+                        ? "Hapus dari keranjang"
+                        : "Tambah ke keranjang",
+                onPressed: () {
+                  final idx = controller.otherTryout.indexOf(value);
+
+                  if (value['is_purchase'] == false) {
+                    value['is_purchase'] = true;
+                    controller.addTryout(value);
+                  } else {
+                    controller.removeTryout(value);
+                    value['is_purchase'] = false;
+                  }
+
+                  controller.otherTryout[idx] = Map<String, dynamic>.from(
+                    value,
+                  ); // 🔥 ini penting supaya Obx rebuild
+                },
+                icon: Icon(
+                  value['is_purchase'] != true
+                      ? Icons.add_box
+                      : Icons.disabled_by_default,
+                  color:
+                      value['is_purchase'] != true ? Colors.teal : Colors.pink,
+                  size: 32,
                 ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.add_box, color: Colors.teal, size: 32),
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -290,114 +431,98 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        spacing: 8,
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(width: double.infinity),
           Text(
-            textAlign: TextAlign.start,
             "Metode Pembayaran",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
           ),
+          const SizedBox(height: 12),
+
+          // 🔹 Virtual Account
           Text(
-            textAlign: TextAlign.start,
             "Virtual Account",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          Wrap(
-            spacing: 0,
-            runSpacing: 0,
-            children: [
-              _methodCard(
-                SvgPicture.network(
-                  "https://idcpns.com/img/payment-method/bni.svg",
-                ),
-                name: "BNI",
-
-                title: "Bank BNI",
-                subtitle: "Biaya Admin: Rp 1.000",
-                admin: 1000,
-                context: context,
-              ),
-              _methodCard(
-                SvgPicture.network(
-                  "https://idcpns.com/img/payment-method/bca.svg",
-                ),
-                name: "BCA",
-
-                title: "Bank BCA",
-                subtitle: "Biaya Admin: Rp 1.000",
-                admin: 1000,
-                context: context,
-              ),
-              _methodCard(
-                SvgPicture.network(
-                  "https://idcpns.com/img/payment-method/mandiri.svg",
-                ),
-                name: "MANDIRI",
-
-                title: "Mandiri",
-                subtitle: "Biaya Admin: Rp 1.000",
-                admin: 1000,
-                context: context,
-              ),
-            ],
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 180, // tinggi fix biar nggak overflow
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.virtualAccount.length,
+              itemBuilder: (context, index) {
+                final data = controller.virtualAccount[index];
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: _methodCard(
+                    SvgPicture.network(data['image_url']),
+                    name: data['name'],
+                    title: data['name'],
+                    subtitle: "Biaya Admin: Rp ${data['biaya_admin']}",
+                    value: data,
+                    context: context,
+                  ),
+                );
+              },
+            ),
           ),
+          const SizedBox(height: 16),
+
+          // 🔹 E-Wallet
           Text(
-            textAlign: TextAlign.start,
             "E-Wallet",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          Wrap(
-            spacing: 0,
-            runSpacing: 0,
-            children: [
-              _methodCard(
-                SvgPicture.network(
-                  "https://idcpns.com/img/payment-method/ovo.svg",
-                ),
-                name: "OVO",
-
-                title: "OVO",
-                subtitle: "Biaya Admin: Rp 1.000",
-                admin: 1000,
-                context: context,
-              ),
-              _methodCard(
-                SvgPicture.network(
-                  "https://idcpns.com/img/payment-method/dana.svg",
-                ),
-                name: "DANA",
-
-                title: "DANA",
-                subtitle: "Biaya Admin: Rp 1.000",
-                admin: 1000,
-                context: context,
-              ),
-            ],
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 180, // tinggi fix biar nggak overflow
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.EWallet.length,
+              itemBuilder: (context, index) {
+                final data = controller.EWallet[index];
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: _methodCard(
+                    SvgPicture.network(data['image_url']),
+                    name: data['name'],
+                    title: data['name'],
+                    value: data,
+                    subtitle: "Biaya Admin: ${data['biaya_admin']}",
+                    context: context,
+                  ),
+                );
+              },
+            ),
           ),
+          const SizedBox(height: 16),
+
+          // 🔹 QR Payments
           Text(
-            textAlign: TextAlign.start,
             "QR Payments",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          Wrap(
-            spacing: 0,
-            runSpacing: 0,
-            children: [
-              _methodCard(
-                SvgPicture.network(
-                  "https://idcpns.com/img/payment-method/qris.svg",
-                ),
-                name: "QRIS",
-                title: "QRIS",
-                subtitle: "Biaya Admin: Rp 0",
-                admin: 0,
-                context: context,
-              ),
-            ],
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 180, // tinggi fix biar nggak overflow
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.QR.length,
+              itemBuilder: (context, index) {
+                final data = controller.QR[index];
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: _methodCard(
+                    SvgPicture.network(data['image_url']),
+                    name: data['name'],
+                    title: data['name'],
+                    value: data,
+                    subtitle: "Biaya Admin: ${data['biaya_admin']}",
+                    context: context,
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -409,37 +534,47 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
     String? title,
     required String name,
     String? subtitle,
-    int admin = 0,
+    double admin = 0,
+    required Map<String, dynamic> value,
     required BuildContext context,
   }) {
     return SizedBox(
-      width: 120, // biar konsisten
+      width: 150,
+      height: 160,
       child: Card(
         elevation: 0,
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(0),
+          borderRadius: BorderRadius.circular(8),
           side: BorderSide(color: const Color.fromARGB(50, 0, 0, 0), width: 1),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           onTap: () {
-            controller.selectedPaymentMethod.value = name;
-            controller.biayaAdmin.value = admin;
-            print(controller.biayaAdmin.value);
+            controller.selectedPaymentMethod.value = value;
+            controller.countAdmin();
             Navigator.pop(context);
             controller.initHarga();
+            controller.selectedPaymentType.value =
+                controller
+                    .getPaymentCategoryByCode(
+                      controller.paymentMethods,
+                      controller.selectedPaymentMethod['code'],
+                    )
+                    .toString();
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 40, child: image), // logo biar rata
+                SizedBox(height: 40, child: image),
                 const SizedBox(height: 12),
                 Text(
-                  title ?? "Bank BNI",
+                  title ?? name,
                   textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis, // biar nggak overflow
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
@@ -449,6 +584,8 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                 Text(
                   subtitle ?? "Biaya Admin: Rp 0",
                   textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                 ),
               ],
@@ -460,8 +597,8 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
   }
 
   /// --- Bottomsheet kode promo ---
-  static Widget _kodePromo() {
-    return Padding(
+  Widget _kodePromo(BuildContext context) {
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         spacing: 8,
@@ -473,6 +610,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           TextField(
+            controller: voucherController,
             decoration: InputDecoration(
               labelStyle: const TextStyle(color: Colors.grey),
               labelText: "Masukkan Kode Promo",
@@ -498,15 +636,18 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 elevation: 0,
-                backgroundColor: Colors.teal.shade300,
+                backgroundColor: Colors.teal,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: Colors.teal.shade300, width: 1.5),
+                  side: BorderSide(color: Colors.teal, width: 1.5),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
-              onPressed: () {},
+              onPressed: () {
+                controller.applyCode(voucherController.text);
+                Navigator.pop(context);
+              },
               child: const Text("Klaim"),
             ),
           ),

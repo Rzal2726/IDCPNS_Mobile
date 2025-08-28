@@ -16,6 +16,8 @@ import '../modules/detailBimbel/bindings/detail_bimbel_binding.dart';
 import '../modules/detailBimbel/views/detail_bimbel_view.dart';
 import '../modules/detailMyBimbel/bindings/detail_my_bimbel_binding.dart';
 import '../modules/detailMyBimbel/views/detail_my_bimbel_view.dart';
+import '../modules/detail_event/bindings/detail_event_binding.dart';
+import '../modules/detail_event/views/detail_event_view.dart';
 import '../modules/detail_pengerjaan_tryout/bindings/detail_pengerjaan_tryout_binding.dart';
 import '../modules/detail_pengerjaan_tryout/views/detail_pengerjaan_tryout_view.dart';
 import '../modules/detail_tryout/bindings/detail_tryout_binding.dart';
@@ -239,6 +241,11 @@ class AppPages {
       name: _Paths.PRETEST_RESULT,
       page: () => const PretestResultView(),
       binding: PretestResultBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETAIL_EVENT,
+      page: () => const DetailEventView(),
+      binding: DetailEventBinding(),
     ),
   ];
 }

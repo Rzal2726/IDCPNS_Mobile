@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/tryout_controller.dart';
 
@@ -10,6 +13,8 @@ class TryoutView extends GetView<TryoutController> {
   TryoutView({Key? key}) : super(key: key);
 
   final controller = Get.put(TryoutController());
+  final eventTextController = TextEditingController();
+  final paketTextController = TextEditingController();
 
   VoidCallback goToDetail(BuildContext context) {
     return () {
@@ -73,7 +78,7 @@ class TryoutView extends GetView<TryoutController> {
                     color: Colors.tealAccent.shade100,
                     width: 1.5,
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
                   color: Color.fromRGBO(238, 255, 250, 1),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
@@ -148,6 +153,12 @@ class TryoutView extends GetView<TryoutController> {
                       ),
                       SizedBox(height: 8),
                       TextField(
+                        controller: eventTextController,
+                        onChanged:
+                            (value) => controller.showEventTryout(
+                              name: value,
+                              category: controller.selectedEventKategori.value,
+                            ),
                         decoration: InputDecoration(
                           labelStyle: TextStyle(color: Colors.grey),
                           labelText: "Cari",
@@ -156,14 +167,14 @@ class TryoutView extends GetView<TryoutController> {
                               color: Colors.tealAccent.shade100,
                               width: 1.5,
                             ),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.tealAccent.shade100,
                               width: 2.0,
                             ),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
                       ),
@@ -277,7 +288,13 @@ class TryoutView extends GetView<TryoutController> {
                                         ),
                                         onPressed: () {
                                           Navigator.pop(context);
-                                          // kirim balik pilihan
+                                          controller.showEventTryout(
+                                            name: eventTextController.text,
+                                            category:
+                                                controller
+                                                    .selectedEventKategori
+                                                    .value,
+                                          );
                                         },
                                         child: const Text("Cari"),
                                       ),
@@ -300,38 +317,56 @@ class TryoutView extends GetView<TryoutController> {
                 ],
               ),
             ),
-            SizedBox(height: 32),
+            SizedBox(height: 8),
             Obx(() {
-              return controller.eventTryout.isNotEmpty
-                  ? SizedBox(
-                    height: 220,
-                    child: PageView.builder(
-                      controller: PageController(viewportFraction: 0.85),
-                      itemCount: controller.eventTryout.length,
-                      itemBuilder: (ctx, index) {
-                        final event = controller.eventTryout[index];
-                        return _eventTryoutGratis(
-                          "Sedang Berlangsung",
-                          event["judul"],
-                          "${event["startDate"]} - ${event["endDate"]}",
-                          event["periode"],
-                        );
-                      },
+              if (controller.loading['event'] == true) {
+                return Skeletonizer(
+                  child: _eventTryoutGratis(
+                    "",
+                    "Lorem Ipsum Odor",
+                    "Lorem Ipsum Odor",
+                    "Lorem Ipsum Odor",
+                    "Lorem Ipsum Odor",
+                  ),
+                );
+              }
+
+              if (controller.eventTryout.isEmpty) {
+                return Column(
+                  children: [
+                    SvgPicture.string(noDataSvg),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Belum Ada Event Berlangsung",
+                      style: TextStyle(color: Colors.grey),
                     ),
-                  )
-                  : Column(
-                    children: [
-                      SvgPicture.string(noDataSvg),
-                      const SizedBox(height: 16),
-                      const Text(
-                        "Belum Ada Event Berlangsung",
-                        style: TextStyle(color: Colors.grey),
+                  ],
+                );
+              }
+
+              return SizedBox(
+                height: 224,
+                child: PageView.builder(
+                  controller: PageController(viewportFraction: 0.85),
+                  itemCount: controller.eventTryout.length,
+                  itemBuilder: (ctx, index) {
+                    final event = controller.eventTryout[index];
+                    log(event.toString());
+                    return _eventTryoutGratis(
+                      event["uuid"].toString(),
+                      event["label_text"].toString(),
+                      event['name'].toString(),
+                      controller.formatTanggalRange(
+                        "${event["startdate"].toString().substring(0, 10)} - ${event["enddate"].toString().substring(0, 10)}",
                       ),
-                    ],
-                  );
+                      event["periode_text"].toString(),
+                    );
+                  },
+                ),
+              );
             }),
 
-            SizedBox(height: 32),
+            SizedBox(height: 8),
 
             // Paket Tryout section
             screenWidth > 800
@@ -372,6 +407,7 @@ class TryoutView extends GetView<TryoutController> {
                         children: [
                           Expanded(
                             child: TextField(
+                              controller: paketTextController,
                               decoration: InputDecoration(
                                 labelStyle: TextStyle(color: Colors.grey),
                                 labelText: "Cari",
@@ -410,7 +446,19 @@ class TryoutView extends GetView<TryoutController> {
                                 vertical: 12,
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              controller.fetchPaketTryout(
+                                page: 1,
+
+                                search: paketTextController.text,
+                                menuCategory:
+                                    controller
+                                        .optionsId[controller
+                                            .selectedPaketKategori
+                                            .value]
+                                        .toString(),
+                              );
+                            },
                             label: Text("Cari"),
                           ),
                         ],
@@ -527,7 +575,16 @@ class TryoutView extends GetView<TryoutController> {
                                         ),
                                         onPressed: () {
                                           Navigator.pop(context);
-                                          // kirim balik pilihan
+                                          controller.fetchPaketTryout(
+                                            page: 1,
+                                            search: paketTextController.text,
+                                            menuCategory:
+                                                controller
+                                                    .optionsId[controller
+                                                        .selectedPaketKategori
+                                                        .value]
+                                                    .toString(),
+                                          );
                                         },
                                         child: const Text("Cari"),
                                       ),
@@ -554,6 +611,21 @@ class TryoutView extends GetView<TryoutController> {
             SizedBox(height: 16),
 
             Obx(() {
+              if (controller.loading['paket'] == true) {
+                return Skeletonizer(
+                  child: Center(
+                    child: _cardPaketTryout(
+                      "Lorem Ipsum Odor",
+                      "assets/logo.png",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                      context,
+                    ),
+                  ),
+                );
+              }
               if (controller.paketTryout.isEmpty) {
                 return Column(
                   children: [
@@ -588,6 +660,119 @@ class TryoutView extends GetView<TryoutController> {
               );
             }),
 
+            Obx(() {
+              final current = controller.currentPage.value;
+              final total = controller.totalPage.value;
+
+              if (total == 0) {
+                return const SizedBox.shrink(); // tidak ada halaman
+              }
+
+              // Tentukan window
+              int start = current - 1;
+              int end = current + 1;
+
+              // clamp biar tetap di antara 1 dan total
+              start = start < 1 ? 1 : start;
+              end = end > total ? total : end;
+
+              // Kalau total < 3, pakai semua halaman yg ada
+              if (total <= 3) {
+                start = 1;
+                end = total;
+              } else {
+                // Kalau current di awal → 1,2,3
+                if (current == 1) {
+                  start = 1;
+                  end = 3;
+                }
+                // Kalau current di akhir → total-2, total-1, total
+                else if (current == total) {
+                  start = total - 2;
+                  end = total;
+                }
+              }
+
+              // Generate daftar halaman
+              final pages = List.generate(end - start + 1, (i) => start + i);
+
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed:
+                          current > 1
+                              ? () => controller.fetchPaketTryout(
+                                page: current - 1,
+                                search: paketTextController.text,
+                                menuCategory:
+                                    controller
+                                        .optionsId[controller
+                                            .selectedPaketKategori
+                                            .value]
+                                        .toString(),
+                              )
+                              : null,
+                      child: const Icon(Icons.arrow_back_ios, size: 16),
+                    ),
+                    const SizedBox(width: 8),
+
+                    ...pages.map((page) {
+                      final isActive = page == current;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: ElevatedButton(
+                          onPressed:
+                              () => controller.fetchPaketTryout(
+                                page: page,
+                                search: paketTextController.text,
+                                menuCategory:
+                                    controller
+                                        .optionsId[controller
+                                            .selectedPaketKategori
+                                            .value]
+                                        .toString(),
+                              ),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(36, 36),
+                            backgroundColor:
+                                isActive ? Colors.teal : Colors.white,
+                            foregroundColor:
+                                isActive ? Colors.white : Colors.black54,
+                          ),
+                          child: Text(
+                            page.toString(),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      );
+                    }),
+
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed:
+                          current < total
+                              ? () => controller.fetchPaketTryout(
+                                page: current + 1,
+                                search: paketTextController.text,
+                                menuCategory:
+                                    controller
+                                        .optionsId[controller
+                                            .selectedPaketKategori
+                                            .value]
+                                        .toString(),
+                              )
+                              : null,
+                      child: const Icon(Icons.arrow_forward_ios, size: 16),
+                    ),
+                  ],
+                ),
+              );
+            }),
+
             SizedBox(height: 32),
           ],
         ),
@@ -612,10 +797,10 @@ class TryoutView extends GetView<TryoutController> {
       child: Card(
         color: Colors.white,
         margin: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 4,
         child: SizedBox(
-          height: 120,
+          height: 128,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -627,9 +812,16 @@ class TryoutView extends GetView<TryoutController> {
                 ),
                 child: Image.network(
                   image, // ganti dengan gambar kamu
-                  width: 100,
-                  height: 120,
-                  fit: BoxFit.cover,
+                  width: 140,
+                  height: 128,
+                  fit: BoxFit.fill,
+                  errorBuilder: (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return Image.asset("assets/logo.png");
+                  },
                 ),
               ),
               const SizedBox(width: 12),
@@ -653,7 +845,9 @@ class TryoutView extends GetView<TryoutController> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Row(
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 hargaFull,
@@ -680,8 +874,9 @@ class TryoutView extends GetView<TryoutController> {
 
                       // Label CPNS
                       Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.centerRight,
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -689,7 +884,7 @@ class TryoutView extends GetView<TryoutController> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.teal,
+                                color: controller.categoryColor[kategori],
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
@@ -701,11 +896,6 @@ class TryoutView extends GetView<TryoutController> {
                                 ),
                               ),
                             ),
-                            SizedBox(width: 8),
-                            Icon(Icons.circle, size: 12),
-                            SizedBox(width: 8),
-                            Icon(Icons.star, color: Colors.orangeAccent),
-                            Text("5"),
                           ],
                         ),
                       ),
@@ -721,43 +911,54 @@ class TryoutView extends GetView<TryoutController> {
   }
 
   Widget _eventTryoutGratis(
+    String uuid,
     String status,
     String judul,
     String tanggal,
     String periode,
   ) {
-    return Container(
-      margin: EdgeInsets.all(32),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Color.fromARGB(255, 242, 255, 251),
-        border: Border.all(
-          color: Colors.transparent, // bisa atur warna border
-          width: 2,
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.amber, // pindahkan color ke sini
-              border: Border.all(
-                color: Colors.transparent, // bisa atur warna border
-                width: 2,
-              ),
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-            ),
-            padding: EdgeInsets.all(2),
-            child: Text(status, style: TextStyle(color: Colors.white)),
+    return InkWell(
+      onTap: () {
+        controller.selectedUuid.value = uuid;
+        Get.toNamed("/detail-event");
+      },
+      child: Container(
+        margin: EdgeInsets.all(32),
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 242, 255, 251),
+          border: Border.all(
+            color: Colors.transparent, // bisa atur warna border
+            width: 2,
           ),
-          SizedBox(height: 8),
-          Text(judul, style: TextStyle(fontWeight: FontWeight.bold)),
-          SizedBox(height: 8),
-          Text(tanggal),
-          Row(children: [Text("Periode :"), Text(" ${periode}")]),
-        ],
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.amber, // pindahkan color ke sini
+                border: Border.all(
+                  color: Colors.transparent, // bisa atur warna border
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
+              padding: EdgeInsets.all(2),
+              child: Text(
+                status,
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(judul, style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Text(tanggal),
+            Row(children: [Text("Periode :"), Text(" ${periode}")]),
+          ],
+        ),
       ),
     );
   }
