@@ -22,7 +22,7 @@ class BimbelController extends GetxController {
         },
       ].obs;
 
-  var selectedUuid = ''.obs;
+  var selectedUuid = 'sss'.obs;
   @override
   void onInit() {
     super.onInit();
