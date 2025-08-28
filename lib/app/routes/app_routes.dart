@@ -36,6 +36,7 @@ abstract class Routes {
   static const MY_BIMBEL = _Paths.MY_BIMBEL;
   static const DETAIL_MY_BIMBEL = _Paths.DETAIL_MY_BIMBEL;
   static const PRETEST_RESULT = _Paths.PRETEST_RESULT;
+  static const DETAIL_EVENT = _Paths.DETAIL_EVENT;
 }
 
 abstract class _Paths {
@@ -74,4 +75,5 @@ abstract class _Paths {
   static const MY_BIMBEL = '/my-bimbel';
   static const DETAIL_MY_BIMBEL = '/detail-my-bimbel';
   static const PRETEST_RESULT = '/pretest-result';
+  static const DETAIL_EVENT = '/detail-event';
 }

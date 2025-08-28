@@ -3,6 +3,6 @@ import 'package:get/get.dart';
 class RestClientProvider extends GetConnect {
   @override
   void onInit() {
-    httpClient.baseUrl = 'https://idcpns.com/api/v1';
+    httpClient.baseUrl = 'https://enha.idcpns.com/api/v1';
   }
 }

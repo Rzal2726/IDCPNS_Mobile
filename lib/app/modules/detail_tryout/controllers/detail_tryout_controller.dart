@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/tryout/controllers/tryout_controller.dart';
+import 'package:intl/intl.dart';
 
 class DetailTryoutController extends GetxController {
   //TODO: Implement DetailTryoutController
@@ -12,52 +14,26 @@ class DetailTryoutController extends GetxController {
 
   RxMap<dynamic, dynamic> detailData = {}.obs;
   RxList<String> option = ['Detail', 'Bundling', 'FAQ'].obs;
+  RxMap<String, dynamic> wishList = <String, dynamic>{}.obs;
   RxList<dynamic> bundling = <dynamic>[].obs;
-  RxBool isLoading = false.obs;
-  RxList<Map<String, dynamic>> bundlingList =
-      <Map<String, dynamic>>[
-        {"judul": "Bundling 1", "soal": "110", "durasi": "230"},
-        {"judul": "Bundling 2", "soal": "110", "durasi": "230"},
-        {"judul": "Bundling 3", "soal": "110", "durasi": "230"},
-      ].obs;
-  RxString FAQ =
-      '''
-<div className="mt-8">
-  <div className="mt-3 border border-muted-200 rounded-lg p-4">
-    <h1 className="font-bold text-lg">
-      Berapa jumlah tryout yang saya dapat pada paket bundling ini?
-    </h1>
-    <p className="text-muted-700 mt-2">
-      Kamu akan mendapatkan total 10 tryout dalam paket ini yang mana artinya Kamu akan menghemat banyak biaya dibanding membeli tryout satuan.
-    </p>
-  </div>
-'''.obs;
-  RxString Detail =
-      '''<h2 class="font-bold text-lg mt-5 mb-3">Lebih hemat beli tryout paket bundling.</h2>
-<p class="text-sm">
-  Siap bersaing bersama ribuan peserta seleksi CPNS lainnya! Ayo persiapkan diri kamu untuk seleksi CPNS selanjutnya dari sekarang dengan mengikuti Paket Tryout SKD CPNS dari IDCPNS ini.
-</p>
-
-<p class="text-sm pt-3">
-  Tryout ini dirancang untuk membantu kamu mempersiapkan seleksi CPNS yang akan datang. Dengan kisi-kisi soal terupdate berdasarkan FR tahun-tahun sebelumnya, membuat kamu belajar lebih mudah. Dengan membeli paket tryout ini maka kamu akan mendapatkan :
-</p>
-
-<ul class="py-3 ml-3 list-disc list-inside">
-  <li>10 Tryout SKD CPNS</li>
-  <li>Masing-masing tryout terdiri dari 110 soal dengan waktu pengerjaan 100 menit</li>
-  <li>Materi dan Penilaian yang selalu disesuaikan dengan ketentuan KEMENPAN-RB terbaru</li>
-  <li>Dan masih banyak lagi</li>
-</ul>
-
-<p class="font-bold text-sm mt-10 mb-10">
-  Yuk tunggu apalagi? Segera #CuriStart dan mulai langkah persiapanmu lebih awal dibanding peserta lainnya.
-</p>'''.obs;
+  RxMap<String, bool> isLoading =
+      <String, bool>{
+        "image": false,
+        "wishlist": false,
+        "detail": false,
+        "bundling": false,
+        "FAQ": false,
+      }.obs;
+  RxList<Map<String, dynamic>> bundlingList = <Map<String, dynamic>>[].obs;
+  RxString FAQ = ''''''.obs;
+  RxString Detail = ''''''.obs;
   RxBool isOnWishlist = false.obs;
   RxString selectedOption = "Detail".obs;
+  RxString selectedUUid = "".obs;
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    initData();
+    await initData();
   }
 
   @override
@@ -71,21 +47,19 @@ class DetailTryoutController extends GetxController {
   }
 
   Future<void> initData() async {
-    isLoading.value = true;
     await getDetailTryout(); // tunggu sampai selesai
     await checkWishList();
-
-    isLoading.value = false;
+    selectedUUid.value = prevController.selectedUuid.value;
   }
 
   Future<bool> addToWishList() async {
     try {
       final client = Get.put(RestClientProvider());
-      isLoading.value = true;
+      isLoading['wishlist'] = true;
       final response = await client.post(
         headers: {
           "Authorization":
-              "Bearer 56759|KK0mqNkVsumxcvbvS48Ee3my8hvITEJi6YZuYmnqdf8b5cf3",
+              "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
         },
         "/account/user/wishlist/add",
         {
@@ -96,7 +70,7 @@ class DetailTryoutController extends GetxController {
 
       if (response.statusCode == 200) {
         print(response.body);
-        isOnWishlist.value = true;
+        isLoading['wishlist'] = true;
         return true;
       } else {
         print("❌ Error: ${response.statusCode}");
@@ -108,28 +82,30 @@ class DetailTryoutController extends GetxController {
       print("Exception: $e");
       return false;
     } finally {
-      isLoading.value = false;
+      isLoading['wishlist'] = false;
     }
   }
 
   Future<bool> removeFromWishList() async {
     try {
       final client = Get.put(RestClientProvider());
-      isLoading.value = true;
+      isLoading['wishlist'] = true;
       final response = await client.post(
         "/account/user/wishlist/delete",
-        {
-          {"uuid": detailData['uuid']},
-        },
+        {"uuid": wishList['uuid']},
         headers: {
           "Authorization":
-              "Bearer 56759|KK0mqNkVsumxcvbvS48Ee3my8hvITEJi6YZuYmnqdf8b5cf3",
+              "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
         },
       );
 
       if (response.statusCode == 200) {
         print(response.body);
+        print(wishList);
+        wishList;
+        print(prevController.selectedUuid.value);
         isOnWishlist.value = false;
+        isLoading['wishlist'] = false;
         return true;
       } else {
         print("❌ Error: ${response.statusCode}");
@@ -140,7 +116,7 @@ class DetailTryoutController extends GetxController {
       print("Exception: $e");
       return false;
     } finally {
-      isLoading.value = false;
+      isLoading['wishlist'] = false;
     }
   }
 
@@ -149,40 +125,59 @@ class DetailTryoutController extends GetxController {
     final response = await client.get(
       headers: {
         "Authorization":
-            "Bearer 56759|KK0mqNkVsumxcvbvS48Ee3my8hvITEJi6YZuYmnqdf8b5cf3",
+            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
       },
-      '/account/user/wishlist/${prevController.selectedUuid}',
+      '/account/user/wishlist/${prevController.selectedUuid.value}',
     );
 
     if (response.statusCode == 200) {
       final data = response.body;
       isOnWishlist.value = data['data'] == null ? false : true;
+      wishList.value = response.body['data'];
       print(data['data']);
     } else {
       print('Error: ${response.statusText}');
     }
   }
 
-  Future<void> getDetailTryout() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 56759|KK0mqNkVsumxcvbvS48Ee3my8hvITEJi6YZuYmnqdf8b5cf3",
-      },
-      '/tryout/formasi/${prevController.selectedUuid.value}',
+  String formatCurrency(dynamic number) {
+    var customFormatter = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp.',
+      decimalDigits: 0,
     );
+    var formattedValue = customFormatter.format(int.parse(number));
+    return formattedValue.toString();
+  }
 
-    if (response.statusCode == 200) {
-      final Map<dynamic, dynamic> paket = Map<dynamic, dynamic>.from(
-        response.body['data'],
+  Future<void> getDetailTryout() async {
+    try {
+      final client = Get.find<RestClientProvider>();
+      final response = await client.get(
+        headers: {
+          "Authorization":
+              "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
+        },
+        '/tryout/formasi/${prevController.selectedUuid.value}',
       );
-      detailData.assignAll(paket);
-      FAQ.value = (paket['faq_mobile'] ?? "").toString();
-      Detail.value = (paket['deskripsi_mobile'] ?? "").toString();
-      bundling.value = paket['tryouts'];
-    } else {
-      print('Error: ${response.statusText}');
+
+      if (response.statusCode == 200) {
+        final Map<dynamic, dynamic> paket = Map<dynamic, dynamic>.from(
+          response.body['data'],
+        );
+        isLoading['image'] = true;
+        isLoading['detail'] = true;
+        detailData.assignAll(paket);
+        FAQ.value = (paket['faq_mobile'] ?? "").toString();
+        Detail.value = (paket['deskripsi_mobile'] ?? "").toString();
+        bundling.value = paket['tryouts'];
+      } else {
+        print('Error: ${response.statusText}');
+      }
+    } catch (e) {
+    } finally {
+      isLoading['image'] = false;
+      isLoading['detail'] = false;
     }
   }
 }
