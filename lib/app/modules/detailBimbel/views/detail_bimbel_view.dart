@@ -11,34 +11,31 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
+        preferredSize: Size.fromHeight(60),
         child: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () => Get.back(),
           ),
-          title: const Text(
-            'Detail Bimbel',
-            style: TextStyle(color: Colors.black),
-          ),
+          title: Text('Detail Bimbel', style: TextStyle(color: Colors.black)),
           actions: [
             IconButton(
               icon: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  const Icon(Icons.notifications_none, color: Colors.teal),
+                  Icon(Icons.notifications_none, color: Colors.teal),
                   Positioned(
                     right: -4,
                     top: -4,
                     child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: const BoxDecoration(
+                      padding: EdgeInsets.all(3),
+                      decoration: BoxDecoration(
                         color: Colors.red,
                         shape: BoxShape.circle,
                       ),
-                      child: const Text(
+                      child: Text(
                         '9+',
                         style: TextStyle(color: Colors.white, fontSize: 10),
                       ),
@@ -53,7 +50,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -61,42 +58,53 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  'https://placehold.co/600x400/png',
+                  'https://placehold.co/600x600/png',
                   width: double.infinity,
-                  height: 200,
+                  height: 300,
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
 
               // Judul
-              const Text(
+              Text(
                 'Bimbel SKD CPNS 2024 Batch 12',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
 
               // Rating dan peserta
               Row(
-                children: const [
+                children: [
                   Icon(Icons.star, color: Colors.amber, size: 16),
                   SizedBox(width: 4),
-                  Text('5.0'),
+                  Text('5', style: TextStyle(fontWeight: FontWeight.w700)),
                   SizedBox(width: 8),
-                  Icon(Icons.people, color: Colors.grey, size: 16),
+                  Container(
+                    width: 5,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Icon(Icons.people, color: Colors.amber, size: 16),
                   SizedBox(width: 4),
-                  Text('100+ Peserta Telah Bergabung'),
+                  Text(
+                    '100+ Peserta Telah Bergabung',
+                    style: TextStyle(fontWeight: FontWeight.w700),
+                  ),
                 ],
               ),
-              const SizedBox(height: 16),
-
+              SizedBox(height: 25),
               // Jenis Paket
-              const Text(
+              Text(
                 'Jenis Paket',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8),
-
               Obx(
                 () => Column(
                   children: [
@@ -121,26 +129,37 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
 
               // Tombol
               OutlinedButton.icon(
-                icon: const Icon(Icons.favorite_border, color: Colors.teal),
-                label: const Text(
+                icon: Icon(Icons.favorite_border, color: Colors.teal),
+                label: Text(
                   'Tambahkan ke Wishlist +',
-                  style: TextStyle(color: Colors.teal),
+                  style: TextStyle(
+                    color: Colors.teal,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.teal),
-                  minimumSize: const Size.fromHeight(50),
+                  side: BorderSide(color: Colors.teal, width: 2),
+                  minimumSize: Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                 ),
                 onPressed: () {},
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,
-                  minimumSize: const Size.fromHeight(50),
+                  minimumSize: Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    // 🔹 border radius
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                 ),
                 onPressed: () {
                   Get.snackbar(
@@ -148,9 +167,17 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                     'Kamu memilih paket: ${controller.selectedPaket.value}',
                   );
                 },
-                child: const Text('Daftar Sekarang'),
+                child: Text(
+                  'Daftar Sekarang',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-              const SizedBox(height: 20),
+
+              SizedBox(height: 20),
 
               // TabBar
               TabBar(
@@ -158,20 +185,20 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                 labelColor: Colors.teal,
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: Colors.teal,
-                tabs: const [
+                tabs: [
                   Tab(text: 'Detail'),
                   Tab(text: 'Jadwal'),
                   Tab(text: 'FAQ'),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
 
               // TabBarView (pakai SizedBox agar ada tinggi minimal)
               SizedBox(
                 height: 300,
                 child: TabBarView(
                   controller: controller.tabController,
-                  children: const [
+                  children: [
                     Center(child: Text('Konten Detail')),
                     Center(child: Text('Konten Jadwal')),
                     Center(child: Text('Konten FAQ')),
@@ -191,34 +218,49 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
     String newPrice,
     DetailBimbelController controller,
   ) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text(title),
-      subtitle: Row(
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            oldPrice,
-            style: const TextStyle(
-              decoration: TextDecoration.lineThrough,
-              color: Colors.grey,
-            ),
+          // Kiri: Radio + Title
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Radio<String>(
+                value: title,
+                groupValue: controller.selectedPaket.value,
+                onChanged: (value) {
+                  controller.pilihPaket(value!);
+                },
+                activeColor: Colors.teal, // 🎯 bikin bulatan aktif jadi teal
+              ),
+              Align(alignment: Alignment.center, child: Text(title)),
+            ],
           ),
-          const SizedBox(width: 8),
-          Text(
-            newPrice,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.teal,
-            ),
+
+          // Kanan: Harga lama + baru
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // tetap rata kiri
+            mainAxisAlignment:
+                MainAxisAlignment.center, // biar posisinya vertikal center
+            children: [
+              Text(
+                oldPrice,
+                style: TextStyle(
+                  decoration: TextDecoration.lineThrough,
+                  color: Colors.grey,
+                ),
+              ),
+              SizedBox(height: 4), // pakai height biar rapi, jangan width
+              Text(
+                newPrice,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+            ],
           ),
         ],
-      ),
-      leading: Radio<String>(
-        value: title,
-        groupValue: controller.selectedPaket.value,
-        onChanged: (value) {
-          controller.pilihPaket(value!);
-        },
       ),
     );
   }

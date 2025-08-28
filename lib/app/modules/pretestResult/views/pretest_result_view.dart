@@ -57,16 +57,16 @@ class PretestResultView extends GetView<PretestResultController> {
               // ICON TROPHY
               const SizedBox(height: 16),
               Container(
-                width: 120,
-                height: 120,
+                width: 200,
+                height: 200,
                 decoration: BoxDecoration(
-                  color: Colors.teal.shade50,
+                  color: Colors.teal,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.emoji_events,
                   size: 80,
-                  color: Colors.teal,
+                  color: Colors.tealAccent,
                 ),
               ),
               const SizedBox(height: 16),
@@ -74,13 +74,13 @@ class PretestResultView extends GetView<PretestResultController> {
               // TEKS UTAMA
               const Text(
                 'Selamat Pejuang!',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
               ),
               const SizedBox(height: 8),
               const Text(
                 'Berikut nilai yang kamu dapatkan dari sesi pretest ini',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.black54),
+                style: TextStyle(fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 24),
 
@@ -93,7 +93,7 @@ class PretestResultView extends GetView<PretestResultController> {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade200,
+                      color: Colors.grey.shade300,
                       blurRadius: 6,
                       offset: const Offset(0, 3),
                     ),
@@ -106,32 +106,53 @@ class PretestResultView extends GetView<PretestResultController> {
                       'Pretest',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 20,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Jawaban Benar'),
-                        Text('${controller.jawabanBenar.value}'),
+                        const Text(
+                          'Jawaban Benar',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                        Text(
+                          '${controller.jawabanBenar.value}',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Tambahan Point'),
-                        Text('${controller.tambahanPoint.value}'),
+                        const Text(
+                          'Tambahan Point',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                        Text(
+                          '${controller.tambahanPoint.value}',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
-                    const Divider(height: 24),
+                    const Divider(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           'Total Point',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
                         Text(
                           '${controller.totalPoint}',
@@ -150,10 +171,20 @@ class PretestResultView extends GetView<PretestResultController> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
-                    minimumSize: const Size.fromHeight(45),
+                    minimumSize: Size.fromHeight(45),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                   ),
                   onPressed: () => Get.back(),
-                  child: const Text('Kembali'),
+                  child: Text(
+                    'Kembali',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
             ],
