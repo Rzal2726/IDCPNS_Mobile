@@ -28,6 +28,7 @@ abstract class Routes {
   static const AFFILIATE_DETAIL = _Paths.AFFILIATE_DETAIL;
   static const COMMISION_DETAIL = _Paths.COMMISION_DETAIL;
   static const PENGERJAAN_TRYOUT = _Paths.PENGERJAAN_TRYOUT;
+  static const DETAIL_EVENT = _Paths.DETAIL_EVENT;
 }
 
 abstract class _Paths {
@@ -57,4 +58,5 @@ abstract class _Paths {
   static const AFFILIATE_DETAIL = '/affiliate-detail';
   static const COMMISION_DETAIL = '/commision-detail';
   static const PENGERJAAN_TRYOUT = '/pengerjaan-tryout';
+  static const DETAIL_EVENT = '/detail-event';
 }

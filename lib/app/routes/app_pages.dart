@@ -10,6 +10,8 @@ import '../modules/commisionDetail/bindings/commision_detail_binding.dart';
 import '../modules/commisionDetail/views/commision_detail_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
+import '../modules/detail_event/bindings/detail_event_binding.dart';
+import '../modules/detail_event/views/detail_event_view.dart';
 import '../modules/detail_pengerjaan_tryout/bindings/detail_pengerjaan_tryout_binding.dart';
 import '../modules/detail_pengerjaan_tryout/views/detail_pengerjaan_tryout_view.dart';
 import '../modules/detail_tryout/bindings/detail_tryout_binding.dart';
@@ -184,6 +186,11 @@ class AppPages {
       name: _Paths.PENGERJAAN_TRYOUT,
       page: () => const PengerjaanTryoutView(),
       binding: PengerjaanTryoutBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETAIL_EVENT,
+      page: () => const DetailEventView(),
+      binding: DetailEventBinding(),
     ),
   ];
 }

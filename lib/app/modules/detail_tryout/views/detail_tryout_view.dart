@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/detail_tryout_controller.dart';
 
@@ -35,7 +36,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                 ), // <-- radius untuk gambar
                 child: Obx(
                   () =>
-                      controller.isLoading.value == true
+                      controller.detailData['gambar'] == null
                           ? CircularProgressIndicator()
                           : Image.network(
                             controller.detailData['gambar'] ??
@@ -75,7 +76,12 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                 child: Container(
                   child:
                       controller.detailData['formasi'] == null
-                          ? CircularProgressIndicator()
+                          ? Skeletonizer(
+                            enabled: true,
+                            child: Text(
+                              "Judul Tryout Formasi Judul Tryout Formasi Judul Tryout Formasi",
+                            ),
+                          )
                           : Text(
                             controller.detailData['formasi'],
                             style: TextStyle(
@@ -89,20 +95,28 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
             SizedBox(height: 8),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 32.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(Icons.star, color: Colors.orange),
-                  SizedBox(width: 4),
-                  Text("5"),
-                  SizedBox(width: 4),
-                  Icon(Icons.circle, size: 8),
-                  SizedBox(width: 4),
-                  Icon(Icons.people, color: Colors.orange),
-                  SizedBox(width: 4),
-                  Text("500+ Sudah Bergabung"),
-                ],
+              child: Obx(
+                () => Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.star, color: Colors.orange),
+                    SizedBox(width: 4),
+                    controller.detailData['review'] == null
+                        ? Skeletonizer(child: Text("5"))
+                        : Text("${controller.detailData['review']}"),
+                    SizedBox(width: 4),
+                    Icon(Icons.circle, size: 8),
+                    SizedBox(width: 4),
+                    Icon(Icons.people, color: Colors.orange),
+                    SizedBox(width: 4),
+                    controller.detailData['jumlah_dibeli'] == null
+                        ? Skeletonizer(child: Text("500+ Sudah Bergabung"))
+                        : Text(
+                          "${controller.detailData['jumlah_dibeli']} Sudah Bergabung",
+                        ),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 8),
@@ -127,9 +141,22 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text("Bundling"),
-                  Text(
-                    "Rp.50.000",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  Obx(
+                    () =>
+                        controller.detailData['harga_fix'] == null
+                            ? Skeletonizer(
+                              enabled: true,
+                              child: Text("Rp.50.000"),
+                            )
+                            : Text(
+                              controller.formatCurrency(
+                                controller.detailData['harga_fix'].toString(),
+                              ),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                   ),
                 ],
               ),
@@ -143,55 +170,38 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                   Expanded(
                     child: Obx(
                       () => ElevatedButton(
-                        onPressed: () async {
-                          if (!controller.isLoading.value) {
-                            ScaffoldMessenger.of(context).clearSnackBars();
+                        onPressed:
+                            controller.isLoading['wishlist'] == true
+                                ? null // disable tombol saat loading
+                                : () async {
+                                  ScaffoldMessenger.of(
+                                    context,
+                                  ).clearSnackBars();
 
-                            bool success;
-                            if (controller.isOnWishlist.value == false) {
-                              success = await controller.addToWishList();
-                              if (success) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
+                                  bool success;
+                                  if (!controller.isOnWishlist.value) {
+                                    success = await controller.addToWishList();
+                                    _showSnackBar(
+                                      context,
+                                      success,
                                       "Wishlist berhasil disimpan!",
-                                    ),
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: Colors.teal,
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Gagal menyimpan wishlist!"),
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            } else {
-                              success = await controller.removeFromWishList();
-                              if (success) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Wishlist berhasil dihapus!"),
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: Colors.teal,
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Gagal menghapus wishlist!"),
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            }
-                          }
-                        },
-
+                                      "Gagal menyimpan wishlist!",
+                                    );
+                                    if (success)
+                                      controller.isOnWishlist.value = true;
+                                  } else {
+                                    success =
+                                        await controller.removeFromWishList();
+                                    _showSnackBar(
+                                      context,
+                                      success,
+                                      "Wishlist berhasil dihapus!",
+                                      "Gagal menghapus wishlist!",
+                                    );
+                                    if (success)
+                                      controller.isOnWishlist.value = false;
+                                  }
+                                },
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
                           foregroundColor: Colors.teal.shade300,
@@ -199,16 +209,26 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                             side: BorderSide(
-                              color: Colors.teal.shade300, // ganti warna border
+                              color: Colors.teal.shade300,
                               width: 1.5,
                             ),
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         child:
-                            controller.isOnWishlist.value == false
-                                ? Text("Tambahkan Ke Wishlist +")
-                                : Text("Hapus Dari Wishlist -"),
+                            controller.isLoading['wishlist'] == true
+                                ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : Text(
+                                  controller.isOnWishlist.value
+                                      ? "Hapus Dari Wishlist -"
+                                      : "Tambahkan Ke Wishlist +",
+                                ),
                       ),
                     ),
                   ),
@@ -216,7 +236,9 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, "/tryout-payment");
+                        controller.selectedUUid.value =
+                            controller.detailData['uuid'];
+                        Get.toNamed("/tryout-payment");
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal.shade300,
@@ -291,45 +313,63 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
             Obx(() {
               final option = controller.selectedOption.value;
 
-              if (option == "Bundling") {
-                return SingleChildScrollView(
-                  child: Container(
-                    margin: const EdgeInsets.all(16),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: controller.bundling.length,
-                      itemBuilder: (context, index) {
-                        final data = controller.bundling[index];
-                        return _cardBundling(
-                          data['name'] ?? "",
-                          data['jumlah_soal']?.toString() ?? "",
-                          data['waktu_pengerjaan']?.toString() ?? "",
-                        );
-                      },
+              if (controller.isLoading['detail'] == true) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              switch (option) {
+                case "Bundling":
+                  return SingleChildScrollView(
+                    child: Skeletonizer(
+                      enabled: controller.isLoading['detail']!,
+                      child: Container(
+                        margin: const EdgeInsets.all(16),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: controller.bundling.length,
+                          itemBuilder: (context, index) {
+                            final data = controller.bundling[index];
+                            return _cardBundling(
+                              data['name'] ?? "",
+                              data['jumlah_soal']?.toString() ?? "",
+                              data['waktu_pengerjaan']?.toString() ?? "",
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                );
-              }
+                  );
 
-              if (option == "FAQ") {
-                return Container(
-                  margin: const EdgeInsets.all(16),
-                  child:
-                      controller.FAQ.value == null
-                          ? const Center(child: CircularProgressIndicator())
-                          : _htmlCard(controller.FAQ.value ?? ''),
-                );
-              }
+                case "FAQ":
+                  return Skeletonizer(
+                    enabled: controller.isLoading['detail']!,
+                    child: Container(
+                      margin: const EdgeInsets.all(16),
+                      child:
+                          controller.FAQ.value.isEmpty
+                              ? const Center(child: Text("Tidak ada FAQ"))
+                              : _htmlCard(controller.FAQ.value),
+                    ),
+                  );
 
-              // Default -> Detail
-              return Container(
-                margin: const EdgeInsets.all(16),
-                child:
-                    controller.Detail.value == null
-                        ? const Center(child: CircularProgressIndicator())
-                        : _htmlCard(controller.Detail.value ?? ''),
-              );
+                default: // Detail
+                  return Skeletonizer(
+                    enabled: controller.isLoading['detail']!,
+                    child: Container(
+                      margin: const EdgeInsets.all(16),
+                      child:
+                          controller.Detail.value.isEmpty
+                              ? const Skeletonizer(
+                                enabled: true,
+                                child: Text(
+                                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel velit in nisi pulvinar ornare. Integer faucibus mauris nec mauris aliquet, eget molestie tortor auctor. Phasellus sit amet congue purus. Curabitur cursus mauris quis sapien aliquet rhoncus. Donec semper nibh mollis orci posuere pulvinar. Vestibulum suscipit eu massa elementum efficitur",
+                                ),
+                              )
+                              : _htmlCard(controller.Detail.value),
+                    ),
+                  );
+              }
             }),
           ],
         ),
@@ -339,22 +379,18 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
 }
 
 Widget _cardBundling(String Judul, String soal, String durasi) {
-  return Card(
-    elevation: 0, // hapus shadow
-    shape: RoundedRectangleBorder(
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.all(color: Colors.grey, width: 0.5),
       borderRadius: BorderRadius.circular(8),
-      side: BorderSide(
-        color: Colors.grey, // ganti warna border
-        width: 0.5,
-      ),
     ),
-    color: Colors.white,
-
     child: Container(
       padding: EdgeInsets.all(12),
       child: Column(
         children: [
-          Row(children: [Text(Judul, style: TextStyle(fontSize: 16))]),
+          Text(Judul, style: TextStyle(fontSize: 16)),
           SizedBox(height: 8),
           Row(
             spacing: 8,
@@ -382,5 +418,20 @@ Widget _htmlCard(String isi) {
       ".font-bold": Style(fontWeight: FontWeight.bold),
       ".text-muted-700": Style(color: Colors.grey.shade700),
     },
+  );
+}
+
+void _showSnackBar(
+  BuildContext context,
+  bool success,
+  String successMessage,
+  String failureMessage,
+) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(success ? successMessage : failureMessage),
+      duration: const Duration(seconds: 2),
+      backgroundColor: success ? Colors.teal : Colors.red,
+    ),
   );
 }
