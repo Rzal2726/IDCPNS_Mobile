@@ -56,6 +56,7 @@ class HomeView extends GetView<HomeController> {
 
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
+          backgroundColor: Colors.white,
           selectedItemColor: Colors.teal,
           unselectedItemColor: Colors.grey,
           selectedFontSize: 12.0,
@@ -64,7 +65,7 @@ class HomeView extends GetView<HomeController> {
           onTap: (index) {
             controller.changeBottomBar(index);
           },
-          items: const [
+          items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
             BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Bimbel'),
             BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Platinum'),

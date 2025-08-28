@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -36,16 +37,16 @@ class DashboardView extends GetView<DashboardController> {
                 ),
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 50),
 
             // Pilih Layanan
             Text(
               'Pilih Layanan',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 4),
             Text('Pilih layanan yang cocok sebagai teman belajar kamu'),
-            SizedBox(height: 16),
+            SizedBox(height: 30),
 
             Row(
               children: [
@@ -55,20 +56,30 @@ class DashboardView extends GetView<DashboardController> {
                       Get.toNamed(Routes.TRYOUT); // ganti dengan route kamu
                     },
                     child: _buildServiceCard(
-                      Icons.assignment,
+                      'assets/tryoutHomeIcon.svg',
                       'Tryout',
                       Colors.teal,
                     ),
                   ),
                 ),
                 SizedBox(width: 20),
+
                 Expanded(
-                  child: _buildServiceCard(Icons.school, 'Bimbel', Colors.teal),
+                  child: InkWell(
+                    onTap: () {
+                      Get.toNamed(Routes.BIMBEL);
+                    },
+                    child: _buildServiceCard(
+                      'assets/bimbelHomeIcon.svg',
+                      'Bimbel',
+                      Colors.teal,
+                    ),
+                  ),
                 ),
                 SizedBox(width: 20),
                 Expanded(
                   child: _buildServiceCard(
-                    Icons.star,
+                    'assets/platinumHomeIcon.svg',
                     'Platinum',
                     Colors.orange,
                     badge: 'Baru',
@@ -77,19 +88,19 @@ class DashboardView extends GetView<DashboardController> {
               ],
             ),
 
-            SizedBox(height: 24),
+            SizedBox(height: 50),
 
             // Pilih Kategori
             Text(
               'Pilih Kategori',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 4),
             Text(
               style: TextStyle(color: Colors.grey),
               'Pilih kategori yang cocok sebagai teman belajar kamu',
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 30),
 
             Container(
               padding: EdgeInsets.all(12),
@@ -120,17 +131,19 @@ class DashboardView extends GetView<DashboardController> {
                 ],
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 50),
+
             Text(
               'Rekomendasi Penunjang Program CPNS',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 4),
             Text(
               style: TextStyle(color: Colors.grey),
               'Pilihan utama kami untuk anda',
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 30),
+
             Container(
               padding: EdgeInsets.all(25),
               decoration: BoxDecoration(
@@ -150,34 +163,16 @@ class DashboardView extends GetView<DashboardController> {
                 children: [
                   Center(
                     child: Container(
-                      height: 240,
+                      height: 180,
                       width: 240,
-                      decoration: BoxDecoration(color: const Color(0xFF5E9F94)),
-                      child: Center(
-                        // Menggunakan placeholder untuk gambar dummy
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Center(
-                            child: Icon(
-                              Icons.school,
-                              size: 60,
-                              color: Color(0xFF5E9F94),
-                            ),
-                          ),
-                        ),
-                      ),
+                      child: Image.asset('assets/squareLogo.png'),
                     ),
                   ),
 
                   // Area gambar dengan background dan icon dummy
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   // Judul "Platinum"
-                  const Text(
+                  Text(
                     'Platinum',
                     style: TextStyle(
                       fontSize: 24,
@@ -185,15 +180,15 @@ class DashboardView extends GetView<DashboardController> {
                       color: Color(0xFFCD915B),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   // Deskripsi
-                  const Text(
+                  Text(
                     'Upgrade jenis akun Anda menjadi Platinum dan dapatkan berbagai macam fitur unggulan seperti Video Series, E-book, Tryout Harian, dan Webinar yang dapat meningkatkan persiapan kamu lebih optimal lagi.',
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   // Harga coret
-                  const Text(
+                  Text(
                     'Rp.149.000 - Rp.774.000',
                     style: TextStyle(
                       fontSize: 16,
@@ -202,9 +197,9 @@ class DashboardView extends GetView<DashboardController> {
                       decorationColor: Colors.grey,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   // Harga utama
-                  const Text(
+                  Text(
                     'Rp.129.000 - Rp.239.000',
                     style: TextStyle(
                       fontSize: 20,
@@ -215,25 +210,25 @@ class DashboardView extends GetView<DashboardController> {
                 ],
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 50),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 50),
                   // Judul dan deskripsi
                   Text(
                     'Event Tryout Gratis',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 4),
                   Text(
                     style: TextStyle(color: Colors.grey),
                     'Ikuti event tryout dari rekomendasi kita untuk anda!',
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 30),
+
                   // Search field
                   Container(
                     height: 50,
@@ -254,7 +249,7 @@ class DashboardView extends GetView<DashboardController> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 30),
                   // Tombol Filter
                   Align(
                     alignment: Alignment.centerRight,
@@ -278,18 +273,13 @@ class DashboardView extends GetView<DashboardController> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: 40),
                   // Tampilan kosong (empty state)
                   Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(height: 50), // Jarak atas yang lebih jauh
-                        Icon(
-                          Icons.archive_outlined,
-                          size: 100,
-                          color: Colors.black38,
-                        ),
+                        SvgPicture.asset("assets/emptyArchiveIcon.svg"),
                         SizedBox(height: 16),
                         Text(
                           'Belum Ada Event Berlangsung',
@@ -306,10 +296,10 @@ class DashboardView extends GetView<DashboardController> {
                 ],
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 50),
             Text(
               'Rekomendasi Tryout',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
             //
@@ -317,25 +307,11 @@ class DashboardView extends GetView<DashboardController> {
               'Ikuti event tryout dari rekomendasi kita untuk anda!',
               style: TextStyle(color: Colors.grey),
             ),
-            SizedBox(height: 24),
-            Container(
-              height: 150,
-              decoration: BoxDecoration(
-                color: Colors.blue.shade200,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Text(
-                  'Banner Highlight\n(Placeholder)',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
-            ),
-            SizedBox(height: 24),
+            SizedBox(height: 30),
+
+            SvgPicture.asset("assets/learningEmpty.svg"),
 
             Container(
-              height: 150,
               child: Center(
                 child: Text(
                   'belum ada event',
@@ -344,13 +320,13 @@ class DashboardView extends GetView<DashboardController> {
                 ),
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 50),
 
             Text(
               'Program Afiliasi',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 30),
 
             Container(
               height: 150,
@@ -367,24 +343,19 @@ class DashboardView extends GetView<DashboardController> {
               ),
             ),
             //
-            SizedBox(height: 24),
-
-            Text(
-              'Bantuan Cepat',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            SizedBox(height: 50),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Bantuan Cepat',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -394,7 +365,7 @@ class DashboardView extends GetView<DashboardController> {
                           'Punya pertanyaan atau bantuan? Silahkan hubungi kami.',
                       buttonText: 'Hubungi Kami',
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16),
                     _buildHelpContainer(
                       title: 'Panduan',
                       description:
@@ -419,7 +390,7 @@ Widget _buildHelpContainer({
 }) {
   return Expanded(
     child: Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.0),
@@ -429,7 +400,7 @@ Widget _buildHelpContainer({
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 5,
-            offset: const Offset(0, 3),
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -438,34 +409,34 @@ Widget _buildHelpContainer({
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             description,
-            style: const TextStyle(fontSize: 14, color: Colors.black54),
+            style: TextStyle(fontSize: 14, color: Colors.black54),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Divider(color: Colors.grey[400], height: 1),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF16A085),
+                backgroundColor: Color(0xFF16A085),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                padding: EdgeInsets.symmetric(vertical: 12.0),
               ),
               child: Text(
                 buttonText,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -479,7 +450,7 @@ Widget _buildHelpContainer({
 }
 
 Widget _buildServiceCard(
-  IconData icon,
+  String icon,
   String title,
   Color color, {
   String? badge,
@@ -490,32 +461,46 @@ Widget _buildServiceCard(
         width: 100,
         height: 140,
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5),
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: color, size: 32),
+            Container(
+              padding: EdgeInsets.all(12), // biar ada ruang di sekitar icon
+              decoration: BoxDecoration(
+                color: color, // warna background teal
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: SvgPicture.asset(icon),
+            ),
             SizedBox(height: 8),
-            Text(title, style: TextStyle(color: Colors.grey)),
+            Text(title, style: TextStyle(color: Colors.grey, fontSize: 16)),
           ],
         ),
       ),
       if (badge != null)
         Positioned(
-          right: 4,
-          top: 4,
+          right: 0,
+          top: 30,
           child: Container(
+            width: 50,
+            height: 25,
             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: Colors.red,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadiusDirectional.only(
+                bottomStart: Radius.circular(3),
+                topStart: Radius.circular(3),
+              ),
             ),
-            child: Text(
-              badge,
-              style: TextStyle(color: Colors.white, fontSize: 10),
+            child: Center(
+              child: Text(
+                badge,
+                style: TextStyle(color: Colors.white, fontSize: 15),
+              ),
             ),
           ),
         ),

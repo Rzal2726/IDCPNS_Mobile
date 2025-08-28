@@ -14,27 +14,27 @@ class MyAccountView extends GetView<MyAccountController> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text("Ubah Akun", style: TextStyle(color: Colors.black)),
+        title: Text("Ubah Akun", style: TextStyle(color: Colors.black)),
         actions: [
           Stack(
             children: [
               IconButton(
-                icon: const Icon(Icons.notifications, color: Colors.black),
+                icon: Icon(Icons.notifications_none, color: Colors.teal),
                 onPressed: () {},
               ),
               Positioned(
                 right: 8,
                 top: 8,
                 child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: const BoxDecoration(
+                  padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
                     color: Colors.red,
                     shape: BoxShape.circle,
                   ),
-                  child: const Text(
+                  child: Text(
                     "9+",
                     style: TextStyle(fontSize: 10, color: Colors.white),
                   ),
@@ -46,9 +46,9 @@ class MyAccountView extends GetView<MyAccountController> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -56,7 +56,7 @@ class MyAccountView extends GetView<MyAccountController> {
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
                   blurRadius: 6,
-                  offset: const Offset(0, 3),
+                  offset: Offset(0, 3),
                 ),
               ],
             ),
@@ -71,81 +71,105 @@ class MyAccountView extends GetView<MyAccountController> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "Data Diri",
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      const CircleAvatar(
-                        radius: 50,
+                      SizedBox(height: 10),
+                      CircleAvatar(
+                        radius: 60,
                         backgroundImage: NetworkImage(
                           "https://i.ibb.co/3vYwF5L/sample-food.jpg",
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      const Text("Max 5mb"),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
+                      Text("Max 5mb"),
+                      SizedBox(height: 8),
                       OutlinedButton(
                         onPressed: () {},
-                        child: const Text("Pilih Foto"),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: Colors.teal,
+                            width: 2,
+                          ), // warna dan ketebalan border
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              8,
+                            ), // sudut kotak
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ), // padding dalam tombol
+                        ),
+                        child: Text(
+                          "Pilih Foto",
+                          style: TextStyle(
+                            color: Colors.teal,
+                            fontWeight: FontWeight.bold,
+                          ), // teks warna teal
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 // Provinsi
                 Column(
                   children: [
                     // Nama Lengkap
                     TextField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Nama Lengkap",
                         border: OutlineInputBorder(),
                         isDense: true,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 30),
 
                     // Email
                     TextField(
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Email",
                         border: OutlineInputBorder(),
                         isDense: true,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 30),
 
                     // Nomor HP
                     TextField(
                       keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Nomor HP",
                         border: OutlineInputBorder(),
                         isDense: true,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 30),
 
                     // Nomor WhatsApp
                     TextField(
                       keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Nomor WhatsApp",
                         border: OutlineInputBorder(),
                         isDense: true,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 30),
 
                     // Tanggal Lahir
                     TextField(
                       readOnly: true,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Tanggal Lahir",
                         border: OutlineInputBorder(),
                         isDense: true,
@@ -153,17 +177,17 @@ class MyAccountView extends GetView<MyAccountController> {
                         suffixIcon: Icon(Icons.calendar_today),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 30),
 
                     // Jenis Kelamin
                     DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Jenis Kelamin",
                         border: OutlineInputBorder(),
                         isDense: true,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
-                      items: const [
+                      items: [
                         DropdownMenuItem(
                           value: "Laki-laki",
                           child: Text("Laki-laki"),
@@ -175,17 +199,17 @@ class MyAccountView extends GetView<MyAccountController> {
                       ],
                       onChanged: (value) {},
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 30),
 
                     // Provinsi
                     DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Provinsi",
                         border: OutlineInputBorder(),
                         isDense: true,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
-                      items: const [
+                      items: [
                         DropdownMenuItem(value: "ACEH", child: Text("ACEH")),
                         DropdownMenuItem(
                           value: "JAWA BARAT",
@@ -194,39 +218,39 @@ class MyAccountView extends GetView<MyAccountController> {
                       ],
                       onChanged: (value) {},
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 30),
 
                     // Kabupaten
                     TextField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Kabupaten",
                         border: OutlineInputBorder(),
                         isDense: true,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 30),
 
                     // Pendidikan
                     TextField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Pendidikan",
                         border: OutlineInputBorder(),
                         isDense: true,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 30),
 
                     // Darimana Mengetahui
                     DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Darimana Anda Mengetahui IDCPNS",
                         border: OutlineInputBorder(),
                         isDense: true,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
-                      items: const [
+                      items: [
                         DropdownMenuItem(
                           value: "Instagram",
                           child: Text("Instagram"),
@@ -235,23 +259,23 @@ class MyAccountView extends GetView<MyAccountController> {
                       ],
                       onChanged: (value) {},
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 30),
 
                     // Preferensi Belajar
                     DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Preferensi Belajar",
                         border: OutlineInputBorder(),
                         isDense: true,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
-                      items: const [
+                      items: [
                         DropdownMenuItem(value: "BUMN", child: Text("BUMN")),
                         DropdownMenuItem(value: "CPNS", child: Text("CPNS")),
                       ],
                       onChanged: (value) {},
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                   ],
                 ),
 
@@ -261,13 +285,13 @@ class MyAccountView extends GetView<MyAccountController> {
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: Colors.teal,
+                      padding: EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Simpan",
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),

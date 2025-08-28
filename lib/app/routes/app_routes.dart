@@ -27,7 +27,15 @@ abstract class Routes {
   static const AFFILIATE = _Paths.AFFILIATE;
   static const AFFILIATE_DETAIL = _Paths.AFFILIATE_DETAIL;
   static const COMMISION_DETAIL = _Paths.COMMISION_DETAIL;
-  static const PENGERJAAN_TRYOUT = _Paths.PENGERJAAN_TRYOUT;
+  static const SPLASH = _Paths.SPLASH;
+  static const REKENING = _Paths.REKENING;
+  static const MUTASI_SALDO = _Paths.MUTASI_SALDO;
+  static const TARIK_KOMISI = _Paths.TARIK_KOMISI;
+  static const BIMBEL = _Paths.BIMBEL;
+  static const DETAIL_BIMBEL = _Paths.DETAIL_BIMBEL;
+  static const MY_BIMBEL = _Paths.MY_BIMBEL;
+  static const DETAIL_MY_BIMBEL = _Paths.DETAIL_MY_BIMBEL;
+  static const PRETEST_RESULT = _Paths.PRETEST_RESULT;
   static const DETAIL_EVENT = _Paths.DETAIL_EVENT;
 }
 
@@ -57,6 +65,15 @@ abstract class _Paths {
   static const AFFILIATE = '/affiliate';
   static const AFFILIATE_DETAIL = '/affiliate-detail';
   static const COMMISION_DETAIL = '/commision-detail';
+  static const SPLASH = '/splash';
   static const PENGERJAAN_TRYOUT = '/pengerjaan-tryout';
+  static const REKENING = '/rekening';
+  static const MUTASI_SALDO = '/mutasi-saldo';
+  static const TARIK_KOMISI = '/tarik-komisi';
+  static const BIMBEL = '/bimbel';
+  static const DETAIL_BIMBEL = '/detail-bimbel';
+  static const MY_BIMBEL = '/my-bimbel';
+  static const DETAIL_MY_BIMBEL = '/detail-my-bimbel';
+  static const PRETEST_RESULT = '/pretest-result';
   static const DETAIL_EVENT = '/detail-event';
 }
