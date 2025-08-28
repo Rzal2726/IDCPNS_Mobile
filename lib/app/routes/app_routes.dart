@@ -28,6 +28,10 @@ abstract class Routes {
   static const AFFILIATE_DETAIL = _Paths.AFFILIATE_DETAIL;
   static const COMMISION_DETAIL = _Paths.COMMISION_DETAIL;
   static const SPLASH = _Paths.SPLASH;
+  static const REKENING = _Paths.REKENING;
+  static const MUTASI_SALDO = _Paths.MUTASI_SALDO;
+  static const TARIK_KOMISI = _Paths.TARIK_KOMISI;
+  static const BIMBEL = _Paths.BIMBEL;
 }
 
 abstract class _Paths {
@@ -58,4 +62,8 @@ abstract class _Paths {
   static const COMMISION_DETAIL = '/commision-detail';
   static const SPLASH = '/splash';
   static const PENGERJAAN_TRYOUT = '/pengerjaan-tryout';
+  static const REKENING = '/rekening';
+  static const MUTASI_SALDO = '/mutasi-saldo';
+  static const TARIK_KOMISI = '/tarik-komisi';
+  static const BIMBEL = '/bimbel';
 }
