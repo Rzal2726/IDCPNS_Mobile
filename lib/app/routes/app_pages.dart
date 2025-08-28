@@ -12,6 +12,10 @@ import '../modules/commisionDetail/bindings/commision_detail_binding.dart';
 import '../modules/commisionDetail/views/commision_detail_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
+import '../modules/detailBimbel/bindings/detail_bimbel_binding.dart';
+import '../modules/detailBimbel/views/detail_bimbel_view.dart';
+import '../modules/detailMyBimbel/bindings/detail_my_bimbel_binding.dart';
+import '../modules/detailMyBimbel/views/detail_my_bimbel_view.dart';
 import '../modules/detail_pengerjaan_tryout/bindings/detail_pengerjaan_tryout_binding.dart';
 import '../modules/detail_pengerjaan_tryout/views/detail_pengerjaan_tryout_view.dart';
 import '../modules/detail_tryout/bindings/detail_tryout_binding.dart';
@@ -30,12 +34,16 @@ import '../modules/mutasiSaldo/bindings/mutasi_saldo_binding.dart';
 import '../modules/mutasiSaldo/views/mutasi_saldo_view.dart';
 import '../modules/myAccount/bindings/my_account_binding.dart';
 import '../modules/myAccount/views/my_account_view.dart';
+import '../modules/myBimbel/bindings/my_bimbel_binding.dart';
+import '../modules/myBimbel/views/my_bimbel_view.dart';
 import '../modules/notification/bindings/notification_binding.dart';
 import '../modules/notification/views/notification_view.dart';
 import '../modules/panduan_tryout/bindings/panduan_tryout_binding.dart';
 import '../modules/panduan_tryout/views/panduan_tryout_view.dart';
 import '../modules/pengerjaan_tryout/bindings/pengerjaan_tryout_binding.dart';
 import '../modules/pengerjaan_tryout/views/pengerjaan_tryout_view.dart';
+import '../modules/pretestResult/bindings/pretest_result_binding.dart';
+import '../modules/pretestResult/views/pretest_result_view.dart';
 import '../modules/programSaya/bindings/program_saya_binding.dart';
 import '../modules/programSaya/views/program_saya_view.dart';
 import '../modules/register/bindings/register_binding.dart';
@@ -211,6 +219,26 @@ class AppPages {
       name: _Paths.BIMBEL,
       page: () => const BimbelView(),
       binding: BimbelBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETAIL_BIMBEL,
+      page: () => const DetailBimbelView(),
+      binding: DetailBimbelBinding(),
+    ),
+    GetPage(
+      name: _Paths.MY_BIMBEL,
+      page: () => const MyBimbelView(),
+      binding: MyBimbelBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETAIL_MY_BIMBEL,
+      page: () => const DetailMyBimbelView(),
+      binding: DetailMyBimbelBinding(),
+    ),
+    GetPage(
+      name: _Paths.PRETEST_RESULT,
+      page: () => const PretestResultView(),
+      binding: PretestResultBinding(),
     ),
   ];
 }

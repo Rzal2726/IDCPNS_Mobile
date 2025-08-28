@@ -63,11 +63,17 @@ class DashboardView extends GetView<DashboardController> {
                   ),
                 ),
                 SizedBox(width: 20),
+
                 Expanded(
-                  child: _buildServiceCard(
-                    'assets/bimbelHomeIcon.svg',
-                    'Bimbel',
-                    Colors.teal,
+                  child: InkWell(
+                    onTap: () {
+                      Get.toNamed(Routes.BIMBEL);
+                    },
+                    child: _buildServiceCard(
+                      'assets/bimbelHomeIcon.svg',
+                      'Bimbel',
+                      Colors.teal,
+                    ),
                   ),
                 ),
                 SizedBox(width: 20),

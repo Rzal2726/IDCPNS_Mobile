@@ -32,6 +32,10 @@ abstract class Routes {
   static const MUTASI_SALDO = _Paths.MUTASI_SALDO;
   static const TARIK_KOMISI = _Paths.TARIK_KOMISI;
   static const BIMBEL = _Paths.BIMBEL;
+  static const DETAIL_BIMBEL = _Paths.DETAIL_BIMBEL;
+  static const MY_BIMBEL = _Paths.MY_BIMBEL;
+  static const DETAIL_MY_BIMBEL = _Paths.DETAIL_MY_BIMBEL;
+  static const PRETEST_RESULT = _Paths.PRETEST_RESULT;
 }
 
 abstract class _Paths {
@@ -66,4 +70,8 @@ abstract class _Paths {
   static const MUTASI_SALDO = '/mutasi-saldo';
   static const TARIK_KOMISI = '/tarik-komisi';
   static const BIMBEL = '/bimbel';
+  static const DETAIL_BIMBEL = '/detail-bimbel';
+  static const MY_BIMBEL = '/my-bimbel';
+  static const DETAIL_MY_BIMBEL = '/detail-my-bimbel';
+  static const PRETEST_RESULT = '/pretest-result';
 }

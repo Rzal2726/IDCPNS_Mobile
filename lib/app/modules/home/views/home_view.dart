@@ -65,7 +65,7 @@ class HomeView extends GetView<HomeController> {
           onTap: (index) {
             controller.changeBottomBar(index);
           },
-          items: const [
+          items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
             BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Bimbel'),
             BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Platinum'),

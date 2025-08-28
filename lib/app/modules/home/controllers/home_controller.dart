@@ -5,8 +5,6 @@ import 'package:idcpns_mobile/app/modules/bimbel/views/bimbel_view.dart';
 import 'package:idcpns_mobile/app/modules/dashboard/views/dashboard_view.dart';
 
 class HomeController extends GetxController {
-  //TODO: Implement HomeController
-
   RxInt currentIndex = 0.obs;
   RxInt tabIndex = 0.obs;
 
