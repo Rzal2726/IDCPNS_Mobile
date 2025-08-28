@@ -4,6 +4,8 @@ import '../modules/account/bindings/account_binding.dart';
 import '../modules/account/views/account_view.dart';
 import '../modules/affiliate/bindings/affiliate_binding.dart';
 import '../modules/affiliate/views/affiliate_view.dart';
+import '../modules/bimbel/bindings/bimbel_binding.dart';
+import '../modules/bimbel/views/bimbel_view.dart';
 import '../modules/changePassword/bindings/change_password_binding.dart';
 import '../modules/changePassword/views/change_password_view.dart';
 import '../modules/commisionDetail/bindings/commision_detail_binding.dart';
@@ -13,8 +15,6 @@ import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/detail_pengerjaan_tryout/bindings/detail_pengerjaan_tryout_binding.dart';
 import '../modules/detail_pengerjaan_tryout/views/detail_pengerjaan_tryout_view.dart';
 import '../modules/detail_tryout/bindings/detail_tryout_binding.dart';
-import '../modules/detail_tryout/bindings/detail_tryout_binding.dart';
-import '../modules/detail_tryout/views/detail_tryout_view.dart';
 import '../modules/detail_tryout/views/detail_tryout_view.dart';
 import '../modules/detail_tryout_saya/bindings/detail_tryout_saya_binding.dart';
 import '../modules/detail_tryout_saya/views/detail_tryout_saya_view.dart';
@@ -26,6 +26,8 @@ import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/mutasiSaldo/bindings/mutasi_saldo_binding.dart';
+import '../modules/mutasiSaldo/views/mutasi_saldo_view.dart';
 import '../modules/myAccount/bindings/my_account_binding.dart';
 import '../modules/myAccount/views/my_account_view.dart';
 import '../modules/notification/bindings/notification_binding.dart';
@@ -38,21 +40,21 @@ import '../modules/programSaya/bindings/program_saya_binding.dart';
 import '../modules/programSaya/views/program_saya_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
+import '../modules/rekening/bindings/rekening_binding.dart';
+import '../modules/rekening/views/rekening_view.dart';
+import '../modules/splash/bindings/splash_binding.dart';
+import '../modules/splash/views/splash_view.dart';
+import '../modules/tarikKomisi/bindings/tarik_komisi_binding.dart';
+import '../modules/tarikKomisi/views/tarik_komisi_view.dart';
 import '../modules/transaction/bindings/transaction_binding.dart';
 import '../modules/transaction/views/transaction_view.dart';
 import '../modules/tryout/bindings/tryout_binding.dart';
-import '../modules/tryout/bindings/tryout_binding.dart';
-import '../modules/tryout/views/tryout_view.dart';
 import '../modules/tryout/views/tryout_view.dart';
 import '../modules/tryout_checkout/bindings/tryout_checkout_binding.dart';
 import '../modules/tryout_checkout/views/tryout_checkout_view.dart';
 import '../modules/tryout_payment/bindings/tryout_payment_binding.dart';
-import '../modules/tryout_payment/bindings/tryout_payment_binding.dart';
-import '../modules/tryout_payment/views/tryout_payment_view.dart';
 import '../modules/tryout_payment/views/tryout_payment_view.dart';
 import '../modules/tryout_saya/bindings/tryout_saya_binding.dart';
-import '../modules/tryout_saya/bindings/tryout_saya_binding.dart';
-import '../modules/tryout_saya/views/tryout_saya_view.dart';
 import '../modules/tryout_saya/views/tryout_saya_view.dart';
 import '../modules/wishlist/bindings/wishlist_binding.dart';
 import '../modules/wishlist/views/wishlist_view.dart';
@@ -181,9 +183,34 @@ class AppPages {
       binding: CommisionDetailBinding(),
     ),
     GetPage(
+      name: _Paths.SPLASH,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
+    ),
+    GetPage(
       name: _Paths.PENGERJAAN_TRYOUT,
       page: () => const PengerjaanTryoutView(),
       binding: PengerjaanTryoutBinding(),
+    ),
+    GetPage(
+      name: _Paths.REKENING,
+      page: () => const RekeningView(),
+      binding: RekeningBinding(),
+    ),
+    GetPage(
+      name: _Paths.MUTASI_SALDO,
+      page: () => const MutasiSaldoView(),
+      binding: MutasiSaldoBinding(),
+    ),
+    GetPage(
+      name: _Paths.TARIK_KOMISI,
+      page: () => const TarikKomisiView(),
+      binding: TarikKomisiBinding(),
+    ),
+    GetPage(
+      name: _Paths.BIMBEL,
+      page: () => const BimbelView(),
+      binding: BimbelBinding(),
     ),
   ];
 }

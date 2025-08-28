@@ -56,6 +56,7 @@ class HomeView extends GetView<HomeController> {
 
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
+          backgroundColor: Colors.white,
           selectedItemColor: Colors.teal,
           unselectedItemColor: Colors.grey,
           selectedFontSize: 12.0,
