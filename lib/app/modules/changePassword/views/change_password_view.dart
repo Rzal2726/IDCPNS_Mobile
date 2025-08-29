@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/change_password_controller.dart';
 
@@ -13,7 +14,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text("Kata Sandi"),
+        title: Text("Kata Sandi"),
         actions: [
           Stack(
             children: [
@@ -43,7 +44,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppStyle.screenPadding,
         child: Align(
           alignment: Alignment.topCenter, // posisikan card di atas tengah
           child: Card(
@@ -53,16 +54,16 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "Ubah Kata Sandi",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
 
                   // Kata Sandi Lama
                   Column(
@@ -93,7 +94,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       Obx(
                         () => TextField(
                           controller: controller.newPasswordController,
@@ -119,7 +120,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       Obx(
                         () => TextField(
                           controller: controller.confirmPasswordController,
@@ -147,7 +148,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,

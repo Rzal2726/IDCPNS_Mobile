@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/my_bimbel_controller.dart';
 
@@ -12,34 +13,31 @@ class MyBimbelView extends GetView<MyBimbelController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
+        preferredSize: Size.fromHeight(60),
         child: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () => Get.back(),
           ),
-          title: const Text(
-            'Bimbel Saya',
-            style: TextStyle(color: Colors.black),
-          ),
+          title: Text('Bimbel Saya', style: TextStyle(color: Colors.black)),
           actions: [
             IconButton(
               icon: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  const Icon(Icons.notifications_none, color: Colors.teal),
+                  Icon(Icons.notifications_none, color: Colors.teal),
                   Positioned(
                     right: -4,
                     top: -4,
                     child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: const BoxDecoration(
+                      padding: EdgeInsets.all(3),
+                      decoration: BoxDecoration(
                         color: Colors.red,
                         shape: BoxShape.circle,
                       ),
-                      child: const Text(
+                      child: Text(
                         '9+',
                         style: TextStyle(color: Colors.white, fontSize: 10),
                       ),
@@ -53,20 +51,20 @@ class MyBimbelView extends GetView<MyBimbelController> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppStyle.screenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Bimbel Saya',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 4),
-            const Text(
+            SizedBox(height: 4),
+            Text(
               'Pilih bimbel dan belajar bersama peserta lainnya.',
               style: TextStyle(color: Colors.grey),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // Search bar
             Row(
@@ -76,33 +74,44 @@ class MyBimbelView extends GetView<MyBimbelController> {
                     onChanged: (value) => controller.searchText.value = value,
                     decoration: InputDecoration(
                       hintText: 'Cari',
-                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(color: Colors.teal),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(color: Colors.teal),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
                         vertical: 0,
                         horizontal: 8,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: controller.doSearch,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 16,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
                     ),
                   ),
-                  child: const Text('Cari'),
+                  child: Text(
+                    'Cari',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 30),
 
             // Filter button
             Align(
@@ -111,14 +120,17 @@ class MyBimbelView extends GetView<MyBimbelController> {
                 onTap: openFilter,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Text('Filter', style: TextStyle(color: Colors.teal)),
+                  children: [
+                    Text(
+                      'Filter',
+                      style: TextStyle(color: Colors.teal, fontSize: 16),
+                    ),
                     Icon(Icons.keyboard_arrow_down, color: Colors.teal),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 15),
 
             // List Bimbel
             Expanded(
@@ -132,16 +144,16 @@ class MyBimbelView extends GetView<MyBimbelController> {
                         Get.toNamed(Routes.DETAIL_MY_BIMBEL);
                       },
                       child: Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.all(12),
+                        margin: EdgeInsets.only(bottom: 20),
+                        padding: EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.shade200,
+                              color: Colors.grey.shade300,
                               blurRadius: 4,
-                              offset: const Offset(0, 2),
+                              offset: Offset(0, 2),
                             ),
                           ],
                         ),
@@ -149,35 +161,38 @@ class MyBimbelView extends GetView<MyBimbelController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.teal.shade100,
-                                borderRadius: BorderRadius.circular(4),
+                                color: Colors.teal,
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'CPNS',
                                 style: TextStyle(
-                                  color: Colors.teal,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 7),
                             Text(
                               item['title']!,
-                              style: const TextStyle(
-                                fontSize: 14,
+                              style: TextStyle(
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: 7),
                             Text(
                               item['jenis']!,
-                              style: const TextStyle(color: Colors.grey),
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 13,
+                              ),
                             ),
                           ],
                         ),
@@ -197,23 +212,23 @@ class MyBimbelView extends GetView<MyBimbelController> {
 void openFilter() {
   Get.bottomSheet(
     Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          Text(
             'Filter',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           ElevatedButton(
             onPressed: () => Get.back(),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
-            child: const Text('Terapkan'),
+            child: Text('Terapkan'),
           ),
         ],
       ),

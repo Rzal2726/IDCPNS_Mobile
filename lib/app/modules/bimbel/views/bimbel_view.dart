@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/bimbel_controller.dart';
 
@@ -53,7 +54,7 @@ class BimbelView extends GetView<BimbelController> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: AppStyle.sreenPaddingHome,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

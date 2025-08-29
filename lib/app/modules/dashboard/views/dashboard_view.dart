@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/dashboard_controller.dart';
 
@@ -13,7 +14,7 @@ class DashboardView extends GetView<DashboardController> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 50),
+        padding: AppStyle.sreenPaddingHome,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -268,7 +269,7 @@ class DashboardView extends GetView<DashboardController> {
                           SizedBox(
                             width: 4,
                           ), // Memberikan jarak antara teks dan ikon
-                          Icon(Icons.filter_list),
+                          Icon(Icons.keyboard_arrow_down),
                         ],
                       ),
                     ),

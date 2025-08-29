@@ -130,7 +130,11 @@ class WishlistView extends GetView<WishlistController> {
                         style: TextStyle(color: Colors.teal, fontSize: 16),
                       ),
                       SizedBox(width: 4),
-                      Icon(Icons.filter_list, size: 18, color: Colors.teal),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 18,
+                        color: Colors.teal,
+                      ),
                     ],
                   ),
                 ),

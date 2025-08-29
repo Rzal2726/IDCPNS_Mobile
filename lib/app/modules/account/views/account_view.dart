@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/account_controller.dart';
 
@@ -14,10 +15,7 @@ class AccountView extends GetView<AccountController> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 40,
-            ), // padding untuk seluruh isi
+            padding: AppStyle.sreenPaddingHome, // padding untuk seluruh isi
             child: Column(
               children: [
                 // Profile section
@@ -50,7 +48,7 @@ class AccountView extends GetView<AccountController> {
                                 child: Text(
                                   "Basic",
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 15,
                                     color: Colors.black87,
                                   ),
                                 ),
@@ -60,7 +58,8 @@ class AccountView extends GetView<AccountController> {
                                 "Upgrade Akun",
                                 style: TextStyle(
                                   color: Colors.teal,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 15,
                                 ),
                               ),
                             ],
@@ -69,16 +68,31 @@ class AccountView extends GetView<AccountController> {
                           Text(
                             "radit",
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 20,
                             ),
                           ),
                           SizedBox(height: 6),
                           Row(
                             children: [
-                              Icon(Icons.wallet, size: 16, color: Colors.grey),
-                              SizedBox(width: 4),
-                              Text("0"),
+                              Container(
+                                padding: const EdgeInsets.all(
+                                  3,
+                                ), // Sesuaikan padding sesuai kebutuhan untuk ukuran lingkaran
+                                decoration: const BoxDecoration(
+                                  color:
+                                      Colors
+                                          .teal, // Warna latar belakang lingkaran
+                                  shape: BoxShape.circle, // Bentuk lingkaran
+                                ),
+                                child: const Icon(
+                                  Icons.wallet,
+                                  size: 15,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Text("0", style: TextStyle(fontSize: 15)),
                             ],
                           ),
                         ],
@@ -136,15 +150,33 @@ class AccountView extends GetView<AccountController> {
   }
 
   Widget buildMenuItem(IconData icon, String title, String routeName) {
-    return Container(
-      color: Colors.white,
-      child: ListTile(
-        leading: Icon(icon, color: Colors.grey[700]),
-        title: Text(title),
-        trailing: Icon(Icons.chevron_right),
-        onTap: () {
-          Get.toNamed(routeName);
-        },
+    return InkWell(
+      onTap: () => Get.toNamed(routeName),
+      child: Container(
+        color: Colors.white,
+        padding: EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(icon, color: Colors.grey[700]),
+                      SizedBox(width: 12),
+                      Text(title),
+                    ],
+                  ),
+                  Icon(Icons.chevron_right),
+                ],
+              ),
+            ),
+
+            Divider(height: 5),
+          ],
+        ),
       ),
     );
   }
