@@ -58,6 +58,8 @@ import '../modules/pretestRanking/bindings/pretest_ranking_binding.dart';
 import '../modules/pretestRanking/views/pretest_ranking_view.dart';
 import '../modules/pretestResult/bindings/pretest_result_binding.dart';
 import '../modules/pretestResult/views/pretest_result_view.dart';
+import '../modules/pretestTour/bindings/pretest_tour_binding.dart';
+import '../modules/pretestTour/views/pretest_tour_view.dart';
 import '../modules/programSaya/bindings/program_saya_binding.dart';
 import '../modules/programSaya/views/program_saya_view.dart';
 import '../modules/register/bindings/register_binding.dart';
@@ -295,6 +297,11 @@ class AppPages {
       name: _Paths.PRETEST,
       page: () => const PretestView(),
       binding: PretestBinding(),
+    ),
+    GetPage(
+      name: _Paths.PRETEST_TOUR,
+      page: () => const PretestTourView(),
+      binding: PretestTourBinding(),
     ),
   ];
 }

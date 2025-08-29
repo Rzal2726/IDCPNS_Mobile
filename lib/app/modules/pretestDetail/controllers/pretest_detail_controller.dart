@@ -52,5 +52,6 @@ class PretestDetailController extends GetxController {
 
   void lihatPanduan() {
     Get.snackbar("Panduan", "Menampilkan panduan pretest (dummy)");
+    Get.toNamed(Routes.PRETEST_TOUR);
   }
 }

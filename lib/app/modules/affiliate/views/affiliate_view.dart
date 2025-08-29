@@ -131,7 +131,7 @@ class AffiliateView extends GetView<AffiliateController> {
               ElevatedButton(
                 onPressed: controller.simpanKode,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF009379),
+                  backgroundColor: Colors.teal,
                   minimumSize: Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -221,29 +221,28 @@ class AffiliateView extends GetView<AffiliateController> {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Color(0xFF009379),
+        color: Colors.teal,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.insert_drive_file, color: Colors.white),
-          SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
             children: [
+              Icon(Icons.wallet, color: Colors.white, size: 15),
+              SizedBox(width: 5),
               Text(title, style: TextStyle(color: Colors.white, fontSize: 14)),
-              SizedBox(height: 8),
-              Obx(
-                () => Text(
-                  value.value.toString(),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
             ],
+          ),
+          Obx(
+            () => Text(
+              value.value.toString(),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
           ),
         ],
       ),

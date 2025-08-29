@@ -44,6 +44,7 @@ abstract class Routes {
   static const PRETEST_DETAIL = _Paths.PRETEST_DETAIL;
   static const PAYMENT_CHECKOUT = _Paths.PAYMENT_CHECKOUT;
   static const PRETEST = _Paths.PRETEST;
+  static const PRETEST_TOUR = _Paths.PRETEST_TOUR;
 }
 
 abstract class _Paths {
@@ -90,4 +91,5 @@ abstract class _Paths {
   static const PRETEST_DETAIL = '/pretest-detail';
   static const PAYMENT_CHECKOUT = '/payment-checkout';
   static const PRETEST = '/pretest';
+  static const PRETEST_TOUR = '/pretest-tour';
 }
