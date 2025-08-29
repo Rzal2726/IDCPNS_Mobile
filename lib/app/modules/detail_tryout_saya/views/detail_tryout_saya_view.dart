@@ -125,6 +125,18 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                 ],
               ),
             ),
+            Card(
+              color: Colors.white,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                child: Column(
+                  children: [
+                    SizedBox(width: double.infinity),
+                    Text("Total Nilai"),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

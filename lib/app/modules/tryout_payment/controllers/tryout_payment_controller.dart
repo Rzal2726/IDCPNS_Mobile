@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get_cli/common/utils/json_serialize/json_ast/parse.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/detail_tryout/controllers/detail_tryout_controller.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,7 @@ class TryoutPaymentController extends GetxController {
   final prevController = Get.find<DetailTryoutController>();
 
   RxMap<String, dynamic> selectedPaymentMethod = <String, dynamic>{}.obs;
+  RxMap<String, dynamic> transactionData = <String, dynamic>{}.obs;
   RxList<int> itemsId = <int>[].obs;
   RxMap<String, bool> loading =
       <String, bool>{"other": false, "main": false, "bayar": false}.obs;
@@ -22,6 +24,7 @@ class TryoutPaymentController extends GetxController {
   RxList<Map<String, dynamic>> EWallet = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> QR = <Map<String, dynamic>>[].obs;
   RxMap<String, dynamic> dataTryout = <String, dynamic>{}.obs;
+  RxString ovoNumber = "".obs;
   RxDouble diskon = 0.0.obs;
   RxString promoCode = "".obs;
   RxDouble totalHarga = 0.0.obs;
@@ -89,7 +92,6 @@ class TryoutPaymentController extends GetxController {
           response.body['data'],
         );
         dataTryout.assignAll(paket);
-        itemsId.add(paket['id']);
         selectedItems.add(paket);
         harga.value += paket['harga_fix'];
         initHarga();
@@ -254,25 +256,30 @@ class TryoutPaymentController extends GetxController {
       },
       '/transaction/create-payment',
       {
-        "type": "string",
-        "total_amount": "number",
+        "type": "tryout",
+        "total_amount": totalHarga.value,
         "amount_diskon": diskon.value,
-        "description": "string",
-        "bundling": "boolean",
+        "description": dataTryout['formasi'],
+        "bundling": true,
         "tryout_formasi_id": dataTryout['id'],
-        "kode_promo": promoCode,
+        "kode_promo": promoCode.value,
         "items": itemsId,
-        "source": "string",
-        "useBalance": "boolean",
+        "source": "",
+        "useBalance": false,
         "payment_method_id": selectedPaymentMethod['id'],
         "payment_method": selectedPaymentMethod['code'],
-        "payment_type": "string",
-        "mobile_number": "number",
+        "payment_type": selectedPaymentType.value,
+        "mobile_number": ovoNumber.value,
       },
     );
 
     if (response.statusCode == 200) {
+      final Map<String, dynamic> data = Map<String, dynamic>.from(
+        response.body['data'],
+      );
+      transactionData.assignAll(data);
       print('Data: ${response.body}');
+      Get.toNamed("/tryout-checkout");
     } else {
       print('Error: ${response.statusText}');
     }

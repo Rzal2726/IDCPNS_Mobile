@@ -34,7 +34,10 @@ class TryoutView extends GetView<TryoutController> {
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: const Text('Tryout'),
+        title: Image.asset(
+          'assets/logo.png', // Dummy logo
+          height: 55,
+        ),
         actions: [
           Stack(
             children: [
