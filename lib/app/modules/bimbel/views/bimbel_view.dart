@@ -6,7 +6,8 @@ import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import '../controllers/bimbel_controller.dart';
 
 class BimbelView extends GetView<BimbelController> {
-  const BimbelView({super.key});
+  BimbelView({super.key});
+  final controller = Get.put(BimbelController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(

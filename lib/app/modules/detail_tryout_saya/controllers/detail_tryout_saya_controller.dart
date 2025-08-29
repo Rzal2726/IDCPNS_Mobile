@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
+import 'package:idcpns_mobile/app/modules/tryout_saya/controllers/tryout_saya_controller.dart';
 
 class DetailTryoutSayaController extends GetxController {
   //TODO: Implement DetailTryoutSayaController
-
+  final prevController = Get.find<TryoutSayaController>();
   final count = 0.obs;
   @override
   void onInit() {
