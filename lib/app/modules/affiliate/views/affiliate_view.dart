@@ -70,7 +70,7 @@ class AffiliateView extends GetView<AffiliateController> {
               SizedBox(height: 24),
               Text(
                 "Informasi",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 1),
               ),
               SizedBox(height: 8),
               _buildInfoItem(
@@ -220,12 +220,15 @@ class AffiliateView extends GetView<AffiliateController> {
   Widget _buildKomisiCard(String title, RxInt value) {
     return Container(
       padding: EdgeInsets.all(16),
+      height: 85,
       decoration: BoxDecoration(
         color: Colors.teal,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start, // tetap rata kiri
+        mainAxisAlignment:
+            MainAxisAlignment.center, // bikin konten ke tengah vertikal
         children: [
           Row(
             children: [
@@ -235,12 +238,15 @@ class AffiliateView extends GetView<AffiliateController> {
             ],
           ),
           Obx(
-            () => Text(
-              value.value.toString(),
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+            () => Padding(
+              padding: EdgeInsets.symmetric(horizontal: 3),
+              child: Text(
+                value.value.toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
               ),
             ),
           ),
