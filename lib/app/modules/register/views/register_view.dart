@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -12,15 +13,15 @@ class RegisterView extends GetView<RegisterController> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
           child: Form(
             key: controller.formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(child: Image.asset('assets/logo.png', height: 70)),
-                const SizedBox(height: 32),
-                const Text(
+                SizedBox(height: 32),
+                Text(
                   'Daftar',
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
@@ -28,14 +29,14 @@ class RegisterView extends GetView<RegisterController> {
                   'Mari bergabung bersama jutaan peserta lainnya.',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 // Nama Lengkap
-                const Text(
+                Text(
                   "Nama Lengkap *",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 TextFormField(
                   controller: controller.nameController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -47,14 +48,11 @@ class RegisterView extends GetView<RegisterController> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Email
-                const Text(
-                  "Email *",
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 8),
+                Text("Email *", style: TextStyle(fontWeight: FontWeight.w600)),
+                SizedBox(height: 8),
                 TextFormField(
                   controller: controller.emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -73,14 +71,14 @@ class RegisterView extends GetView<RegisterController> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Password
-                const Text(
+                Text(
                   "Kata Sandi *",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Obx(
                   () => TextFormField(
                     controller: controller.passwordController,
@@ -107,14 +105,14 @@ class RegisterView extends GetView<RegisterController> {
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Konfirmasi Password
-                const Text(
+                Text(
                   "Konfirmasi Kata Sandi *",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Obx(
                   () => TextFormField(
                     controller: controller.confirmPasswordController,
@@ -141,18 +139,18 @@ class RegisterView extends GetView<RegisterController> {
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
-                const Text(
+                Text(
                   "Kode Afiliator",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 TextFormField(
                   controller: controller.affiliatorController,
                   decoration: _inputDecoration("Masukkan kode afiliator"),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Checkbox Terms & Conditions
                 Row(
@@ -169,7 +167,7 @@ class RegisterView extends GetView<RegisterController> {
                     ),
                     Expanded(
                       child: RichText(
-                        text: const TextSpan(
+                        text: TextSpan(
                           text: 'Saya menyetujui ',
                           style: TextStyle(color: Colors.black54, fontSize: 14),
                           children: [
@@ -180,6 +178,13 @@ class RegisterView extends GetView<RegisterController> {
                                 fontWeight: FontWeight.w600,
                                 decoration: TextDecoration.underline,
                               ),
+                              recognizer:
+                                  TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Get.toNamed(Routes.TERM_CONDITONS);
+                                      // Atau bisa pindah halaman:
+                                      // Get.to(() => SyaratKetentuanPage());
+                                    },
                             ),
                             TextSpan(text: ' yang berlaku'),
                           ],
@@ -188,7 +193,7 @@ class RegisterView extends GetView<RegisterController> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
 
                 // Tombol Daftar
                 Obx(
@@ -211,18 +216,16 @@ class RegisterView extends GetView<RegisterController> {
                             },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      minimumSize: const Size.fromHeight(50),
+                      minimumSize: Size.fromHeight(50),
                     ),
                     child:
                         controller.isLoading.value
-                            ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
-                            : const Text(
+                            ? CircularProgressIndicator(color: Colors.white)
+                            : Text(
                               'Daftar',
                               style: TextStyle(
                                 color: Colors.white,
@@ -232,13 +235,13 @@ class RegisterView extends GetView<RegisterController> {
                             ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Tombol Google
                 OutlinedButton.icon(
                   onPressed: () {},
                   icon: Image.asset('assets/goggleIcon.png', height: 28),
-                  label: const Text(
+                  label: Text(
                     'Lanjutkan dengan Google',
                     style: TextStyle(
                       color: Colors.black,
@@ -247,35 +250,35 @@ class RegisterView extends GetView<RegisterController> {
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    side: const BorderSide(color: Colors.grey),
+                    side: BorderSide(color: Colors.grey),
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
 
                 // Sudah punya akun?
                 Center(
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         'Sudah Punya Akun?',
                         style: TextStyle(color: Colors.grey),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       OutlinedButton(
                         onPressed: () => Get.toNamed(Routes.LOGIN),
                         style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          side: const BorderSide(color: Colors.teal, width: 2),
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          side: BorderSide(color: Colors.teal, width: 2),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          minimumSize: const Size.fromHeight(50),
+                          minimumSize: Size.fromHeight(50),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Masuk',
                           style: TextStyle(
                             color: Colors.teal,
@@ -287,9 +290,9 @@ class RegisterView extends GetView<RegisterController> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
-                const Center(
+                Center(
                   child: Text(
                     'Bimbel Tryout CPNS, Soal Tes CPNS & Kedinasan - IDCPNS © 2025',
                     textAlign: TextAlign.center,

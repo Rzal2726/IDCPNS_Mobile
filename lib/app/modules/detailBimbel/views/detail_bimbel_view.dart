@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/detail_bimbel_controller.dart';
@@ -163,10 +164,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                   ),
                 ),
                 onPressed: () {
-                  Get.snackbar(
-                    'Daftar',
-                    'Kamu memilih paket: ${controller.selectedPaket.value}',
-                  );
+                  Get.toNamed(Routes.PAYMENT_DETAIL);
                 },
                 child: Text(
                   'Daftar Sekarang',

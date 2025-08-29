@@ -37,6 +37,13 @@ abstract class Routes {
   static const DETAIL_MY_BIMBEL = _Paths.DETAIL_MY_BIMBEL;
   static const PRETEST_RESULT = _Paths.PRETEST_RESULT;
   static const DETAIL_EVENT = _Paths.DETAIL_EVENT;
+  static const PAYMENT_DETAIL = _Paths.PAYMENT_DETAIL;
+  static const PRETEST_RANKING = _Paths.PRETEST_RANKING;
+  static const BIMBEL_RECORD = _Paths.BIMBEL_RECORD;
+  static const TERM_CONDITONS = _Paths.TERM_CONDITONS;
+  static const PRETEST_DETAIL = _Paths.PRETEST_DETAIL;
+  static const PAYMENT_CHECKOUT = _Paths.PAYMENT_CHECKOUT;
+  static const PRETEST = _Paths.PRETEST;
 }
 
 abstract class _Paths {
@@ -76,4 +83,11 @@ abstract class _Paths {
   static const DETAIL_MY_BIMBEL = '/detail-my-bimbel';
   static const PRETEST_RESULT = '/pretest-result';
   static const DETAIL_EVENT = '/detail-event';
+  static const PAYMENT_DETAIL = '/payment-detail';
+  static const PRETEST_RANKING = '/pretest-ranking';
+  static const BIMBEL_RECORD = '/bimbel-record';
+  static const TERM_CONDITONS = '/term-conditons';
+  static const PRETEST_DETAIL = '/pretest-detail';
+  static const PAYMENT_CHECKOUT = '/payment-checkout';
+  static const PRETEST = '/pretest';
 }

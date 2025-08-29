@@ -6,6 +6,8 @@ import '../modules/affiliate/bindings/affiliate_binding.dart';
 import '../modules/affiliate/views/affiliate_view.dart';
 import '../modules/bimbel/bindings/bimbel_binding.dart';
 import '../modules/bimbel/views/bimbel_view.dart';
+import '../modules/bimbelRicord/bindings/bimbel_ricord_binding.dart';
+import '../modules/bimbelRicord/views/bimbel_ricord_view.dart';
 import '../modules/changePassword/bindings/change_password_binding.dart';
 import '../modules/changePassword/views/change_password_view.dart';
 import '../modules/commisionDetail/bindings/commision_detail_binding.dart';
@@ -42,8 +44,18 @@ import '../modules/notification/bindings/notification_binding.dart';
 import '../modules/notification/views/notification_view.dart';
 import '../modules/panduan_tryout/bindings/panduan_tryout_binding.dart';
 import '../modules/panduan_tryout/views/panduan_tryout_view.dart';
+import '../modules/paymentCheckout/bindings/payment_checkout_binding.dart';
+import '../modules/paymentCheckout/views/payment_checkout_view.dart';
+import '../modules/paymentDetail/bindings/payment_detail_binding.dart';
+import '../modules/paymentDetail/views/payment_detail_view.dart';
 import '../modules/pengerjaan_tryout/bindings/pengerjaan_tryout_binding.dart';
 import '../modules/pengerjaan_tryout/views/pengerjaan_tryout_view.dart';
+import '../modules/pretest/bindings/pretest_binding.dart';
+import '../modules/pretest/views/pretest_view.dart';
+import '../modules/pretestDetail/bindings/pretest_detail_binding.dart';
+import '../modules/pretestDetail/views/pretest_detail_view.dart';
+import '../modules/pretestRanking/bindings/pretest_ranking_binding.dart';
+import '../modules/pretestRanking/views/pretest_ranking_view.dart';
 import '../modules/pretestResult/bindings/pretest_result_binding.dart';
 import '../modules/pretestResult/views/pretest_result_view.dart';
 import '../modules/programSaya/bindings/program_saya_binding.dart';
@@ -56,6 +68,8 @@ import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
 import '../modules/tarikKomisi/bindings/tarik_komisi_binding.dart';
 import '../modules/tarikKomisi/views/tarik_komisi_view.dart';
+import '../modules/termConditons/bindings/term_conditons_binding.dart';
+import '../modules/termConditons/views/term_conditons_view.dart';
 import '../modules/transaction/bindings/transaction_binding.dart';
 import '../modules/transaction/views/transaction_view.dart';
 import '../modules/tryout/bindings/tryout_binding.dart';
@@ -246,6 +260,41 @@ class AppPages {
       name: _Paths.DETAIL_EVENT,
       page: () => const DetailEventView(),
       binding: DetailEventBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT_DETAIL,
+      page: () => const PaymentDetailView(),
+      binding: PaymentDetailBinding(),
+    ),
+    GetPage(
+      name: _Paths.PRETEST_RANKING,
+      page: () => const PretestRankingView(),
+      binding: PretestRankingBinding(),
+    ),
+    GetPage(
+      name: _Paths.BIMBEL_RECORD,
+      page: () => const BimbelRecordView(),
+      binding: BimbelRecordBinding(),
+    ),
+    GetPage(
+      name: _Paths.TERM_CONDITONS,
+      page: () => const TermConditonsView(),
+      binding: TermConditonsBinding(),
+    ),
+    GetPage(
+      name: _Paths.PRETEST_DETAIL,
+      page: () => const PretestDetailView(),
+      binding: PretestDetailBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT_CHECKOUT,
+      page: () => const PaymentCheckoutView(),
+      binding: PaymentCheckoutBinding(),
+    ),
+    GetPage(
+      name: _Paths.PRETEST,
+      page: () => const PretestView(),
+      binding: PretestBinding(),
     ),
   ];
 }
