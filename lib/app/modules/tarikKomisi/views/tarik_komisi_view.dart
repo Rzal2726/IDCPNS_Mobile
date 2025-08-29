@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/tarik_komisi_controller.dart';
 
@@ -22,25 +23,17 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: AppStyle.screenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               padding: EdgeInsets.all(16),
               margin: EdgeInsets.only(bottom: 24),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Informasi',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  Text('Informasi', style: AppStyle.styleW900),
                   SizedBox(height: 12),
                   ...controller.informationPoints
                       .map(
@@ -58,7 +51,7 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                               Expanded(
                                 child: Text(
                                   point,
-                                  style: TextStyle(fontSize: 14),
+                                  style: TextStyle(fontSize: 15),
                                 ),
                               ),
                             ],
@@ -79,13 +72,10 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Tarik Komisi',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  Text('Tarik Komisi', style: AppStyle.styleW900),
                   SizedBox(height: 16),
-                  Text('* Nominal', style: TextStyle(color: Colors.red)),
-                  SizedBox(height: 4),
+                  Text('Nominal', style: TextStyle(color: Colors.black)),
+                  SizedBox(height: 5),
                   TextField(
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
@@ -94,8 +84,8 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                     keyboardType: TextInputType.number,
                   ),
                   SizedBox(height: 16),
-                  Text('* Rekening', style: TextStyle(color: Colors.red)),
-                  SizedBox(height: 4),
+                  Text('Rekening', style: TextStyle(color: Colors.black)),
+                  SizedBox(height: 5),
                   DropdownButtonFormField(
                     items: [
                       DropdownMenuItem(value: 'Bank A', child: Text('Bank A')),
@@ -125,27 +115,33 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                         ),
                         child: Text(
                           'Batal',
-                          style: TextStyle(color: Colors.teal),
+                          style: TextStyle(color: Colors.teal, fontSize: 15),
                         ),
                       ),
                       SizedBox(width: 8),
                       ElevatedButton(
                         onPressed: () {},
-                        style: ElevatedButton.styleFrom(
+                        style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.teal,
                           padding: EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 12,
                           ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                         ),
-                        child: Text('Submit'),
+                        child: Text(
+                          'Submit',
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ),
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 20),
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(16),
@@ -159,7 +155,7 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                 children: [
                   Text(
                     'Lihat riwayat penarikan komisi',
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(fontSize: 15),
                   ),
                   Icon(Icons.arrow_forward),
                 ],

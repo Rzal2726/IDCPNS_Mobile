@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/affiliate_controller.dart';
 
@@ -15,14 +16,7 @@ class AffiliateView extends GetView<AffiliateController> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text(
-          'Afiliasi',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Text('Afiliasi', style: AppStyle.appBarTitle),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Get.back(),
@@ -31,7 +25,7 @@ class AffiliateView extends GetView<AffiliateController> {
           Stack(
             alignment: Alignment.center,
             children: [
-              Icon(Icons.notifications_none, color: Colors.black, size: 28),
+              Icon(Icons.notifications_none, color: Colors.teal, size: 28),
               Positioned(
                 top: 8,
                 right: 8,
@@ -58,7 +52,7 @@ class AffiliateView extends GetView<AffiliateController> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
+          padding: AppStyle.screenPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -68,10 +62,7 @@ class AffiliateView extends GetView<AffiliateController> {
               SizedBox(height: 12),
               _buildKomisiCard("Komisi Ditarik", controller.komisiDitarik),
               SizedBox(height: 24),
-              Text(
-                "Informasi",
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 1),
-              ),
+              Text("Informasi", style: AppStyle.styleW900),
               SizedBox(height: 8),
               _buildInfoItem(
                 "Kamu berhak mendapatkan komisi atas setiap pembelian paket yang menggunakan kode referral kamu.",
@@ -113,20 +104,32 @@ class AffiliateView extends GetView<AffiliateController> {
                 ],
               ),
               SizedBox(height: 24),
-              Text(
-                "Kode Afiliasi Saya",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
+              Text("Kode Afiliasi Saya", style: AppStyle.styleW900),
               SizedBox(height: 8),
               TextField(
                 controller: controller.kodeController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  filled: true,
+                  fillColor: Colors.grey.shade200, // background abu muda
                   isDense: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade400, // border normal abu
+                      width: 1.5,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color:
+                          Colors.grey.shade600, // border pas ngetik lebih gelap
+                      width: 1.8,
+                    ),
+                  ),
                 ),
               ),
+
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: controller.simpanKode,
@@ -137,35 +140,36 @@ class AffiliateView extends GetView<AffiliateController> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text("Simpan"),
+                child: Text(
+                  "Simpan",
+                  style: TextStyle(color: Colors.white, fontSize: 15),
+                ),
               ),
               SizedBox(height: 16),
               Text(
                 "Kamu tidak dapat mengubah kode referral jika sudah ada user lain yang memakai kode referral kamu saat daftar.",
-                style: TextStyle(color: Colors.black87, fontSize: 12),
+                style: TextStyle(color: Colors.black87, fontSize: 15),
               ),
               SizedBox(height: 32),
-              Text(
-                "Link Afiliasi Saya",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
+              Text("Link Afiliasi Saya", style: AppStyle.styleW900),
               SizedBox(height: 12),
               Container(
-                padding: EdgeInsets.all(12),
+                padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
+                    Icon(Icons.copy, color: Colors.black54, size: 15),
+                    SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         "https://idcpns.com/app/daftar?ref=AWJQLGN",
-                        style: TextStyle(color: Colors.black87, fontSize: 14),
+                        style: TextStyle(color: Colors.black87, fontSize: 15),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Icon(Icons.copy, color: Colors.black54),
                   ],
                 ),
               ),
@@ -261,7 +265,7 @@ class AffiliateView extends GetView<AffiliateController> {
       children: [
         Icon(Icons.radio_button_checked, size: 18, color: Colors.black54),
         SizedBox(width: 8),
-        Expanded(child: Text(text, style: TextStyle(fontSize: 14))),
+        Expanded(child: Text(text, style: TextStyle(fontSize: 15))),
       ],
     );
   }
@@ -281,13 +285,7 @@ Widget _buildMenuItem({
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        border: Border.all(color: Colors.grey),
       ),
       child: Row(
         children: [
@@ -297,18 +295,9 @@ Widget _buildMenuItem({
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
+                Text(title, style: AppStyle.styleW900),
                 const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
+                Text(subtitle, style: TextStyle(fontSize: 15)),
               ],
             ),
           ),

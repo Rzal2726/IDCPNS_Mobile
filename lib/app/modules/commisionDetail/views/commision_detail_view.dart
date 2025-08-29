@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/commision_detail_controller.dart';
 
@@ -10,10 +11,12 @@ class CommisionDetailView extends GetView<CommisionDetailController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Afiliasi"),
+        backgroundColor: Colors.white,
+        title: Text("Afiliasi", style: AppStyle.appBarTitle),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
@@ -21,23 +24,20 @@ class CommisionDetailView extends GetView<CommisionDetailController> {
             alignment: Alignment.topRight,
             children: [
               IconButton(
-                icon: const Icon(Icons.notifications_none),
+                icon: Icon(Icons.notifications_none),
                 onPressed: () {},
               ),
               Positioned(
                 right: 8,
                 top: 8,
                 child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: const BoxDecoration(
+                  padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
                     color: Colors.red,
                     shape: BoxShape.circle,
                   ),
-                  constraints: const BoxConstraints(
-                    minWidth: 18,
-                    minHeight: 18,
-                  ),
-                  child: const Text(
+                  constraints: BoxConstraints(minWidth: 18, minHeight: 18),
+                  child: Text(
                     "9+",
                     style: TextStyle(
                       color: Colors.white,
@@ -53,7 +53,7 @@ class CommisionDetailView extends GetView<CommisionDetailController> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppStyle.screenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -61,52 +61,55 @@ class CommisionDetailView extends GetView<CommisionDetailController> {
             TextField(
               decoration: InputDecoration(
                 hintText: "Cari",
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                contentPadding: EdgeInsets.symmetric(horizontal: 12),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Colors.teal),
+                  borderSide: BorderSide(color: Colors.teal),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Colors.teal),
+                  borderSide: BorderSide(color: Colors.teal),
                 ),
-                suffixIcon: const Icon(Icons.search, color: Colors.black54),
+                suffixIcon: Icon(Icons.search, color: Colors.black54),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 30),
 
             // Card Rincian Komisi
             Card(
+              color: Colors.white,
               elevation: 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       "Rincian Komisi",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    Center(
-                      child: Column(
-                        children: [
-                          SvgPicture.asset(
-                            "assets/emptyArchiveIcon.svg", // ganti dengan asset ilustrasi
-                            height: 80,
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            "Tidak ada transaksi",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 50),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            SvgPicture.asset(
+                              "assets/emptyArchiveIcon.svg", // ganti dengan asset ilustrasi
+                              height: 100,
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "Tidak ada transaksi",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
