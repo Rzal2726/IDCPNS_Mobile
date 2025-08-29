@@ -133,7 +133,7 @@ class DetailTryoutController extends GetxController {
     if (response.statusCode == 200) {
       final data = response.body;
       isOnWishlist.value = data['data'] == null ? false : true;
-      wishList.value = response.body['data'];
+      wishList.value = response.body['data'] ?? {};
       print(data['data']);
     } else {
       print('Error: ${response.statusText}');

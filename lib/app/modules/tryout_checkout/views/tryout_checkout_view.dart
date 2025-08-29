@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/tryout_checkout_controller.dart';
 
@@ -55,7 +57,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
           children: [
             Card(
               color: Colors.white,
-              margin: EdgeInsets.symmetric(vertical: 32, horizontal: 32),
+              margin: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
               child: Container(
                 padding: EdgeInsets.all(32),
                 child: Center(
@@ -69,12 +71,20 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                           fontSize: 20,
                         ),
                       ),
-                      Text(
-                        "00:00:00",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                      Obx(
+                        () =>
+                            controller.timeStamp.value == ""
+                                ? Skeletonizer(
+                                  enabled: true,
+                                  child: Text("00:00:00"),
+                                )
+                                : Text(
+                                  controller.timeStamp.value,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
                       ),
                     ],
                   ),
@@ -84,7 +94,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
 
             Card(
               color: Colors.white,
-              margin: EdgeInsets.symmetric(vertical: 32, horizontal: 32),
+              margin: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
               child: Container(
                 padding: EdgeInsets.all(32),
                 child: Center(
@@ -92,31 +102,79 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Center(
-                        child: SvgPicture.network(
-                          "https://idcpns.com/img/payment-method/bca.svg",
-                          width: 140,
-                        ),
+                      Obx(
+                        () =>
+                            controller.paymentDetails.isEmpty
+                                ? Center(child: CircularProgressIndicator())
+                                : Center(
+                                  child: SvgPicture.network(
+                                    controller
+                                        .paymentDetails['payment_details'][0]['method']['image_url'],
+                                    width: 140,
+                                  ),
+                                ),
                       ),
                       SizedBox(height: 16),
-                      Text(
-                        "BCA Virtual Account Number",
-                        style: TextStyle(fontSize: 16),
+                      Obx(
+                        () =>
+                            controller.paymentDetails.isEmpty
+                                ? Skeletonizer(
+                                  enabled: true,
+                                  child: Text("Nama Bank"),
+                                )
+                                : Text(
+                                  controller
+                                      .paymentDetails['payment_details'][0]['method']['name'],
+                                  style: TextStyle(fontSize: 16),
+                                ),
                       ),
-                      Text(
-                        "112233445566",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.tealAccent,
-                        ),
+                      Obx(
+                        () =>
+                            controller.paymentDetails.isEmpty
+                                ? Skeletonizer(
+                                  enabled: true,
+                                  child: Text("Nama Bank"),
+                                )
+                                : Text(
+                                  controller
+                                      .paymentDetails['payment_details'][0]['payment_code'],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.tealAccent,
+                                  ),
+                                ),
                       ),
                       SizedBox(height: 16),
                       Text("Nama Akun", style: TextStyle(fontSize: 16)),
-                      Text("John Doe", style: TextStyle(fontSize: 20)),
+                      Obx(
+                        () =>
+                            controller.paymentDetails.isEmpty
+                                ? Skeletonizer(
+                                  enabled: true,
+                                  child: Text("Nama Bank"),
+                                )
+                                : Text(
+                                  controller.paymentDetails['user_name'],
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                      ),
                       SizedBox(height: 16),
                       Text("Total Harga", style: TextStyle(fontSize: 16)),
-                      Text("Rp.9.000", style: TextStyle(fontSize: 20)),
+                      Obx(
+                        () =>
+                            controller.paymentDetails.isEmpty
+                                ? Skeletonizer(
+                                  enabled: true,
+                                  child: Text("Nama Bank"),
+                                )
+                                : Text(
+                                  controller.formatCurrency(
+                                    controller.paymentDetails['amount'],
+                                  ),
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                      ),
                     ],
                   ),
                 ),
@@ -139,14 +197,235 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  showModalBottomSheet(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(16), // Sudut atas melengkung
+                      ),
+                      side: BorderSide(
+                        color: Colors.transparent, // warna border
+                        width: 2, // ketebalan border
+                      ),
+                    ),
+
+                    context: context,
+                    builder: (ctx) {
+                      return Obx(
+                        () => SingleChildScrollView(
+                          padding: EdgeInsets.all(16),
+
+                          child: Column(
+                            spacing: 16,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Cek Status Pembayaran",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    icon: Icon(Icons.close),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "No Invoice:",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  controller.paymentDetails.isEmpty
+                                      ? Skeletonizer(
+                                        enabled: true,
+                                        child: Container(
+                                          child: Text(
+                                            "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
+                                          ),
+                                        ),
+                                      )
+                                      : Container(
+                                        child: Text(
+                                          controller.paymentDetails['no_order'],
+                                          style: TextStyle(),
+                                        ),
+                                      ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Nama Produk:",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  controller.paymentDetails.isEmpty
+                                      ? Skeletonizer(
+                                        enabled: true,
+                                        child: Container(
+                                          child: Text(
+                                            "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
+                                          ),
+                                        ),
+                                      )
+                                      : Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children:
+                                            controller
+                                                .paymentDetails['payment_details']
+                                                .map<Widget>(
+                                                  (item) => Container(
+                                                    width: 240,
+                                                    child: Text(
+                                                      item['item_name'],
+                                                      style: TextStyle(),
+                                                    ),
+                                                  ),
+                                                )
+                                                .toList(),
+                                      ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Total Harga:",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  controller.paymentDetails.isEmpty
+                                      ? Skeletonizer(
+                                        enabled: true,
+                                        child: Container(
+                                          child: Text(
+                                            "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
+                                          ),
+                                        ),
+                                      )
+                                      : Container(
+                                        child: Text(
+                                          controller.formatCurrency(
+                                            controller.paymentDetails['amount'],
+                                          ),
+                                          style: TextStyle(),
+                                        ),
+                                      ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Status:",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  controller.paymentDetails.isEmpty
+                                      ? Skeletonizer(
+                                        enabled: true,
+                                        child: Container(
+                                          child: Text(
+                                            "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
+                                          ),
+                                        ),
+                                      )
+                                      : Text(
+                                        controller.paymentDetails['status'],
+                                        style: TextStyle(),
+                                      ),
+                                ],
+                              ),
+                              Container(
+                                margin: EdgeInsets.symmetric(horizontal: 32),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 0,
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: Colors.teal.shade300,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      side: BorderSide(
+                                        color:
+                                            Colors
+                                                .teal
+                                                .shade300, // ganti warna border
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(ctx);
+                                  },
+                                  child: Center(child: Text("Tutup")),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
                 child: Center(child: Text("Cek Status Pembayaran")),
               ),
+            ),
+            Obx(
+              () =>
+                  controller.isDeveloper.value == true
+                      ? Container(
+                        margin: EdgeInsets.symmetric(horizontal: 32),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Colors.teal.shade300,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(
+                                color:
+                                    Colors.teal.shade300, // ganti warna border
+                                width: 1.5,
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          onPressed: () {
+                            controller.simulatePayment();
+                          },
+                          child: Center(child: Text("Simulate Payment")),
+                        ),
+                      )
+                      : SizedBox(),
             ),
 
             Card(
               color: Colors.white,
-              margin: EdgeInsets.symmetric(vertical: 32, horizontal: 32),
+              margin: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
               child: Container(
                 padding: EdgeInsets.all(32),
                 child: Center(
@@ -215,12 +494,45 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                       SizedBox(height: 16),
                       Obx(() {
                         if (controller.selectedOption.value == "ATM") {
-                          return Center(child: Text("Tutorial ATM"));
+                          return controller.paymentDetails.isEmpty
+                              ? Skeletonizer(
+                                enabled: true,
+                                child: Container(
+                                  child: Text(
+                                    "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
+                                  ),
+                                ),
+                              )
+                              : Html(
+                                data:
+                                    controller
+                                        .paymentDetails['payment_details'][0]['instructions'][1]['instruction'],
+                              );
                         } else if (controller.selectedOption.value ==
                             "MBanking") {
-                          return Center(child: Text("Tutorial MBanking"));
+                          return controller.paymentDetails.isEmpty
+                              ? Skeletonizer(
+                                enabled: true,
+                                child: Container(
+                                  child: Text(
+                                    "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial MBangking",
+                                  ),
+                                ),
+                              )
+                              : Html(
+                                data:
+                                    controller
+                                        .paymentDetails['payment_details'][0]['instructions'][0]['instruction'],
+                              );
                         } else {
-                          return Center(child: Text("Tutorial ATM"));
+                          return Skeletonizer(
+                            enabled: true,
+                            child: Container(
+                              child: Text(
+                                "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
+                              ),
+                            ),
+                          );
                         }
                       }),
                     ],

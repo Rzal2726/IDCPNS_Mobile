@@ -8,6 +8,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
   TryoutPaymentView({super.key});
   final controller = Get.put(TryoutPaymentController());
   final voucherController = TextEditingController();
+  final ovoNumController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -297,7 +298,9 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          controller.createPayment();
+                        },
                         child:
                             controller.loading['bayar'] == false
                                 ? Text("Bayar Sekarang")
@@ -562,6 +565,14 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                       controller.selectedPaymentMethod['code'],
                     )
                     .toString();
+            if (controller.selectedPaymentMethod['CODE'] == "OVO") {
+              showModalBottomSheet(
+                context: context,
+                builder: (builder) {
+                  return _nomorOvo(context);
+                },
+              );
+            }
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
@@ -649,6 +660,66 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                 Navigator.pop(context);
               },
               child: const Text("Klaim"),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _nomorOvo(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        spacing: 8,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            "Nomor Ovo",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          TextField(
+            controller: ovoNumController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelStyle: const TextStyle(color: Colors.grey),
+              labelText: "Masukkan Nomor Ovo",
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.tealAccent.shade100,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.tealAccent.shade100,
+                  width: 2.0,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: Colors.teal,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Colors.teal, width: 1.5),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              onPressed: () {
+                controller.ovoNumber.value = ovoNumController.text;
+                Navigator.pop(context);
+              },
+              child: const Text("Konfirmasi"),
             ),
           ),
         ],
