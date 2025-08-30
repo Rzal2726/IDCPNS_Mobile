@@ -311,10 +311,10 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                       SizedBox(height: 8),
                       Container(
                         margin: EdgeInsets.only(bottom: 12),
-                        padding: EdgeInsets.all(12),
+                        padding: EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: Colors.grey.shade300),
                         ),
                         child: Column(
@@ -328,79 +328,38 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                               ),
                             ),
                             SizedBox(height: 12),
-
-                            // Row info: Hari | Tanggal | Jam (semua inline, gak pake widget terpisah)
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Hari',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        "hari",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      "Hari",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                    Text("hari"),
+                                  ],
                                 ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Tanggal',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        "tanggal",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      "Tanggal",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                    Text("tanggal"),
+                                  ],
                                 ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Jam',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        'jam',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      "Jam",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                    Text("jam"),
+                                  ],
                                 ),
                               ],
                             ),
-
                             SizedBox(height: 12),
 
                             // Tombol Pretest + Buka Kelas (inline)
@@ -471,14 +430,14 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                   'Jadwal Kelas Bimbel',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 15),
                 ...controller.jadwalKelas.map(
                   (item) => Container(
                     margin: EdgeInsets.only(bottom: 12),
-                    padding: EdgeInsets.all(12),
+                    padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.grey.shade300),
                     ),
                     child: Column(
@@ -492,72 +451,35 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                           ),
                         ),
                         SizedBox(height: 12),
-
-                        // Row info: Hari | Tanggal | Jam (semua inline, gak pake widget terpisah)
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Hari',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    item['hari']!,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            Column(
+                              children: [
+                                Text(
+                                  "Hari",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                Text(item['hari']!),
+                              ],
                             ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Tanggal',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    item['tanggal']!,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            Column(
+                              children: [
+                                Text(
+                                  "Tanggal",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                Text(item['tanggal']!),
+                              ],
                             ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Jam',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    item['jam']!,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            Column(
+                              children: [
+                                Text(
+                                  "Jam",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                Text(item['jam']!),
+                              ],
                             ),
                           ],
                         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/payment_detail_controller.dart';
 
@@ -9,174 +10,281 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Rincian Pembayaran"),
+        title: Text("Rincian Pembayaran", style: AppStyle.appBarTitle),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Checkout Paket Bimbel",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            SizedBox(height: 12),
-
-            // Paket Utama
-            Obx(
-              () => ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  controller.paketUtama.value,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(controller.paketUtamaTipe.value),
-                leading: Icon(Icons.check_box, color: Colors.teal),
+        child: Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: Offset(0, 2),
               ),
-            ),
-            Divider(),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Judul
+              Text("Checkout Paket Bimbel", style: AppStyle.styleW900),
+              SizedBox(height: 16),
 
-            // Paket Lainnya
-            Text(
-              "Bimbel Lainnya",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Obx(
-              () => Column(
-                children: [
-                  RadioListTile<String>(
-                    value: "Extended",
-                    groupValue: controller.selectedPaketLainnya.value,
-                    onChanged: (v) => controller.pilihPaketLainnya(v!),
-                    title: Text("Extended"),
-                  ),
-                  RadioListTile<String>(
-                    value: "Extended + Platinum Zone",
-                    groupValue: controller.selectedPaketLainnya.value,
-                    onChanged: (v) => controller.pilihPaketLainnya(v!),
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Paket Utama
+              Obx(
+                () => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      controller.paketUtama.value,
+                      style: AppStyle.style15Bold,
+                    ),
+                    SizedBox(height: 8),
+                    Row(
                       children: [
-                        Text("Extended + Platinum Zone"),
+                        // custom checkbox-like icon agar mirip gambar
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: Colors.teal.shade600,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ),
+                        SizedBox(width: 8),
                         Text(
-                          "Rp. 50.000",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          controller.paketUtamaTipe.value,
+                          style: TextStyle(fontSize: 13),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Divider(),
-
-            // Metode Pembayaran
-            Text(
-              "Metode Pembayaran",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 6),
-            GestureDetector(
-              onTap: () => paymentDialog(),
-              child: Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.withOpacity(0.4)),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.credit_card, color: Colors.teal),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Obx(
-                        () => Text(
-                          controller.metodePembayaran.isEmpty
-                              ? "Pilih Pembayaran"
-                              : controller.metodePembayaran.value,
-                        ),
-                      ),
-                    ),
-                    Icon(Icons.chevron_right),
                   ],
                 ),
               ),
-            ),
-            Divider(),
+              SizedBox(height: 28),
 
-            // Kode Promo
-            Text("Kode Promo", style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 6),
-            GestureDetector(
-              onTap: () => promoCodeDialog(),
-              child: Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.withOpacity(0.4)),
-                ),
-                child: Row(
+              // Paket Lainnya
+              Text(
+                "Bimbel Lainnya",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 15),
+              Text(
+                "Bimbel SKD CPNS 2025 batch 16",
+                style: AppStyle.style15Bold,
+              ),
+              SizedBox(height: 8),
+              Obx(
+                () => Column(
                   children: [
-                    Icon(Icons.discount, color: Colors.orange),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Obx(
-                        () => Text(
-                          controller.kodePromo.isEmpty
-                              ? "Gunakan Kode Promo"
-                              : controller.kodePromo.value,
-                        ),
-                      ),
+                    RadioListTile<String>(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      value: "Extended",
+                      groupValue: controller.selectedPaketLainnya.value,
+                      onChanged: (v) => controller.pilihPaketLainnya(v!),
+                      title: Text("Extended", style: TextStyle(fontSize: 14)),
+                      activeColor: Colors.teal,
                     ),
-                    Icon(Icons.chevron_right),
+                    RadioListTile<String>(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      value: "Extended + Platinum Zone",
+                      groupValue: controller.selectedPaketLainnya.value,
+                      onChanged: (v) => controller.pilihPaketLainnya(v!),
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Extended + Platinum Zone",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          Text(
+                            "Rp. 50.000",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      activeColor: Colors.teal,
+                    ),
                   ],
                 ),
               ),
-            ),
-            Divider(),
 
-            // Rincian Pesanan
-            Text(
-              "Rincian Pesanan",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Obx(
-              () => Column(
-                children: [
-                  _rowItem("Harga", "Rp.${controller.harga.value}"),
-                  SizedBox(height: 4),
-                  _rowItem(
-                    "Total Harga",
-                    "Rp.${controller.totalHarga.value}",
-                    bold: true,
-                  ),
-                ],
+              SizedBox(height: 15),
+              Divider(height: 1),
+              SizedBox(height: 15),
+
+              // Metode Pembayaran
+              Text(
+                "Metode Pembayaran",
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            ),
-
-            SizedBox(height: 16),
-            Obx(
-              () => ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  minimumSize: Size(double.infinity, 48),
-                  shape: RoundedRectangleBorder(
+              SizedBox(height: 10),
+              GestureDetector(
+                onTap: () => paymentDialog(),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.withOpacity(0.35)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        child: Icon(Icons.credit_card, color: Colors.teal),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Obx(
+                          () => Text(
+                            controller.metodePembayaran.isEmpty
+                                ? "Pilih Pembayaran"
+                                : controller.metodePembayaran.value,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ),
+                      Icon(Icons.chevron_right),
+                    ],
                   ),
                 ),
-                onPressed:
-                    controller.totalHarga.value > 0
-                        ? controller.bayarSekarang
-                        : null, // null = button disable
-                child: Text("Bayar Sekarang"),
               ),
-            ),
-          ],
+
+              SizedBox(height: 24),
+
+              // Kode Promo
+              Text("Kode Promo", style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
+              GestureDetector(
+                onTap: () => promoCodeDialog(),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.withOpacity(0.35)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        child: Icon(Icons.discount, color: Colors.orange),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Obx(
+                          () => Text(
+                            controller.kodePromo.isEmpty
+                                ? "Gunakan Kode Promo"
+                                : controller.kodePromo.value,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ),
+                      Icon(Icons.chevron_right),
+                    ],
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 12),
+              SizedBox(height: 12),
+
+              // Rincian Pesanan
+              Text(
+                "Rincian Pesanan",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Obx(
+                () => Column(
+                  children: [
+                    // Baris Harga
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text("Harga", style: TextStyle(fontSize: 14)),
+                        ),
+                        Text(
+                          "Rp.${controller.harga.value}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 6),
+                    // Baris Total Harga (bold)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Total Harga",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Text(
+                          "Rp.${controller.totalHarga.value}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 20),
+
+              // Tombol Bayar
+              Obx(
+                () => SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                    ),
+                    onPressed:
+                        controller.totalHarga.value > 0
+                            ? () => controller.bayarSekarang()
+                            : null,
+                    child: Text(
+                      "Bayar Sekarang",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
