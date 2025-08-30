@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -58,17 +59,11 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
               children: [
                 // ================== INFO PAKET ==================
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade200,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+                    border: Border.all(color: Colors.grey.shade300),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,16 +85,26 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.teal,
-                          minimumSize: Size.fromHeight(40),
+                          minimumSize: Size.fromHeight(35),
                         ),
                         onPressed: () {},
-                        child: Text('${controller.masaAktif.value} Hari Lagi'),
+                        child: Text(
+                          '${controller.masaAktif.value} Hari Lagi',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                       SizedBox(height: 8),
                       OutlinedButton(
                         onPressed: () {},
                         style: OutlinedButton.styleFrom(
                           minimumSize: Size.fromHeight(40),
+                          backgroundColor: Colors.teal, // warna background
+                          foregroundColor: Colors.white, // warna teks & icon
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              8,
+                            ), // border radius 8
+                          ),
                         ),
                         child: Text('Ganti Paket'),
                       ),
@@ -110,38 +115,81 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
 
                 // ================== MENU BUTTONS ==================
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Column(
-                      children: [
-                        Icon(Icons.book_outlined, size: 40, color: Colors.teal),
-                        SizedBox(height: 8),
-                        Text('Materi'),
-                      ],
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.teal.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icon/iconBuku.svg',
+                              width: 50,
+                              height: 50,
+                            ),
+                            SizedBox(height: 8),
+                            Text('Materi'),
+                          ],
+                        ),
+                      ),
                     ),
                     GestureDetector(
                       onTap: () {
                         Get.toNamed(Routes.BIMBEL_RECORD);
                       },
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.play_circle_outline,
-                            size: 40,
-                            color: Colors.red,
-                          ),
-                          SizedBox(height: 8),
-                          Text('Rekaman'),
-                        ],
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icon/iconRekaman.svg',
+                              width: 50,
+                              height: 50,
+                            ),
+                            SizedBox(height: 8),
+                            Text('Rekaman'),
+                          ],
+                        ),
                       ),
                     ),
-
-                    Column(
-                      children: [
-                        Icon(Icons.send_outlined, size: 40, color: Colors.blue),
-                        SizedBox(height: 8),
-                        Text('Group'),
-                      ],
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icon/iconPesawatKertas.svg',
+                              width: 50,
+                              height: 50,
+                            ),
+                            SizedBox(height: 8),
+                            Text('Group'),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -190,18 +238,49 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                       ),
                     ],
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
                     children: [
-                      Text(
-                        'Peringkat',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Peringkat',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Get.toNamed(Routes.PRETEST_RANKING);
+                            },
+                            child: Text(
+                              'Lihat Ranking',
+                              style: TextStyle(color: Colors.teal),
+                            ),
+                          ),
+                        ],
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Get.toNamed(Routes.PRETEST_RANKING);
-                        },
-                        child: Text('Lihat Ranking'),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "1", // ranking kamu
+                                style: TextStyle(
+                                  color: Colors.black, // highlight hitam
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 23,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "/0", // total peserta
+                                style: TextStyle(
+                                  color: Colors.grey[700],
+                                  fontSize: 23,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -230,7 +309,158 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 8),
-                      Text('Hari ini tidak ada kelas'),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 12),
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "judul",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            SizedBox(height: 12),
+
+                            // Row info: Hari | Tanggal | Jam (semua inline, gak pake widget terpisah)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Hari',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "hari",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Tanggal',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "tanggal",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Jam',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        'jam',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: 12),
+
+                            // Tombol Pretest + Buka Kelas (inline)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      Get.toNamed(Routes.PRETEST_DETAIL);
+                                    },
+                                    icon: Icon(Icons.assignment, size: 18),
+                                    label: Text('Pretest'),
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      backgroundColor: Colors.grey.shade100,
+                                      foregroundColor: Colors.grey.shade700,
+                                      side: BorderSide(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                      minimumSize: Size(0, 40),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      // aksi buka kelas
+                                    },
+                                    icon: Icon(Icons.video_call, size: 18),
+                                    label: Text('Buka Kelas'),
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      backgroundColor: Colors.grey.shade100,
+                                      foregroundColor: Colors.grey.shade700,
+                                      side: BorderSide(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                      minimumSize: Size(0, 40),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Text('Hari ini tidak ada kelas'),
                     ],
                   ),
                 ),
@@ -249,44 +479,133 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.shade200,
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
+                      border: Border.all(color: Colors.grey.shade300),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           item['judul']!,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          '${item['hari']} | ${item['tanggal']} | ${item['jam']}',
-                        ),
-                        SizedBox(height: 8),
+                        SizedBox(height: 12),
+
+                        // Row info: Hari | Tanggal | Jam (semua inline, gak pake widget terpisah)
                         Row(
                           children: [
                             Expanded(
-                              child: OutlinedButton(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Hari',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    item['hari']!,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Tanggal',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    item['tanggal']!,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Jam',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    item['jam']!,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 12),
+
+                        // Tombol Pretest + Buka Kelas (inline)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
                                 onPressed: () {
                                   Get.toNamed(Routes.PRETEST_DETAIL);
                                 },
-                                child: Text('Pretest'),
+                                icon: Icon(Icons.assignment, size: 18),
+                                label: Text('Pretest'),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.grey.shade100,
+                                  foregroundColor: Colors.grey.shade700,
+                                  side: BorderSide(color: Colors.grey.shade300),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 12),
+                                  minimumSize: Size(0, 40),
+                                ),
                               ),
                             ),
                             SizedBox(width: 8),
                             Expanded(
-                              child: ElevatedButton(
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  // aksi buka kelas
+                                },
+                                icon: Icon(Icons.video_call, size: 18),
+                                label: Text('Buka Kelas'),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
+                                  elevation: 0,
+                                  backgroundColor: Colors.grey.shade100,
+                                  foregroundColor: Colors.grey.shade700,
+                                  side: BorderSide(color: Colors.grey.shade300),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: 12),
+                                  minimumSize: Size(0, 40),
                                 ),
-                                onPressed: () {},
-                                child: Text('Buka Kelas'),
                               ),
                             ),
                           ],
