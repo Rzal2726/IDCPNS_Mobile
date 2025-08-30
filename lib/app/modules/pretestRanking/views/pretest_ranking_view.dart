@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/pretest_ranking_controller.dart';
 
@@ -9,130 +10,214 @@ class PretestRankingView extends GetView<PretestRankingController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Peringkat Pretest")),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text("Peringkat Pretest", style: AppStyle.appBarTitle),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Hasil Peringkat Pretest Bimbel",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          padding: AppStyle.screenPadding,
+          child: Container(
+            padding: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade200,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
                 ),
-              ),
-              // Hasil peringkat
-              Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange.shade200),
+              ],
+            ),
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Hasil Peringkat Pretest Bimbel",
+                    style: AppStyle.style17Bold,
+                  ),
                 ),
-                child: Text(
-                  "Anda berada di peringkat 1 dari total 1 peserta",
-                  style: TextStyle(color: Colors.black87),
+                SizedBox(height: 20),
+                // Hasil peringkat
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.orange.shade200),
+                  ),
+                  child: Text(
+                    "Anda berada di peringkat 1 dari total 1 peserta",
+                    style: TextStyle(color: Colors.black87),
+                  ),
                 ),
-              ),
-              SizedBox(height: 16),
+                SizedBox(height: 18),
 
-              // Search
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: controller.searchCtrl,
-                      decoration: InputDecoration(
-                        hintText: "Cari Disini",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 2,
+                // Search
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: controller.searchCtrl,
+                        decoration: InputDecoration(
+                          hintText: "Cari Disini",
+                          hintStyle: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
                           ),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Get.snackbar(
-                                "Cari",
-                                "Mencari: ${controller.searchCtrl.text}",
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.teal,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 10,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 2,
+                            ),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Get.snackbar(
+                                  "Cari",
+                                  "Mencari: ${controller.searchCtrl.text}",
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
                               ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                              child: const Text(
+                                "Cari",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
-                            child: const Text("Cari"),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
 
-              SizedBox(height: 16),
+                SizedBox(height: 16),
 
-              // List peserta
-              Obx(() {
-                return Column(
-                  children:
-                      controller.peserta.map((p) {
-                        return Card(
-                          margin: EdgeInsets.only(bottom: 8),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.teal.shade50,
-                              child: Text(
-                                "${p['rank']}",
-                                style: TextStyle(color: Colors.teal),
-                              ),
+                // List peserta
+                Obx(() {
+                  return Column(
+                    children:
+                        controller.peserta.map((p) {
+                          return Card(
+                            color: Colors.white,
+                            margin: EdgeInsets.only(bottom: 8),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(color: Colors.grey.shade300),
                             ),
-                            title: Text(
-                              p['name'],
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Row(
-                              children: [
-                                Text("Nilai "),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(16, 12, 16, 14),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // badge kecil di atas (tidak overlay)
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: 26,
+                                        height: 26,
+                                        decoration: BoxDecoration(
+                                          color: Colors.lightBlue[400],
+                                          shape: BoxShape.circle,
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "${p['rank']}",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.teal.shade50,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    "${p['nilai']}",
+
+                                  SizedBox(height: 10),
+
+                                  // Nama
+                                  Text(
+                                    p['name'],
                                     style: TextStyle(
-                                      color: Colors.teal,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
                                     ),
                                   ),
-                                ),
-                              ],
+
+                                  SizedBox(height: 10),
+
+                                  // Baris Nilai
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Nilai',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.teal,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 2,
+                                              offset: Offset(0, 1),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Text(
+                                          "${p['nilai']}",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      }).toList(),
-                );
-              }),
+                          );
+                        }).toList(),
+                  );
+                }),
 
-              SizedBox(height: 12),
+                SizedBox(height: 12),
 
-              // Pagination
-              _buildPagination(),
-            ],
+                // Pagination
+                _buildPagination(),
+              ],
+            ),
           ),
         ),
       ),

@@ -186,7 +186,7 @@ class WishlistView extends GetView<WishlistController> {
     required Color tagColor,
   }) {
     return Container(
-      height: 120, // FIXED HEIGHT
+      height: 140, // FIXED HEIGHT
       margin: EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -214,7 +214,7 @@ class WishlistView extends GetView<WishlistController> {
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(12),
+              padding: EdgeInsets.all(8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,

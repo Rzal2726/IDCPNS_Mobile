@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/mutasi_saldo_controller.dart';
 
@@ -12,13 +14,14 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text('Afiliasi'),
+        title: Text("Afiliasi", style: AppStyle.appBarTitle),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           Stack(
+            alignment: Alignment.topRight,
             children: [
               IconButton(
                 icon: Icon(Icons.notifications_none),
@@ -28,14 +31,20 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
                 right: 8,
                 top: 8,
                 child: Container(
-                  padding: EdgeInsets.all(4),
+                  padding: EdgeInsets.all(2),
                   decoration: BoxDecoration(
                     color: Colors.red,
                     shape: BoxShape.circle,
                   ),
+                  constraints: BoxConstraints(minWidth: 18, minHeight: 18),
                   child: Text(
-                    '9+',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
+                    "9+",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -43,85 +52,71 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextButton.icon(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.arrow_back_ios, size: 16),
-                label: Text('Kembali'),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  alignment: Alignment.centerLeft,
-                ),
-              ),
-              SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
+      body: Padding(
+        padding: AppStyle.screenPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Search box
+            TextField(
+              decoration: InputDecoration(
+                hintText: "Cari",
+                contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+                  borderSide: BorderSide(color: Colors.teal),
                 ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Cari',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    prefixIcon: Icon(Icons.search, color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: EdgeInsets.symmetric(vertical: 16),
-                  ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.teal),
                 ),
+                suffixIcon: Icon(Icons.search, color: Colors.black54),
               ),
-              SizedBox(height: 24),
-              Container(
-                width: double.infinity,
+            ),
+            SizedBox(height: 30),
+
+            // Card Rincian Komisi
+            Card(
+              color: Colors.white,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
                 padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Mutasi Saldo',
+                      "Mutasi Saldo",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(height: 16),
-                    Icon(Icons.description, size: 80, color: Colors.grey[300]),
-                    SizedBox(height: 8),
-                    Text(
-                      'Tidak ada transaksi',
-                      style: TextStyle(color: Colors.grey),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 50),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            SvgPicture.asset(
+                              "assets/emptyArchiveIcon.svg", // ganti dengan asset ilustrasi
+                              height: 100,
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "Tidak ada transaksi",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
