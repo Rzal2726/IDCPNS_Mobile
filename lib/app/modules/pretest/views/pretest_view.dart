@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/pretest_controller.dart';
 
@@ -9,26 +10,26 @@ class PretestView extends GetView<PretestController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff3f6f5),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
         leading: BackButton(),
-        title: Text("Pretest"),
+        title: Text("Pretest", style: AppStyle.appBarTitle),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
             child: ElevatedButton(
               onPressed: controller.finish,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xff0da686),
+                backgroundColor: Colors.teal,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               ),
-              child: Text("Selesai"),
+              child: Text("Selesai", style: TextStyle(color: Colors.white)),
             ),
           ),
         ],
@@ -49,6 +50,7 @@ class PretestView extends GetView<PretestController> {
                     children: [
                       // Nomor Soal card with chevrons + small boxes
                       Card(
+                        color: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -58,117 +60,132 @@ class PretestView extends GetView<PretestController> {
                             horizontal: 12,
                             vertical: 12,
                           ),
-                          child: Row(
+                          child: Column(
+                            mainAxisAlignment:
+                                MainAxisAlignment.center, // vertikal
+                            crossAxisAlignment:
+                                CrossAxisAlignment.center, // horizontal
                             children: [
-                              Text(
-                                "Nomor Soal",
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                              Spacer(),
-                              // left chevron
-                              IconButton(
-                                visualDensity: VisualDensity.compact,
-                                padding: EdgeInsets.zero,
-                                onPressed: controller.goPrev,
-                                icon: Icon(Icons.chevron_left),
-                                color: Colors.grey.shade700,
+                              // Header: Nomor Soal + Icon
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .spaceBetween, // biar Row juga tengah
+                                children: [
+                                  Text(
+                                    "Nomor Soal",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Icon(
+                                    Icons.format_list_bulleted,
+                                    color: Colors.teal,
+                                  ),
+                                ],
                               ),
 
-                              // small numbered boxes (wrap to show up to 5)
+                              SizedBox(height: 12),
+
+                              // Navigator soal
                               Row(
-                                children: List.generate(
-                                  controller.soalList.length,
-                                  (i) {
-                                    final isActive =
-                                        controller.currentIndex.value == i;
-                                    final isAnswered =
-                                        controller.answers[controller
-                                            .soalList[i]
-                                            .nomor] !=
-                                        null;
-                                    return GestureDetector(
-                                      onTap: () => controller.jumpTo(i),
-                                      child: Container(
-                                        margin: EdgeInsets.symmetric(
-                                          horizontal: 6,
-                                        ),
-                                        width: 34,
-                                        height: 34,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          color:
-                                              isActive
-                                                  ? Colors.white
-                                                  : Colors.white,
-                                          border: Border.all(
-                                            color:
-                                                isActive
-                                                    ? Color(0xff0da686)
-                                                    : Colors.grey.shade300,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            6,
-                                          ),
-                                          boxShadow:
-                                              isActive
-                                                  ? [
-                                                    BoxShadow(
-                                                      color: Colors.black12,
-                                                      blurRadius: 2,
-                                                      offset: Offset(0, 1),
-                                                    ),
-                                                  ]
-                                                  : null,
-                                        ),
-                                        child: Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            Text(
-                                              "${controller.soalList[i].nomor}",
-                                              style: TextStyle(
-                                                color:
-                                                    isActive
-                                                        ? Color(0xff0da686)
-                                                        : Colors.black87,
-                                                fontWeight: FontWeight.w600,
-                                              ),
+                                mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .center, // posisi tombol & nomor ke tengah
+                                children: [
+                                  // Left chevron
+                                  Container(
+                                    width: 34,
+                                    height: 34,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: Colors.teal,
+                                        width: 1.5,
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: IconButton(
+                                      visualDensity: VisualDensity.compact,
+                                      padding: EdgeInsets.zero,
+                                      onPressed: controller.goPrev,
+                                      icon: Icon(
+                                        Icons.chevron_left,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
+                                  ),
+
+                                  // Nomor soal (max 5 tampil wrap)
+                                  Row(
+                                    children: List.generate(
+                                      controller.soalList.length,
+                                      (i) {
+                                        final isActive =
+                                            controller.currentIndex.value == i;
+                                        final isAnswered =
+                                            controller.answers[controller
+                                                .soalList[i]
+                                                .nomor] !=
+                                            null;
+
+                                        return GestureDetector(
+                                          onTap: () => controller.jumpTo(i),
+                                          child: Container(
+                                            margin: EdgeInsets.symmetric(
+                                              horizontal: 6,
                                             ),
-                                            // answered dot at top-right
-                                            if (isAnswered)
-                                              Positioned(
-                                                right: 2,
-                                                top: 2,
-                                                child: Container(
-                                                  width: 8,
-                                                  height: 8,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.green,
-                                                    shape: BoxShape.circle,
+                                            width: 34,
+                                            height: 34,
+                                            alignment: Alignment.center,
+                                            decoration: AppStyle.cardDecoration,
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Text(
+                                                  "${controller.soalList[i].nomor}",
+                                                  style: TextStyle(
+                                                    color:
+                                                        isActive
+                                                            ? Colors.teal
+                                                            : Colors.black87,
+                                                    fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
-                                              ),
-                                          ],
-                                        ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+
+                                  // Right chevron
+                                  Container(
+                                    width: 34,
+                                    height: 34,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white, // isi putih
+                                      border: Border.all(
+                                        color: Colors.teal, // warna border teal
+                                        width: 1.5,
                                       ),
-                                    );
-                                  },
-                                ),
-                              ),
-
-                              // right chevron
-                              IconButton(
-                                visualDensity: VisualDensity.compact,
-                                padding: EdgeInsets.zero,
-                                onPressed: controller.goNext,
-                                icon: Icon(Icons.chevron_right),
-                                color: Colors.grey.shade700,
-                              ),
-
-                              const SizedBox(width: 8),
-                              // small icon like list
-                              Icon(
-                                Icons.format_list_bulleted,
-                                color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(
+                                        6,
+                                      ), // biar agak rounded, opsional
+                                    ),
+                                    child: IconButton(
+                                      visualDensity: VisualDensity.compact,
+                                      padding: EdgeInsets.zero,
+                                      onPressed: controller.goNext,
+                                      icon: Icon(
+                                        Icons.chevron_right,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -179,6 +196,7 @@ class PretestView extends GetView<PretestController> {
 
                       // Soal card
                       Card(
+                        color: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -265,7 +283,7 @@ class PretestView extends GetView<PretestController> {
                                         border: Border.all(
                                           color:
                                               isSelected
-                                                  ? Color(0xff0da686)
+                                                  ? Colors.teal
                                                   : Colors.grey.shade300,
                                         ),
                                       ),
@@ -368,9 +386,7 @@ class PretestView extends GetView<PretestController> {
                       onPressed: disableNext ? null : controller.goNext,
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            disableNext
-                                ? Colors.grey.shade400
-                                : Color(0xff0da686),
+                            disableNext ? Colors.grey.shade400 : Colors.teal,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),

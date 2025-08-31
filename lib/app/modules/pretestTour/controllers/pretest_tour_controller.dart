@@ -1,10 +1,34 @@
-import 'dart:async'; // <- penting untuk Timer
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class PretestTourController extends GetxController {
-  // Semua soal contoh
+  var currentIndex = 0.obs;
+  var answers = <int, int>{}.obs; // nomor -> opsiIndex
+  var flagged = <int>{}.obs;
+  var bookmarked = <int>{}.obs;
+  var remainingSeconds = (5 * 60).obs; // default 5 menit
+
+  Timer? _timer;
+
+  // Showcase keys
+  final GlobalKey keyFlag = GlobalKey();
+  final GlobalKey keyReport = GlobalKey();
+  final GlobalKey keyQuestion = GlobalKey();
+  final GlobalKey keyOptions = GlobalKey();
+  final GlobalKey keyFinish = GlobalKey();
+  final GlobalKey keyNumberNav = GlobalKey();
+  final GlobalKey keyPrev = GlobalKey();
+  final GlobalKey keyTimer = GlobalKey();
+  final GlobalKey keyNext = GlobalKey();
+
+  bool _started = false;
+
+  // step showcase
+  late List<GlobalKey> steps;
+  int currentStep = 0;
+
   final List<Soal> soalList = [
     Soal(
       nomor: 1,
@@ -47,126 +71,75 @@ class PretestTourController extends GetxController {
     ),
   ];
 
-  // reactive state
-  var currentIndex = 0.obs;
-  var answers = <int, int>{}.obs; // nomor -> opsiIndex
-  var flagged = <int>{}.obs; // set nomor soal yang diflag
-  var bookmarked = <int>{}.obs; // set soal yg di-bookmark (bookmark icon)
-  var remainingSeconds = 300.obs; // 5 minutes default
-
-  Timer? _timer; // 5 menit (dummy)
-  final count = 0.obs;
-
-  // -----------------------------
-  // SHOWCASE KEYS (disimpan di controller)
-  // urutannya mengikuti permintaan:
-  // 1. tandai (bookmark) -> 2. laporkan (flag) -> 3. field soal -> 4. opsi ->
-  // 5. tombol selesai (appbar) -> 6. pagination -> 7. tombol sebelumnya -> 8. durasi -> 9. tombol next
-  // -----------------------------
-  final GlobalKey kBookmark = GlobalKey();
-  final GlobalKey kFlag = GlobalKey();
-  final GlobalKey kSoalField = GlobalKey();
-  final GlobalKey kOptions = GlobalKey();
-  final GlobalKey kFinish = GlobalKey();
-  final GlobalKey kPagination = GlobalKey();
-  final GlobalKey kPrev = GlobalKey();
-  final GlobalKey kTimer = GlobalKey();
-  final GlobalKey kNext = GlobalKey();
-
-  List<GlobalKey> get showcaseKeys => [
-    kBookmark,
-    kFlag,
-    kSoalField,
-    kOptions,
-    kFinish,
-    kPagination,
-    kPrev,
-    kTimer,
-    kNext,
-  ];
-
-  bool _showcaseStarted = false; // mencegah start ganda
-
-  // helper: mulai showcase dari controller (panggil dari view dengan context)
-  void startShowcase(BuildContext ctx, {bool force = false}) {
-    if (_showcaseStarted && !force) return;
-    try {
-      final widget = ShowCaseWidget.of(ctx);
-      widget?.startShowCase(showcaseKeys);
-      _showcaseStarted = true;
-    } catch (e) {
-      // kalau gagal (mis. belum ada ShowCaseWidget di tree), abaikan
-    }
-  }
-
-  // optional: reset flag agar bisa di-start lagi
-  void resetShowcase() {
-    _showcaseStarted = false;
-  }
-
-  // -----------------------------
-  // lifecycle & timer
-  // -----------------------------
   @override
   void onInit() {
-    startTimer();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      startShowcase(Get.context!);
-    });
     super.onInit();
+    steps = [
+      keyFlag,
+      keyReport,
+      keyQuestion,
+      keyOptions,
+      keyFinish,
+      keyNumberNav,
+      keyPrev,
+      keyTimer,
+      keyNext,
+    ];
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-    // jalankan showcase setelah widget siap
+  /// Mulai showcase
+  void startShowcase(BuildContext context) {
+    if (_started) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      startShowcase(Get.context!);
+      ShowCaseWidget.of(context).startShowCase(steps);
+      _started = true;
+      currentStep = 0;
     });
   }
 
-  @override
-  void onClose() {
-    _timer?.cancel();
-    super.onClose();
+  /// Reset biar bisa dipanggil ulang
+  void restartShowcase(BuildContext context) {
+    _started = false;
+    startShowcase(context);
   }
 
+  /// Timer
   void startTimer() {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+    _timer = Timer.periodic(Duration(seconds: 1), (t) {
       if (remainingSeconds.value > 0) {
         remainingSeconds.value--;
       } else {
         t.cancel();
-        // time's up -> optional: auto submit
         Get.snackbar("Waktu Habis", "Waktu pengerjaan telah habis (dummy).");
       }
     });
   }
 
-  // -----------------------------
-  // functional methods
-  // -----------------------------
+  /// Answer selection
   void selectAnswer(int soalNomor, int opsiIndex) {
     answers[soalNomor] = opsiIndex;
   }
 
   void toggleFlag(int soalNomor) {
-    if (flagged.contains(soalNomor))
+    if (flagged.contains(soalNomor)) {
       flagged.remove(soalNomor);
-    else
+    } else {
       flagged.add(soalNomor);
+    }
     flagged.refresh();
   }
 
   void toggleBookmark(int soalNomor) {
-    if (bookmarked.contains(soalNomor))
+    if (bookmarked.contains(soalNomor)) {
       bookmarked.remove(soalNomor);
-    else
+    } else {
       bookmarked.add(soalNomor);
+    }
     bookmarked.refresh();
   }
 
+  /// Navigasi soal
   void goNext() {
     if (currentIndex.value < soalList.length - 1) currentIndex.value++;
   }
@@ -179,39 +152,52 @@ class PretestTourController extends GetxController {
     if (idx >= 0 && idx < soalList.length) currentIndex.value = idx;
   }
 
+  /// Navigasi showcase (tour)
+  void goNextShow(BuildContext context) {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      ShowCaseWidget.of(context).startShowCase([steps[currentStep]]);
+      print("Next step: $currentStep");
+    } else {
+      // jika ini langkah terakhir, langsung keluar
+      print("Showcase selesai, otomatis kembali");
+      Get.back();
+    }
+  }
+
+  void goPrevShow(BuildContext context) {
+    if (currentStep > 0) {
+      currentStep--;
+      ShowCaseWidget.of(context).startShowCase([steps[currentStep]]);
+      print("Prev step: $currentStep");
+    }
+  }
+
+  void onFinishTour() {
+    Get.back();
+    print("Tour selesai 🎉");
+  }
+
+  /// Format timer
   String formatTime(int seconds) {
     final mm = (seconds ~/ 60).toString().padLeft(2, '0');
     final ss = (seconds % 60).toString().padLeft(2, '0');
     return "$mm:$ss";
   }
 
+  /// Dummy submit
   void finish() {
-    // dummy submit
     Get.snackbar("Selesai", "Jawaban tersimpan (dummy).");
-  }
-
-  void report(int soalNomor) {
-    Get.defaultDialog(
-      title: 'Laporkan Soal',
-      middleText: 'Anda ingin melaporkan soal nomor $soalNomor?',
-      textCancel: 'Batal',
-      textConfirm: 'Laporkan',
-      onConfirm: () {
-        Get.back(); // tutup dialog
-        Get.snackbar(
-          'Dilaporkan',
-          'Soal nomor $soalNomor telah dilaporkan (dummy).',
-        );
-      },
-    );
   }
 }
 
+/// Data model soal
 class Soal {
   final int nomor;
   final String judul;
   final String pertanyaan;
   final List<String> opsi;
+
   Soal({
     required this.nomor,
     required this.judul,
