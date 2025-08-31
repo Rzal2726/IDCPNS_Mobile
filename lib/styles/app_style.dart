@@ -29,4 +29,16 @@ class AppStyle {
     fontWeight: FontWeight.bold,
     fontSize: 15,
   );
+  static final BoxDecoration cardDecoration = BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.grey.withOpacity(0.2),
+        spreadRadius: 1,
+        blurRadius: 5,
+        offset: Offset(0, 3),
+      ),
+    ],
+  );
 }

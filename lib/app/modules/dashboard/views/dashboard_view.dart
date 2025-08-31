@@ -113,9 +113,9 @@ class DashboardView extends GetView<DashboardController> {
                                 label: Text('Pretest'),
                                 style: ElevatedButton.styleFrom(
                                   elevation: 0,
-                                  backgroundColor: Colors.grey.shade100,
-                                  foregroundColor: Colors.grey.shade700,
-                                  side: BorderSide(color: Colors.grey.shade300),
+                                  backgroundColor: Colors.amber,
+                                  foregroundColor: Colors.white,
+                                  side: BorderSide(color: Colors.amber),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(6),
                                   ),
@@ -130,13 +130,13 @@ class DashboardView extends GetView<DashboardController> {
                                 onPressed: () {
                                   // aksi buka kelas
                                 },
-                                icon: Icon(Icons.video_call, size: 18),
+                                icon: Icon(Icons.computer, size: 18),
                                 label: Text('Buka Kelas'),
                                 style: ElevatedButton.styleFrom(
                                   elevation: 0,
-                                  backgroundColor: Colors.grey.shade100,
-                                  foregroundColor: Colors.grey.shade700,
-                                  side: BorderSide(color: Colors.grey.shade300),
+                                  backgroundColor: Colors.teal,
+                                  foregroundColor: Colors.white,
+                                  side: BorderSide(color: Colors.teal),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(6),
                                   ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/payment_checkout_controller.dart';
 
@@ -9,86 +10,79 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Detail Pembayaran"),
+        title: Text("Detail Pembayaran", style: AppStyle.appBarTitle),
         backgroundColor: Colors.white,
         elevation: 0,
         foregroundColor: Colors.black,
       ),
       body: Obx(() {
         return SingleChildScrollView(
-          padding: EdgeInsets.all(16),
+          padding: AppStyle.screenPadding,
           child: Column(
             children: [
               // Countdown
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
+                decoration: AppStyle.cardDecoration,
                 child: Column(
                   children: [
                     Text(
                       "Bayar Sebelum",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: 5),
                     buildCountdown(300),
                   ],
                 ),
               ),
               SizedBox(height: 16),
-
               // Info Bank + VA
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
+                decoration: AppStyle.cardDecoration,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset("assets/bri.png", height: 40), // logo dummy
-                    SizedBox(height: 8),
-                    Text(
-                      controller.bank.value,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Image.asset("assets/bri.png", height: 40),
                     ),
-                    SizedBox(height: 12),
-                    Text("BRI Virtual Account Number"),
+                    SizedBox(height: 30),
+                    Text(
+                      "BRI Virtual Account Number",
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    SizedBox(height: 3),
                     SelectableText(
                       controller.vaNumber.value,
                       style: TextStyle(
                         color: Colors.teal,
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 12),
-                    Text("Nama Akun"),
+                    SizedBox(height: 13),
+                    Text("Nama Akun", style: TextStyle(fontSize: 15)),
+                    SizedBox(height: 3),
                     Text(
                       controller.namaAkun.value,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 15),
                     ),
-                    SizedBox(height: 12),
-                    Text("Total Harga"),
+                    SizedBox(height: 13),
+                    Text("Total Harga", style: TextStyle(fontSize: 15)),
+                    SizedBox(height: 3),
                     Text(
                       "Rp.${controller.totalHarga.value.toStringAsFixed(0)}",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(fontSize: 15),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 15),
 
               // Tombol cek status
               ElevatedButton(
@@ -100,18 +94,17 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
                   ),
                 ),
                 onPressed: controller.cekStatus,
-                child: Text("Cek Status Pembayaran"),
+                child: Text(
+                  "Cek Status Pembayaran",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 15),
 
               // Tab ATM | MBANKING
               Container(
                 padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                decoration: AppStyle.cardDecoration,
                 child: Column(
                   children: [
                     Row(
@@ -234,11 +227,7 @@ Widget buildCountdown(int seconds) {
       String secs = value.inSeconds.remainder(60).toString().padLeft(2, '0');
       return Text(
         "$minutes:$secs",
-        style: TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.bold,
-          color: Colors.teal,
-        ),
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       );
     },
   );
