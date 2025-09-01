@@ -150,6 +150,7 @@ class LoginView extends GetView<LoginController> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                 ),
@@ -158,18 +159,42 @@ class LoginView extends GetView<LoginController> {
 
               // Google Login
               OutlinedButton.icon(
-                onPressed: () {},
+                onPressed:
+                    controller.isLoading.value
+                        ? null
+                        : () {
+                          // controller.loginWithGoogle();
+                        },
                 icon: Image.asset('assets/goggleIcon.png', height: 28),
-                label: Text(
-                  'Lanjutkan dengan Google',
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-                ),
+                label:
+                    controller.isLoading.value
+                        ? SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.black,
+                          ),
+                        )
+                        : Text(
+                          'Lanjutkan dengan Google',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 12),
+                  backgroundColor:
+                      Colors.white, // samakan dengan ElevatedButton
+                  padding: EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  side: BorderSide(color: Colors.grey),
+                  minimumSize: Size.fromHeight(50),
+                  side: BorderSide(
+                    color: Colors.grey,
+                  ), // optional, sesuai taste
                 ),
               ),
               SizedBox(height: 24),

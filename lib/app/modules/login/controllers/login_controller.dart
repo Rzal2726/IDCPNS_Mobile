@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class LoginController extends GetxController {
   final _restClient = RestClient();
@@ -38,15 +39,18 @@ class LoginController extends GetxController {
     isLoading.value = true;
     try {
       final result = await _restClient.postData(url: url, payload: payload);
+      final data = result["data"];
+      final user = data["user"];
+      box.write("token", data["access_token"]);
+      box.write("name", user["name"]);
+      box.write("email", user["email"]);
+      box.write("password", password); // simpan password kembali
 
-      // Ambil token aman (menyesuaikan struktur API)
-      // final token = result["token"] ?? result["data"]?["token"];
+      // Reset TextField saat login berhasil
+      emailController.clear();
+      passwordController.clear();
 
-      // Simpan sesi
-      // box.write("token", token);
-      // box.write("email", email);
-      // box.write("password", password);
-      // box.write("isLogin", true);
+      Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
     } catch (e) {
       Get.snackbar("Error", "Email atau Password invalid.");
       debugPrint("Unexpected error: $e");
@@ -57,8 +61,6 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
-    emailController.dispose();
-    passwordController.dispose();
     super.onClose();
   }
 }

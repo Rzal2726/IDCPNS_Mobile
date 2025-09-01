@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 
@@ -25,10 +26,7 @@ class AccountView extends GetView<AccountController> {
                   child: Row(
                     children: [
                       // Avatar
-                      CircleAvatar(
-                        radius: 35,
-                        backgroundImage: AssetImage("assets/avatar.png"),
-                      ),
+                      CircleAvatar(radius: 35, backgroundColor: Colors.blue),
                       SizedBox(width: 18),
                       // Info
                       Column(
@@ -104,42 +102,89 @@ class AccountView extends GetView<AccountController> {
                 SizedBox(height: 12),
 
                 // Menu List
-                buildMenuItem(Icons.person, "Akun", Routes.MY_ACCOUNT),
-                buildMenuItem(Icons.lock, "Kata Sandi", Routes.CHANGE_PASSWORD),
-                buildMenuItem(Icons.favorite, "Wishlist", Routes.WISHLIST),
-                buildMenuItem(Icons.list_alt, "Transaksi", Routes.TRANSACTION),
                 buildMenuItem(
-                  Icons.list_alt,
-                  "Program Saya",
-                  Routes.PROGRAM_SAYA,
+                  icon: Icons.person,
+                  title: "Akun",
+                  onTap: () => Get.toNamed(Routes.MY_ACCOUNT),
                 ),
-                buildMenuItem(Icons.group, "Afiliasi", Routes.AFFILIATE),
-                buildMenuItem(Icons.phone, "Hubungi Kami", Routes.MY_ACCOUNT),
                 buildMenuItem(
-                  Icons.help_outlined,
-                  "Panduan",
-                  Routes.MY_ACCOUNT,
+                  icon: Icons.lock,
+                  title: "Kata Sandi",
+                  onTap: () => Get.toNamed(Routes.CHANGE_PASSWORD),
                 ),
-                SizedBox(height: 30),
-                // Keluar
-                buildMenuItem(Icons.logout, "Keluar", Routes.LOGIN),
-
-                SizedBox(height: 30),
-
-                // Banner (Upgrade ke Platinum)
-                Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade200,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Banner Highlight\n(Placeholder)',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                buildMenuItem(
+                  icon: Icons.favorite,
+                  title: "Wishlist",
+                  onTap: () => Get.toNamed(Routes.WISHLIST),
+                ),
+                buildMenuItem(
+                  icon: Icons.list_alt,
+                  title: "Transaksi",
+                  onTap: () => Get.toNamed(Routes.TRANSACTION),
+                ),
+                buildMenuItem(
+                  icon: Icons.list_alt,
+                  title: "Program Saya",
+                  onTap: () => Get.toNamed(Routes.PROGRAM_SAYA),
+                ),
+                buildMenuItem(
+                  icon: Icons.group,
+                  title: "Afiliasi",
+                  onTap: () => Get.toNamed(Routes.AFFILIATE),
+                ),
+                Column(
+                  children: [
+                    buildMenuItem(
+                      icon: Icons.phone,
+                      title: "Hubungi Kami",
+                      onTap: () {
+                        // Bisa ganti sesuai aksi yang diinginkan, misal buka dialer
+                        // launchUrl(Uri.parse("tel:+628123456789"));
+                        Get.toNamed(
+                          Routes.MY_ACCOUNT,
+                        ); // sementara pakai route dulu
+                      },
                     ),
-                  ),
+                    buildMenuItem(
+                      icon: Icons.help_outlined,
+                      title: "Panduan",
+                      onTap: () {
+                        // Bisa diganti buka PDF/URL atau halaman khusus
+                        Get.toNamed(Routes.MY_ACCOUNT); // sementara pakai route
+                      },
+                    ),
+                    SizedBox(height: 30),
+                    // Keluar
+                    buildMenuItem(
+                      icon: Icons.logout,
+                      title: "Keluar",
+                      onTap: () {
+                        final box = GetStorage();
+                        box.erase();
+
+                        // Pindah ke halaman login tanpa memanggil clear/dispose
+                        Get.offAllNamed(Routes.LOGIN);
+                      },
+                    ),
+
+                    SizedBox(height: 30),
+
+                    // Banner (Upgrade ke Platinum)
+                    Container(
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade200,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Banner Highlight\n(Placeholder)',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -149,35 +194,43 @@ class AccountView extends GetView<AccountController> {
     );
   }
 
-  Widget buildMenuItem(IconData icon, String title, String routeName) {
-    return InkWell(
-      onTap: () => Get.toNamed(routeName),
-      child: Container(
-        color: Colors.white,
-        padding: EdgeInsets.symmetric(vertical: 12),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(icon, color: Colors.grey[700]),
-                      SizedBox(width: 12),
-                      Text(title),
-                    ],
+  Widget buildMenuItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap, // fleksibel, bisa route atau fungsi lain
+  }) {
+    final controller = Get.put(AccountController());
+    return Column(
+      children: [
+        InkWell(
+          onTap: onTap,
+          child: Container(
+            color: Colors.white,
+            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            child: Row(
+              children: [
+                Icon(icon, color: Colors.black54),
+                SizedBox(width: 16),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.normal,
                   ),
-                  Icon(Icons.chevron_right),
-                ],
-              ),
+                ),
+                Spacer(),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Colors.grey,
+                ), // panah kanan
+              ],
             ),
-
-            Divider(height: 5),
-          ],
+          ),
         ),
-      ),
+        Divider(height: 1, color: Colors.grey[300]), // divider tipis
+      ],
     );
   }
 }

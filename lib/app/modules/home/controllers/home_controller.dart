@@ -15,9 +15,16 @@ class HomeController extends GetxController {
     AccountView(),
     AccountView(),
   ];
+
   @override
   void onInit() {
     super.onInit();
+    print("ssada");
+    // cek jika ada argument dari route
+    final initialIndex = Get.arguments?['initialIndex'] ?? 0;
+
+    tabIndex.value = initialIndex;
+    currentIndex.value = initialIndex;
   }
 
   @override
@@ -31,12 +38,16 @@ class HomeController extends GetxController {
   }
 
   void changeBottomBar(int index) {
-    print(index.toString());
     tabIndex.value = index;
-    // update();
   }
 
   void changePage(int index) {
     currentIndex.value = index;
+  }
+
+  /// Fungsi ini dipanggil saat ingin langsung ke tab pertama
+  void goToFirstTab() {
+    tabIndex.value = 0;
+    currentIndex.value = 0;
   }
 }

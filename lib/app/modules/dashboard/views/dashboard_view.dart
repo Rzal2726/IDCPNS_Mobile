@@ -43,6 +43,7 @@ class DashboardView extends GetView<DashboardController> {
               padding: AppStyle.screenPadding,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
                 children: [

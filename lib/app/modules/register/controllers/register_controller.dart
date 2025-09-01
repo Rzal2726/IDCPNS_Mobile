@@ -12,8 +12,8 @@ class RegisterController extends GetxController {
 
   // Controllers
   final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final regEmailController = TextEditingController();
+  final regPasswordController = TextEditingController();
   final affiliatorController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   RxString emailError = ''.obs;
@@ -42,33 +42,52 @@ class RegisterController extends GetxController {
       return;
     }
 
-    if (passwordController.text != confirmPasswordController.text) {
+    if (regPasswordController.text != confirmPasswordController.text) {
       Get.snackbar("Error", "Password dan konfirmasi tidak cocok");
       return;
     }
 
     isLoading.value = true;
-
     try {
-      final url = baseUrl + apiRegister; // pastikan endpoint benar
+      final url = baseUrl + apiRegister;
       final payload = {
         "name": nameController.text,
-        "email": emailController.text,
-        "password": passwordController.text,
+        "email": regEmailController.text,
+        "password": regPasswordController.text,
         "password_confirmation": confirmPasswordController.text,
         "user_afiliator": affiliatorController.text ?? "",
       };
-      print("payload ${payload.toString()}");
+
       final result = await _restClient.postData(url: url, payload: payload);
 
       if (result["status"] == "success") {
-        Get.snackbar("Sukses", "Registrasi berhasil");
+        // Ambil data dari response
+        final data = result["data"];
+        final user = data["user"];
+
+        // Simpan ke GetStorage
+        final box = GetStorage();
+        box.write("token", data["access_token"]);
+        box.write("name", user["name"]);
+        box.write("email", user["email"]);
+        box.write("password", regPasswordController.text);
+        box.write("isEmailVerified", user["is_email_verified"] ?? false);
+        print("tokknne ${data['access_token']}");
         Get.offNamed(Routes.EMAIL_VERIFICATION);
       } else {
-        Get.snackbar("Gagal", result["message"] ?? "Terjadi kesalahan");
+        if (result["message"] is Map && result["message"]["email"] != null) {
+          emailError.value = result["message"]["email"][0];
+          formKey.currentState?.validate();
+        } else {
+          Get.snackbar("Gagal", result["message"] ?? "Terjadi kesalahan");
+        }
       }
+      //   57308|asfqPicPZjzkm2SnwUoe4qh2YfNhT2KleeHC8qoo01ec55cb
+      //   57308|asfqPicPZjzkm2SnwUoe4qh2YfNhT2KleeHC8qoo01ec55cb
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      // langsung munculin error email saat catch
+      emailError.value = "email sudah ada sebelumnya.";
+      formKey.currentState?.validate();
     } finally {
       isLoading.value = false;
     }

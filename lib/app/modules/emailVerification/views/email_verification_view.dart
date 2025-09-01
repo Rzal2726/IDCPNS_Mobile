@@ -70,44 +70,48 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
                           textAlign: TextAlign.left,
                           style: TextStyle(fontSize: 30),
                         ),
+
                         // Deskripsi
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
-                          child: RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
+                        Obx(
+                          () => Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text:
+                                        "Sebelum melanjutkan, silahkan periksa email Anda ",
+                                  ),
+                                  TextSpan(
+                                    text: controller.email.value,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        " untuk tautan verifikasi. Jika Anda tidak menerima email, silahkan klik tombol ",
+                                  ),
+                                  TextSpan(
+                                    text: "Kirim Ulang Email",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  TextSpan(text: " dibawah ini."),
+                                ],
                               ),
-                              children: [
-                                TextSpan(
-                                  text:
-                                      "Sebelum melanjutkan, silahkan periksa email Anda ",
-                                ),
-                                TextSpan(
-                                  text: "farisrafi048@gmail.com",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text:
-                                      " untuk tautan verifikasi. Jika Anda tidak menerima email, silahkan klik tombol ",
-                                ),
-                                TextSpan(
-                                  text: "Kirim Ulang Email",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                TextSpan(text: " dibawah ini."),
-                              ],
                             ),
                           ),
                         ),
+
                         SizedBox(height: 24),
 
                         // Tombol
@@ -119,17 +123,30 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
                               onPressed:
                                   controller.isButtonEnabled.value
                                       ? () => controller.resendEmail()
-                                      : null,
+                                      : null, // otomatis disable
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.teal,
-                                side: BorderSide(color: Colors.teal),
+                                foregroundColor:
+                                    controller.isButtonEnabled.value
+                                        ? Colors.teal
+                                        : Colors.grey, // warna teks & icon
+                                side: BorderSide(
+                                  color:
+                                      controller.isButtonEnabled.value
+                                          ? Colors.teal
+                                          : Colors.grey, // warna border
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                               ),
                               child: Text(
-                                style: TextStyle(color: Colors.teal),
                                 "Kirim Ulang Email",
+                                style: TextStyle(
+                                  color:
+                                      controller.isButtonEnabled.value
+                                          ? Colors.teal
+                                          : Colors.grey, // warna teks
+                                ),
                               ),
                             ),
                           ),
@@ -162,7 +179,7 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
                                       ..onTap = () {
                                         _showChangeEmailDialog(
                                           context,
-                                          "farisrafi048@gmail.com",
+                                          "${controller.box.read("email")}",
                                         );
                                       },
                               ),
@@ -186,8 +203,8 @@ void _showChangeEmailDialog(BuildContext context, String oldEmail) {
   TextEditingController oldEmailController = TextEditingController(
     text: oldEmail,
   );
-  TextEditingController newEmailController = TextEditingController();
 
+  final controller = Get.put(EmailVerificationController());
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -233,7 +250,7 @@ void _showChangeEmailDialog(BuildContext context, String oldEmail) {
               _buildLabel("* Email Baru"),
               SizedBox(height: 6),
               TextField(
-                controller: newEmailController,
+                controller: controller.newEmailController,
                 decoration: _inputDecoration(
                   hintText: "Masukkan alamat email baru",
                 ),
@@ -246,7 +263,7 @@ void _showChangeEmailDialog(BuildContext context, String oldEmail) {
                 height: 45,
                 child: ElevatedButton(
                   onPressed: () {
-                    // TODO: kirim email baru ke server
+                    controller.changeAndSendEmail();
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(

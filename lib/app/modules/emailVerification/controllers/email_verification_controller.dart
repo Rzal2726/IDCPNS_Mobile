@@ -1,24 +1,34 @@
 import 'dart:async';
-
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
+// import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class EmailVerificationController extends GetxController {
-  var countdown = 28.obs;
-  var isButtonEnabled = false.obs;
-
+  final _restClient = RestClient();
+  final box = GetStorage();
+  var countdown = 0.obs; // mulai dari 0
+  var isButtonEnabled = true.obs; // bisa langsung klik
+  RxBool isLoading = false.obs;
+  TextEditingController newEmailController = TextEditingController();
+  Timer? pollingTimer;
+  RxString email = "".obs;
   @override
   void onInit() {
     super.onInit();
-    startCountdown();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
+    countdown.value = 30; // mulai dari 30 detik
+    isButtonEnabled.value = false; // tombol disable saat countdown
+    startCountdown(); // mulai countdown otomatis
+    // polling email sementara tetap di-comment
+    startEmailVerificationPolling();
   }
 
   @override
   void onClose() {
+    pollingTimer?.cancel();
     super.onClose();
   }
 
@@ -31,8 +41,82 @@ class EmailVerificationController extends GetxController {
   }
 
   void resendEmail() {
-    countdown.value = 28;
+    sendEmail();
+    countdown.value = 30;
     isButtonEnabled.value = false;
     startCountdown();
+  }
+
+  Future<void> sendEmail() async {
+    isLoading.value = true;
+    try {
+      final url = baseUrl + apiEmailResend;
+      final payload = {"name": box.read("name"), "email": box.read("email")};
+      print("payload ${payload.toString()}");
+      final result = await _restClient.postData(url: url, payload: payload);
+
+      if (result["status"] == "success") {
+      } else {}
+    } catch (e) {
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> changeAndSendEmail() async {
+    isLoading.value = true;
+    try {
+      final url = baseUrl + apiEmailChange;
+      final payload = {
+        "old_email": box.read("email"),
+        "email": newEmailController.text,
+      };
+      final result = await _restClient.postData(url: url, payload: payload);
+
+      if (result["status"] == "success") {
+        Get.snackbar(
+          "Berhasil",
+          "Email berhasil diperbarui. Silakan cek email untuk verifikasi.",
+        );
+        box.write("email", newEmailController.text);
+        email.value = newEmailController.text; // update Rx variable
+        resendEmail();
+      } else {
+        final errorMessage =
+            (result["message"] is Map && result["message"]["email"] != null)
+                ? result["message"]["email"][0]
+                : "Terjadi kesalahan, silakan coba lagi.";
+        Get.snackbar("Gagal", errorMessage);
+      }
+    } catch (e) {
+      Get.snackbar("Gagal", "Email ini sudah terdaftar.");
+    } finally {
+      newEmailController.clear();
+      isLoading.value = false;
+    }
+  }
+
+  // sementara fungsi polling di-comment
+
+  Future<void> startEmailVerificationPolling() async {
+    pollingTimer?.cancel();
+    pollingTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+      try {
+        final url = await baseUrl + apiCheckEmailVerify;
+
+        final result = await _restClient.getData(url: url);
+        print("emailnnyaa ${result.toString()}");
+        if (result["status"] == "success") {
+          print("emailnnyaa ${result["data"].toString()}");
+          final isVerified = result["data"]["is_email_verified"] ?? false;
+          if (isVerified) {
+            timer.cancel();
+            Get.offNamed(Routes.LOGIN);
+          }
+        }
+      } catch (e) {
+        print("Error polling email verification: $e");
+      }
+    });
   }
 }
