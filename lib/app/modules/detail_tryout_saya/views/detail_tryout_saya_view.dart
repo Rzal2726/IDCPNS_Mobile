@@ -3,11 +3,16 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../controllers/detail_tryout_saya_controller.dart';
 
 class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
-  const DetailTryoutSayaView({super.key});
+  DetailTryoutSayaView({super.key});
+  final List<ChartData> chartData = [
+    ChartData('Benar', 7, Colors.green),
+    ChartData('Salah', 1, Colors.red),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +137,119 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                 child: Column(
                   children: [
                     SizedBox(width: double.infinity),
-                    Text("Total Nilai"),
+                    SfCircularChart(
+                      title: ChartTitle(
+                        text: "Total Nilai",
+                        textStyle: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      annotations: <CircularChartAnnotation>[
+                        CircularChartAnnotation(
+                          widget: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '20/40', // 👉 ganti sesuai value dinamis
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                'Benar/Salah', // subtitle optional
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      series: <CircularSeries>[
+                        DoughnutSeries<ChartData, String>(
+                          dataSource: chartData,
+                          xValueMapper: (ChartData data, _) => data.x,
+                          yValueMapper: (ChartData data, _) => data.y,
+                          innerRadius: '80%',
+                          pointColorMapper: (ChartData data, _) => data.color,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Card(
+              color: Colors.white,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(width: double.infinity),
+                    Text(
+                      "Nilai",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 16,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Waktu Pengerjaan",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              "Untuk melihat statistik waktu pengerjaan silahkan kerjakan tryout ini terlebih dahulu.",
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 16,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Statistik Nilai",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              "Untuk melihat statistik nilai silahkan kerjakan tryout ini terlebih dahulu.",
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -158,4 +275,11 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
       ),
     );
   }
+}
+
+class ChartData {
+  ChartData(this.x, this.y, this.color);
+  final String x;
+  final double y;
+  final Color color;
 }
