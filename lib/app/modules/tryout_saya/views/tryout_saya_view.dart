@@ -546,7 +546,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
     return InkWell(
       onTap: () {
         controller.selectedUuid.value = uuid;
-        Get.toNamed("detail-tryout-saya");
+        Get.toNamed("detail-tryout-saya", arguments: uuid);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
