@@ -225,7 +225,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.DETAIL_TRYOUT_SAYA,
-      page: () => const DetailTryoutSayaView(),
+      page: () => DetailTryoutSayaView(),
       binding: DetailTryoutSayaBinding(),
     ),
     GetPage(
