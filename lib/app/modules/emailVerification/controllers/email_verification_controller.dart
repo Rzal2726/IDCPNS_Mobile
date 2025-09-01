@@ -102,7 +102,7 @@ class EmailVerificationController extends GetxController {
     pollingTimer?.cancel();
     pollingTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
       try {
-        final url = await baseUrl + apiCheckEmailVerify;
+        final url = await baseUrl + apiGetUser;
 
         final result = await _restClient.getData(url: url);
         print("emailnnyaa ${result.toString()}");

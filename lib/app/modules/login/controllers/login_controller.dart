@@ -45,7 +45,8 @@ class LoginController extends GetxController {
       box.write("name", user["name"]);
       box.write("email", user["email"]);
       box.write("password", password); // simpan password kembali
-
+      box.write("photoProfile", user['profile_image_url']);
+      print("ppss ${user['profile_image_url'].toString()}");
       // Reset TextField saat login berhasil
       emailController.clear();
       passwordController.clear();

@@ -60,6 +60,7 @@ class SplashController extends GetxController {
       box.write("name", user["name"]);
       box.write("email", user["email"]);
       box.write("password", password); // simpan password kembali
+      box.write("photoProfile", user['profile_image_url']);
       print("masuk3 ${email} dan ${password}");
       Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
       return true;

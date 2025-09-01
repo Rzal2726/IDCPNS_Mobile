@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/modules/account/controllers/account_controller.dart';
 import 'package:idcpns_mobile/app/modules/account/views/account_view.dart';
+import 'package:idcpns_mobile/app/modules/bimbel/controllers/bimbel_controller.dart';
 import 'package:idcpns_mobile/app/modules/bimbel/views/bimbel_view.dart';
 import 'package:idcpns_mobile/app/modules/dashboard/views/dashboard_view.dart';
+import 'package:idcpns_mobile/app/modules/platinum_zone/controllers/platinum_zone_controller.dart';
+import 'package:idcpns_mobile/app/modules/platinum_zone/views/platinum_zone_view.dart';
 
 class HomeController extends GetxController {
   RxInt currentIndex = 0.obs;
@@ -12,13 +16,16 @@ class HomeController extends GetxController {
   final List<Widget> pages = [
     DashboardView(),
     BimbelView(),
-    AccountView(),
+    PlatinumZoneView(),
     AccountView(),
   ];
 
   @override
   void onInit() {
     super.onInit();
+    Get.lazyPut(() => AccountController());
+    Get.lazyPut(() => BimbelController());
+    Get.lazyPut(() => PlatinumZoneController());
     print("ssada");
     // cek jika ada argument dari route
     final initialIndex = Get.arguments?['initialIndex'] ?? 0;
