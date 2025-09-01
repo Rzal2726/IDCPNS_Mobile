@@ -59,12 +59,6 @@ class ChangePasswordController extends GetxController {
     try {
       final result = await _restClient.postData(url: url, payload: payload);
       Get.snackbar("Berhasil", "Password berhasil diubah");
-      // final data = result["data"];
-      // final user = data["user"];
-      // box.write("token", data["access_token"]);
-      // box.write("name", user["name"]);
-      // box.write("email", user["email"]);
-      // box.write("password", password); // simpan password kembali
     } catch (e) {
       Get.snackbar("Gagal", "Password gagal diubah");
       debugPrint("Unexpected error: $e");

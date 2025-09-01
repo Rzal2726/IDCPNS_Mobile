@@ -4,6 +4,7 @@ const String baseUrl = "https://idcpns.com/api/";
 const String apiLogin = "v1/auth/login";
 const String apiRegister = "v1/auth/register";
 const String apiUser = "user";
+const String apiSyaratDanKetentuan = "v1/sysconf/syaratketentuan";
 const String apiEmailConfirmation = "email/resend";
 const String apiGetUser = "v1/account/user/profile";
 const String apiEmailResend = "v1/auth/verification/resend-email";
