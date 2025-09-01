@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import 'package:get/get.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/pengerjaan_tryout_controller.dart';
 
@@ -38,7 +40,24 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                     ),
                   ),
                   onPressed: () {
-                    Get.offAllNamed("home");
+                    Get.defaultDialog(
+                      backgroundColor: Colors.white,
+                      title: "Konfirmasi",
+                      middleText:
+                          "Apakah kamu yakin ingin menyelesaikan tryout?",
+                      textCancel: "Batal",
+                      textConfirm: "Selesai",
+                      confirmTextColor: Colors.white,
+                      buttonColor: Colors.teal,
+                      onConfirm: () {
+                        Get.offNamed(
+                          "/hasil-tryout",
+                          arguments: controller.uuid.value,
+                        );
+                      },
+                      onCancel: () {},
+                      radius: 8,
+                    );
                   },
                   child: Text("Selesai"),
                 ),
@@ -73,12 +92,26 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                       vertical: 12,
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    if (controller.currentQuestion.value > 0) {
+                      controller.currentQuestion.value--;
+                      controller.startQuestion(
+                        controller.soalList[controller
+                            .currentQuestion
+                            .value]['id'],
+                      );
+                    }
+                  },
                   child: Row(
                     children: [Icon(Icons.arrow_back_ios), Text("Sebelumnya")],
                   ),
                 ),
-                Text("00:00:00"),
+                Obx(
+                  () => Text(
+                    controller.formattedTime,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -91,7 +124,17 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                       vertical: 12,
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    if (controller.currentQuestion.value <
+                        controller.soalList.length - 1) {
+                      controller.currentQuestion.value++;
+                      controller.startQuestion(
+                        controller.soalList[controller
+                            .currentQuestion
+                            .value]['id'],
+                      );
+                    }
+                  },
                   child: Row(
                     children: [
                       Text("Selanjutnya"),
@@ -145,39 +188,91 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                           ),
                                         ),
                                         SizedBox(height: 12),
-                                        GridView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: 10,
-                                          gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                                crossAxisCount:
-                                                    5, // jumlah kolom
-                                                crossAxisSpacing: 4,
-                                                mainAxisSpacing: 4,
-                                              ),
-                                          itemBuilder: (context, index) {
-                                            return ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.white,
-                                                foregroundColor:
-                                                    Colors
-                                                        .black, // warna teks/icon
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 12,
+                                        Obx(
+                                          () =>
+                                              controller.soalList.isEmpty
+                                                  ? Skeletonizer(
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.white,
+                                                        foregroundColor:
+                                                            Colors
+                                                                .black, // warna teks/icon
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 24,
+                                                              vertical: 12,
+                                                            ),
+                                                      ),
+                                                      onPressed: () {},
+                                                      child: Text("5"),
                                                     ),
-                                              ),
-                                              onPressed: () {},
-                                              child: Text(
-                                                (index + 1).toString(),
-                                              ),
-                                            );
-                                          },
+                                                  )
+                                                  : GridView.builder(
+                                                    shrinkWrap: true,
+                                                    itemCount:
+                                                        controller
+                                                            .soalList
+                                                            .length,
+                                                    gridDelegate:
+                                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                                          crossAxisCount:
+                                                              5, // jumlah kolom
+                                                          crossAxisSpacing: 4,
+                                                          mainAxisSpacing: 4,
+                                                        ),
+                                                    itemBuilder: (
+                                                      context,
+                                                      index,
+                                                    ) {
+                                                      return ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.white,
+                                                          foregroundColor:
+                                                              Colors
+                                                                  .black, // warna teks/icon
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  8,
+                                                                ),
+                                                          ),
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                horizontal: 24,
+                                                                vertical: 12,
+                                                              ),
+                                                        ),
+                                                        onPressed: () {
+                                                          controller
+                                                              .currentQuestion
+                                                              .value = index;
+                                                          controller.startQuestion(
+                                                            controller
+                                                                .soalList[controller
+                                                                .currentQuestion
+                                                                .value]['id'],
+                                                          );
+                                                          Navigator.pop(
+                                                            context,
+                                                          );
+                                                        },
+                                                        child: Text(
+                                                          controller
+                                                              .soalList[index]['no_soal']
+                                                              .toString(),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
                                         ),
                                       ],
                                     ),
@@ -198,22 +293,30 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                         ],
                       ),
                     ),
-                    Obx(
-                      () => Row(
+                    Obx(() {
+                      // Pastikan currentPage sinkron dengan currentQuestion
+                      int pageIndex =
+                          controller.currentQuestion.value ~/
+                          controller.numberPerPage.value;
+                      if (controller.currentPage.value != pageIndex) {
+                        controller.currentPage.value = pageIndex;
+                      }
+
+                      return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           // Tombol Back
                           IconButton(
                             onPressed:
-                                controller.currentPage.value > 0
+                                controller.currentQuestion.value > 0
                                     ? () {
-                                      controller.currentPage.value--;
+                                      controller.currentQuestion.value--;
                                     }
-                                    : null, // disable kalau di page pertama
+                                    : null,
                             icon: const Icon(Icons.arrow_back_ios),
                           ),
 
-                          // Tombol nomor soal fixed
+                          // Tombol nomor soal di page saat ini
                           ...List.generate(controller.numberPerPage.value, (
                             index,
                           ) {
@@ -222,11 +325,20 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                     controller.numberPerPage.value +
                                 (index + 1);
 
+                            // Cek kalau questionNumber > jumlah soal
+                            if (questionNumber > controller.soalList.length) {
+                              return SizedBox.shrink();
+                            }
+
                             return Container(
                               margin: EdgeInsets.symmetric(horizontal: 4),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
+                                  backgroundColor:
+                                      controller.currentQuestion.value ==
+                                              questionNumber - 1
+                                          ? Colors.green.shade100
+                                          : Colors.white,
                                   foregroundColor: Colors.black,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -237,8 +349,13 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  // logika pilih soal
-                                  // controller.goToQuestion(questionNumber);
+                                  controller.currentQuestion.value =
+                                      questionNumber - 1;
+                                  controller.startQuestion(
+                                    controller.soalList[controller
+                                        .currentQuestion
+                                        .value]['id'],
+                                  );
                                 },
                                 child: Text(questionNumber.toString()),
                               ),
@@ -248,95 +365,303 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                           // Tombol Next
                           IconButton(
                             onPressed:
-                                (controller.currentPage.value + 1) *
-                                            controller.numberPerPage.value <
+                                (controller.currentQuestion.value + 1) <
                                         controller.soalList.length
                                     ? () {
-                                      controller.currentPage.value++;
+                                      controller.currentQuestion.value++;
                                     }
-                                    : null, // disable kalau sudah di page terakhir
+                                    : null,
                             icon: const Icon(Icons.arrow_forward_ios),
                           ),
                         ],
-                      ),
-                    ),
+                      );
+                    }),
                   ],
                 ),
               ),
             ),
-            Obx(
-              () => Card(
+            Obx(() {
+              // Kalau soal masih kosong -> tampilkan skeleton
+              if (controller.soalList.isEmpty) {
+                return Skeletonizer(
+                  child: Card(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Soal No.X",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Row(
+                            children: const [
+                              Icon(Icons.bookmark, color: Colors.amberAccent),
+                              Icon(Icons.flag, color: Colors.redAccent),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              // Ambil soal aktif
+              final soal =
+                  controller.soalList[controller.currentQuestion.value];
+
+              return Card(
                 color: Colors.white,
-                child: Container(
-                  padding: EdgeInsets.all(16),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
+                      // Header soal
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Soal No.1",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            "Soal No.${soal['no_soal']}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               IconButton(
                                 onPressed: () {},
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.bookmark,
                                   color: Colors.amberAccent,
                                 ),
                               ),
                               IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.flag, color: Colors.redAccent),
+                                icon: const Icon(
+                                  Icons.flag,
+                                  color: Colors.redAccent,
+                                ),
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.white,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(16),
+                                      ),
+                                    ),
+                                    context: context,
+                                    builder: (context) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 16,
+                                          right: 16,
+                                          top: 16,
+                                          bottom:
+                                              MediaQuery.of(
+                                                context,
+                                              ).viewInsets.bottom +
+                                              16,
+                                        ),
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              // Header modal
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  const Text(
+                                                    "Laporkan Soal",
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Icons.close,
+                                                    ),
+                                                    onPressed:
+                                                        () => Navigator.pop(
+                                                          context,
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const Divider(height: 1),
+                                              const SizedBox(height: 12),
+                                              Text(
+                                                "Silahkan isi form di bawah untuk melaporkan soal:",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.grey[700],
+                                                ),
+                                              ),
+                                              const SizedBox(height: 16),
+                                              TextField(
+                                                controller:
+                                                    controller
+                                                        .laporanController,
+                                                maxLines: 6,
+                                                decoration: InputDecoration(
+                                                  hintText: "Isi laporan...",
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  contentPadding:
+                                                      const EdgeInsets.all(12),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              SizedBox(
+                                                width: double.infinity,
+                                                child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.teal,
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          vertical: 14,
+                                                        ),
+                                                  ),
+                                                  onPressed: () {
+                                                    controller.sendLaporSoal(
+                                                      questionId: soal['id'],
+                                                      laporan:
+                                                          controller
+                                                              .laporanController
+                                                              .text,
+                                                    );
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text(
+                                                    "Kirim Laporan",
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
                               ),
                             ],
                           ),
                         ],
                       ),
+
+                      // Soal text
                       Container(
-                        margin: EdgeInsets.all(8),
-                        child: Text(
-                          "Soal ini berisi Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                        ),
+                        margin: const EdgeInsets.all(8),
+                        child: Html(data: soal['soal'] ?? ""),
                       ),
 
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: controller.optionList[0].length,
-                        itemBuilder: (context, index) {
-                          return SizedBox(
-                            width: double.infinity,
-                            child: ChoiceChip(
-                              label: SizedBox(
-                                width: double.infinity,
-                                child: Text(
-                                  "Opsi ${controller.optionList[0][(index + 1).toString()]}",
-                                  style: TextStyle(),
+                      // List opsi jawaban
+                      Obx(() {
+                        final selectedAnswer =
+                            controller.selectedAnswers[controller
+                                .currentQuestion
+                                .value];
+                        final options = soal['options'] as List;
+
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: options.length,
+                          itemBuilder: (context, index) {
+                            final option = options[index];
+                            return Card(
+                              color: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: const BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
                                 ),
                               ),
-                              selected: false,
-                              selectedColor: Colors.teal.withOpacity(0.1),
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(6),
+                              margin: const EdgeInsets.symmetric(vertical: 4),
+                              child: RadioListTile(
+                                value: option['id'],
+                                groupValue: selectedAnswer,
+                                onChanged: (val) {
+                                  controller.saveAnswer(
+                                    questionId: soal['id'],
+                                    optionId: option['id'],
+                                    waktuPengerjaan: controller.getWaktuSoal(
+                                      soal['id'],
+                                    ),
+                                  );
+                                  controller.selectedAnswers[controller
+                                          .currentQuestion
+                                          .value] =
+                                      val;
+                                },
+                                title: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 32,
+                                      height: 32,
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "${option['inisial']}.",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Html(
+                                        data: option['jawaban'],
+                                        style: {
+                                          "p": Style(
+                                            margin: Margins.all(0),
+                                            padding: HtmlPaddings.all(0),
+                                            fontSize: FontSize(14),
+                                            lineHeight: LineHeight.number(1.3),
+                                          ),
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              onSelected: (value) {},
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          },
+                        );
+                      }),
                     ],
                   ),
                 ),
-              ),
-            ),
+              );
+            }),
           ],
         ),
       ),
