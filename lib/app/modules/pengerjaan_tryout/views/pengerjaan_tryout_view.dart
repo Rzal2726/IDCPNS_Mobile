@@ -49,11 +49,20 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                       textConfirm: "Selesai",
                       confirmTextColor: Colors.white,
                       buttonColor: Colors.teal,
-                      onConfirm: () {
-                        Get.offNamed(
-                          "/hasil-tryout",
-                          arguments: controller.uuid.value,
-                        );
+                      onConfirm: () async {
+                        Get.back();
+                        if (controller.selectedAnswersList.isNotEmpty) {
+                          await controller.submitSoal();
+                          Get.offNamed(
+                            "/hasil-tryout",
+                            arguments: controller.uuid.value,
+                          );
+                        } else {
+                          Get.snackbar(
+                            "Error",
+                            "Tryout ini tidak bisa dikirim tanpa jawaban.",
+                          );
+                        }
                       },
                       onCancel: () {},
                       radius: 8,

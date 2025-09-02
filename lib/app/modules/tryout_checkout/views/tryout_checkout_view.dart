@@ -493,44 +493,44 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                       ),
                       SizedBox(height: 16),
                       Obx(() {
+                        final details = controller.paymentDetails;
+                        final instructions =
+                            details?['payment_details']?[0]?['instructions']
+                                as List? ??
+                            [];
+
+                        String getInstruction(int index) {
+                          if (instructions.isEmpty) return "<p>No Data</p>";
+                          if (index < 0 || index >= instructions.length)
+                            return "<p>No Instruction</p>";
+                          return instructions[index]?['instruction'] ??
+                              "<p>No Instruction</p>";
+                        }
+
                         if (controller.selectedOption.value == "ATM") {
-                          return controller.paymentDetails.isEmpty
+                          return details.isEmpty
                               ? Skeletonizer(
                                 enabled: true,
-                                child: Container(
-                                  child: Text(
-                                    "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
-                                  ),
+                                child: Text(
+                                  "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
                                 ),
                               )
-                              : Html(
-                                data:
-                                    controller
-                                        .paymentDetails['payment_details'][0]['instructions'][1]['instruction'],
-                              );
+                              : Html(data: getInstruction(1));
                         } else if (controller.selectedOption.value ==
                             "MBanking") {
-                          return controller.paymentDetails.isEmpty
+                          return details.isEmpty
                               ? Skeletonizer(
                                 enabled: true,
-                                child: Container(
-                                  child: Text(
-                                    "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial MBangking",
-                                  ),
+                                child: Text(
+                                  "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial MBanking",
                                 ),
                               )
-                              : Html(
-                                data:
-                                    controller
-                                        .paymentDetails['payment_details'][0]['instructions'][0]['instruction'],
-                              );
+                              : Html(data: getInstruction(0));
                         } else {
                           return Skeletonizer(
                             enabled: true,
-                            child: Container(
-                              child: Text(
-                                "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
-                              ),
+                            child: Text(
+                              "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
                             ),
                           );
                         }

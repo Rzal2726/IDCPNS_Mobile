@@ -190,6 +190,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                   buttonColor: Colors.teal,
                                   onConfirm: () {
                                     controller.resetTryout();
+                                    Get.back();
                                   },
                                   onCancel: () {},
                                   radius: 8,
@@ -351,7 +352,8 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                                       ),
                                                 ),
                                                 onPressed: () {
-                                                  Get.toNamed(
+                                                  Navigator.pop(context);
+                                                  Get.offNamed(
                                                     "/detail-pengerjaan-tryout",
                                                   );
                                                   controller.uuid.value =
@@ -549,18 +551,21 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
             "assets/report.svg",
             Color(0xFF00A693),
             isDone,
+            "/rapor",
           ),
           _featureButton(
             "Peringkat",
             "assets/trophy.svg",
             Color(0xFFFFA800),
             isDone,
+            "/peringkat-tryout",
           ),
           _featureButton(
             "Pembahasan",
             "assets/book.svg",
             Color(0xFF00A8C5),
             isDone,
+            "pembahasan-tryout",
           ),
         ],
       ),
@@ -572,12 +577,13 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
     String assetPath,
     Color activeColor,
     bool isEnabled,
+    String route,
   ) {
     return InkWell(
       onTap:
           isEnabled
               ? () {
-                /* Navigation logic */
+                Get.toNamed(route, arguments: controller.tryOutSaya['uuid']);
               }
               : null,
       borderRadius: BorderRadius.circular(12),

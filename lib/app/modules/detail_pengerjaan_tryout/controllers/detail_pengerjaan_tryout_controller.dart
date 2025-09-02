@@ -1,12 +1,15 @@
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/detail_tryout_saya/controllers/detail_tryout_saya_controller.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class DetailPengerjaanTryoutController extends GetxController {
   //TODO: Implement DetailPengerjaanTryoutController
 
   final count = 0.obs;
   final prevController = Get.find<DetailTryoutSayaController>();
+  final restClient = RestClient();
   RxList<String> instructions =
       [
         "Pastikan koneksi internet stabil.",
@@ -39,23 +42,13 @@ class DetailPengerjaanTryoutController extends GetxController {
   }
 
   Future<void> getDetailTryout() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/me/detail/${prevController.uuid}',
+    final response = await restClient.getData(
+      url: baseUrl + apiGetDetailTryoutSaya + prevController.uuid.value,
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = Map<String, dynamic>.from(
-        response.body['data'],
-      );
-      tryOutSaya.assignAll(data);
-      print('Data: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    final Map<String, dynamic> data = Map<String, dynamic>.from(
+      response['data'],
+    );
+    tryOutSaya.assignAll(data);
   }
 }
