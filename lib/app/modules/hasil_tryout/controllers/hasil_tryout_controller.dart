@@ -1,11 +1,14 @@
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class HasilTryoutController extends GetxController {
   //TODO: Implement HasilTryoutController
 
   final count = 0.obs;
   late String uuid;
+  final restClient = RestClient();
   RxMap<String, dynamic> nilaiChart = <String, dynamic>{}.obs;
   RxMap<String, dynamic> tryOutSaya = <String, dynamic>{}.obs;
   RxList<Map<String, dynamic>> statistic = <Map<String, dynamic>>[].obs;
@@ -29,52 +32,29 @@ class HasilTryoutController extends GetxController {
     uuid = await Get.arguments;
     await getDetailTryout();
     await getNilai();
-    initStatistic();
   }
 
   Future<void> getNilai() async {
     final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/nilai/detail/${uuid}',
+    final response = await restClient.getData(
+      url: baseUrl + apiGetNilaiSaya + uuid,
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = Map<String, dynamic>.from(
-        response.body['data'],
-      );
-      nilaiChart.assignAll(data);
-      print('Data Nilai: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    final Map<String, dynamic> data = Map<String, dynamic>.from(
+      response['data'],
+    );
+    nilaiChart.assignAll(data);
   }
 
   Future<void> getDetailTryout() async {
     final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/me/detail/${uuid}',
+    final response = await restClient.getData(
+      url: baseUrl + apiGetDetailTryoutSaya + uuid,
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = Map<String, dynamic>.from(
-        response.body['data'],
-      );
-      tryOutSaya.assignAll(data);
-      print('Data Detail: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
-  }
-
-  void initStatistic() {
-    statistic.assignAll(nilaiChart['statistic']);
+    final Map<String, dynamic> data = Map<String, dynamic>.from(
+      response['data'],
+    );
+    tryOutSaya.assignAll(data);
   }
 }

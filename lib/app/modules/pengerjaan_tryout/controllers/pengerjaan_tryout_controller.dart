@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class PengerjaanTryoutController extends GetxController {
   //TODO: Implement PengerjaanTryoutController
 
   late final String tryoutUuid;
   final laporanController = TextEditingController();
+  final restClient = RestClient();
   // total waktu dalam detik
   late int totalSeconds;
 
@@ -66,113 +69,66 @@ class PengerjaanTryoutController extends GetxController {
   }
 
   Future<void> getDetailTryout() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/me/detail/${tryoutUuid}',
+    final response = await restClient.getData(
+      url: baseUrl + apiGetDetailTryoutSaya + tryoutUuid,
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = Map<String, dynamic>.from(
-        response.body['data'],
-      );
-      tryoutData.assignAll(data);
-      print('Data Detail: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    final Map<String, dynamic> data = Map<String, dynamic>.from(
+      response['data'],
+    );
+    tryoutData.assignAll(data);
   }
 
   Future<void> getTryoutSoal() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/questions/${tryoutUuid}',
+    final response = await restClient.getData(
+      url: baseUrl + apiGetQuestions + tryoutUuid,
     );
 
-    if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
-        response.body['data'],
-      );
-      soalList.assignAll(data);
-      startQuestion(soalList[currentQuestion.value]['id']);
-      print('Data Detail: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    soalList.assignAll(data);
+    startQuestion(soalList[currentQuestion.value]['id']);
   }
 
   Future<void> sendLaporSoal({
     required int questionId,
     required String laporan,
   }) async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.post(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/quiz/lapor/soal',
-      {"tryout_question_id": questionId.toString(), "laporan": laporan},
+    final payload = {
+      "tryout_question_id": questionId.toString(),
+      "laporan": laporan,
+    };
+    final response = await restClient.postData(
+      url: baseUrl + apiLaporSoal,
+      payload: payload,
     );
-
-    if (response.statusCode == 200) {
-      print('Laporan: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
   }
 
   Future<void> submitSoal() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.post(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/quiz/submit',
-      {
-        "tryout_transaction_id": tryoutData['uuid'],
-        "instansi_id": instansiId.value,
-        "jabatan_id": jabatanId,
-        "items": selectedAnswersList,
-      },
+    final payload = {
+      "tryout_transaction_id": tryoutData['uuid'],
+      "instansi_id": instansiId.value,
+      "jabatan_id": jabatanId.value,
+      "items": selectedAnswersList,
+    };
+    print(payload);
+    final response = await restClient.postData(
+      url: baseUrl + apiSubmitSoal,
+      payload: payload,
     );
-
-    if (response.statusCode == 200) {
-      print('Laporan: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    print(response);
   }
 
   void fetchServerTime() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/general/server-time',
-    );
+    final response = await restClient.getData(url: baseUrl + apiGetServerTime);
 
-    if (response.statusCode == 200) {
-      int timestampInMilliseconds =
-          response.body['data']; // Example timestamp in milliseconds
-      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-        timestampInMilliseconds * 1000 + (86400 * 1000),
-      );
-      timeStamp.value = dateTime.toString();
-      print('Data: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    int timestampInMilliseconds =
+        response.body['data']; // Example timestamp in milliseconds
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+      timestampInMilliseconds * 1000 + (86400 * 1000),
+    );
+    timeStamp.value = dateTime.toString();
   }
 
   void saveAnswer({

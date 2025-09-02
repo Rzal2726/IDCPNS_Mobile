@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class TryoutSayaController extends GetxController {
   //TODO: Implement TryoutSayaController
+  final restClient = RestClient();
   RxMap<String, bool> isLoading = <String, bool>{"list": false}.obs;
   RxMap<String, Color> categoryColors =
       <String, Color>{"Premium": Colors.orange, "Gratis": Colors.teal}.obs;
@@ -70,60 +73,39 @@ class TryoutSayaController extends GetxController {
 
   Future<void> fetchTryoutSaya() async {
     isLoading['list'] = true;
-    final client = Get.find<RestClientProvider>();
-    final response = await client.post(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/me/list',
-      {
-        "perpage": "15",
-        "isdone": int.tryParse(isDone.value),
-        "islulus": int.tryParse(isLulus.value),
-        "menu_category_id": int.tryParse(kategoriId.value),
-        "search": search.value,
-      },
+    final payload = {
+      "perpage": "15",
+      "isdone": int.tryParse(isDone.value),
+      "islulus": int.tryParse(isLulus.value),
+      "menu_category_id": int.tryParse(kategoriId.value),
+      "search": search.value,
+    };
+    final response = await restClient.postData(
+      url: baseUrl + apiGetTryoutSaya,
+      payload: payload,
     );
+    ;
 
-    if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
-        response.body['data']['data'],
-      );
-      listData.assignAll(data);
-      print("IsDone: ${isDone.value}");
-      print("IsLulus: ${isLulus.value}");
-      print("kategoriId: ${kategoriId.value}");
-      print('Data: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data']['data'],
+    );
+    listData.assignAll(data);
     isLoading['list'] = false;
   }
 
   void fetchKategori() async {
     final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/menu/category',
-    );
 
-    if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
-        response.body['data'],
-      );
-      for (var item in data) {
-        final exists = listCategory.any((e) => e['id'] == item['id']);
-        if (!exists) {
-          listCategory.add(item);
-        }
+    final response = await restClient.getData(url: baseUrl + apiGetCategory);
+
+    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    for (var item in data) {
+      final exists = listCategory.any((e) => e['id'] == item['id']);
+      if (!exists) {
+        listCategory.add(item);
       }
-      print('Data Kategori: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
     }
   }
 }

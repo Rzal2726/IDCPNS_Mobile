@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/tryout_saya/controllers/tryout_saya_controller.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class DetailTryoutSayaController extends GetxController {
   //TODO: Implement DetailTryoutSayaController
+  final restClient = RestClient();
   late String lateUuid;
   final count = 0.obs;
   RxMap<String, dynamic> tryOutSaya = <String, dynamic>{}.obs;
@@ -40,147 +43,81 @@ class DetailTryoutSayaController extends GetxController {
 
     await getDetailTryout();
     await getNilai();
-    await getStatsNilai();
+    // await getStatsNilai();
     await getServerTime();
     await getInstansi();
     await getJabatan();
   }
 
   Future<void> getDetailTryout() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/me/detail/${lateUuid}',
+    final response = await restClient.getData(
+      url: baseUrl + apiGetDetailTryoutSaya + lateUuid,
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = Map<String, dynamic>.from(
-        response.body['data'],
-      );
-      tryOutSaya.assignAll(data);
-      print('Data Detail: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    final Map<String, dynamic> data = Map<String, dynamic>.from(
+      response['data'],
+    );
+    tryOutSaya.assignAll(data);
   }
 
   Future<void> getNilai() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/nilai/detail/${lateUuid}',
+    final response = await restClient.getData(
+      url: baseUrl + apiGetNilaiSaya + lateUuid,
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = Map<String, dynamic>.from(
-        response.body['data'],
-      );
-      nilaiChart.assignAll(data);
-      print('Data Nilai: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    final Map<String, dynamic> data = Map<String, dynamic>.from(
+      response['data'],
+    );
+    nilaiChart.assignAll(data);
   }
 
   Future<void> getStatsNilai() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/waktu/detail/${lateUuid}',
+    final response = await restClient.getData(
+      url: baseUrl + apiGetNilaiDetail + lateUuid,
     );
-
-    if (response.statusCode == 200) {
-      print('Data Stat Nilai: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
   }
 
   Future<void> getServerTime() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/general/server-time',
-    );
-
-    if (response.statusCode == 200) {
-      print('Data Server Time: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    final response = await restClient.getData(url: baseUrl + apiGetServerTime);
   }
 
   Future<void> getInstansi() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/general/instansi/${tryOutSaya['tryout']['menu_category_id']}',
+    final response = await restClient.getData(
+      url:
+          baseUrl +
+          apiGetInstansi +
+          tryOutSaya['tryout']['menu_category_id'].toString(),
     );
 
-    if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
-        response.body['data'],
-      );
-      listInstansi.assignAll(data);
-      print('Data: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    listInstansi.assignAll(data);
   }
 
   Future<void> getJabatan() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/general/jabatan/${tryOutSaya['tryout']['menu_category_id']}',
+    final response = await restClient.getData(
+      url:
+          baseUrl +
+          apiGetJabatan +
+          tryOutSaya['tryout']['menu_category_id'].toString(),
     );
 
-    if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
-        response.body['data'],
-      );
-      listJabatan.assignAll(data);
-      print('Data: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    listJabatan.assignAll(data);
   }
 
   Future<void> resetTryout() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.post(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/quiz/reset/',
-      {"tryout_transaction_id": lateUuid},
+    final payload = {"tryout_transaction_id": lateUuid};
+
+    final response = await restClient.postData(
+      url: baseUrl + apiResetTryout,
+      payload: payload,
     );
 
-    if (response.statusCode == 200) {
-      initTryoutSaya();
-      print('Data Detail: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    await getDetailTryout();
   }
 
   String hitungMasaAktif(String tanggal) {

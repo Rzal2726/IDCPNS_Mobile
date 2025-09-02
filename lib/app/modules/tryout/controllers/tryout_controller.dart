@@ -3,9 +3,12 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
 
 class TryoutController extends GetxController {
   //TODO: Implement TryoutController
+  final restClient = RestClient();
 
   RxList<String> options = ["Semua", "CPNS", "BUMN", "Kedinasan", "PPPK"].obs;
   RxMap<String, dynamic> optionsId =
@@ -61,26 +64,14 @@ class TryoutController extends GetxController {
 
   void fetchEventsTryout() async {
     loading['event'] = true;
+    final response = await restClient.getData(url: baseUrl + apiGetTryoutEvent);
 
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/event',
+    final List<Map<String, dynamic>> paket = List<Map<String, dynamic>>.from(
+      response['data'],
     );
-
-    if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> paket = List<Map<String, dynamic>>.from(
-        response.body['data'],
-      );
-      eventBaseTryout.assignAll(paket);
-      print('Data: ${response.body['data']}');
-      showEventTryout();
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    eventBaseTryout.assignAll(paket);
+    print('Data: ${response['data']}');
+    showEventTryout();
     loading['event'] = false;
   }
 
@@ -115,30 +106,25 @@ class TryoutController extends GetxController {
       isLoading.value = true;
       loading['paket'] = true;
       final client = Get.find<RestClientProvider>();
-      final response = await client.post(
-        '/tryout/formasi?page=${page.toString()}',
-        {
-          "perpage": perPage.value,
-          "menu_category_id": menuCategory,
-          "submenu_category_id": subMenuCategory,
-          "search": search,
-        },
-        headers: {
-          "Authorization":
-              "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3", // ambil dari storage
-        },
+      final payload = {
+        "perpage": perPage.value,
+        "menu_category_id": menuCategory,
+        "submenu_category_id": subMenuCategory,
+        "search": search,
+      };
+
+      final response = await restClient.postData(
+        url: baseUrl + apiGetTryoutPaket + '?page=${page.toString()}',
+        payload: payload,
       );
 
-      if (response.statusCode == 200 && response.body != null) {
-        final List<Map<String, dynamic>> paket =
-            List<Map<String, dynamic>>.from(response.body['data']['data']);
-        paketTryout.assignAll(paket);
-        totalPaket.value = response.body['data']['total'];
-        totalPage.value = (totalPaket.value / perPage.value).toInt();
-        currentPage.value = response.body['data']['current_page'];
-      } else {
-        Get.snackbar("Error", response.statusText ?? "Gagal ambil data");
-      }
+      final List<Map<String, dynamic>> paket = List<Map<String, dynamic>>.from(
+        response['data']['data'],
+      );
+      paketTryout.assignAll(paket);
+      totalPaket.value = response['data']['total'];
+      totalPage.value = (totalPaket.value / perPage.value).toInt();
+      currentPage.value = response['data']['current_page'];
     } catch (e) {
       Get.snackbar("Error", e.toString());
     } finally {

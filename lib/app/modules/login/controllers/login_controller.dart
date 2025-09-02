@@ -51,7 +51,7 @@ class LoginController extends GetxController {
       emailController.clear();
       passwordController.clear();
 
-      Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
+      Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
     } catch (e) {
       Get.snackbar("Error", "Email atau Password invalid.");
       debugPrint("Unexpected error: $e");

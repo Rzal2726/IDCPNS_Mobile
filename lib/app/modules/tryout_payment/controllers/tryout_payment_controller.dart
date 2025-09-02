@@ -1,14 +1,17 @@
 import 'package:get/get.dart';
 import 'package:get_cli/common/utils/json_serialize/json_ast/parse.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/detail_tryout/controllers/detail_tryout_controller.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
 
 class TryoutPaymentController extends GetxController {
   //TODO: Implement TryoutPaymentController
 
   final prevController = Get.find<DetailTryoutController>();
+  final restClient = RestClient();
 
   RxMap<String, dynamic> selectedPaymentMethod = <String, dynamic>{}.obs;
   RxMap<String, dynamic> transactionData = <String, dynamic>{}.obs;
@@ -76,94 +79,54 @@ class TryoutPaymentController extends GetxController {
 
   Future<void> fetchDetailTryout() async {
     try {
-      final client = Get.find<RestClientProvider>();
-      final response = await client.get(
-        headers: {
-          "Authorization":
-              "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-        },
-        '/tryout/formasi/${prevController.selectedUUid.value}',
+      restClient.getData(
+        url:
+            baseUrl +
+            apiGetDetailTryoutPaket +
+            prevController.selectedUUid.value,
+      );
+      final response = await restClient.getData(
+        url:
+            baseUrl +
+            apiGetDetailTryoutPaket +
+            prevController.selectedUUid.value,
       );
 
-      if (response.statusCode == 200) {
-        print(response.body);
-        print("uuid : ${prevController.selectedUUid.value}");
-        final Map<String, dynamic> paket = Map<String, dynamic>.from(
-          response.body['data'],
-        );
-        dataTryout.assignAll(paket);
-        selectedItems.add(paket);
-        harga.value += paket['harga_fix'];
-        initHarga();
-      } else {
-        print('Error: ${response.statusText}');
-      }
+      print("uuid : ${prevController.selectedUUid.value}");
+      final Map<String, dynamic> paket = Map<String, dynamic>.from(
+        response['data'],
+      );
+      dataTryout.assignAll(paket);
+      selectedItems.add(paket);
+      harga.value += paket['harga_fix'];
+      initHarga();
     } catch (e) {
     } finally {}
   }
 
   Future<void> fetchDetailTryoutEvent() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/event/${prevController.selectedUUid.value}',
+    final response = await restClient.getData(
+      url:
+          baseUrl + apiGetDetailTryoutEvent + prevController.selectedUUid.value,
     );
-
-    if (response.statusCode == 200) {
-      print('Data: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
   }
 
   Future<void> fetchDetailTryoutOther() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.post(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/other-formasi',
-      {},
+    final response = await restClient.postData(
+      url: baseUrl + apiGetOtherTryout,
     );
 
-    if (response.statusCode == 200) {
-      otherTryout.assignAll(
-        List<Map<String, dynamic>>.from(response.body['data']),
-      );
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    otherTryout.assignAll(List<Map<String, dynamic>>.from(response['data']));
   }
 
   Future<void> fetchListPayment() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.get(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/transaction/payment-type/list',
+    final response = await restClient.getData(url: baseUrl + apiGetPaymentList);
+
+    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
     );
-
-    if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
-        response.body['data'],
-      );
-      paymentMethods.assignAll(data);
-      await loadPaymentMethod(data);
-
-      print("Payment");
-      print('Data: ${response.body}');
-      print('Data: ${virtualAccount}');
-      print('Data: ${EWallet}');
-      print('Data: ${QR}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    await loadPaymentMethod(data);
+    paymentMethods.assignAll(data);
   }
 
   Future<void> loadPaymentMethod(List data) async {
@@ -227,62 +190,44 @@ class TryoutPaymentController extends GetxController {
   }
 
   void applyCode(String code) async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.post(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/tryout/voucher/apply',
-      {"kode_promo": code, "amount": "100000"},
+    final payload = {"kode_promo": code, "amount": totalHarga.toString()};
+    final response = await restClient.postData(
+      url: baseUrl + apiApplyVoucher,
+      payload: payload,
     );
 
-    if (response.statusCode == 200) {
-      diskon.value = double.parse(response.body['data']['nominal'].toString());
-      promoCode.value = code;
-      initHarga();
-      print('Data: ${response.body}');
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    diskon.value = double.parse(response['data']['nominal'].toString());
+    promoCode.value = code;
+    initHarga();
   }
 
   void createPayment() async {
-    final client = Get.find<RestClientProvider>();
-    final response = await client.post(
-      headers: {
-        "Authorization":
-            "Bearer 18|V9PnP29RzhtFCKwwbb1NLFUliZ9YLK9PiFDCa5Ir9f6c4eb3",
-      },
-      '/transaction/create-payment',
-      {
-        "type": "tryout",
-        "total_amount": totalHarga.value,
-        "amount_diskon": diskon.value,
-        "description": dataTryout['formasi'],
-        "bundling": true,
-        "tryout_formasi_id": dataTryout['id'],
-        "kode_promo": promoCode.value,
-        "items": itemsId,
-        "source": "",
-        "useBalance": false,
-        "payment_method_id": selectedPaymentMethod['id'],
-        "payment_method": selectedPaymentMethod['code'],
-        "payment_type": selectedPaymentType.value,
-        "mobile_number": ovoNumber.value,
-      },
+    final payload = {
+      "type": "tryout",
+      "total_amount": totalHarga.value,
+      "amount_diskon": diskon.value,
+      "description": dataTryout['formasi'],
+      "bundling": true,
+      "tryout_formasi_id": dataTryout['id'],
+      "kode_promo": promoCode.value,
+      "items": itemsId,
+      "source": "",
+      "useBalance": false,
+      "payment_method_id": selectedPaymentMethod['id'],
+      "payment_method": selectedPaymentMethod['code'],
+      "payment_type": selectedPaymentType.value,
+      "mobile_number": ovoNumber.value,
+    };
+    final response = await restClient.postData(
+      url: baseUrl + apiCreatePayment,
+      payload: payload,
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = Map<String, dynamic>.from(
-        response.body['data'],
-      );
-      transactionData.assignAll(data);
-      print('Data: ${response.body}');
-      Get.toNamed("/tryout-checkout");
-    } else {
-      print('Error: ${response.statusText}');
-    }
+    final Map<String, dynamic> data = Map<String, dynamic>.from(
+      response['data'],
+    );
+    transactionData.assignAll(data);
+    Get.offNamed("/tryout-checkout");
   }
 
   void countAdmin() {
