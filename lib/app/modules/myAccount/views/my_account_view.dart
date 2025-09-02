@@ -160,24 +160,28 @@ class MyAccountView extends GetView<MyAccountController> {
                     value:
                         controller.jenisKelamin.value.isEmpty
                             ? null
-                            : controller.jenisKelamin.value,
+                            : controller
+                                .jenisKelamin
+                                .value, // tetap pakai "L" atau "P"
                     decoration: InputDecoration(
                       labelText: "Jenis Kelamin",
                       border: OutlineInputBorder(),
                       isDense: true,
                     ),
-                    items: [
-                      DropdownMenuItem(
-                        value: "Laki-laki",
-                        child: Text("Laki-laki"),
-                      ),
-                      DropdownMenuItem(
-                        value: "Perempuan",
-                        child: Text("Perempuan"),
-                      ),
-                    ],
-                    onChanged:
-                        (value) => controller.jenisKelamin.value = value ?? '',
+                    items:
+                        controller.jenisKelaminMap.entries
+                            .map(
+                              (entry) => DropdownMenuItem<String>(
+                                value: entry.key, // "L" / "P"
+                                child: Text(
+                                  entry.value,
+                                ), // "Laki-laki" / "Perempuan"
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (value) {
+                      controller.jenisKelamin.value = value ?? '';
+                    },
                   ),
                 ),
                 SizedBox(height: 30),
@@ -259,10 +263,7 @@ class MyAccountView extends GetView<MyAccountController> {
                 // Preferensi Belajar
                 Obx(
                   () => DropdownButtonFormField<String>(
-                    value:
-                        controller.preferensiBelajar.value.isEmpty
-                            ? null
-                            : controller.preferensiBelajar.value,
+                    value: controller.referensi.value,
                     decoration: InputDecoration(
                       labelText: "Preferensi Belajar",
                       border: OutlineInputBorder(),
@@ -273,8 +274,7 @@ class MyAccountView extends GetView<MyAccountController> {
                       DropdownMenuItem(value: "CPNS", child: Text("CPNS")),
                     ],
                     onChanged:
-                        (value) =>
-                            controller.preferensiBelajar.value = value ?? '',
+                        (value) => controller.referensi.value = value ?? '',
                   ),
                 ),
                 SizedBox(height: 20),

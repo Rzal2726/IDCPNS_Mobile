@@ -1,5 +1,5 @@
-const String baseUrl = "https://idcpns.com/api/";
-// const String baseUrl = "https://enha.idcpns.com/api/";
+// const String baseUrl = "https://idcpns.com/api/";
+const String baseUrl = "https://enha.idcpns.com/api/";
 
 const String apiLogin = "v1/auth/login";
 const String apiRegister = "v1/auth/register";
@@ -17,3 +17,12 @@ const String apiAveraging = "averaging";
 const String apiUploadCSV = "upload-csv/";
 const String apiDeleteAverageDetail = "average-detail/";
 const String apiEditAverageDetail = "average-detail/";
+const String apiGetKategori = "v1/general/menu_kategori";
+const String apiGetBannerHighlight = "v1/home/banner";
+const String apiGetRekomendasi = "v1/home/category/recommendation";
+const String apiGetBimbel = "v1/bimbel/parent/list-guest";
+const String apiBimbelReminder = "v1/home/bimbel-reminder";
+const String apiGetProvince = "v1/general/provinsi";
+const String apiGetReference = "v1/general/referensi";
+const String apiGetPendidikan = "v1/general/pendidikan";
+const String apiGetKabup = "v1/general/kabupaten";

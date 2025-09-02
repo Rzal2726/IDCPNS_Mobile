@@ -19,11 +19,18 @@ class MyAccountController extends GetxController {
   var jenisKelamin = ''.obs;
   var provinsi = ''.obs;
   var sumberInfo = ''.obs;
-  var preferensiBelajar = ''.obs;
+  RxString referensi = ''.obs;
+  RxList provinceData = [].obs;
+  RxList pendidikanData = [].obs;
+  RxList kabupData = [].obs;
+  RxList referensiData = [].obs;
 
   @override
   void onInit() {
     getUser();
+    getPendidikan();
+    getProvince();
+    getRreferensi();
     super.onInit();
   }
 
@@ -53,7 +60,6 @@ class MyAccountController extends GetxController {
     jenisKelamin.value = "Laki-laki";
     provinsi.value = "JAWA BARAT";
     sumberInfo.value = "Instagram";
-    preferensiBelajar.value = "CPNS";
   }
 
   void simpanData() {
@@ -68,7 +74,6 @@ class MyAccountController extends GetxController {
     print("Jenis Kelamin: ${jenisKelamin.value}");
     print("Provinsi: ${provinsi.value}");
     print("Darimana tahu: ${sumberInfo.value}");
-    print("Preferensi: ${preferensiBelajar.value}");
   }
 
   Future<void> getUser() async {
@@ -84,16 +89,117 @@ class MyAccountController extends GetxController {
         hpController.text = data["no_hp"];
         waController.text = data["no_wa"];
         kabupatenController.text = "Bandung";
-        pendidikanController.text = "S1";
+        await getPendidikan(id: data['pendidikan_id'].toString());
+        await getRreferensi(id: data['referensi_id'].toString());
+        await getProvince(id: data['provinsi_id'].toString());
 
         tanggalLahir.value = data["tanggal_lahir"];
         jenisKelamin.value = data["jenis_kelamin"];
-        provinsi.value = "JAWA BARAT";
         sumberInfo.value = "Instagram";
-        preferensiBelajar.value = "CPNS";
       }
     } catch (e) {
       print("Error polling email verification: $e");
     }
   }
+
+  Future<void> getPendidikan({String? id}) async {
+    try {
+      final url = await baseUrl + apiGetPendidikan;
+
+      final result = await _restClient.getData(url: url);
+      if (result["status"] == "success") {
+        var data = result['data'];
+
+        pendidikanData.value = data;
+
+        // Kalau id dikirim, cari data yang sesuai
+        if (id != null && id.isNotEmpty) {
+          final match = data.firstWhere(
+            (item) => item['id'].toString() == id,
+            orElse: () => null,
+          );
+
+          if (match != null) {
+            print("sadasd ${match.toString()}");
+            pendidikanController.text = match['pendidikan'] ?? '';
+          }
+        }
+      }
+    } catch (e) {
+      print("xx verification: $e");
+    }
+  }
+
+  Future<void> getProvince({String? id}) async {
+    try {
+      final url = await baseUrl + apiGetProvince;
+
+      final result = await _restClient.getData(url: url);
+      print("Result Province: ${result.toString()}");
+
+      if (result["status"] == "success") {
+        var data = result['data'];
+        provinceData.value = data;
+
+        // Kalau ada id, cari data yg sesuai
+        if (id != null) {
+          final found = data.firstWhere(
+            (item) => item['id'].toString() == id,
+            orElse: () => null,
+          );
+
+          if (found != null) {
+            provinsi.value = found['nama'] ?? "";
+          }
+        }
+      }
+    } catch (e) {
+      print("Error getProvince: $e");
+    }
+  }
+
+  Future<void> getRreferensi({String? id}) async {
+    try {
+      final url = await baseUrl + apiGetReference;
+
+      final result = await _restClient.getData(url: url);
+      print("Result Referensi: ${result.toString()}");
+
+      if (result["status"] == "success") {
+        var data = result['data'];
+        referensiData.value = data;
+
+        // Kalau ada id, cari data yg sesuai
+        if (id != null) {
+          final found = data.firstWhere(
+            (item) => item['id'].toString() == id,
+            orElse: () => null,
+          );
+
+          if (found != null) {
+            // preferensiBelajar.value = found['nama'] ?? "";
+            referensi.value = found['nama'] ?? "";
+          }
+        }
+      }
+    } catch (e) {
+      print("Error getRreferensi: $e");
+    }
+  }
+
+  Future<void> getKabupaten({required id}) async {
+    try {
+      final url = await baseUrl + apiGetKabup + "/" + id;
+
+      final result = await _restClient.getData(url: url);
+      if (result["status"] == "success") {
+        var data = result['data'];
+        kabupData.value = data;
+      }
+    } catch (e) {
+      print("Error polling email verification: $e");
+    }
+  }
+
+  Map<String, String> jenisKelaminMap = {"L": "Laki-laki", "P": "Perempuan"};
 }

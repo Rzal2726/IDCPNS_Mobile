@@ -1,7 +1,11 @@
+import 'dart:ffi' as ffi;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:get_cli/common/utils/json_serialize/json_ast/parse.dart';
+import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 
@@ -203,19 +207,25 @@ class BimbelView extends GetView<BimbelController> {
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: controller.paketList.length,
+                  itemCount: controller.bimbelData.length,
                   itemBuilder: (context, index) {
-                    final paket = controller.paketList[index];
+                    final paket = controller.bimbelData[index];
                     // sesuaikan keys ('image','title','hargaFull','hargaDiskon','kategori') dengan datamu
                     return _cardPaketBimbel(
-                      image: paket['image'] ?? '',
-                      title: paket['title'] ?? '',
-                      hargaFull: paket['hargaFull'] ?? '',
-                      hargaDiskon: paket['hargaDiskon'] ?? '',
-                      kategori: paket['kategori'] ?? '',
+                      image: paket['gambar'] ?? '',
+                      title: paket['name'] ?? '',
+                      hargaFixTertinggi:
+                          paket['price_list']['harga_fix_tertinggi'] ?? '',
+                      hargaTertinggi:
+                          paket['price_list']['harga_tertinggi'] ?? '',
+                      hargaTerendah:
+                          paket['price_list']['harga_terendah'] ?? '',
+                      hargaFixTerendah:
+                          paket['price_list']['harga_fix_terendah'] ?? '',
+                      kategori: paket['menu_category']['menu'] ?? '',
                       color: Colors.teal,
                       onTap: () {
-                        controller.selectedUuid.value = paket['uuid'] ?? '';
+                        // controller.selectedUuid.value = paket['uuid'] ?? '';
                         Get.toNamed(Routes.DETAIL_BIMBEL); // sesuaikan rute
                       },
                     );
@@ -235,8 +245,10 @@ class BimbelView extends GetView<BimbelController> {
   Widget _cardPaketBimbel({
     required String image,
     required String title,
-    required String hargaFull,
-    required String hargaDiskon,
+    required int hargaTertinggi,
+    required int hargaFixTertinggi,
+    required int hargaTerendah,
+    required int hargaFixTerendah,
     required String kategori,
     required Color color,
     required VoidCallback onTap,
@@ -290,7 +302,7 @@ class BimbelView extends GetView<BimbelController> {
 
                     SizedBox(height: 10),
                     Text(
-                      hargaFull,
+                      "${formatRupiah(hargaTerendah)} - ${formatRupiah(hargaTertinggi)}",
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,
@@ -299,9 +311,9 @@ class BimbelView extends GetView<BimbelController> {
                     ),
 
                     Text(
-                      hargaDiskon,
+                      "${formatRupiah(hargaFixTerendah)} - ${formatRupiah(hargaFixTertinggi)}",
                       style: TextStyle(
-                        color: Colors.teal,
+                        color: Colors.black,
                         fontWeight: FontWeight.w900,
                         fontSize: 14,
                       ),
