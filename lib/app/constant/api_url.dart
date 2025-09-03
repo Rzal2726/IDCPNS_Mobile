@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 // const String baseUrl = "https://idcpns.com/api/";
 const String baseUrl = "https://enha.idcpns.com/api/";
-=======
-const String baseUrl = "https://enha.idcpns.com/api/";
-// const String baseUrl = "https://enha.idcpns.com/api/";
->>>>>>> a8fe1000bd16112acd9060c3d1f9244a0a390283
 
 const String apiLogin = "v1/auth/login";
 const String apiRegister = "v1/auth/register";
@@ -22,7 +17,6 @@ const String apiAveraging = "averaging";
 const String apiUploadCSV = "upload-csv/";
 const String apiDeleteAverageDetail = "average-detail/";
 const String apiEditAverageDetail = "average-detail/";
-<<<<<<< HEAD
 const String apiGetKategori = "v1/general/menu_kategori";
 const String apiGetBannerHighlight = "v1/home/banner";
 const String apiGetRekomendasi = "v1/home/category/recommendation";
@@ -32,7 +26,6 @@ const String apiGetProvince = "v1/general/provinsi";
 const String apiGetReference = "v1/general/referensi";
 const String apiGetPendidikan = "v1/general/pendidikan";
 const String apiGetKabup = "v1/general/kabupaten";
-=======
 const String apiGetTryoutEvent = "v1/tryout/event";
 const String apiGetTryoutPaket = "v1/tryout/formasi";
 const String apiGetDetailTryoutPaket = "v1/tryout/formasi/";
@@ -62,4 +55,8 @@ const String apiRaporDetail = "v1/tryout/raport/detail/";
 const String apiRankingTryout = "v1/tryout/rangking/";
 const String apiTryoutPembahasan = "v1/tryout/pembahasan/";
 const String apiCekPlatinumExpired = "v1/account/user/level/expired";
->>>>>>> a8fe1000bd16112acd9060c3d1f9244a0a390283
+
+const String apiGetDetailBimbel = "v1/bimbel/parent/detail";
+const String apiGetwhislist = "v1/account/user/wishlist";
+const String apiAddWhistlist = "v1/account/user/wishlist/add";
+const String apiDeleteWhislist = "v1/account/user/wishlist/delete";
