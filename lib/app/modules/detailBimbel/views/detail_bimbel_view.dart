@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 
@@ -51,162 +53,157 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: AppStyle.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Gambar dummy
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  'https://placehold.co/600x600/png',
-                  width: double.infinity,
-                  height: 300,
-                  fit: BoxFit.cover,
+        child: Obx(() {
+          var data = controller.datalBimbelData;
+          return SingleChildScrollView(
+            padding: AppStyle.screenPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Gambar dummy
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    '${data['gambar']}',
+                    width: double.infinity,
+                    height: 300,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              SizedBox(height: 16),
+                SizedBox(height: 16),
 
-              // Judul
-              Text(
-                'Bimbel SKD CPNS 2024 Batch 12',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              SizedBox(height: 8),
+                // Judul
+                Text(
+                  '${data['name']}',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 8),
 
-              // Rating dan peserta
-              Row(
-                children: [
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  SizedBox(width: 4),
-                  Text('5', style: TextStyle(fontWeight: FontWeight.w700)),
-                  SizedBox(width: 8),
-                  Container(
-                    width: 5,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Icon(Icons.people, color: Colors.amber, size: 16),
-                  SizedBox(width: 4),
-                  Text(
-                    '100+ Peserta Telah Bergabung',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-              SizedBox(height: 25),
-              // Jenis Paket
-              Text(
-                'Jenis Paket',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Obx(
-                () => Column(
+                // Rating dan peserta
+                Row(
                   children: [
-                    _buildRadioOption(
-                      'Reguler',
-                      'Rp.349.000',
-                      'Rp.199.000',
-                      controller,
+                    Icon(Icons.star, color: Colors.amber, size: 16),
+                    SizedBox(width: 4),
+                    Text(
+                      '${data['review']}',
+                      style: TextStyle(fontWeight: FontWeight.w700),
                     ),
-                    _buildRadioOption(
-                      'Extended',
-                      'Rp.399.000',
-                      'Rp.239.000',
-                      controller,
+                    SizedBox(width: 8),
+                    Container(
+                      width: 5,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                    _buildRadioOption(
-                      'Extended + Platinum Zone',
-                      'Rp.498.000',
-                      'Rp.289.000',
-                      controller,
+                    SizedBox(width: 8),
+                    Icon(Icons.people, color: Colors.amber, size: 16),
+                    SizedBox(width: 4),
+                    Text(
+                      '${data['jumlah_dibeli']} Peserta Telah Bergabung',
+                      style: TextStyle(fontWeight: FontWeight.w700),
                     ),
                   ],
                 ),
-              ),
-              SizedBox(height: 16),
-
-              // Tombol
-              OutlinedButton.icon(
-                icon: Icon(Icons.favorite_border, color: Colors.teal),
-                label: Text(
-                  'Tambahkan ke Wishlist +',
-                  style: TextStyle(
-                    color: Colors.teal,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
+                SizedBox(height: 25),
+                // Jenis Paket
+                Text(
+                  'Jenis Paket',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Obx(
+                  () => Column(
+                    children: [
+                      for (var subData in data['bimbel'])
+                        _buildRadioOption(
+                          '${subData['name']}',
+                          '${formatRupiah(subData['harga'])}',
+                          '${formatRupiah(subData['harga_fix'])}',
+                          controller,
+                        ),
+                    ],
                   ),
                 ),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.teal, width: 2),
-                  minimumSize: Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
+                SizedBox(height: 16),
+
+                // Tombol
+                OutlinedButton.icon(
+                  icon: Icon(Icons.favorite_border, color: Colors.teal),
+                  label: Text(
+                    'Tambahkan ke Wishlist +',
+                    style: TextStyle(
+                      color: Colors.teal,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.teal, width: 2),
+                    minimumSize: Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  onPressed: () {},
+                ),
+                SizedBox(height: 8),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    minimumSize: Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      // 🔹 border radius
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  onPressed: () {
+                    Get.toNamed(Routes.PAYMENT_DETAIL);
+                  },
+                  child: Text(
+                    'Daftar Sekarang',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-                onPressed: () {},
-              ),
-              SizedBox(height: 8),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  minimumSize: Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    // 🔹 border radius
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                onPressed: () {
-                  Get.toNamed(Routes.PAYMENT_DETAIL);
-                },
-                child: Text(
-                  'Daftar Sekarang',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
 
-              SizedBox(height: 20),
+                SizedBox(height: 20),
 
-              // TabBar
-              TabBar(
-                controller: controller.tabController,
-                labelColor: Colors.teal,
-                unselectedLabelColor: Colors.grey,
-                indicatorColor: Colors.teal,
-                tabs: [
-                  Tab(text: 'Detail'),
-                  Tab(text: 'Jadwal'),
-                  Tab(text: 'FAQ'),
-                ],
-              ),
-              SizedBox(height: 12),
-
-              // TabBarView (pakai SizedBox agar ada tinggi minimal)
-              SizedBox(
-                height: 300,
-                child: TabBarView(
+                // TabBar
+                TabBar(
                   controller: controller.tabController,
-                  children: [
-                    Center(child: Text('Konten Detail')),
-                    Center(child: Text('Konten Jadwal')),
-                    Center(child: Text('Konten FAQ')),
+                  labelColor: Colors.teal,
+                  unselectedLabelColor: Colors.grey,
+                  indicatorColor: Colors.teal,
+                  tabs: [
+                    Tab(text: 'Detail'),
+                    Tab(text: 'Jadwal'),
+                    Tab(text: 'FAQ'),
                   ],
                 ),
-              ),
-            ],
-          ),
-        ),
+                SizedBox(height: 12),
+
+                Obx(() {
+                  switch (controller.currentIndex.value) {
+                    case 0:
+                      return Html(data: data['deskripsi_pc']);
+                    case 1:
+                      return Text('Konten Jadwal');
+                    case 2:
+                      return Html(data: data['faq_pc']);
+                    default:
+                      return SizedBox.shrink();
+                  }
+                }),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }

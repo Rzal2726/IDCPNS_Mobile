@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class CommisionDetailController extends GetxController {
-  //TODO: Implement CommisionDetailController
-
-  final count = 0.obs;
+  final _restClient = RestClient();
+  RxMap komisiDetailData = {}.obs;
   @override
   void onInit() {
+    getRincianKomisi();
     super.onInit();
   }
 
@@ -19,5 +21,19 @@ class CommisionDetailController extends GetxController {
     super.onClose();
   }
 
-  void increment() => count.value++;
+  Future<void> getRincianKomisi() async {
+    try {
+      final url = await baseUrl + apiGetRincianKomisi;
+
+      final result = await _restClient.postData(url: url);
+      print("emailnnyaa ${result.toString()}");
+      if (result["status"] == "success") {
+        var data = result['data'];
+        komisiDetailData.value = data;
+        print("asda ${data['data'][0]['user'].toString()}");
+      }
+    } catch (e) {
+      print("Error polling email verification: $e");
+    }
+  }
 }

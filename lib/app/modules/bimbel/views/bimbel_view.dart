@@ -192,7 +192,7 @@ class BimbelView extends GetView<BimbelController> {
 
               // List paket (mirip style gambar)
               Obx(() {
-                if (controller.paketList.isEmpty) {
+                if (controller.bimbelData.isEmpty) {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 32),
                     child: Center(
@@ -226,7 +226,10 @@ class BimbelView extends GetView<BimbelController> {
                       color: Colors.teal,
                       onTap: () {
                         // controller.selectedUuid.value = paket['uuid'] ?? '';
-                        Get.toNamed(Routes.DETAIL_BIMBEL); // sesuaikan rute
+                        Get.toNamed(
+                          Routes.DETAIL_BIMBEL,
+                          arguments: paket['uuid'],
+                        ); // sesuaikan rute
                       },
                     );
                   },

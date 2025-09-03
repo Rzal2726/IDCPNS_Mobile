@@ -6,15 +6,17 @@ import 'package:idcpns_mobile/app/providers/rest_client.dart';
 class DetailBimbelController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final _restClient = RestClient();
-  RxList datalBimbelData = [].obs;
+  RxMap datalBimbelData = {}.obs;
   RxList datalCheckList = [].obs;
   var selectedPaket = 'Reguler'.obs;
   late TabController tabController;
+  var idBimbel = Get.arguments;
+  RxInt currentIndex = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
-    getDetailBimbel();
+    getDetailBimbel(id: idBimbel);
     tabController = TabController(length: 3, vsync: this);
   }
 
@@ -24,11 +26,12 @@ class DetailBimbelController extends GetxController
     super.onClose();
   }
 
-  Future<void> getDetailBimbel() async {
+  Future<void> getDetailBimbel({required id}) async {
     try {
-      final url = await baseUrl + apiGetDetailBimbel;
+      final url = await baseUrl + apiGetDetailBimbel + "/" + id;
 
       final result = await _restClient.getData(url: url);
+      print("asdas ${result.toString()}");
       if (result["status"] == "success") {
         var data = result['data'];
         datalBimbelData.value = data;

@@ -1,402 +1,341 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/modules/transaction/controllers/transaction_controller.dart';
 
 class TransactionView extends GetView<TransactionController> {
   const TransactionView({super.key});
-
-  // ==== warna2 yang mirip di UI ====
-  Color get _primary =>
-      const Color(0xFF16A75C); // hijau indikator/tab & border search
-  Color get _bg => const Color(0xFFF6F6F6); // background layar
-  Color get _danger => const Color(0xFFE84855); // label Gagal
-  Color get _softText => const Color(0xFF8F8F8F);
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: _bg,
-        appBar: _buildAppBar(context),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ===== TAB BAR =====
-            Material(
-              color: Colors.white,
-              child: TabBar(
-                labelColor: _primary,
-                unselectedLabelColor: Colors.black87,
-                indicatorColor: _primary,
-                indicatorWeight: 3,
-                labelStyle: const TextStyle(fontWeight: FontWeight.w600),
-                tabs: const [
-                  Tab(text: 'Semua'),
-                  Tab(text: 'Sukses'),
-                  Tab(text: 'Menunggu Pembayaran'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // ===== SEARCH =====
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          titleSpacing: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+            onPressed: () => Get.back(),
+          ),
+          title: Text(
+            'Transaksi',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          actions: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _SearchField(
-                borderColor: _primary,
-                hint: 'Cari',
-                onChanged: (q) {
-                  // opsional: sambungkan ke controller kalau kamu punya search
-                  // controller.searchQuery.value = q;
-                  controller
-                      .update(); // biar Obx/GetBuilder yang kamu pakai ngerender ulang
-                },
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // ===== HEADER RIWAYAT + FILTER =====
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
+              padding: EdgeInsets.only(right: 12),
+              child: Stack(
+                clipBehavior: Clip.none,
                 children: [
-                  const Text(
-                    'Riwayat Transaksi',
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.notifications_rounded, color: Colors.teal),
                   ),
-                  const Spacer(),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(8),
-                    onTap: () {
-                      // buka bottom sheet filter kalau ada
-                    },
-                    child: Row(
-                      children: const [
-                        Text(
-                          'Filter',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
+                  Positioned(
+                    right: 6,
+                    top: 6,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '9+',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
                         ),
-                        SizedBox(width: 4),
-                        Icon(Icons.arrow_drop_down, size: 18),
-                      ],
+                      ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // ===== LIST PER TAB =====
-            Expanded(
-              child: TabBarView(
-                // children: [
-                //   _buildList(), // Semua
-                //   _buildList(), // Sukses
-                //   _buildList(), // Menunggu Pembayaran
-                // ],
-                children: [
-                  _buildList(), // Semua
-                  _buildList(status: 'Sukses'), // Sukses
-                  _buildList(status: 'Sukses'), // Menunggu Pembayaran
                 ],
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  // ===================== WIDGETS =====================
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
-      titleSpacing: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-        onPressed: () => Get.back(),
-      ),
-      title: const Text(
-        'Transaksi',
-        style: TextStyle(fontWeight: FontWeight.w600),
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 12),
-          child: Stack(
-            clipBehavior: Clip.none,
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.notifications_rounded,
-                  color: Colors.teal,
+              // ===== TAB BAR =====
+              Material(
+                color: Colors.white,
+                child: TabBar(
+                  labelColor: Colors.teal,
+                  unselectedLabelColor: Colors.black87,
+                  indicatorColor: Colors.teal,
+                  indicatorWeight: 3,
+                  labelStyle: TextStyle(fontWeight: FontWeight.w600),
+                  tabs: [
+                    Tab(text: 'Semua'),
+                    Tab(text: 'Sukses'),
+                    Tab(text: 'Menunggu Pembayaran'),
+                  ],
                 ),
               ),
-              // badge "9+"
-              Positioned(
-                right: 6,
-                top: 6,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEF4444),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    '9+',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
+              SizedBox(height: 8),
+
+              // ===== SEARCH =====
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: TextField(
+                  onChanged: (q) {
+                    controller.update();
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Cari',
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 14,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.teal, width: 1.2),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.teal, width: 1.6),
+                    ),
+                    suffixIcon: Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 6),
+                        width: 38,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.search_rounded,
+                          size: 22,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    suffixIconConstraints: BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
                     ),
                   ),
+                ),
+              ),
+              SizedBox(height: 12),
+
+              // ===== HEADER RIWAYAT + FILTER =====
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Text(
+                      'Riwayat Transaksi',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Spacer(),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {},
+                      child: Row(
+                        children: [
+                          Text(
+                            'Filter',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                          SizedBox(width: 4),
+                          Icon(Icons.arrow_drop_down, size: 18),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 8),
+
+              // ===== LIST PER TAB =====
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    // Semua
+                    Obx(() {
+                      final allData = controller.transactions['data'] ?? [];
+                      final filtered = allData;
+                      print("asd ${controller.transactions.toString()}");
+                      if (filtered.isEmpty) {
+                        return _buildEmptyState();
+                      }
+                      return _buildTransactionList(filtered);
+                    }),
+
+                    // Sukses
+                    Obx(() {
+                      final allData = controller.transactions['data'] ?? [];
+                      final filtered =
+                          allData
+                              .where((t) => t['status'] == 'SUCCESS')
+                              .toList();
+                      if (filtered.isEmpty) {
+                        return _buildEmptyState();
+                      }
+                      return _buildTransactionList(filtered);
+                    }),
+
+                    // Menunggu Pembayaran
+                    Obx(() {
+                      final allData = controller.transactions['data'] ?? [];
+                      final filtered =
+                          allData
+                              .where((t) => t['status'] == 'PENDING')
+                              .toList();
+                      if (filtered.isEmpty) {
+                        return _buildEmptyState();
+                      }
+                      return _buildTransactionList(filtered);
+                    }),
+                  ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+Widget _buildEmptyState() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.receipt_long, size: 60, color: Colors.grey),
+        SizedBox(height: 12),
+        Text(
+          "Tidak ada transaksi",
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ],
-    );
-  }
-
-  Widget _buildList({String? status}) {
-    return GetBuilder<TransactionController>(
-      builder: (_) {
-        // filter data sesuai status
-        final data =
-            status == null
-                ? controller.transactions
-                : controller.transactions
-                    .where((t) => t.status == status)
-                    .toList();
-
-        if (data.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.receipt_long, size: 60, color: Colors.grey),
-                SizedBox(height: 12),
-                Text(
-                  "Tidak ada transaksi",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return ListView.separated(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-          itemCount: data.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemBuilder: (context, i) {
-            final trx = data[i];
-            return _TransactionCard(
-              id: trx.id,
-              name: trx.name,
-              dateTimePrice:
-                  '${trx.date} - Rp.${trx.amount.toStringAsFixed(0)}',
-              statusText: trx.status,
-              statusColor:
-                  trx.status == 'Sukses'
-                      ? _primary
-                      : (trx.status.toLowerCase().contains('menunggu')
-                          ? const Color(0xFFF59E0B)
-                          : _danger),
-              softTextColor: _softText,
-              trailingIcon: Icons.chevron_right_rounded,
-              primary: _primary,
-            );
-          },
-        );
-      },
-    );
-  }
+    ),
+  );
 }
 
-/// Search field mirip screenshot (ikon di kanan dalam kotak kecil)
-class _SearchField extends StatelessWidget {
-  final Color borderColor;
-  final String hint;
-  final ValueChanged<String>? onChanged;
-
-  const _SearchField({
-    required this.borderColor,
-    required this.hint,
-    this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(10);
-    return TextField(
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 14,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: radius,
-          borderSide: BorderSide(color: borderColor, width: 1.2),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: radius,
-          borderSide: BorderSide(color: borderColor, width: 1.6),
-        ),
-        // ikon di kanan dalam capsule kecil
-        suffixIcon: Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            width: 38,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: const Color(0xFFEDEDED),
-            ),
-            child: const Icon(
-              Icons.search_rounded,
-              size: 22,
-              color: Colors.black87,
-            ),
-          ),
-        ),
-        suffixIconConstraints: const BoxConstraints(
-          minWidth: 0,
-          minHeight: 0,
-        ), // rapat ke kanan
-      ),
-    );
-  }
-}
-
-/// Kartu transaksi menyerupai yang di screenshot
-class _TransactionCard extends StatelessWidget {
-  final String id;
-  final String name;
-  final String dateTimePrice;
-  final String statusText;
-  final Color statusColor;
-  final Color softTextColor;
-  final IconData trailingIcon;
-  final Color primary;
-
-  const _TransactionCard({
-    required this.id,
-    required this.name,
-    required this.dateTimePrice,
-    required this.statusText,
-    required this.statusColor,
-    required this.softTextColor,
-    required this.trailingIcon,
-    required this.primary,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x11000000),
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 12, 12, 14),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // konten kiri
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // badge status di kiri atas
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      statusText,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  // invoice id
-                  Text(
-                    id,
-                    style: TextStyle(
-                      color: softTextColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  // nama paket
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 14.5,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  // tanggal + harga
-                  Text(
-                    dateTimePrice,
-                    style: TextStyle(
-                      color: softTextColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            // tombol bulat hijau di kanan
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: primary,
-              child: Icon(trailingIcon, color: Colors.white),
+Widget _buildTransactionList(List<dynamic> filtered) {
+  return ListView.separated(
+    padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
+    itemCount: filtered.length,
+    separatorBuilder: (_, __) => SizedBox(height: 12),
+    itemBuilder: (_, i) {
+      final trx = filtered[i];
+      print("sddd ${trx['payment_details'][0]['item_parent_name'].toString()}");
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade300,
+              blurRadius: 6,
+              offset: Offset(0, 2),
             ),
           ],
         ),
-      ),
-    );
-  }
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(14, 12, 12, 14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color:
+                            trx['status'] == 'PAID'
+                                ? Colors.green
+                                : (trx['status'] == ('PENDING')
+                                    ? Colors.amber
+                                    : Colors.red),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        trx['status']?.toString().toUpperCase() == 'PAID'
+                            ? "Sukses"
+                            : trx['status'] == 'PENDING'
+                            ? "Menunggu Pembayaran"
+                            : "Gagal",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      trx['no_order'],
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      (trx['payment_details'] != null &&
+                              trx['payment_details'].isNotEmpty)
+                          ? (trx['payment_details'][0]['item_parent_name'] ??
+                              trx['payment_details'][0]['item_name'] ??
+                              "-")
+                          : "-",
+                      style: TextStyle(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black,
+                      ),
+                    ),
+
+                    SizedBox(height: 2),
+                    Text(
+                      '${trx['tanggal']} - ${formatRupiah(trx['amount'])}',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 8),
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.teal,
+                child: Icon(Icons.chevron_right_rounded, color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

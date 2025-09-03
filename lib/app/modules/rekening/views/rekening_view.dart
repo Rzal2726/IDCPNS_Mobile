@@ -67,7 +67,7 @@ class RekeningView extends GetView<RekeningController> {
                             children: [
                               Icon(
                                 Icons.check_circle_outline,
-                                color: Colors.teal,
+                                color: Colors.grey,
                                 size: 20,
                               ),
                               SizedBox(width: 8),
@@ -193,8 +193,8 @@ class RekeningView extends GetView<RekeningController> {
                       SizedBox(height: 40),
 
                       // list akun
-                      ...controller.savedAccounts.map(
-                        (account) => Container(
+                      for (var data in controller.rekeningUserData)
+                        Container(
                           margin: EdgeInsets.only(bottom: 12),
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
@@ -222,19 +222,19 @@ class RekeningView extends GetView<RekeningController> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      account['bank'] ?? '',
+                                      data['bank_name'] ?? '',
                                       style: AppStyle.style17Bold,
                                     ),
                                     SizedBox(height: 4),
                                     Text(
-                                      account['number'] ?? '',
+                                      data['no_rekening'] ?? '',
                                       style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.black87,
                                       ),
                                     ),
                                     Text(
-                                      account['owner'] ?? '',
+                                      data['nama_pemilik'] ?? '',
                                       style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.black87,
@@ -246,7 +246,6 @@ class RekeningView extends GetView<RekeningController> {
                             ],
                           ),
                         ),
-                      ),
                     ],
                   ),
                 );

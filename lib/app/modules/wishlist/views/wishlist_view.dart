@@ -54,125 +54,119 @@ class WishlistView extends GetView<WishlistController> {
           SizedBox(width: 12),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    onChanged: controller.updateSearch,
-                    decoration: InputDecoration(
-                      hintText: 'Apa yang ingin Anda cari?',
-                      suffixIcon: Icon(Icons.search, color: Colors.black),
-                      isDense: true,
-                      contentPadding: EdgeInsets.all(10),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.teal),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                          color: Colors.teal,
-                        ), // warna saat enabled
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                          color: Colors.teal,
-                          width: 2,
-                        ), // warna saat fokus
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Cari',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 7),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Beli Semua',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTap: () {},
-                  child: Row(
+      body: SafeArea(
+        child: Obx(() {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      Text(
-                        'Filter',
-                        style: TextStyle(color: Colors.teal, fontSize: 16),
+                      Expanded(
+                        child: TextField(
+                          onChanged: controller.updateSearch,
+                          decoration: InputDecoration(
+                            hintText: 'Apa yang ingin Anda cari?',
+                            suffixIcon: Icon(Icons.search, color: Colors.black),
+                            isDense: true,
+                            contentPadding: EdgeInsets.all(10),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.teal),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.teal),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.teal,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      SizedBox(width: 4),
-                      Icon(
-                        Icons.keyboard_arrow_down,
-                        size: 18,
-                        color: Colors.teal,
+                      SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          'Cari',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildWishlistItem(
-                    imageUrl: 'https://placehold.co/600x400/000000/FFFFFF/png',
-                    title: 'Paket Tryout SKD Kedinasan',
-                    oldPrice: 'Rp.149.000',
-                    newPrice: 'Rp.99.000',
-                    tag: 'Kedinasan',
-                    tagColor: Colors.orangeAccent,
+                  SizedBox(height: 7),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          'Beli Semua',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ),
+                      Spacer(),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Row(
+                          children: [
+                            Text(
+                              'Filter',
+                              style: TextStyle(
+                                color: Colors.teal,
+                                fontSize: 16,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(
+                              Icons.keyboard_arrow_down,
+                              size: 18,
+                              color: Colors.teal,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  _buildWishlistItem(
-                    imageUrl: 'https://placehold.co/600x400/000000/FFFFFF/png',
-                    title: 'Paket Tryout SKD CPNS',
-                    oldPrice: 'Rp.249.000',
-                    newPrice: 'Rp.199.000',
-                    tag: 'CPNS',
-                    tagColor: Colors.green,
-                  ),
-                  _buildWishlistItem(
-                    imageUrl: 'https://placehold.co/600x400/000000/FFFFFF/png',
-                    title: 'Bimbel SKD CPNS 2025 Batch 19',
-                    oldPrice: 'Rp.340.000 - Rp.498.000',
-                    newPrice: 'Rp.199.000 - Rp.289.000',
-                    tag: 'CPNS',
-                    tagColor: Colors.green,
-                  ),
+                  SizedBox(height: 16),
+
+                  // Loop manual pakai for
+                  for (var item in controller.whistlistData['data'])
+                    Padding(
+                      padding: EdgeInsets.only(
+                        bottom: 12,
+                      ), // biar ada jarak antar item
+                      child: _buildWishlistItem(
+                        imageUrl: item['productDetail']['gambar'],
+                        title: item['productDetail']['formasi'],
+                        oldPrice: item['productDetail']['harga'].toString(),
+                        newPrice: item['productDetail']['harga_fix'].toString(),
+                        tag: item['productDetail']['menu_category']['menu'],
+                        tagColor:
+                            item['productDetail']['menu_category']['warna']['hex'],
+                      ),
+                    ),
                 ],
               ),
             ),
-          ],
-        ),
+          );
+        }),
       ),
     );
   }
@@ -183,8 +177,16 @@ class WishlistView extends GetView<WishlistController> {
     required String oldPrice,
     required String newPrice,
     required String tag,
-    required Color tagColor,
+    required String tagColor,
   }) {
+    Color hexToColor(String hex) {
+      hex = hex.replaceAll("#", ""); // buang # kalau ada
+      if (hex.length == 6) {
+        hex = "FF$hex"; // tambahin alpha (FF = 100% opacity)
+      }
+      return Color(int.parse(hex, radix: 16));
+    }
+
     return Container(
       height: 140, // FIXED HEIGHT
       margin: EdgeInsets.only(bottom: 16),
@@ -254,7 +256,7 @@ class WishlistView extends GetView<WishlistController> {
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: tagColor,
+                        color: hexToColor(tagColor),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(

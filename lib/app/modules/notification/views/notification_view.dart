@@ -49,63 +49,56 @@ class NotificationView extends GetView<NotificationController> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
+      body: SafeArea(
+        child: Obx(() {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
 
-          // Center(
-          //   child: Column(
-          //     children:  [
-          //       Icon(Icons.notifications_none,
-          //           size: 80, color: Colors.grey),
-          //       SizedBox(height: 12),
-          //       Text(
-          //         "Tidak ada notifikasi",
-          //         style: TextStyle(
-          //             fontSize: 16,
-          //             color: Colors.grey,
-          //             fontWeight: FontWeight.w500),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSelectAll(),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionHeader('Belum dibaca'),
-                  IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+                  _buildSelectAll(),
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildSectionHeader('Belum dibaca'),
+                      IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+                    ],
+                  ),
+
+                  SizedBox(height: 8),
+                  for (var data in controller.notifData)
+                    if (data['read'] == 0)
+                      _buildNotificationItem(
+                        '${data['title']}',
+                        '${data['created_at']}',
+                        0,
+                      ),
+                  SizedBox(height: 16),
+                  Divider(color: Colors.grey),
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildSectionHeader('Sudah dibaca'),
+                      IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  for (var data in controller.notifData)
+                    if (data['read'] == 1)
+                      _buildNotificationItem(
+                        '${data['title']}',
+                        '${data['created_at']}',
+                        1,
+                      ),
                 ],
               ),
-
-              SizedBox(height: 8),
-              _buildNotificationItem(
-                'Pembayaran Gagal',
-                '23 Aug 2025',
-                borderColor: Colors.teal,
-              ),
-              _buildNotificationItem(
-                'Menunggu Pembayaran',
-                '22 Aug 2025',
-                borderColor: Colors.teal,
-              ),
-              SizedBox(height: 16),
-              Divider(color: Colors.grey),
-              SizedBox(height: 16),
-              _buildSectionHeader('Sudah dibaca'),
-              SizedBox(height: 8),
-              _buildNotificationItem(
-                'Transaksi Berhasil',
-                '21 Aug 2025',
-                borderColor: Colors.teal,
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -165,18 +158,17 @@ class NotificationView extends GetView<NotificationController> {
     );
   }
 
-  Widget _buildNotificationItem(
-    String title,
-    String date, {
-    required Color borderColor,
-  }) {
+  Widget _buildNotificationItem(String title, String date, int tipe) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 6),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.all(color: borderColor, width: 1),
+        border: Border.all(
+          color: tipe == 0 ? Colors.teal : Colors.grey,
+          width: 1,
+        ),
         borderRadius: BorderRadius.circular(5),
-        color: Colors.white,
+        color: tipe == 0 ? Colors.white : Colors.grey.shade100,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

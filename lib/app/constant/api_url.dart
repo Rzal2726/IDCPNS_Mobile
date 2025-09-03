@@ -32,6 +32,7 @@ const String apiGetDetailTryoutPaket = "v1/tryout/formasi/";
 const String apiGetDetailTryoutEvent = "v1/tryout/event/";
 const String apiGetOtherTryout = "v1/tryout/other-formasi";
 const String apiGetTryoutSaya = "v1/tryout/me/list";
+const String apiGetBimbelSaya = "v1/bimbel/me/list";
 const String apiGetDetailTryoutSaya = "v1/tryout/me/detail/";
 const String apiGetCategory = "v1/tryout/menu/category";
 const String apiAddWishList = "v1/account/user/wishlist/add";
@@ -60,3 +61,20 @@ const String apiGetDetailBimbel = "v1/bimbel/parent/detail";
 const String apiGetwhislist = "v1/account/user/wishlist";
 const String apiAddWhistlist = "v1/account/user/wishlist/add";
 const String apiDeleteWhislist = "v1/account/user/wishlist/delete";
+
+const String apiGetNotif = "v1/account/user/notification";
+const String apiReadNotif = "v1/account/user/notification/read";
+const String apiUnreadNotif = "v1/account/user/notification/unread";
+const String apiDeleteNotif = "v1/account/user/notification/delete";
+
+const String apiGetTransaction = "v1/account/transaction/list";
+
+const String apiGetCheckAfiliasi = "v1/account/user/check-afiliasi-exist";
+const String apiGetFinance = "v1/account/user/finance";
+const String apiGetSubmitAfiliansi = "v1/account/user/afiliasi";
+
+const String apiGetMutasiSaldo = "v1/account/user/balance-mutation/list";
+const String apiGetRincianKomisi = "v1/transaction/payment-history/list";
+
+const String apiGetRekeningUser = "v1/account/user/bank-account";
+const String apiGetBank = "v1/general/banks";

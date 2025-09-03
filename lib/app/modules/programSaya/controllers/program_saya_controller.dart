@@ -1,6 +1,11 @@
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class ProgramSayaController extends GetxController {
+  final _restClient = RestClient();
+  RxList bimbelData = [].obs;
+  RxList tryoutData = [].obs;
   RxInt currentPage = 1.obs;
   RxInt totalPages = 10.obs; // total halaman (bisa diatur sesuai data API)
   RxInt selectedTab = 0.obs;
@@ -66,5 +71,19 @@ class ProgramSayaController extends GetxController {
     return programs
         .where((p) => p.toLowerCase().contains(searchQuery.value.toLowerCase()))
         .toList();
+  }
+
+  Future<void> getBimbel() async {
+    try {
+      final url = await baseUrl + apiGetBimbel;
+
+      final result = await _restClient.getData(url: url);
+      print("emailnnyaa ${result.toString()}");
+      if (result["status"] == "success") {
+        bimbelData.value = result['data'];
+      }
+    } catch (e) {
+      print("Error polling email verification: $e");
+    }
   }
 }

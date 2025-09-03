@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class MutasiSaldoController extends GetxController {
-  //TODO: Implement MutasiSaldoController
-
-  final count = 0.obs;
+  final _restClient = RestClient();
+  RxMap mutasiSaldoData = {}.obs;
   @override
   void onInit() {
+    getMutasiSaldo();
     super.onInit();
   }
 
@@ -19,5 +21,18 @@ class MutasiSaldoController extends GetxController {
     super.onClose();
   }
 
-  void increment() => count.value++;
+  Future<void> getMutasiSaldo() async {
+    try {
+      final url = await baseUrl + apiGetMutasiSaldo;
+
+      final result = await _restClient.postData(url: url);
+      print("emailnnyaa ${result.toString()}");
+      if (result["status"] == "success") {
+        var data = result['data'];
+        mutasiSaldoData.value = data;
+      }
+    } catch (e) {
+      print("Error polling email verification: $e");
+    }
+  }
 }
