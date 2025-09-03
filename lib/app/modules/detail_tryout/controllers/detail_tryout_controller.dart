@@ -12,7 +12,7 @@ class DetailTryoutController extends GetxController {
   //TODO: Implement DetailTryoutController
 
   final count = 0.obs;
-  final prevController = Get.find<TryoutController>();
+  late String uuid;
   final restClient = RestClient();
   RxMap<dynamic, dynamic> detailData = {}.obs;
   RxList<String> option = ['Detail', 'Bundling', 'FAQ'].obs;
@@ -49,9 +49,10 @@ class DetailTryoutController extends GetxController {
   }
 
   Future<void> initData() async {
+    uuid = await Get.arguments;
     await getDetailTryout(); // tunggu sampai selesai
     await checkWishList();
-    selectedUUid.value = prevController.selectedUuid.value;
+    selectedUUid.value = uuid;
   }
 
   Future<bool> addToWishList() async {
@@ -100,11 +101,9 @@ class DetailTryoutController extends GetxController {
 
   Future<void> checkWishList() async {
     final client = Get.find<RestClientProvider>();
-    restClient.getData(
-      url: baseUrl + apiCheckWishList + prevController.selectedUuid.value,
-    );
+    restClient.getData(url: baseUrl + apiCheckWishList + uuid);
     final response = await restClient.getData(
-      url: baseUrl + apiCheckWishList + prevController.selectedUuid.value,
+      url: baseUrl + apiCheckWishList + uuid,
     );
 
     final data = response;
@@ -125,17 +124,9 @@ class DetailTryoutController extends GetxController {
   Future<void> getDetailTryout() async {
     try {
       final client = Get.find<RestClientProvider>();
-      restClient.getData(
-        url:
-            baseUrl +
-            apiGetDetailTryoutPaket +
-            prevController.selectedUuid.value,
-      );
+      restClient.getData(url: baseUrl + apiGetDetailTryoutPaket + uuid);
       final response = await restClient.getData(
-        url:
-            baseUrl +
-            apiGetDetailTryoutPaket +
-            prevController.selectedUuid.value,
+        url: baseUrl + apiGetDetailTryoutPaket + uuid,
       );
 
       final Map<dynamic, dynamic> paket = Map<dynamic, dynamic>.from(

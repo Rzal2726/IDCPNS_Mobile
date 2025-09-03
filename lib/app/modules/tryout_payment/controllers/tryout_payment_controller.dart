@@ -180,7 +180,6 @@ class TryoutPaymentController extends GetxController {
       final methods = category['xendit_payment_method'] as List;
       for (final method in methods) {
         if (method['code'] == code) {
-          print(category['code']);
           return category['code']; // misalnya "VIRTUAL_ACCOUNT"
         }
       }

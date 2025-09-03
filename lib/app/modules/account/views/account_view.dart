@@ -82,12 +82,17 @@ class AccountView extends GetView<AccountController> {
                                   ),
                                 ),
                                 SizedBox(width: 6),
-                                Text(
-                                  "Upgrade Akun",
-                                  style: TextStyle(
-                                    color: Colors.teal,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 15,
+                                InkWell(
+                                  onTap: () {
+                                    Get.toNamed("/upgrade-akun");
+                                  },
+                                  child: Text(
+                                    "Upgrade Akun",
+                                    style: TextStyle(
+                                      color: Colors.teal,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 15,
+                                    ),
                                   ),
                                 ),
                               ],

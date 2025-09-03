@@ -8,9 +8,9 @@ class PlatinumZoneController extends GetxController {
   final restClient = RestClient();
   RxMap<String, dynamic> data = <String, dynamic>{}.obs;
   @override
-  void onInit() async {
+  void onInit() {
+    cekPlatinum();
     super.onInit();
-    await initPlatinum();
   }
 
   @override
@@ -23,13 +23,10 @@ class PlatinumZoneController extends GetxController {
     super.onClose();
   }
 
-  Future<void> initPlatinum() async {
-    await cekPlatinum();
-    print(data);
-  }
-
   Future<void> cekPlatinum() async {
-    final response = restClient.getData(url: baseUrl + apiCekPlatinumExpired);
+    final response = await restClient.getData(
+      url: baseUrl + apiCekPlatinumExpired,
+    );
     Map<String, dynamic> responseData = Map<String, dynamic>.from(
       response['data'],
     );

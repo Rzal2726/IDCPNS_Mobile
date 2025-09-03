@@ -565,12 +565,16 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                       controller.selectedPaymentMethod['code'],
                     )
                     .toString();
-            if (controller.selectedPaymentMethod['CODE'] == "OVO") {
+            // Jika OVO dipilih, munculkan modal input nomor
+            if (controller.selectedPaymentMethod['code'] == "OVO") {
               showModalBottomSheet(
                 context: context,
-                builder: (builder) {
-                  return _nomorOvo(context);
-                },
+                backgroundColor: Colors.white,
+                isScrollControlled: true, // supaya bisa full screen jika perlu
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (context) => _nomorOvo(context),
               );
             }
           },
@@ -668,61 +672,67 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
   }
 
   Widget _nomorOvo(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        spacing: 8,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            "Nomor Ovo",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          TextField(
-            controller: ovoNumController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelStyle: const TextStyle(color: Colors.grey),
-              labelText: "Masukkan Nomor Ovo",
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.tealAccent.shade100,
-                  width: 1.5,
-                ),
-                borderRadius: BorderRadius.circular(12),
+    return Padding(
+      // Ini yang bikin container naik mengikuti keyboard
+      padding: MediaQuery.of(context).viewInsets,
+      child: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            spacing: 8,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Nomor OVO",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.tealAccent.shade100,
-                  width: 2.0,
+              TextField(
+                controller: ovoNumController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelStyle: const TextStyle(color: Colors.grey),
+                  labelText: "Masukkan Nomor OVO",
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.tealAccent.shade100,
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.tealAccent.shade100,
+                      width: 2.0,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(12),
               ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-                backgroundColor: Colors.teal,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: Colors.teal, width: 1.5),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: Colors.teal,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: Colors.teal, width: 1.5),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onPressed: () {
+                    controller.ovoNumber.value = ovoNumController.text;
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Konfirmasi"),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 12),
               ),
-              onPressed: () {
-                controller.ovoNumber.value = ovoNumController.text;
-                Navigator.pop(context);
-              },
-              child: const Text("Konfirmasi"),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
