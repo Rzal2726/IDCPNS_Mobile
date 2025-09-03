@@ -8,10 +8,10 @@ import 'package:skeletonizer/skeletonizer.dart';
 import '../controllers/platinum_zone_controller.dart';
 
 class PlatinumZoneView extends GetView<PlatinumZoneController> {
-  const PlatinumZoneView({super.key});
+  PlatinumZoneView({super.key});
+  final controller = Get.put(PlatinumZoneController());
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(HomeController());
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

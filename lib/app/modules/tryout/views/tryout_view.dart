@@ -794,8 +794,7 @@ class TryoutView extends GetView<TryoutController> {
   ) {
     return InkWell(
       onTap: () {
-        controller.selectedUuid.value = uuid;
-        Get.toNamed("/detail-tryout");
+        Get.toNamed("/detail-tryout", arguments: uuid);
       },
       child: Card(
         color: Colors.white,
@@ -922,8 +921,7 @@ class TryoutView extends GetView<TryoutController> {
   ) {
     return InkWell(
       onTap: () {
-        controller.selectedUuid.value = uuid;
-        Get.toNamed("/detail-event");
+        Get.toNamed("/detail-event", arguments: uuid);
       },
       child: Container(
         margin: EdgeInsets.all(32),

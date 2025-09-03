@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/kategori_controller.dart';
 
@@ -8,15 +11,1107 @@ class KategoriView extends GetView<KategoriController> {
   const KategoriView({super.key});
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    const String noDataSvg = '''
+    <svg width="184" height="152" viewBox="0 0 184 152" xmlns="http://www.w3.org/2000/svg"><title>No data</title><g fill="none" fill-rule="evenodd"><g transform="translate(24 31.67)"><ellipse fill-opacity=".8" fill="#F5F5F7" cx="67.797" cy="106.89" rx="67.797" ry="12.668"></ellipse><path d="M122.034 69.674L98.109 40.229c-1.148-1.386-2.826-2.225-4.593-2.225h-51.44c-1.766 0-3.444.839-4.592 2.225L13.56 69.674v15.383h108.475V69.674z" fill="#AEB8C2"></path><path d="M101.537 86.214L80.63 61.102c-1.001-1.207-2.507-1.867-4.048-1.867H31.724c-1.54 0-3.047.66-4.048 1.867L6.769 86.214v13.792h94.768V86.214z" fill="url(#linearGradient-1)" transform="translate(13.56)"></path><path d="M33.83 0h67.933a4 4 0 0 1 4 4v93.344a4 4 0 0 1-4 4H33.83a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill="#F5F5F7"></path><path d="M42.678 9.953h50.237a2 2 0 0 1 2 2V36.91a2 2 0 0 1-2 2H42.678a2 2 0 0 1-2-2V11.953a2 2 0 0 1 2-2zM42.94 49.767h49.713a2.262 2.262 0 1 1 0 4.524H42.94a2.262 2.262 0 0 1 0-4.524zM42.94 61.53h49.713a2.262 2.262 0 1 1 0 4.525H42.94a2.262 2.262 0 0 1 0-4.525zM121.813 105.032c-.775 3.071-3.497 5.36-6.735 5.36H20.515c-3.238 0-5.96-2.29-6.734-5.36a7.309 7.309 0 0 1-.222-1.79V69.675h26.318c2.907 0 5.25 2.448 5.25 5.42v.04c0 2.971 2.37 5.37 5.277 5.37h34.785c2.907 0 5.277-2.421 5.277-5.393V75.1c0-2.972 2.343-5.426 5.25-5.426h26.318v33.569c0 .617-.077 1.216-.221 1.789z" fill="#DCE0E6"></path></g><path d="M149.121 33.292l-6.83 2.65a1 1 0 0 1-1.317-1.23l1.937-6.207c-2.589-2.944-4.109-6.534-4.109-10.408C138.802 8.102 148.92 0 161.402 0 173.881 0 184 8.102 184 18.097c0 9.995-10.118 18.097-22.599 18.097-4.528 0-8.744-1.066-12.28-2.902z" fill="#DCE0E6"></path><g transform="translate(149.65 15.383)" fill="#FFF"><ellipse cx="20.654" cy="3.167" rx="2.849" ry="2.815"></ellipse><path d="M5.698 5.63H0L2.898.704zM9.259.704h4.985V5.63H9.259z"></path></g></g></svg>
+    ''';
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('KategoriView'),
-        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: Image.asset(
+          'assets/logo.png', // Dummy logo
+          height: 55,
+        ),
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.notifications_rounded, color: Colors.teal),
+                onPressed: () {
+                  Get.to(NotificationView());
+                },
+              ),
+              Positioned(
+                right: 10,
+                top: 10,
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '4',
+                    style: TextStyle(color: Colors.white, fontSize: 10),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
-      body: const Center(
-        child: Text(
-          'KategoriView is working',
-          style: TextStyle(fontSize: 20),
+      body: SingleChildScrollView(
+        child: Column(
+          // 🚀 Hapus Expanded
+          children: [
+            // Tryout Saya box
+            Stack(
+              children: [
+                Obx(
+                  () =>
+                      controller.categoryList.isEmpty
+                          ? Skeletonizer(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(16),
+                                ),
+                                color: Colors.grey,
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 32,
+                                vertical: 16,
+                              ),
+                              margin: EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 32,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Zona 'Kategori'",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        width: 0.5,
+                                        color: Colors.white,
+                                      ),
+                                      color: Colors.white,
+                                    ),
+                                    child: SizedBox(width: double.infinity),
+                                  ),
+                                  Text(
+                                    "Zona 'Kategori'",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                          : Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: controller.currentCategoryColor,
+                                width: 1.5,
+                              ),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(16),
+                              ),
+                              color: controller.currentCategoryColor,
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 32,
+                              vertical: 16,
+                            ),
+                            margin: EdgeInsets.symmetric(
+                              vertical: 16,
+                              horizontal: 32,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Obx(
+                                  () =>
+                                      controller.categoryData.isEmpty
+                                          ? Skeletonizer(
+                                            child: Text(
+                                              "Zona 'Kategori'",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          )
+                                          : Text(
+                                            "Zona ${controller.categoryData['menu'].toString()}",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 0.5,
+                                      color: Colors.white,
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  child: SizedBox(width: double.infinity),
+                                ),
+                                Obx(
+                                  () =>
+                                      controller.categoryData.isEmpty
+                                          ? Skeletonizer(
+                                            child: Text(
+                                              "Zona 'Kategori'",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          )
+                                          : Text(
+                                            "Tingkatkan persiapan seleksi ${controller.categoryData['menu'].toString()} anda disini",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                ),
+                              ],
+                            ),
+                          ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 32),
+
+            // Event Tryout Gratis
+            screenWidth > 800
+                ? Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Event Tryout Gratis",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            "Ikuti tryout akbar gratis bersama ribuan peserta lainnya.",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+                : Container(
+                  padding: EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Event Tryout Gratis",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "Ikuti tryout akbar gratis bersama ribuan peserta lainnya.",
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                      SizedBox(height: 8),
+                      TextField(
+                        controller: controller.eventTextController,
+                        onChanged:
+                            (value) => controller.showEventTryout(
+                              name: value,
+                              category: controller.categoryId,
+                            ),
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(color: Colors.grey),
+                          labelText: "Cari",
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.tealAccent.shade100,
+                              width: 1.5,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.tealAccent.shade100,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+            SizedBox(height: 16),
+
+            SizedBox(height: 8),
+            Obx(() {
+              if (controller.loading['event'] == true) {
+                return Skeletonizer(
+                  child: _eventTryoutGratis(
+                    "",
+                    "Lorem Ipsum Odor",
+                    "Lorem Ipsum Odor",
+                    "Lorem Ipsum Odor",
+                    "Lorem Ipsum Odor",
+                  ),
+                );
+              }
+
+              if (controller.eventTryout.isEmpty) {
+                return Column(
+                  children: [
+                    SvgPicture.string(noDataSvg),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Belum Ada Event Berlangsung",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                );
+              }
+
+              return SizedBox(
+                height: 224,
+                child: PageView.builder(
+                  controller: PageController(viewportFraction: 0.85),
+                  itemCount: controller.eventTryout.length,
+                  itemBuilder: (ctx, index) {
+                    final event = controller.eventTryout[index];
+                    return _eventTryoutGratis(
+                      event["uuid"].toString(),
+                      event["label_text"].toString(),
+                      event['name'].toString(),
+                      controller.formatTanggalRange(
+                        "${event["startdate"].toString().substring(0, 10)} - ${event["enddate"].toString().substring(0, 10)}",
+                      ),
+                      event["periode_text"].toString(),
+                    );
+                  },
+                ),
+              );
+            }),
+
+            SizedBox(height: 8),
+
+            // Paket Tryout section
+            screenWidth > 800
+                ? Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Paket Tryout",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+                : Container(
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Paket Tryout",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        "Pilih paket tryout sesuai kebutuhanmu.",
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                      SizedBox(height: 12),
+
+                      // Search bar
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: controller.paketTextController,
+                              decoration: InputDecoration(
+                                labelStyle: TextStyle(color: Colors.grey),
+                                labelText: "Cari",
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.tealAccent.shade100,
+                                    width: 1.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.tealAccent.shade100,
+                                    width: 2.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal, // warna tombol
+                              foregroundColor: Colors.white, // warna teks/icon
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                            ),
+                            onPressed: () {
+                              controller.fetchPaketTryout(
+                                page: 1,
+
+                                search: controller.paketTextController.text,
+                                menuCategory: controller.categoryId.toString(),
+                              );
+                            },
+                            label: Text("Cari"),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+            SizedBox(height: 16),
+
+            Obx(() {
+              if (controller.loading['paket'] == true) {
+                return Skeletonizer(
+                  child: Center(
+                    child: _cardPaketTryout(
+                      "Lorem Ipsum Odor",
+                      "assets/logo.png",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                      context,
+                    ),
+                  ),
+                );
+              }
+              if (controller.paketTryout.isEmpty) {
+                return Column(
+                  children: [
+                    SizedBox(height: 200, child: SvgPicture.string(noDataSvg)),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Belum Ada Tryout Tersedia",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                );
+              }
+
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: controller.paketTryout.length,
+                itemBuilder: (context, index) {
+                  final data = controller.paketTryout[index];
+                  final option = controller.categoryId;
+                  return _cardPaketTryout(
+                    data['uuid'].toString() ?? '',
+                    data['gambar'].toString() ?? '',
+                    data['formasi'].toString() ?? '',
+                    controller.formatCurrency(data['harga'].toString()) ?? '',
+                    controller.formatCurrency(data['harga_fix'].toString()) ??
+                        '',
+                    option,
+                    context,
+                  );
+                },
+              );
+            }),
+
+            Obx(() {
+              final current = controller.currentPage.value;
+              final total = controller.totalPage.value;
+
+              if (total == 0) {
+                return const SizedBox.shrink(); // tidak ada halaman
+              }
+
+              // Tentukan window
+              int start = current - 1;
+              int end = current + 1;
+
+              // clamp biar tetap di antara 1 dan total
+              start = start < 1 ? 1 : start;
+              end = end > total ? total : end;
+
+              // Kalau total < 3, pakai semua halaman yg ada
+              if (total <= 3) {
+                start = 1;
+                end = total;
+              } else {
+                // Kalau current di awal → 1,2,3
+                if (current == 1) {
+                  start = 1;
+                  end = 3;
+                }
+                // Kalau current di akhir → total-2, total-1, total
+                else if (current == total) {
+                  start = total - 2;
+                  end = total;
+                }
+              }
+
+              // Generate daftar halaman
+              final pages = List.generate(end - start + 1, (i) => start + i);
+
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed:
+                          current > 1
+                              ? () => controller.fetchPaketTryout(
+                                page: current - 1,
+                                search: controller.paketTextController.text,
+                                menuCategory: controller.categoryId.toString(),
+                              )
+                              : null,
+                      child: const Icon(Icons.arrow_back_ios, size: 16),
+                    ),
+                    const SizedBox(width: 8),
+
+                    ...pages.map((page) {
+                      final isActive = page == current;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: ElevatedButton(
+                          onPressed:
+                              () => controller.fetchPaketTryout(
+                                page: page,
+                                search: controller.paketTextController.text,
+                                menuCategory: controller.categoryId.toString(),
+                              ),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(36, 36),
+                            backgroundColor:
+                                isActive ? Colors.teal : Colors.white,
+                            foregroundColor:
+                                isActive ? Colors.white : Colors.black54,
+                          ),
+                          child: Text(
+                            page.toString(),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      );
+                    }),
+
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed:
+                          current < total
+                              ? () => controller.fetchPaketTryout(
+                                page: current + 1,
+                                search: controller.paketTextController.text,
+                                menuCategory: controller.categoryId.toString(),
+                              )
+                              : null,
+                      child: const Icon(Icons.arrow_forward_ios, size: 16),
+                    ),
+                  ],
+                ),
+              );
+            }),
+
+            SizedBox(height: 32),
+
+            // Bimbel section
+            screenWidth > 800
+                ? Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Paket Bimbel",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+                : Container(
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Paket Bimbel",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        "Belajar lebih intensif bersama mentor ahli di bidangnya.",
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                      SizedBox(height: 12),
+
+                      // Search bar
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: controller.bimbelTextController,
+                              decoration: InputDecoration(
+                                labelStyle: TextStyle(color: Colors.grey),
+                                labelText: "Cari",
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.tealAccent.shade100,
+                                    width: 1.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.tealAccent.shade100,
+                                    width: 2.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal, // warna tombol
+                              foregroundColor: Colors.white, // warna teks/icon
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                            ),
+                            onPressed: () {
+                              controller.fetchBimbel(
+                                page: 1,
+
+                                search: controller.bimbelTextController.text,
+                                menuCategory: controller.categoryId.toString(),
+                              );
+                            },
+                            label: Text("Cari"),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+            SizedBox(height: 16),
+
+            //Bimbel
+            Obx(() {
+              if (controller.loading['bimbel'] == true) {
+                return Skeletonizer(
+                  child: Center(
+                    child: _cardPaketTryout(
+                      "Lorem Ipsum Odor",
+                      "assets/logo.png",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                      context,
+                    ),
+                  ),
+                );
+              }
+              if (controller.bimbelList.isEmpty) {
+                return Column(
+                  children: [
+                    SizedBox(height: 200, child: SvgPicture.string(noDataSvg)),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Belum Ada Bimbel Tersedia",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                );
+              }
+
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: controller.bimbelList.length,
+                itemBuilder: (context, index) {
+                  final data = controller.bimbelList[index];
+                  final option = controller.categoryId;
+                  return _cardPaketBimbel(
+                    image: data['gambar'] ?? '',
+                    title: data['name'] ?? '',
+                    hargaTertinggi: data['price_list']?['harga_tertinggi'] ?? 0,
+                    hargaFixTertinggi:
+                        data['price_list']?['harga_fix_tertinggi'] ?? 0,
+                    hargaTerendah: data['price_list']?['harga_terendah'],
+                    hargaFixTerendah:
+                        data['price_list']?['harga_fix_terendah'] ?? 0,
+                    kategori: controller.categoryData['menu'],
+                    color: controller.currentCategoryColor,
+                    onTap: () {
+                      Get.toNamed("/detail-bimbel"); // sesuaikan rute
+                    },
+                  );
+                },
+              );
+            }),
+
+            Obx(() {
+              final current = controller.currentBimbelPage.value;
+              final total = controller.totalBimbelPage.value;
+
+              if (total == 0) {
+                return const SizedBox.shrink(); // tidak ada halaman
+              }
+
+              // Tentukan window
+              int start = current - 1;
+              int end = current + 1;
+
+              // clamp biar tetap di antara 1 dan total
+              start = start < 1 ? 1 : start;
+              end = end > total ? total : end;
+
+              // Kalau total < 3, pakai semua halaman yg ada
+              if (total <= 3) {
+                start = 1;
+                end = total;
+              } else {
+                // Kalau current di awal → 1,2,3
+                if (current == 1) {
+                  start = 1;
+                  end = 3;
+                }
+                // Kalau current di akhir → total-2, total-1, total
+                else if (current == total) {
+                  start = total - 2;
+                  end = total;
+                }
+              }
+
+              // Generate daftar halaman
+              final pages = List.generate(end - start + 1, (i) => start + i);
+
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed:
+                          current > 1
+                              ? () => controller.fetchBimbel(
+                                page: current - 1,
+                                search: controller.bimbelTextController.text,
+                                menuCategory: controller.categoryId.toString(),
+                              )
+                              : null,
+                      child: const Icon(Icons.arrow_back_ios, size: 16),
+                    ),
+                    const SizedBox(width: 8),
+
+                    ...pages.map((page) {
+                      final isActive = page == current;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: ElevatedButton(
+                          onPressed:
+                              () => controller.fetchBimbel(
+                                page: page,
+                                search: controller.bimbelTextController.text,
+                                menuCategory: controller.categoryId.toString(),
+                              ),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(36, 36),
+                            backgroundColor:
+                                isActive ? Colors.teal : Colors.white,
+                            foregroundColor:
+                                isActive ? Colors.white : Colors.black54,
+                          ),
+                          child: Text(
+                            page.toString(),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      );
+                    }),
+
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed:
+                          current < total
+                              ? () => controller.fetchPaketTryout(
+                                page: current + 1,
+                                search: controller.bimbelTextController.text,
+                                menuCategory: controller.categoryId.toString(),
+                              )
+                              : null,
+                      child: const Icon(Icons.arrow_forward_ios, size: 16),
+                    ),
+                  ],
+                ),
+              );
+            }),
+
+            SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _cardPaketTryout(
+    String uuid,
+    String image,
+    String title,
+    String hargaFull,
+    String hargaDiskon,
+    String kategori,
+    BuildContext context,
+  ) {
+    return InkWell(
+      onTap: () {
+        Get.toNamed("/detail-tryout", arguments: uuid);
+      },
+      child: Card(
+        color: Colors.white,
+        margin: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 4,
+        child: SizedBox(
+          height: 128,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Bagian kiri: gambar
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomLeft: Radius.circular(8),
+                ),
+                child: Image.network(
+                  image, // ganti dengan gambar kamu
+                  width: 140,
+                  height: 128,
+                  fit: BoxFit.fill,
+                  errorBuilder: (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return Image.asset("assets/logo.png");
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              // Bagian kanan: teks
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                hargaFull,
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                hargaDiskon,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Label CPNS
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: controller.categoryColor[kategori],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                kategori,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _cardPaketBimbel({
+    required String image,
+    required String title,
+    required int hargaTertinggi,
+    required int hargaFixTertinggi,
+    required int hargaTerendah,
+    required int hargaFixTerendah,
+    required String kategori,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 140, // FIXED HEIGHT
+        margin: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              blurRadius: 5,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              width: 120,
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                ),
+                child: Image.network(image, fit: BoxFit.cover),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 15,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
+                    ),
+
+                    SizedBox(height: 10),
+                    Text(
+                      "${controller.formatCurrency(hargaTerendah.toString())} - ${controller.formatCurrency(hargaTertinggi.toString())}",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        decoration: TextDecoration.lineThrough,
+                      ),
+                    ),
+
+                    Text(
+                      "${controller.formatCurrency(hargaFixTerendah.toString())} - ${controller.formatCurrency(hargaFixTertinggi.toString())}",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(height: 3),
+                    Align(
+                      alignment: Alignment.centerRight, // Bikin rata kanan
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.teal,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          kategori,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _eventTryoutGratis(
+    String uuid,
+    String status,
+    String judul,
+    String tanggal,
+    String periode,
+  ) {
+    return InkWell(
+      onTap: () {
+        Get.toNamed("/detail-event", arguments: uuid);
+      },
+      child: Container(
+        margin: EdgeInsets.all(32),
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 242, 255, 251),
+          border: Border.all(
+            color: Colors.transparent, // bisa atur warna border
+            width: 2,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.amber, // pindahkan color ke sini
+                border: Border.all(
+                  color: Colors.transparent, // bisa atur warna border
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
+              padding: EdgeInsets.all(2),
+              child: Text(
+                status,
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(judul, style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Text(tanggal),
+            Row(children: [Text("Periode :"), Text(" ${periode}")]),
+          ],
         ),
       ),
     );

@@ -9,10 +9,7 @@ class DetailEventView extends GetView<DetailEventController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('DetailEventView'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('DetailEventView'), centerTitle: true),
       body: const Center(
         child: Text(
           'DetailEventView is working',

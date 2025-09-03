@@ -345,7 +345,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.PLATINUM_ZONE,
-      page: () => const PlatinumZoneView(),
+      page: () => PlatinumZoneView(),
       binding: PlatinumZoneBinding(),
     ),
     GetPage(
