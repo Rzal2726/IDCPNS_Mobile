@@ -55,6 +55,12 @@ const String apiRaporDetail = "v1/tryout/raport/detail/";
 const String apiRankingTryout = "v1/tryout/rangking/";
 const String apiTryoutPembahasan = "v1/tryout/pembahasan/";
 const String apiCekPlatinumExpired = "v1/account/user/level/expired";
+const String apiVideoTopicDetail = "v1/video-series/topic/detail/";
+const String apiVideoTopicComments = "v1/video-series/topic/comments";
+const String apiVideoTopicAddComments = "v1/video-series/topic/comments/add";
+const String apiVideoTopicGetNotes = "v1/video-series/topic/note/";
+const String apiVideoTopicAddNotes = "v1/video-series/topic/note/add";
+const String apiVideoTopicDeleteNotes = "v1/video-series/topic/note/delete";
 
 const String apiGetDetailBimbel = "v1/bimbel/parent/detail";
 const String apiGetwhislist = "v1/account/user/wishlist";
