@@ -335,6 +335,7 @@ class DashboardView extends GetView<DashboardController> {
                         _buildCategoryItem(
                           controller.kategoriData[i]['menu'],
                           controller.kategoriData[i]['logo'],
+                          controller.kategoriData[i]['id'].toString(),
                         ),
                     ],
                   ),
@@ -922,27 +923,32 @@ Widget _buildServiceCard(
   );
 }
 
-Widget _buildCategoryItem(String title, String icon) {
-  return Container(
-    child: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center, // vertikal center
-        crossAxisAlignment: CrossAxisAlignment.center, // horizontal center
-        children: [
-          Image.network(
-            icon,
-            width: 48,
-            height: 48,
-            fit: BoxFit.contain, // biar nggak ketarik aneh
-          ),
-          SizedBox(height: 8),
-          Text(
-            title,
-            style: TextStyle(color: Colors.grey, fontSize: 14),
-            textAlign: TextAlign.center,
-          ),
-        ],
+Widget _buildCategoryItem(String title, String icon, String kategoriId) {
+  return InkWell(
+    onTap: () {
+      Get.toNamed("/kategori", arguments: kategoriId);
+    },
+    child: Container(
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center, // vertikal center
+          crossAxisAlignment: CrossAxisAlignment.center, // horizontal center
+          children: [
+            Image.network(
+              icon,
+              width: 48,
+              height: 48,
+              fit: BoxFit.contain, // biar nggak ketarik aneh
+            ),
+            SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(color: Colors.grey, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     ),
   );
