@@ -47,6 +47,7 @@ dependencies:
   syncfusion_flutter_charts: ^30.2.7
   url_launcher: ^6.3.2
   carousel_slider: ^5.1.1
+  flutter_bunny_video_player: ^1.0.2
 
 
 

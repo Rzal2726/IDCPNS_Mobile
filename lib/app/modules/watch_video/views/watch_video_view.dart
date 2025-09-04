@@ -81,6 +81,108 @@ class WatchVideoView extends GetView<WatchVideoController> {
                   }
                 }
               }),
+              Expanded(
+                child: Obx(() {
+                  if (controller.loading['video'] == true) {
+                    Skeletonizer(
+                      child: _cardVidio(
+                        imgUrl:
+                            "https://cms.idcpns.com/storage/upload/video-series/2024-07/d5d2571241b1c69079e3814f01966206.jpg",
+                        kategori: "CPNS",
+                        kategoriColor: Colors.grey,
+                        title: "Materi Lengkap SKD CPNS",
+                        duration: "706",
+                        totalVid: "55",
+                        data: <String, dynamic>{},
+                      ),
+                    );
+                  }
+
+                  if (controller.listVideo.isEmpty) {
+                    return Center(child: Text("Unavailable"));
+                  }
+                  return ListView.builder(
+                    itemCount: controller.listVideo.length,
+                    itemBuilder: (context, index) {
+                      final section = controller.listVideo[index];
+                      final videos = section['topics'] as List;
+
+                      return Card(
+                        color: Colors.white,
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        child: ExpansionTile(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.transparent),
+                          ),
+                          tilePadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
+                          ),
+                          title: Text(
+                            section['nama'],
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          trailing: const Icon(Icons.keyboard_arrow_down),
+                          children: [
+                            ListView.builder(
+                              physics:
+                                  const NeverScrollableScrollPhysics(), // biar nggak conflict scroll
+                              shrinkWrap: true, // wajib untuk nested list
+                              itemCount: videos.length,
+                              itemBuilder: (context, vidIndex) {
+                                final video = videos[vidIndex];
+                                return ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 0,
+                                  ),
+                                  leading: Checkbox(
+                                    value:
+                                        video['video_completed'].isEmpty
+                                            ? false
+                                            : true, // nanti bisa diubah ke RxBool
+                                    onChanged: (val) {},
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    video['nama'],
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  subtitle: Text(
+                                    video['durasi'].toString(),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: const Icon(
+                                      Icons.play_circle_fill,
+                                      color: Colors.teal,
+                                    ),
+                                    onPressed: () {
+                                      // Aksi play video
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
             ],
           ),
         ),

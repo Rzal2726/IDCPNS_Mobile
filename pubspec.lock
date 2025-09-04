@@ -275,6 +275,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_bunny_video_player:
+    dependency: "direct main"
+    description:
+      name: flutter_bunny_video_player
+      sha256: "9c6f9ee12bb5eb9273993138db780a643ed0a20fb9cce6383a267dab3be2829c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   flutter_html:
     dependency: "direct main"
     description:
