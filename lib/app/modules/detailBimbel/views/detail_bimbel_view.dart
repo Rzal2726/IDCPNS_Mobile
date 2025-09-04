@@ -147,8 +147,11 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    controller.getCheckWhislist();
+                  },
                 ),
+
                 SizedBox(height: 8),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(

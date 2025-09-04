@@ -44,8 +44,12 @@ class DetailBimbelController extends GetxController
   Future<void> getCheckWhislist() async {
     try {
       final url = await baseUrl + apiCheckWishList;
-
-      final result = await _restClient.getData(url: url);
+      var payload = {
+        "tryout_formasi_id": datalBimbelData['id'],
+        "menu_category_id": datalBimbelData['menu_category_id'],
+      };
+      print("payloadx ${payload.toString()}");
+      final result = await _restClient.postData(url: url, payload: payload);
       if (result["status"] == "success") {
         var data = result['data'];
         datalCheckList.value = data;
