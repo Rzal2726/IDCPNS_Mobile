@@ -158,7 +158,7 @@ class WatchVideoView extends GetView<WatchVideoController> {
                                     style: const TextStyle(fontSize: 14),
                                   ),
                                   subtitle: Text(
-                                    video['durasi'].toString(),
+                                    "${video['durasi'].toString()} Menit",
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey,
@@ -171,6 +171,10 @@ class WatchVideoView extends GetView<WatchVideoController> {
                                     ),
                                     onPressed: () {
                                       // Aksi play video
+                                      Get.toNamed(
+                                        "/detail-video",
+                                        arguments: video,
+                                      );
                                     },
                                   ),
                                 );

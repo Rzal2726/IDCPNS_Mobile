@@ -68,6 +68,7 @@ class DetailTryoutController extends GetxController {
         url: baseUrl + apiAddWishList,
         payload: payload,
       );
+      checkWishList();
 
       return true;
     } catch (e) {
