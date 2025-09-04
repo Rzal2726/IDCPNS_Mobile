@@ -84,3 +84,5 @@ const String apiBonusDetail = "v1/tryout/formasi/bonus/";
 const String apiUpgradeDetail = "v1/account/upgrade/duration/";
 const String apiListVideoSeries = "v1/video-series/list";
 const String apiListVideoSeriesParents = "v1/video-series/parents/";
+
+const String apiAddRekening = "v1/account/user/bank-account/add";

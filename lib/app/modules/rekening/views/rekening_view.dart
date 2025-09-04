@@ -85,95 +85,106 @@ class RekeningView extends GetView<RekeningController> {
                 ],
               ),
               SizedBox(height: 24),
-              Container(
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Tambah Rekening Bank', style: AppStyle.styleW900),
-                    SizedBox(height: 40),
-                    Text('Bank', style: TextStyle(color: Colors.black)),
-                    SizedBox(height: 4),
-                    Obx(() {
-                      return DropdownButtonFormField<String>(
-                        value:
-                            controller.selectedBank.value.isEmpty
-                                ? null
-                                : controller.selectedBank.value,
-                        items:
-                            controller.bankList
-                                .map(
-                                  (bank) => DropdownMenuItem<String>(
-                                    value: bank,
-                                    child: Text(bank),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (value) {
-                          if (value != null)
-                            controller.selectedBank.value = value;
-                        },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12),
+              controller.rekeningUserData.length < 3
+                  ? Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black12, blurRadius: 4),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Tambah Rekening Bank', style: AppStyle.styleW900),
+                        SizedBox(height: 40),
+                        Text('Bank', style: TextStyle(color: Colors.black)),
+                        SizedBox(height: 4),
+                        Obx(() {
+                          return DropdownButtonFormField<String>(
+                            value:
+                                controller.selectedBank.value.isEmpty
+                                    ? null
+                                    : controller.selectedBank.value,
+                            items:
+                                controller.bankList
+                                    .map(
+                                      (bank) => DropdownMenuItem<String>(
+                                        value: bank,
+                                        child: Text(bank),
+                                      ),
+                                    )
+                                    .toList(),
+                            onChanged: (value) {
+                              if (value != null)
+                                controller.selectedBank.value = value;
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                            ),
+                            hint: Text('Pilih Bank'),
+                          );
+                        }),
+                        SizedBox(height: 16),
+                        Text(
+                          'No. Rekening',
+                          style: TextStyle(color: Colors.black),
                         ),
-                        hint: Text('Pilih Bank'),
-                      );
-                    }),
-                    SizedBox(height: 16),
-                    Text('No. Rekening', style: TextStyle(color: Colors.black)),
-                    SizedBox(height: 4),
-                    TextField(
-                      controller: controller.accountNumberController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Masukkan No. Rekening',
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                    SizedBox(height: 16),
-                    Text('Nama Pemilik', style: TextStyle(color: Colors.black)),
-                    SizedBox(height: 4),
-                    TextField(
-                      controller: controller.ownerNameController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Masukkan Nama Pemilik',
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        onPressed: controller.saveAccount,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal, // warna tombol
-                          foregroundColor: Colors.white, // warna teks
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
+                        SizedBox(height: 4),
+                        TextField(
+                          controller: controller.accountNumberController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Masukkan No. Rekening',
                           ),
-                          textStyle: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              5,
-                            ), // border circulation 5
+                          keyboardType: TextInputType.number,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'Nama Pemilik',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        SizedBox(height: 4),
+                        TextField(
+                          controller: controller.ownerNameController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Masukkan Nama Pemilik',
                           ),
                         ),
-                        child: Text('Simpan'),
-                      ),
+                        SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: ElevatedButton(
+                            onPressed: controller.saveAccount,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                              textStyle: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            child: Text('Simpan'),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  )
+                  : SizedBox.shrink(),
+
               SizedBox(height: 24),
 
               Obx(() {

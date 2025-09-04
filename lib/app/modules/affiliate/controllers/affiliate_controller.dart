@@ -5,7 +5,7 @@ import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class AffiliateController extends GetxController {
   final _restClient = RestClient();
-  RxString affiliateStatus = "".obs;
+  RxBool affiliateStatus = false.obs;
   RxMap finaceData = {}.obs;
   RxInt komisiTotal = 0.obs;
   RxInt komisiTersedia = 0.obs;
@@ -31,13 +31,22 @@ class AffiliateController extends GetxController {
     super.onClose();
   }
 
-  void simpanKode() {
+  void simpanKode() async {
     // Tambahkan logika simpan kode
-    Get.snackbar(
-      "Sukses",
-      "Kode berhasil disimpan",
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    try {
+      final url = await baseUrl + apiGetSubmitAfiliansi;
+      var payload = {'kode_afiliasi': kodeController.text};
+      final result = await _restClient.postData(url: url, payload: payload);
+      if (result["status"] == "success") {
+        Get.snackbar(
+          "Sukses",
+          "Kode berhasil disimpan",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      print("Error polling email verification: $e");
+    }
   }
 
   Future<void> getCheckAffiliate() async {
@@ -48,6 +57,7 @@ class AffiliateController extends GetxController {
       print("emailnnyaa ${result.toString()}");
       if (result["status"] == "success") {
         affiliateStatus.value = result["exist"];
+        print("sadas ${result["exist"]}");
       }
     } catch (e) {
       print("Error polling email verification: $e");

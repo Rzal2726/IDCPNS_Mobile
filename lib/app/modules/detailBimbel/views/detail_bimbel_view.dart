@@ -131,24 +131,45 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
 
                 // Tombol
                 OutlinedButton.icon(
-                  icon: Icon(Icons.favorite_border, color: Colors.teal),
+                  icon: Icon(
+                    controller.datalCheckList.isNotEmpty
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color:
+                        controller.datalCheckList.isNotEmpty
+                            ? Colors.white
+                            : Colors.teal,
+                  ),
                   label: Text(
-                    'Tambahkan ke Wishlist +',
+                    controller.datalCheckList.isNotEmpty
+                        ? 'Hapus dari Wishlist -'
+                        : 'Tambahkan ke Wishlist +',
                     style: TextStyle(
-                      color: Colors.teal,
+                      color:
+                          controller.datalCheckList.isNotEmpty
+                              ? Colors.white
+                              : Colors.teal,
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
+                    backgroundColor:
+                        controller.datalCheckList.isNotEmpty
+                            ? Colors.teal
+                            : Colors.white,
                     side: BorderSide(color: Colors.teal, width: 2),
-                    minimumSize: Size.fromHeight(50),
+                    minimumSize: const Size.fromHeight(50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
                   onPressed: () {
-                    controller.getCheckWhislist();
+                    if (controller.datalCheckList.isNotEmpty) {
+                      controller.getDeleteWhisList();
+                    } else {
+                      controller.getAddWhislist();
+                    }
                   },
                 ),
 

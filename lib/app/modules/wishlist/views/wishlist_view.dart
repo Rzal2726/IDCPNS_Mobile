@@ -154,7 +154,7 @@ class WishlistView extends GetView<WishlistController> {
                       ), // biar ada jarak antar item
                       child: _buildWishlistItem(
                         imageUrl: item['productDetail']['gambar'],
-                        title: item['productDetail']['formasi'],
+                        title: item['productDetail']['name'],
                         oldPrice: item['productDetail']['harga'].toString(),
                         newPrice: item['productDetail']['harga_fix'].toString(),
                         tag: item['productDetail']['menu_category']['menu'],

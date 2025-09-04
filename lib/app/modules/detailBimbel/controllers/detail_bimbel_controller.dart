@@ -7,7 +7,8 @@ class DetailBimbelController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final _restClient = RestClient();
   RxMap datalBimbelData = {}.obs;
-  RxList datalCheckList = [].obs;
+  RxMap datalCheckList = {}.obs;
+  RxString wishlistUuid = "".obs;
   var selectedPaket = 'Reguler'.obs;
   late TabController tabController;
   var idBimbel = Get.arguments;
@@ -35,6 +36,7 @@ class DetailBimbelController extends GetxController
       if (result["status"] == "success") {
         var data = result['data'];
         datalBimbelData.value = data;
+        getCheckWhislist();
       }
     } catch (e) {
       print("Error polling email verification: $e");
@@ -43,45 +45,51 @@ class DetailBimbelController extends GetxController
 
   Future<void> getCheckWhislist() async {
     try {
-      final url = await baseUrl + apiCheckWishList;
-      var payload = {
-        "tryout_formasi_id": datalBimbelData['id'],
-        "menu_category_id": datalBimbelData['menu_category_id'],
-      };
-      print("payloadx ${payload.toString()}");
-      final result = await _restClient.postData(url: url, payload: payload);
+      final url = baseUrl + apiCheckWishList + "/" + idBimbel;
+      final result = await _restClient.getData(url: url);
+
       if (result["status"] == "success") {
         var data = result['data'];
-        datalCheckList.value = data;
+        if (data != null) {
+          datalCheckList.value = data;
+          wishlistUuid.value = data['uuid'] ?? "";
+        } else {
+          datalCheckList.value = {}; // kosongin kalau null
+          wishlistUuid.value = "";
+        }
       }
     } catch (e) {
-      print("Error polling email verification: $e");
+      print("Error polling check wishlist: $e");
     }
   }
 
   Future<void> getAddWhislist() async {
     try {
       final url = await baseUrl + apiAddWhistlist;
-
-      final result = await _restClient.getData(url: url);
+      var payload = {
+        "bimbel_parent_id": datalBimbelData['id'],
+        "menu_category_id": datalBimbelData['menu_category_id'],
+      };
+      print("sad ${payload.toString()}");
+      final result = await _restClient.postData(url: url, payload: payload);
       if (result["status"] == "success") {
-        var data = result['data'];
+        getCheckWhislist();
       }
     } catch (e) {
-      print("Error polling email verification: $e");
+      print("Error: $e");
     }
   }
 
   Future<void> getDeleteWhisList() async {
     try {
       final url = await baseUrl + apiDeleteWhislist;
-
-      final result = await _restClient.getData(url: url);
+      var payload = {"uuid": datalCheckList['uuid']};
+      final result = await _restClient.postData(url: url, payload: payload);
       if (result["status"] == "success") {
-        var data = result['data'];
+        getCheckWhislist();
       }
     } catch (e) {
-      print("Error polling email verification: $e");
+      print("Error: $e");
     }
   }
 

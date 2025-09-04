@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:intl/intl.dart';
 import '../controllers/notification_controller.dart';
 
 class NotificationView extends GetView<NotificationController> {
@@ -75,6 +77,9 @@ class NotificationView extends GetView<NotificationController> {
                         '${data['title']}',
                         '${data['created_at']}',
                         0,
+                        data['id'],
+                        data['description'],
+                        data['orderId']?.toString() ?? "",
                       ),
                   SizedBox(height: 16),
                   Divider(color: Colors.grey),
@@ -93,6 +98,9 @@ class NotificationView extends GetView<NotificationController> {
                         '${data['title']}',
                         '${data['created_at']}',
                         1,
+                        data['id'],
+                        data['description'],
+                        data['orderId']?.toString() ?? "",
                       ),
                 ],
               ),
@@ -158,7 +166,14 @@ class NotificationView extends GetView<NotificationController> {
     );
   }
 
-  Widget _buildNotificationItem(String title, String date, int tipe) {
+  Widget _buildNotificationItem(
+    String title,
+    String date,
+    int tipe,
+    int id,
+    String desc,
+    String idOrder,
+  ) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 6),
       padding: EdgeInsets.all(12),
@@ -203,7 +218,16 @@ class NotificationView extends GetView<NotificationController> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  showPaymentBottomSheet(
+                    title: title,
+                    dateTime: date,
+                    orderNo: idOrder,
+                    message: desc,
+                    id: id,
+                  );
+                  controller.getReadNotif(id: id);
+                },
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
                   minimumSize: Size(40, 20),
@@ -213,20 +237,26 @@ class NotificationView extends GetView<NotificationController> {
               ),
               SizedBox(width: 8),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  tipe == 0
+                      ? controller.getReadNotif(id: id)
+                      : controller.getUnreadNotif(id: id);
+                },
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
                   minimumSize: Size(40, 20),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  "Tandai sudah dibaca",
+                  tipe == 0 ? "Tandai sudah dibaca" : "Tandai belum dibaca",
                   style: TextStyle(color: Colors.teal),
                 ),
               ),
               SizedBox(width: 8),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  controller.getDeleteNotif(id: id);
+                },
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
                   minimumSize: Size(40, 20),
@@ -240,4 +270,114 @@ class NotificationView extends GetView<NotificationController> {
       ),
     );
   }
+}
+
+void showPaymentBottomSheet({
+  String? title,
+  String? dateTime,
+  String? orderNo,
+  String? message,
+  int? id,
+}) {
+  showModalBottomSheet(
+    context: Get.context!,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (context) {
+      return SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title ?? "Judul tidak ada",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(Icons.close, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 8),
+
+                if (dateTime != null)
+                  Text(
+                    dateTime.isNotEmpty
+                        ? DateFormat(
+                          "dd/MM/yyyy HH:mm",
+                        ).format(DateTime.parse(dateTime))
+                        : "",
+                    style: TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+
+                if (dateTime != null) SizedBox(height: 12),
+
+                if (orderNo != null)
+                  Text(
+                    orderNo == "" ? "" : "No order : $orderNo",
+                    style: TextStyle(fontSize: 13, color: Colors.black87),
+                  ),
+
+                if (orderNo != null) SizedBox(height: 12),
+
+                if (message != null)
+                  Text(
+                    message,
+                    style: TextStyle(fontSize: 13, color: Colors.black87),
+                  ),
+
+                Spacer(), // dorong tombol ke bawah
+
+                Padding(
+                  padding: EdgeInsets.only(
+                    bottom: 12,
+                  ), // kasih jarak biar enak dijangkau
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        title == "Menunggu Pembayaran"
+                            ? Get.toNamed(Routes.TRANSACTION)
+                            : Get.toNamed(Routes.INVOICE, arguments: id);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal, // ganti ke teal
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: Text(
+                        "Lihat selengkapnya",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }

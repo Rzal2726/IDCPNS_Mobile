@@ -13,8 +13,8 @@ class RekeningController extends GetxController {
     'Bank BCA',
     'Bank BNI',
   ];
-  var accountNumberController = TextEditingController();
-  var ownerNameController = TextEditingController();
+  final accountNumberController = TextEditingController();
+  final ownerNameController = TextEditingController();
   final List<String> informationPoints = [
     'Pastikan data yang kamu masukkan sudah benar.',
     'Data yang telah ditambahkan tidak dapat diubah.',
@@ -51,19 +51,38 @@ class RekeningController extends GetxController {
           'owner': 'MUHAMMAD FARIS RAFI',
         },
       ].obs;
-  void saveAccount() {
-    if (selectedBank.isNotEmpty &&
-        accountNumberController.text.isNotEmpty &&
-        ownerNameController.text.isNotEmpty) {
-      savedAccounts.add({
-        'bank': selectedBank.value,
-        'number': accountNumberController.text,
-        'owner': ownerNameController.text,
-      });
-      accountNumberController.clear();
-      ownerNameController.clear();
-      selectedBank.value = '';
+  void saveAccount() async {
+    // if (selectedBank.isNotEmpty &&
+    //     accountNumberController.text.isNotEmpty &&
+    //     ownerNameController.text.isNotEmpty) {
+    //   savedAccounts.add({
+    //     'bank': selectedBank.value,
+    //     'number': accountNumberController.text,
+    //     'owner': ownerNameController.text,
+    //   });
+    //
+    // }
+
+    try {
+      final url = await baseUrl + apiAddRekening;
+
+      var payload = {
+        "bank": 1,
+        "nama_pemilik": ownerNameController.text,
+        "no_rekening": int.parse(accountNumberController.text),
+      };
+      print("payy ${payload}");
+      final result = await _restClient.postData(url: url, payload: payload);
+      if (result["status"] == "success") {
+        Get.snackbar("berhasil", "data berhasil");
+        getRekeningUser();
+      }
+    } catch (e) {
+      print("Error polling email verification: $e");
     }
+    accountNumberController.clear();
+    ownerNameController.clear();
+    selectedBank.value = '';
   }
 
   Future<void> getRekeningUser() async {

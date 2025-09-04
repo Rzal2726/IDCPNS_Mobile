@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/modules/transaction/controllers/transaction_controller.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class TransactionView extends GetView<TransactionController> {
   const TransactionView({super.key});
@@ -327,10 +328,15 @@ Widget _buildTransactionList(List<dynamic> filtered) {
                 ),
               ),
               SizedBox(width: 8),
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.teal,
-                child: Icon(Icons.chevron_right_rounded, color: Colors.white),
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(Routes.INVOICE, arguments: trx['id']);
+                },
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.teal,
+                  child: Icon(Icons.chevron_right_rounded, color: Colors.white),
+                ),
               ),
             ],
           ),

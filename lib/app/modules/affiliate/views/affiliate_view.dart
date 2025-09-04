@@ -116,10 +116,13 @@ class AffiliateView extends GetView<AffiliateController> {
                   children: [
                     TextField(
                       controller: controller.kodeController,
-                      readOnly: controller.affiliateStatus.value != "true",
+                      readOnly: controller.affiliateStatus.value != true,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.grey.shade200,
+                        fillColor:
+                            controller.affiliateStatus.value != false
+                                ? Colors.white
+                                : Colors.grey.shade200,
                         isDense: true,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -140,7 +143,7 @@ class AffiliateView extends GetView<AffiliateController> {
 
                     SizedBox(height: 16),
 
-                    controller.affiliateStatus.value == "true"
+                    controller.affiliateStatus.value == true
                         ? ElevatedButton(
                           onPressed: controller.simpanKode,
                           style: ElevatedButton.styleFrom(
