@@ -72,6 +72,8 @@ import '../modules/paymentCheckout/bindings/payment_checkout_binding.dart';
 import '../modules/paymentCheckout/views/payment_checkout_view.dart';
 import '../modules/paymentDetail/bindings/payment_detail_binding.dart';
 import '../modules/paymentDetail/views/payment_detail_view.dart';
+import '../modules/paymentWhislist/bindings/payment_whislist_binding.dart';
+import '../modules/paymentWhislist/views/payment_whislist_view.dart';
 import '../modules/payment_upgrade_akun/bindings/payment_upgrade_akun_binding.dart';
 import '../modules/payment_upgrade_akun/views/payment_upgrade_akun_view.dart';
 import '../modules/pembahasan_tryout/bindings/pembahasan_tryout_binding.dart';
@@ -484,6 +486,11 @@ class AppPages {
       name: _Paths.INVOICE,
       page: () => const InvoiceView(),
       binding: InvoiceBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT_WHISLIST,
+      page: () => const PaymentWhislistView(),
+      binding: PaymentWhislistBinding(),
     ),
   ];
 }

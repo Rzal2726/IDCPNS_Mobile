@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 import '../controllers/wishlist_controller.dart';
 
@@ -109,7 +110,9 @@ class WishlistView extends GetView<WishlistController> {
                   Row(
                     children: [
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.toNamed(Routes.PAYMENT_WHISLIST);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.teal,
                           shape: RoundedRectangleBorder(
@@ -154,7 +157,7 @@ class WishlistView extends GetView<WishlistController> {
                       ), // biar ada jarak antar item
                       child: _buildWishlistItem(
                         imageUrl: item['productDetail']['gambar'],
-                        title: item['productDetail']['name'],
+                        title: item['productDetail']['name'] ?? "",
                         oldPrice: item['productDetail']['harga'].toString(),
                         newPrice: item['productDetail']['harga_fix'].toString(),
                         tag: item['productDetail']['menu_category']['menu'],

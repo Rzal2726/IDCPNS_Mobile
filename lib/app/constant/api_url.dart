@@ -92,3 +92,4 @@ const String apiListVideoSeries = "v1/video-series/list";
 const String apiListVideoSeriesParents = "v1/video-series/parents/";
 
 const String apiAddRekening = "v1/account/user/bank-account/add";
+const String apiGetDataBuyAllWhishlist = "v1/account/user/all-wishlist";

@@ -71,6 +71,7 @@ abstract class Routes {
   static const PRETEST = _Paths.PRETEST;
   static const PRETEST_TOUR = _Paths.PRETEST_TOUR;
   static const INVOICE = _Paths.INVOICE;
+  static const PAYMENT_WHISLIST = _Paths.PAYMENT_WHISLIST;
 }
 
 abstract class _Paths {
@@ -144,4 +145,5 @@ abstract class _Paths {
   static const PRETEST = '/pretest';
   static const PRETEST_TOUR = '/pretest-tour';
   static const INVOICE = '/invoice';
+  static const PAYMENT_WHISLIST = '/payment-whislist';
 }
