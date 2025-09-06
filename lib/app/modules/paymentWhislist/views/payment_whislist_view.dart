@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
@@ -553,8 +554,10 @@ void showPaymentBottomSheet(BuildContext context) {
                                   title: method['name'],
                                   subtitle:
                                       "Biaya Admin: ${method['biaya_admin']}",
-                                  onTap:
-                                      () => print("${method['name']} dipilih"),
+                                  onTap: () {
+                                    if (method['code'] == "OVO") Get.back();
+                                    showPhoneNumberBottomSheet(context);
+                                  },
                                 ),
                               ),
                           ],
@@ -599,8 +602,8 @@ Widget paymentItem({
               height: 25,
               placeholderBuilder:
                   (context) => SizedBox(
-                    height: 15,
-                    width: 15,
+                    height: 30,
+                    width: 30,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
             ),
@@ -722,6 +725,133 @@ void showPromoCodeBottomSheet(BuildContext context) {
                 ),
               );
         }),
+      );
+    },
+  );
+}
+
+void showPhoneNumberBottomSheet(BuildContext context) {
+  final controller = Get.put(PaymentWhislistController());
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (context) {
+      return SafeArea(
+        child: Padding(
+          // Tambahkan padding di sini
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Obx(() {
+            return controller.paymantListData.isEmpty
+                ? Center(child: CircularProgressIndicator())
+                : SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  child: SingleChildScrollView(
+                    padding: AppStyle.contentPadding,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Nomor Telepon",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.close),
+                              onPressed: () => Get.back(),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12),
+                        Padding(
+                          padding: EdgeInsets.only(top: 1),
+                          child: Row(
+                            children: [
+                              // Tambahkan Textbox untuk "+62" di sini
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  "+62",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8),
+
+                              Expanded(
+                                child: TextField(
+                                  controller: controller.ovoController,
+                                  keyboardType: TextInputType.phone,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  decoration: InputDecoration(
+                                    hintText: "Kirim",
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 10,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                      borderSide: BorderSide(
+                                        color: Colors.teal,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 14,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  controller.getAddOvoNumber();
+                                  Get.back();
+                                },
+                                child: Text(
+                                  "Kirim",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+          }),
+        ),
       );
     },
   );

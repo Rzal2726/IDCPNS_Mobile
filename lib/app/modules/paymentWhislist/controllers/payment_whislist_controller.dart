@@ -14,6 +14,8 @@ class PaymentWhislistController extends GetxController {
   // daftar opsi sub
   RxMap<int, bool> checked = <int, bool>{}.obs;
 
+  RxString ovoNumber = "".obs;
+
   // untuk state radio pilihan (sub bimbel)
   RxMap<int, String> selectedSub = <int, String>{}.obs;
 
@@ -32,6 +34,7 @@ class PaymentWhislistController extends GetxController {
   RxList paymantListData = [].obs;
 
   final TextEditingController promoController = TextEditingController();
+  final TextEditingController ovoController = TextEditingController();
   var paketLainnya = "Bimbel SKD CPNS 2025 Batch 16".obs;
   var selectedPaketLainnya = "".obs;
 
@@ -138,6 +141,16 @@ class PaymentWhislistController extends GetxController {
     } catch (e) {
       print("Error polling email verification: $e");
     }
+  }
+
+  Future<void> getAddOvoNumber() async {
+    String text = ovoController.text;
+    if (!text.startsWith("0")) {
+      text = "0$text";
+    }
+    ovoNumber.value = text;
+    // Optional: print the value to verify it's working
+    print('OVO number saved: ${ovoNumber.value}');
   }
 
   // void createPayment() async {
