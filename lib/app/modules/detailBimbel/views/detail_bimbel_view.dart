@@ -122,6 +122,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                           '${subData['name']}',
                           '${formatRupiah(subData['harga'])}',
                           '${formatRupiah(subData['harga_fix'])}',
+                          subData['id'],
                           controller,
                         ),
                     ],
@@ -184,8 +185,24 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                     ),
                   ),
                   onPressed: () {
-                    Get.toNamed(Routes.PAYMENT_DETAIL);
+                    if (controller.selectedPaket.value == 0) {
+                      Get.snackbar(
+                        "Peringatan",
+                        "Silakan pilih paket terlebih dahulu.",
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red.withOpacity(0.8),
+                        colorText: Colors.white,
+                      );
+                      return; // stop di sini
+                    }
+
+                    // lanjut kalau sudah pilih paket
+                    Get.toNamed(
+                      Routes.PAYMENT_DETAIL,
+                      arguments: [data["uuid"], controller.selectedPaket.value],
+                    );
                   },
+
                   child: Text(
                     'Daftar Sekarang',
                     style: TextStyle(
@@ -236,6 +253,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
     String title,
     String oldPrice,
     String newPrice,
+    int id,
     DetailBimbelController controller,
   ) {
     return Padding(
@@ -248,15 +266,18 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Radio<String>(
-                value: title,
+              Radio<int>(
+                value: id, // ✅ sekarang valuenya ID, bukan title
                 groupValue: controller.selectedPaket.value,
                 onChanged: (value) {
-                  controller.pilihPaket(value!);
+                  controller.pilihPaket(value!); // yg kepilih ID
                 },
-                activeColor: Colors.teal, // 🎯 bikin bulatan aktif jadi teal
+                activeColor: Colors.teal,
               ),
-              Align(alignment: Alignment.center, child: Text(title)),
+              Text(
+                title, // 👈 yang dilihat user tetap title
+                style: TextStyle(fontSize: 14), // opsional, biar rapi
+              ),
             ],
           ),
 

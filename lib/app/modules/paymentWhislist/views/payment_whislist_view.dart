@@ -362,13 +362,13 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
 }
 
 Widget buildRadioOption({
-  required String value,
-  required String groupValue,
-  required void Function(String?) onChanged,
+  required int value,
+  required int groupValue,
+  required void Function(int?) onChanged, // harus int?
   required String title,
   int? price,
 }) {
-  return RadioListTile<String>(
+  return RadioListTile<int>(
     dense: true,
     contentPadding: EdgeInsets.zero,
     value: value,
@@ -390,104 +390,6 @@ Widget buildRadioOption({
     activeColor: Colors.teal,
   );
 }
-
-// Widget buildProductSection({
-//   required dynamic parentId,
-//   required String title,
-//   required String selectedValue,
-//   required void Function(String) onChanged,
-//   required Map<String, dynamic> productDetail,
-//   required bool isChecked,
-//   required void Function(bool?) onCheckChanged,
-// })
-// {
-//   final String header = parentId != null ? "Bimbel" : "Tryout";
-//
-//   final List options = productDetail['is_not_purchased'] ?? [];
-//   final String? hargaFix = productDetail['harga_fix']?.toString();
-//
-//   return Column(
-//     crossAxisAlignment: CrossAxisAlignment.start,
-//     children: [
-//       Text(header, style: TextStyle(fontWeight: FontWeight.bold)),
-//       SizedBox(height: 15),
-//
-//       // Checkbox + Title
-//       Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           Row(
-//             children: [
-//               Checkbox(
-//                 value: isChecked,
-//                 onChanged: (v) {
-//                   print("clik");
-//                   onCheckChanged(v);
-//
-//                   // Reset pilihan kalau di-uncheck
-//                   // if (v == false) {
-//                   //   onChanged("");
-//                   // }
-//                 },
-//               ),
-//               Text(title, style: AppStyle.style15Bold),
-//             ],
-//           ),
-//           if (hargaFix != null)
-//             Text(
-//               formatRupiah(int.parse(hargaFix)),
-//               style: TextStyle(fontWeight: FontWeight.bold),
-//             ),
-//         ],
-//       ),
-//
-//       // Kalau ada options
-//       if (options.isNotEmpty)
-//         Column(
-//           children:
-//               options.map<Widget>((opt) {
-//                 final String value = opt["uuid"].toString();
-//                 final String name = opt["name"].toString();
-//                 final int? price = opt["final_price"];
-//
-//                 return RadioListTile<String>(
-//                   dense: true,
-//                   contentPadding: EdgeInsets.zero,
-//                   value: value,
-//                   groupValue: selectedValue,
-//                   onChanged:
-//                       isChecked
-//                           ? (v) {
-//                             if (v != null) onChanged(v);
-//                           }
-//                           : null, // disable kalau uncheck
-//                   title: Row(
-//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                     children: [
-//                       Text(
-//                         name,
-//                         style: TextStyle(
-//                           fontSize: 14,
-//                           color: isChecked ? Colors.black : Colors.grey,
-//                         ),
-//                       ),
-//                       if (price != null)
-//                         Text(
-//                           formatRupiah(price),
-//                           style: TextStyle(
-//                             fontWeight: FontWeight.bold,
-//                             color: isChecked ? Colors.black : Colors.grey,
-//                           ),
-//                         ),
-//                     ],
-//                   ),
-//                   activeColor: Colors.teal,
-//                 );
-//               }).toList(),
-//         ),
-//     ],
-//   );
-// }
 
 void showPaymentBottomSheet(BuildContext context) {
   final controller = Get.put(PaymentWhislistController());

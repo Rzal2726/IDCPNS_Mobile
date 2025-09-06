@@ -9,7 +9,7 @@ class DetailBimbelController extends GetxController
   RxMap datalBimbelData = {}.obs;
   RxMap datalCheckList = {}.obs;
   RxString wishlistUuid = "".obs;
-  var selectedPaket = 'Reguler'.obs;
+  RxInt selectedPaket = 0.obs;
   late TabController tabController;
   var idBimbel = Get.arguments;
   RxInt currentIndex = 0.obs;
@@ -27,16 +27,23 @@ class DetailBimbelController extends GetxController
     super.onClose();
   }
 
-  Future<void> getDetailBimbel({required id}) async {
+  Future<void> getDetailBimbel({required String id}) async {
     try {
-      final url = await baseUrl + apiGetDetailBimbel + "/" + id;
+      final url = baseUrl + apiGetDetailBimbel + "/" + id;
 
       final result = await _restClient.getData(url: url);
       print("asdas ${result.toString()}");
+
       if (result["status"] == "success") {
         var data = result['data'];
         datalBimbelData.value = data;
-        getCheckWhislist();
+
+        // ambil id pertama dari list result['data']['bimbel']
+        if (data['bimbel'] is List && (data['bimbel'] as List).isNotEmpty) {
+          selectedPaket.value = data['bimbel'][0]['id'];
+        } else {
+          selectedPaket.value = 0; // fallback, misal 0 berarti belum dipilih
+        }
       }
     } catch (e) {
       print("Error polling email verification: $e");
@@ -93,7 +100,8 @@ class DetailBimbelController extends GetxController
     }
   }
 
-  void pilihPaket(String paket) {
+  void pilihPaket(int paket) {
     selectedPaket.value = paket;
+    print("xxx${paket.toString()}");
   }
 }
