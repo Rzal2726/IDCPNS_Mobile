@@ -5,28 +5,43 @@ import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class PaymentWhislistController extends GetxController {
+  // checkbox utama
+  var bimbelChecked = false.obs;
+  var tryoutChecked = false.obs; // <-- tambahan
+  // sub-checkbox
+  // var selectedSub = ''.obs; // bisa kosong kalau belum dipilih
+
+  // daftar opsi sub
+  RxMap<int, bool> checked = <int, bool>{}.obs;
+
+  // untuk state radio pilihan (sub bimbel)
+  RxMap<int, String> selectedSub = <int, String>{}.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    getData();
+    getPaymentData();
+    super.onInit();
+    // Dummy data hardcode
+    // Tambahkan properti reactive untuk checkbox & radio
+  }
+
   final _restClient = RestClient();
   RxList wishLishData = [].obs;
   RxList paymantListData = [].obs;
-  var paketUtama = "Bimbel SKD CPNS 2024 Batch 12".obs;
-  var paketUtamaTipe = "Reguler".obs;
 
+  final TextEditingController promoController = TextEditingController();
   var paketLainnya = "Bimbel SKD CPNS 2025 Batch 16".obs;
   var selectedPaketLainnya = "".obs;
 
+  // contoh: simpan status checkbox di list
   var harga = 199000.obs;
   var totalHarga = 199000.obs;
 
   var metodePembayaran = "".obs;
   var kodePromo = "".obs;
-  final productChecked = <int, bool>{}.obs;
   final count = 0.obs;
-  @override
-  void onInit() {
-    getData();
-    getPaymentData();
-    super.onInit();
-  }
 
   @override
   void onReady() {
@@ -75,15 +90,25 @@ class PaymentWhislistController extends GetxController {
 
   Future<void> getData() async {
     try {
-      final url = await baseUrl + apiGetDataBuyAllWhishlist;
+      final url = baseUrl + apiGetDataBuyAllWhishlist;
 
       final result = await _restClient.getData(url: url);
-      print("emailnnyaa ${result.toString()}");
-      if (result["status"] == "success") {
-        wishLishData.value = result['data'];
+      print("wishlist response: $result");
+
+      if (result["status"] == "success" && result["data"] is List) {
+        wishLishData.value = result["data"];
+
+        // init state (checkbox & radio) sesuai data
+        for (var item in wishLishData) {
+          checked[item["id"]] = false;
+          selectedSub[item["id"]] = "";
+        }
+      } else {
+        wishLishData.clear();
       }
     } catch (e) {
-      print("Error polling email verification: $e");
+      print("Error fetch wishlist: $e");
+      wishLishData.clear();
     }
   }
 
@@ -101,8 +126,46 @@ class PaymentWhislistController extends GetxController {
     }
   }
 
-  void toggleCheck(int index, bool value) {
-    productChecked[index] = value;
-    productChecked.refresh();
+  Future<void> getApplyCode() async {
+    try {
+      final url = await baseUrl + apiApplyBimbelVoucherCode;
+      var payload = {"kode_promo": promoController.text, "amount": 1000};
+      final result = await _restClient.postData(url: url, payload: payload);
+      if (result["status"] == "success") {
+        Get.snackbar("Berhasil", "voucher berhasil");
+        promoController.clear();
+      }
+    } catch (e) {
+      print("Error polling email verification: $e");
+    }
   }
+
+  // void createPayment() async {
+  //   final payload = {
+  //     "type": "tryout",
+  //     "total_amount": totalHarga.value,
+  //     "amount_diskon": diskon.value,
+  //     "description": dataTryout['formasi'],
+  //     "bundling": true,
+  //     "tryout_formasi_id": dataTryout['id'],
+  //     "kode_promo": promoCode.value,
+  //     "items": itemsId,
+  //     "source": "",
+  //     "useBalance": false,
+  //     "payment_method_id": selectedPaymentMethod['id'],
+  //     "payment_method": selectedPaymentMethod['code'],
+  //     "payment_type": selectedPaymentType.value,
+  //     "mobile_number": ovoNumber.value,
+  //   };
+  //   final response = await restClient.postData(
+  //     url: baseUrl + apiCreatePayment,
+  //     payload: payload,
+  //   );
+  //
+  //   final Map<String, dynamic> data = Map<String, dynamic>.from(
+  //     response['data'],
+  //   );
+  //   transactionData.assignAll(data);
+  //   Get.offNamed("/tryout-checkout");
+  // }
 }

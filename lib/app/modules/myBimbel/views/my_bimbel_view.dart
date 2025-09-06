@@ -136,12 +136,15 @@ class MyBimbelView extends GetView<MyBimbelController> {
             Expanded(
               child: Obx(
                 () => ListView.builder(
-                  itemCount: controller.listBimbel.length,
+                  itemCount: controller.listBimbel['data'].length,
                   itemBuilder: (context, index) {
-                    var item = controller.listBimbel[index];
+                    var item = controller.listBimbel['data'][index];
                     return InkWell(
                       onTap: () {
-                        Get.toNamed(Routes.DETAIL_MY_BIMBEL);
+                        Get.toNamed(
+                          Routes.DETAIL_MY_BIMBEL,
+                          arguments: item['uuid'],
+                        );
                       },
                       child: Container(
                         margin: EdgeInsets.only(bottom: 20),
@@ -166,11 +169,18 @@ class MyBimbelView extends GetView<MyBimbelController> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.teal,
+                                color: Color(
+                                  int.parse(
+                                    item['hex'].toString().replaceFirst(
+                                      '#',
+                                      '0xff',
+                                    ),
+                                  ),
+                                ),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                'CPNS',
+                                item['menu']!,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -180,7 +190,7 @@ class MyBimbelView extends GetView<MyBimbelController> {
                             ),
                             SizedBox(height: 7),
                             Text(
-                              item['title']!,
+                              item['bimbel_parent_name']!,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -188,7 +198,7 @@ class MyBimbelView extends GetView<MyBimbelController> {
                             ),
                             SizedBox(height: 7),
                             Text(
-                              item['jenis']!,
+                              item['bimbel_name']!,
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 13,

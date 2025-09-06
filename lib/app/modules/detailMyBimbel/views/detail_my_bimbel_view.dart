@@ -50,8 +50,9 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
           ),
         ],
       ),
-      body: Obx(
-        () => SafeArea(
+      body: Obx(() {
+        var data = controller.bimbelData;
+        return SafeArea(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(16),
             child: Column(
@@ -69,14 +70,14 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        controller.paketName.value,
+                        data['bimbel']['bimbel_parent']['name'],
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        controller.paketType.value,
+                        data['bimbel']['name'],
                         style: TextStyle(color: Colors.grey),
                       ),
                       SizedBox(height: 8),
@@ -264,7 +265,9 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: "1", // ranking kamu
+                                text:
+                                    controller.userRank
+                                        .toString(), // ranking kamu
                                 style: TextStyle(
                                   color: Colors.black, // highlight hitam
                                   fontWeight: FontWeight.bold,
@@ -272,7 +275,8 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                 ),
                               ),
                               TextSpan(
-                                text: "/0", // total peserta
+                                text:
+                                    "/${controller.rankBimbel['data'].length}", // total peserta
                                 style: TextStyle(
                                   color: Colors.grey[700],
                                   fontSize: 23,
@@ -539,8 +543,8 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
               ],
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }

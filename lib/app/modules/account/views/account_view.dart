@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../controllers/account_controller.dart';
 
@@ -235,7 +234,6 @@ class AccountView extends GetView<AccountController> {
     required String title,
     required VoidCallback onTap, // fleksibel, bisa route atau fungsi lain
   }) {
-    final controller = Get.put(AccountController());
     return Column(
       children: [
         InkWell(

@@ -93,3 +93,9 @@ const String apiListVideoSeriesParents = "v1/video-series/parents/";
 
 const String apiAddRekening = "v1/account/user/bank-account/add";
 const String apiGetDataBuyAllWhishlist = "v1/account/user/all-wishlist";
+
+const String apiApplyBimbelVoucherCode = "v1/bimbel/voucher/apply";
+const String apiGetMyBimbel = "v1/bimbel/me/list";
+
+const String apiGetDetailBimbelSaya = "v1/bimbel/me/detail";
+const String apiGetJadwalBimbelSaya = "v1/bimbel/pretest/ranking";
