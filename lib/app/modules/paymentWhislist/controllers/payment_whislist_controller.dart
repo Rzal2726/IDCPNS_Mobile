@@ -10,12 +10,16 @@ class PaymentWhislistController extends GetxController {
   var tryoutChecked = false.obs; // <-- tambahan
   // sub-checkbox
   // var selectedSub = ''.obs; // bisa kosong kalau belum dipilih
+  final selectedPaketPerCard = <int, Map<String, dynamic>>{}.obs;
 
   // daftar opsi sub
   RxMap<int, bool> checked = <int, bool>{}.obs;
 
   RxString ovoNumber = "".obs;
-
+  RxInt paymentMethodId = 0.obs;
+  RxString paymentMethod = "".obs;
+  RxString paymentType = "".obs;
+  RxInt baseHarga = 0.obs;
   // untuk state radio pilihan (sub bimbel)
   RxMap<int, String> selectedSub = <int, String>{}.obs;
 
@@ -39,8 +43,6 @@ class PaymentWhislistController extends GetxController {
   var selectedPaketLainnya = "".obs;
 
   // contoh: simpan status checkbox di list
-  var harga = 199000.obs;
-  var totalHarga = 199000.obs;
 
   var metodePembayaran = "".obs;
   var kodePromo = "".obs;
@@ -56,24 +58,13 @@ class PaymentWhislistController extends GetxController {
     super.onClose();
   }
 
-  void pilihPaketLainnya(String value) {
-    selectedPaketLainnya.value = value;
-
-    if (value.contains("Platinum")) {
-      totalHarga.value = harga.value + 50000;
-    } else {
-      totalHarga.value = harga.value;
-    }
+  void pilihPaket(int parentId, Map<String, dynamic> paket) {
+    selectedPaketPerCard[parentId] = paket;
+    selectedPaketPerCard.refresh(); // biar Obx ke-update
   }
 
   void pilihMetode(String metode) {
     metodePembayaran.value = metode;
-  }
-
-  void pakaiPromo(String kode) {
-    kodePromo.value = kode;
-    // Dummy: diskon Rp 20.000
-    totalHarga.value = (totalHarga.value - 20000).clamp(0, 99999999);
   }
 
   Future<void> bayarSekarang() async {
@@ -91,6 +82,12 @@ class PaymentWhislistController extends GetxController {
     Get.toNamed(Routes.PAYMENT_CHECKOUT);
   }
 
+  List<int> getSelectedItems() {
+    return selectedPaketPerCard.values
+        .map((paket) => paket["id"] as int)
+        .toList();
+  }
+
   Future<void> getData() async {
     try {
       final url = baseUrl + apiGetDataBuyAllWhishlist;
@@ -98,14 +95,9 @@ class PaymentWhislistController extends GetxController {
       final result = await _restClient.getData(url: url);
       print("wishlist response: $result");
 
-      if (result["status"] == "success" && result["data"] is List) {
+      if (result["status"] == "success") {
         wishLishData.value = result["data"];
-
-        // init state (checkbox & radio) sesuai data
-        for (var item in wishLishData) {
-          checked[item["id"]] = false;
-          selectedSub[item["id"]] = "";
-        }
+        print("xxx ${wishLishData.toString()}");
       } else {
         wishLishData.clear();
       }
@@ -143,6 +135,14 @@ class PaymentWhislistController extends GetxController {
     }
   }
 
+  int getTotalHargaFix() {
+    return (baseHarga.value +
+        selectedPaketPerCard.values
+            .map((paket) => paket["harga_fix"] as int)
+            .fold(0, (total, harga) => total + harga));
+    ;
+  }
+
   Future<void> getAddOvoNumber() async {
     String text = ovoController.text;
     if (!text.startsWith("0")) {
@@ -153,32 +153,29 @@ class PaymentWhislistController extends GetxController {
     print('OVO number saved: ${ovoNumber.value}');
   }
 
-  // void createPayment() async {
-  //   final payload = {
-  //     "type": "tryout",
-  //     "total_amount": totalHarga.value,
-  //     "amount_diskon": diskon.value,
-  //     "description": dataTryout['formasi'],
-  //     "bundling": true,
-  //     "tryout_formasi_id": dataTryout['id'],
-  //     "kode_promo": promoCode.value,
-  //     "items": itemsId,
-  //     "source": "",
-  //     "useBalance": false,
-  //     "payment_method_id": selectedPaymentMethod['id'],
-  //     "payment_method": selectedPaymentMethod['code'],
-  //     "payment_type": selectedPaymentType.value,
-  //     "mobile_number": ovoNumber.value,
-  //   };
-  //   final response = await restClient.postData(
-  //     url: baseUrl + apiCreatePayment,
-  //     payload: payload,
-  //   );
-  //
-  //   final Map<String, dynamic> data = Map<String, dynamic>.from(
-  //     response['data'],
-  //   );
-  //   transactionData.assignAll(data);
-  //   Get.offNamed("/tryout-checkout");
-  // }
+  void createPayment() async {
+    final payload = {
+      "type": "bimbel",
+      "total_amount": getTotalHargaFix(),
+      "amount_diskon": 0,
+      "description": "",
+      "bundling": true,
+      "bimbel_parent_id": 0,
+      "kode_promo": "",
+      "items": getSelectedItems(),
+      "source": "",
+      "useBalance": false,
+      "payment_method_id": paymentMethodId.value,
+      "payment_method": paymentMethod.value,
+      "payment_type": paymentType.value,
+      "mobile_number": ovoNumber.value,
+    };
+    print("xxx ${payload.toString()}");
+    // final response = await _restClient.postData(
+    //   url: baseUrl + apiCreatePayment,
+    //   payload: payload,
+    // );
+
+    //  Get.toNamed(Routes.PAYMENT_CHECKOUT);
+  }
 }

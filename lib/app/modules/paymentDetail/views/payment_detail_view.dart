@@ -380,21 +380,6 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
       ),
     );
   }
-
-  Widget _rowItem(String label, String value, {bool bold = false}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label),
-        Text(
-          value,
-          style: TextStyle(
-            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 // helper radio widget

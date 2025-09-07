@@ -42,103 +42,130 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Judul
-                  Text("Wishlist", style: AppStyle.styleW900),
-                  SizedBox(height: 16),
-                  // Bimbel Section
-                  Obx(
-                    () => ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: controller.wishLishData.length,
-                      itemBuilder: (context, index) {
-                        final item = controller.wishLishData[index];
-                        final isBimbel = item["bimbel_parent_id"] != null;
-                        final detail = item["productDetail"];
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Checkbox utama
-                            Obx(
-                              () => CheckboxListTile(
-                                value: controller.checked[item["id"]],
-                                onChanged: (val) {
-                                  controller.checked[item["id"]] = val!;
-                                  if (!val)
-                                    controller.selectedSub[item["id"]] = "";
-                                },
-                                title: Text(
-                                  isBimbel ? detail["name"] : detail["formasi"],
-                                  style: const TextStyle(fontSize: 15),
-                                ),
-                                secondary: Text(
-                                  "${formatRupiah(isBimbel ? detail["is_not_purchased"][0]["final_price"] : detail["final_price"])}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                                activeColor: Colors.teal,
-                                contentPadding:
-                                    EdgeInsets.zero, // ⬅️ Biar mentok kiri
-                              ),
+                  Text("Checkout Paket Bimbel", style: AppStyle.styleW900),
+                  SizedBox(height: 10),
+                  const Text(
+                    "Bimbel Lainnya",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (var data in controller.wishLishData)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
                             ),
-
-                            // Radio sub-option khusus Bimbel
-                            if (isBimbel)
-                              Obx(
-                                () => Column(
-                                  children:
-                                      (detail["is_not_purchased"] as List).map<
-                                        Widget
-                                      >((sub) {
-                                        return Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 32.0,
+                            child: Card(
+                              color: Colors.white,
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Container(
+                                width: 300,
+                                padding: EdgeInsets.all(12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Header row (title + X)
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          data['productDetail']?['name'] ?? '',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                          child: RadioListTile<String>(
-                                            dense: true,
-                                            contentPadding:
-                                                EdgeInsets
-                                                    .zero, // ⬅️ Hilangkan padding default
-                                            value: sub["name"],
-                                            groupValue:
-                                                controller
-                                                    .selectedSub[item["id"]],
-                                            onChanged:
-                                                controller.checked[item["id"]] ==
-                                                        true
-                                                    ? (v) =>
-                                                        controller
-                                                                .selectedSub[item["id"]] =
-                                                            v!
-                                                    : null,
-                                            title: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(sub["name"]),
-                                                Text(
-                                                  "Rp ${sub["final_price"]}",
+                                        ),
+                                        Obx(() {
+                                          final isSelected = controller
+                                              .selectedPaketPerCard
+                                              .containsKey(data['id']);
+                                          return Visibility(
+                                            visible: isSelected,
+                                            maintainSize: true,
+                                            maintainAnimation: true,
+                                            maintainState: true,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                controller.selectedPaketPerCard
+                                                    .remove(data['id']);
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.all(4),
+                                                child: Icon(
+                                                  Icons.cancel,
+                                                  size: 20,
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                      ],
+                                    ),
+
+                                    SizedBox(height: 8),
+
+                                    // list radio option
+                                    // Column(
+                                    //   children: [
+                                    //     for (var subData
+                                    //         in (data['productDetail']?['is_not_purchased'] ??
+                                    //             []))
+                                    //       _buildRadioOption(
+                                    //         '${subData['name']}',
+                                    //         subData['id'], // paket id
+                                    //         data['id'], // parent id
+                                    //         subData['final_price'],
+                                    //         data['bimbel_parent_id'] != null
+                                    //             ? true
+                                    //             : false,
+                                    //         controller,
+                                    //       ),
+                                    //   ],
+                                    // ),
+                                    Column(
+                                      children:
+                                          data['bimbel_parent_id'] != null
+                                              ? [
+                                                // case: parent bimbel ada → loop is_not_purchased
+                                                for (var subData
+                                                    in (data['productDetail']?['is_not_purchased'] ??
+                                                        []))
+                                                  _buildRadioOption(
+                                                    '${subData['name']}',
+                                                    subData['id'],
+                                                    data['id'],
+                                                    subData['final_price'],
+                                                    true,
+                                                    controller,
+                                                  ),
+                                              ]
+                                              : [
+                                                // case: parent bimbel null → pakai productDetail langsung
+                                                _buildRadioOption(
+                                                  '${data['productDetail']?['formasi'] ?? ''}',
+                                                  data['productDetail']?['id'],
+                                                  data['id'],
+                                                  data['productDetail']?['harga_fix'],
+                                                  false,
+                                                  controller,
                                                 ),
                                               ],
-                                            ),
-                                            activeColor: Colors.teal,
-                                          ),
-                                        );
-                                      }).toList(),
+                                    ),
+                                  ],
                                 ),
                               ),
-
-                            const SizedBox(height: 20),
-                          ],
-                        );
-                      },
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-
                   SizedBox(height: 20),
 
                   // ListView.builder(
@@ -279,7 +306,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                             ),
                           ),
                           Text(
-                            "Rp.${controller.harga.value}",
+                            "Rp.${controller.getTotalHargaFix()}",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -298,7 +325,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                             ),
                           ),
                           Text(
-                            "Rp.${controller.totalHarga.value}",
+                            "Rp.${controller.getTotalHargaFix()}",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -324,8 +351,8 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                         elevation: 0,
                       ),
                       onPressed:
-                          controller.totalHarga.value > 0
-                              ? () => controller.bayarSekarang()
+                          controller.getTotalHargaFix() > 0
+                              ? () => controller.createPayment()
                               : null,
                       child: Text(
                         "Bayar Sekarang",
@@ -361,33 +388,47 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
   }
 }
 
-Widget buildRadioOption({
-  required int value,
-  required int groupValue,
-  required void Function(int?) onChanged, // harus int?
-  required String title,
-  int? price,
-}) {
-  return RadioListTile<int>(
-    dense: true,
-    contentPadding: EdgeInsets.zero,
-    value: value,
-    groupValue: groupValue,
-    onChanged: onChanged,
-    title:
-        price == null
-            ? Text(title, style: TextStyle(fontSize: 14))
-            : Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(title, style: TextStyle(fontSize: 14)),
-                Text(
-                  "Rp ${price.toString()}",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
+Widget _buildRadioOption(
+  String title,
+  int paketId,
+  int parentId,
+  int hargaFix,
+  bool isBimbel,
+  PaymentWhislistController controller,
+) {
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical: 4),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Obx(
+              () => Radio<int>(
+                value: paketId, // ID paket dari subData['id']
+                groupValue: controller.selectedPaketPerCard[parentId]?["id"],
+                onChanged: (value) {
+                  if (value != null) {
+                    controller.pilihPaket(parentId, {
+                      "id": value, // simpan id paket
+                      "harga_fix": hargaFix, // simpan harga_fix paket ini
+                    });
+                  }
+                },
+                activeColor: Colors.teal,
+                visualDensity: VisualDensity.compact,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
             ),
-    activeColor: Colors.teal,
+            Text(title, style: TextStyle(fontSize: 12)),
+          ],
+        ),
+        Text(
+          formatRupiah(hargaFix),
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+      ],
+    ),
   );
 }
 
