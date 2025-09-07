@@ -6,6 +6,9 @@ class NotificationController extends GetxController {
   final _restClient = RestClient();
   RxString selectedFilter = "Select All".obs;
   RxList notifData = [].obs;
+  RxList allReadData = [].obs;
+  RxList allUnreadData = [].obs;
+  RxList<Map<String, int>> idSelected = <Map<String, int>>[].obs;
   @override
   void onInit() {
     getNotif();
@@ -28,20 +31,51 @@ class NotificationController extends GetxController {
 
       final result = await _restClient.getData(url: url);
       print("emailnnyaa ${result.toString()}");
+
       if (result["status"] == "success") {
-        notifData.value = result['data'];
+        final data = result['data'] as List<dynamic>;
+
+        notifData.value = data;
+
+        // Filter untuk allReadData
+        allReadData.value =
+            data
+                .where((item) => item['read'] == 1)
+                .map<int>((item) => item['id'] as int)
+                .toList();
+
+        // Filter untuk allUnreadData
+        allUnreadData.value =
+            data
+                .where((item) => item['read'] == 0)
+                .map<int>((item) => item['id'] as int)
+                .toList();
       }
     } catch (e) {
       print("Error polling email verification: $e");
     }
   }
 
-  Future<void> getReadNotif({required int id}) async {
+  Future<void> getReadNotif({
+    int? id,
+    List? idNotif, // opsional, bisa banyak ID
+  }) async {
     try {
       final url = await baseUrl + apiReadNotif + "/" + id.toString();
 
-      final result = await _restClient.postData(url: url);
-      print("emailnnyaa ${result.toString()}");
+      // Buat payload kalau idNotif ada
+      Map<String, dynamic>? payload;
+      if (idNotif != null && idNotif.isNotEmpty) {
+        payload = {"selectedIds": idNotif}; // bisa masukin banyak ID
+      }
+
+      final result = await _restClient.postData(
+        url: url,
+        payload: payload, // kalau payload null, dianggap tanpa body
+      );
+
+      print("Result: ${result.toString()}");
+
       if (result["status"] == "success") {
         getNotif();
       }
@@ -50,31 +84,60 @@ class NotificationController extends GetxController {
     }
   }
 
-  Future<void> getUnreadNotif({required int id}) async {
+  Future<void> getUnreadNotif({
+    required int id,
+    List? idNotif, // opsional, bisa banyak ID
+  }) async {
     try {
       final url = await baseUrl + apiUnreadNotif + "/" + id.toString();
 
-      final result = await _restClient.postData(url: url);
-      print("emailnnyaa ${result.toString()}");
+      // Buat payload kalau idNotif ada
+      Map<String, dynamic>? payload;
+      if (idNotif != null && idNotif.isNotEmpty) {
+        payload = {"selectedIds": idNotif}; // bisa masukin banyak ID
+      }
+
+      final result = await _restClient.postData(
+        url: url,
+        payload: payload, // kalau payload null, request tetap jalan tanpa body
+      );
+
+      print("Result: ${result.toString()}");
+
       if (result["status"] == "success") {
-        getNotif();
+        getNotif(); // refresh data notif setelah update
       }
     } catch (e) {
       print("Error polling email verification: $e");
     }
   }
 
-  Future<void> getDeleteNotif({required int id}) async {
+  Future<void> getDeleteNotif({
+    int? id, // optional untuk single delete
+    List<int>? idNotif, // optional untuk multiple delete
+  }) async {
     try {
-      final url = await baseUrl + apiDeleteNotif + "/" + id.toString();
+      // Kalau id diberikan, pakai itu; kalau idNotif, tetap pakai endpoint sama
+      final url =
+          await baseUrl + apiDeleteNotif + "/" + (id?.toString() ?? "0");
 
-      final result = await _restClient.postData(url: url);
-      print("emailnnyaa ${result.toString()}");
+      Map<String, dynamic>? payload;
+      if (idNotif != null && idNotif.isNotEmpty) {
+        payload = {"selectedIds": idNotif};
+      }
+
+      final result = await _restClient.postData(
+        url: url,
+        payload: payload, // null kalau single delete tanpa payload
+      );
+
+      print("Result: ${result.toString()}");
+
       if (result["status"] == "success") {
-        getNotif();
+        getNotif(); // refresh notif setelah hapus
       }
     } catch (e) {
-      print("Error polling email verification: $e");
+      print("Error deleting notifications: $e");
     }
   }
 }

@@ -117,7 +117,7 @@ class TryoutController extends GetxController {
         url: baseUrl + apiGetTryoutPaket + '?page=${page.toString()}',
         payload: payload,
       );
-
+      print("xxx ${payload}");
       final List<Map<String, dynamic>> paket = List<Map<String, dynamic>>.from(
         response['data']['data'],
       );

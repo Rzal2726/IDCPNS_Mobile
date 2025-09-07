@@ -1,15 +1,36 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class TransactionController extends GetxController {
   final _restClient = RestClient();
+  final TextEditingController startDateController = TextEditingController();
+  final TextEditingController endDateController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
+
   RxMap transactions = {}.obs;
-  RxString selectedFilter = "Semua".obs;
+  RxInt totalPage = 0.obs;
+  final option = ["Semua", "Sukses", "Menunggu Pembayaran", "Gagal"];
+  final selectedOption = "Semua".obs;
+  RxInt currentPage = 1.obs;
+  RxInt totalPages = 0.obs;
+  RxBool isloading = true.obs;
+  RxString status = "".obs;
   final count = 0.obs;
   @override
   void onInit() {
     getTransaction();
+    // searchController.addListener(() {
+    //   // optional: delay manual atau pakai Timer kalau mau debounce
+    //   getTransaction(
+    //     page: 1,
+    //     search: searchController.text,
+    //     date: startDateController.text,
+    //     status: status.value,
+    //   );
+    // });
     super.onInit();
     // Dummy data
   }
@@ -21,21 +42,85 @@ class TransactionController extends GetxController {
 
   @override
   void onClose() {
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
     super.onClose();
   }
 
-  Future<void> getTransaction() async {
-    try {
-      final url = await baseUrl + apiGetTransaction;
+  void goToPage(int page) {
+    if (page >= 1 && page <= totalPage.value) {
+      currentPage.value = page;
+      getTransaction(page: currentPage.value, status: status.value);
+      // panggil API fetch data di sini jika perlu
+    }
+  }
 
-      final result = await _restClient.postData(url: url);
+  void nextPage() {
+    if (currentPage.value < totalPage.value) {
+      currentPage.value++;
+      getTransaction(page: currentPage.value, status: status.value);
+      // panggil API fetch data di sini
+    }
+  }
+
+  void prevPage() {
+    if (currentPage.value > 1) {
+      currentPage.value--;
+      getTransaction(page: currentPage.value, status: status.value);
+      // panggil API fetch data di sini
+    }
+  }
+
+  void _onSearchChanged() {
+    final query = searchController.text;
+    // Optional: pakai debounce supaya API tidak kebanyakan dipanggil
+    getTransaction(
+      page: 1, // reset ke page 1 kalau search
+      search: query,
+      date: startDateController.text,
+      status: status.value,
+    );
+  }
+
+  Future<void> getTransaction({
+    int? page,
+    String? search,
+    String? status,
+    String? date,
+  }) async {
+    try {
+      isloading.value = true;
+      final url = await baseUrl + apiGetTransaction;
+      var payload = {
+        "perpage": 10,
+        "page": page ?? 0,
+        "tanggal_mulai": dateFormat(date ?? ""),
+        "search": search ?? "",
+        "status": status ?? "",
+      };
+      print("xxx${payload.toString()}");
+      final result = await _restClient.postData(url: url, payload: payload);
 
       if (result["status"] == "success") {
         var data = result['data'];
         transactions.value = data;
+        totalPage.value = data['last_page'];
+        print("Xxxc ${result['data']['last_page']}");
       }
     } catch (e) {
       print("Error polling email verification: $e");
     }
+    isloading.value = false;
   }
+}
+
+String dateFormat(String date) {
+  if (date.isEmpty) return "";
+  final parts = date.split('/');
+  if (parts.length != 3)
+    return date; // kembalikan apa adanya kalau format salah
+  final day = parts[0].padLeft(2, '0');
+  final month = parts[1].padLeft(2, '0');
+  final year = parts[2];
+  return "$year-$month-$day";
 }

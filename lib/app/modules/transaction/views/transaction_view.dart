@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/modules/transaction/controllers/transaction_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class TransactionView extends GetView<TransactionController> {
   const TransactionView({super.key});
@@ -64,31 +65,74 @@ class TransactionView extends GetView<TransactionController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ===== TAB BAR =====
-              Material(
-                color: Colors.white,
-                child: TabBar(
-                  labelColor: Colors.teal,
-                  unselectedLabelColor: Colors.black87,
-                  indicatorColor: Colors.teal,
-                  indicatorWeight: 3,
-                  labelStyle: TextStyle(fontWeight: FontWeight.w600),
-                  tabs: [
-                    Tab(text: 'Semua'),
-                    Tab(text: 'Sukses'),
-                    Tab(text: 'Menunggu Pembayaran'),
-                  ],
-                ),
+              // ===== OPTION BAR GANTI TAB =====
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Obx(() {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children:
+                        controller.option.map((option) {
+                          final isSelected =
+                              controller.selectedOption.value == option;
+
+                          return GestureDetector(
+                            onTap: () {
+                              controller.selectedOption.value = option;
+
+                              // Tentukan status untuk API
+                              String status = "";
+                              if (option == "Sukses") status = "SUCCESS";
+                              if (option == "Menunggu Pembayaran")
+                                status = "PENDING";
+                              if (option == "Gagal") status = "FAILED";
+                              controller.status.value = status;
+                              controller.getTransaction(status: status);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    option,
+                                    style: TextStyle(
+                                      color:
+                                          isSelected
+                                              ? Colors.teal
+                                              : Colors.grey[700],
+                                      fontWeight:
+                                          isSelected
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  AnimatedContainer(
+                                    duration: Duration(milliseconds: 200),
+                                    height: 2,
+                                    width: isSelected ? 20 : 0,
+                                    color: Colors.teal,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                  );
+                }),
               ),
+
               SizedBox(height: 8),
 
               // ===== SEARCH =====
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
-                  onChanged: (q) {
-                    controller.update();
-                  },
+                  controller: controller.searchController,
                   decoration: InputDecoration(
                     hintText: 'Cari',
                     filled: true,
@@ -105,18 +149,27 @@ class TransactionView extends GetView<TransactionController> {
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(color: Colors.teal, width: 1.6),
                     ),
-                    suffixIcon: Padding(
-                      padding: EdgeInsets.only(right: 8),
-                      child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 6),
-                        width: 38,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          Icons.search_rounded,
-                          size: 22,
-                          color: Colors.black87,
+                    suffixIcon: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        // Panggil API hanya saat klik ikon search
+                        controller.getTransaction(
+                          page: 1, // biasanya reset ke halaman 1 saat search
+                          search: controller.searchController.text,
+                          date: controller.startDateController.text,
+                          status: controller.status.value,
+                        );
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 8),
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 6),
+                          width: 38,
+                          child: Icon(
+                            Icons.search_rounded,
+                            size: 22,
+                            color: Colors.black87,
+                          ),
                         ),
                       ),
                     ),
@@ -127,6 +180,7 @@ class TransactionView extends GetView<TransactionController> {
                   ),
                 ),
               ),
+
               SizedBox(height: 12),
 
               // ===== HEADER RIWAYAT + FILTER =====
@@ -144,7 +198,9 @@ class TransactionView extends GetView<TransactionController> {
                     Spacer(),
                     InkWell(
                       borderRadius: BorderRadius.circular(8),
-                      onTap: () {},
+                      onTap: () {
+                        showTransactionFilterBottomSheet(context);
+                      },
                       child: Row(
                         children: [
                           Text(
@@ -162,52 +218,51 @@ class TransactionView extends GetView<TransactionController> {
                   ],
                 ),
               ),
+
               SizedBox(height: 8),
 
-              // ===== LIST PER TAB =====
+              // ===== LIST TRANSAKSI =====
               Expanded(
-                child: TabBarView(
-                  children: [
-                    // Semua
-                    Obx(() {
-                      final allData = controller.transactions['data'] ?? [];
-                      final filtered = allData;
-                      print("asd ${controller.transactions.toString()}");
-                      if (filtered.isEmpty) {
-                        return _buildEmptyState();
-                      }
-                      return _buildTransactionList(filtered);
-                    }),
+                child: Obx(() {
+                  if (controller.isloading.value) {
+                    return Skeletonizer(
+                      child: ListView.builder(
+                        itemCount: 5,
+                        itemBuilder:
+                            (context, index) => Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8.0,
+                                horizontal: 16,
+                              ),
+                              child: Container(
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade300,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                      ),
+                    );
+                  }
 
-                    // Sukses
-                    Obx(() {
-                      final allData = controller.transactions['data'] ?? [];
-                      final filtered =
-                          allData
-                              .where((t) => t['status'] == 'SUCCESS')
-                              .toList();
-                      if (filtered.isEmpty) {
-                        return _buildEmptyState();
-                      }
-                      return _buildTransactionList(filtered);
-                    }),
+                  final allData = controller.transactions['data'] ?? [];
+                  if (allData.isEmpty) {
+                    return _buildEmptyState();
+                  }
 
-                    // Menunggu Pembayaran
-                    Obx(() {
-                      final allData = controller.transactions['data'] ?? [];
-                      final filtered =
-                          allData
-                              .where((t) => t['status'] == 'PENDING')
-                              .toList();
-                      if (filtered.isEmpty) {
-                        return _buildEmptyState();
-                      }
-                      return _buildTransactionList(filtered);
-                    }),
-                  ],
-                ),
+                  return _buildTransactionList(allData);
+                }),
               ),
             ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          color: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [_buildPagination()],
           ),
         ),
       ),
@@ -344,4 +399,238 @@ Widget _buildTransactionList(List<dynamic> filtered) {
       );
     },
   );
+}
+
+void showTransactionFilterBottomSheet(BuildContext context) {
+  final controller = Get.put(TransactionController());
+
+  final DateTime today = DateTime.now();
+  controller.endDateController.text =
+      "${today.day.toString().padLeft(2, '0')}/"
+      "${today.month.toString().padLeft(2, '0')}/"
+      "${today.year}";
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (ctx) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return SafeArea(
+            child: Padding(
+              padding: MediaQuery.of(ctx).viewInsets,
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Filter",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+
+                    // Tanggal Mulai
+                    Text("Tanggal Mulai"),
+                    SizedBox(height: 4),
+                    TextField(
+                      controller: controller.startDateController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        hintText: "Pilih Tanggal",
+                        suffixIcon: Icon(Icons.calendar_today),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                          borderSide: BorderSide(color: Colors.grey.shade400),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                      ),
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            controller.startDateController.text =
+                                "${pickedDate.day.toString().padLeft(2, '0')}/"
+                                "${pickedDate.month.toString().padLeft(2, '0')}/"
+                                "${pickedDate.year}";
+                          });
+                        }
+                      },
+                    ),
+                    SizedBox(height: 12),
+
+                    // Tanggal Selesai (tidak bisa diedit)
+                    Text("Tanggal Selesai"),
+                    SizedBox(height: 4),
+                    TextField(
+                      controller: controller.endDateController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                          borderSide: BorderSide(color: Colors.grey.shade400),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+
+                    // Tombol Cari
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Kirim data ke controller
+                          controller.getTransaction(
+                            page: controller.currentPage.value,
+                            date: controller.startDateController.text,
+                            status: controller.status.value,
+                          );
+                          print(
+                            "Start: ${controller.startDateController.text}",
+                          );
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: Text("Cari"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+Widget _buildPagination() {
+  final controller = Get.put(TransactionController());
+
+  return Obx(() {
+    int current = controller.currentPage.value;
+    int total = controller.totalPage.value;
+
+    List<int> pagesToShow = [];
+    pagesToShow.add(1);
+    if (current - 1 > 1) pagesToShow.add(current - 1);
+    if (current != 1 && current != total) pagesToShow.add(current);
+    if (current + 1 < total) pagesToShow.add(current + 1);
+    if (total > 1) pagesToShow.add(total);
+    pagesToShow = pagesToShow.toSet().toList()..sort();
+
+    return SafeArea(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: current > 1 ? () => controller.goToPage(1) : null,
+              icon: Icon(Icons.first_page),
+              color: current > 1 ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+            IconButton(
+              onPressed: current > 1 ? controller.prevPage : null,
+              icon: Icon(Icons.chevron_left),
+              color: current > 1 ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+
+            ...pagesToShow.map((page) {
+              bool isActive = page == current;
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 2),
+                child: GestureDetector(
+                  onTap: () => controller.goToPage(page),
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isActive ? 14 : 10,
+                      vertical: isActive ? 8 : 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isActive ? Colors.teal.shade100 : Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isActive ? Colors.teal : Colors.grey.shade300,
+                        width: isActive ? 2 : 1,
+                      ),
+                    ),
+                    child: Text(
+                      '$page',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isActive ? Colors.teal : Colors.black,
+                        fontSize:
+                            isActive
+                                ? 16
+                                : 14, // font lebih besar untuk page aktif
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+
+            IconButton(
+              onPressed: current < total ? controller.nextPage : null,
+              icon: Icon(Icons.chevron_right),
+              color: current < total ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+            IconButton(
+              onPressed:
+                  current < total ? () => controller.goToPage(total) : null,
+              icon: Icon(Icons.last_page),
+              color: current < total ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+          ],
+        ),
+      ),
+    );
+  });
 }

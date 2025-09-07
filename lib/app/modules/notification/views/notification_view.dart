@@ -61,12 +61,142 @@ class NotificationView extends GetView<NotificationController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSelectAll(),
-                  SizedBox(height: 16),
+
+                  Visibility(
+                    visible: controller.idSelected.isNotEmpty,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 20),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                // Ambil tipe semua yang dipilih
+                                bool allRead = controller.idSelected.every(
+                                  (e) => e['tipe'] == 0,
+                                );
+                                bool allUnread = controller.idSelected.every(
+                                  (e) => e['tipe'] == 1,
+                                );
+
+                                List<int> ids =
+                                    controller.idSelected
+                                        .map((e) => e['id']!)
+                                        .toList();
+
+                                if (allRead || (!allRead && !allUnread)) {
+                                  controller.getReadNotif(id: 0, idNotif: ids);
+                                } else if (allUnread) {
+                                  controller.getUnreadNotif(
+                                    id: 0,
+                                    idNotif: ids,
+                                  );
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
+                              child: Text(
+                                // Tentukan teks tombol
+                                controller.idSelected.every(
+                                      (e) => e['tipe'] == 1,
+                                    )
+                                    ? "Tandai semua belum dibaca"
+                                    : "Tandai semua sudah dibaca",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Ambil semua ID yang dipilih, tidak peduli tipe
+                                List<int> ids =
+                                    controller.idSelected
+                                        .map((e) => e['id']!)
+                                        .toList();
+
+                                // Panggil fungsi hapus (misal getDeleteNotif atau fungsi custom)
+                                controller.getDeleteNotif(idNotif: ids);
+
+                                // Kosongkan idSelected setelah dihapus
+                                controller.idSelected.clear();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.red, // warna merah untuk delete
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
+                              child: Text(
+                                "Hapus",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _buildSectionHeader('Belum dibaca'),
-                      IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+                      Visibility(
+                        visible: controller.idSelected.isEmpty,
+                        child: Align(
+                          alignment:
+                              Alignment.centerRight, // posisinya bisa di kanan
+                          child: PopupMenuButton<String>(
+                            icon: Icon(Icons.more_vert, color: Colors.teal),
+                            onSelected: (value) {
+                              if (value == 'markRead') {
+                                controller.getReadNotif(
+                                  id: 0,
+                                  idNotif: controller.allUnreadData,
+                                );
+                              }
+                              // Bisa tambah opsi lain kalau mau
+                            },
+                            itemBuilder:
+                                (BuildContext context) => [
+                                  PopupMenuItem<String>(
+                                    value: 'markRead',
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.mark_email_read,
+                                          color: Colors.teal,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text("Tandai semua sudah dibaca"),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
 
@@ -88,7 +218,40 @@ class NotificationView extends GetView<NotificationController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _buildSectionHeader('Sudah dibaca'),
-                      IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+                      Visibility(
+                        visible: controller.idSelected.isEmpty,
+                        child: Align(
+                          alignment:
+                              Alignment.centerRight, // posisinya di kanan
+                          child: PopupMenuButton<String>(
+                            icon: Icon(Icons.more_vert, color: Colors.teal),
+                            onSelected: (value) {
+                              if (value == 'markUnread') {
+                                controller.getUnreadNotif(
+                                  id: 0,
+                                  idNotif: controller.allReadData,
+                                );
+                              }
+                            },
+                            itemBuilder:
+                                (BuildContext context) => [
+                                  PopupMenuItem<String>(
+                                    value: 'markUnread',
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.mark_email_unread,
+                                          color: Colors.teal,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text("Tandai semua belum dibaca"),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: 8),
@@ -113,18 +276,66 @@ class NotificationView extends GetView<NotificationController> {
 
   Widget _buildSelectAll() {
     final NotificationController controller = Get.put(NotificationController());
+
+    // Checkbox untuk select all
     return Row(
       children: [
-        Checkbox(
-          value: false,
-          onChanged: (bool? value) {},
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        ),
+        Obx(() {
+          // Tentukan status checkbox: true kalau semua yang sesuai filter sudah dipilih
+          bool isAllSelected = false;
+          if (controller.selectedFilter.value == "Select All") {
+            isAllSelected =
+                controller.idSelected.length ==
+                (controller.allReadData.length +
+                    controller.allUnreadData.length);
+          } else if (controller.selectedFilter.value == "Read") {
+            isAllSelected =
+                controller.idSelected.length == controller.allReadData.length &&
+                controller.allReadData.isNotEmpty;
+          } else if (controller.selectedFilter.value == "Unread") {
+            isAllSelected =
+                controller.idSelected.length ==
+                    controller.allUnreadData.length &&
+                controller.allUnreadData.isNotEmpty;
+          }
 
-        // biar dropdown gak overflow, bungkus dengan Flexible
+          return Checkbox(
+            value: isAllSelected,
+            onChanged: (bool? value) {
+              if (value == true) {
+                // Centang semua sesuai filter
+                controller.idSelected.clear();
+                if (controller.selectedFilter.value == "Select All") {
+                  controller.idSelected.addAll([
+                    ...controller.allReadData.map(
+                      (id) => {"id": id, "tipe": 1},
+                    ),
+                    ...controller.allUnreadData.map(
+                      (id) => {"id": id, "tipe": 0},
+                    ),
+                  ]);
+                } else if (controller.selectedFilter.value == "Read") {
+                  controller.idSelected.addAll(
+                    controller.allReadData.map((id) => {"id": id, "tipe": 1}),
+                  );
+                } else if (controller.selectedFilter.value == "Unread") {
+                  controller.idSelected.addAll(
+                    controller.allUnreadData.map((id) => {"id": id, "tipe": 0}),
+                  );
+                }
+              } else {
+                // Batalin semua
+                controller.idSelected.clear();
+              }
+            },
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          );
+        }),
+
+        // Dropdown filter
         Flexible(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 100), // batas lebar maksimum
+            constraints: BoxConstraints(maxWidth: 100),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
               decoration: BoxDecoration(
@@ -147,7 +358,6 @@ class NotificationView extends GetView<NotificationController> {
                   onChanged: (String? value) {
                     if (value != null) {
                       controller.selectedFilter.value = value;
-                      print("Selected: $value");
                     }
                   },
                 );
@@ -174,6 +384,9 @@ class NotificationView extends GetView<NotificationController> {
     String desc,
     String idOrder,
   ) {
+    // Cek apakah ID ini sudah ada di idSelected
+    bool isChecked = controller.idSelected.any((e) => e['id'] == id);
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 6),
       padding: EdgeInsets.all(12),
@@ -191,8 +404,18 @@ class NotificationView extends GetView<NotificationController> {
           Row(
             children: [
               Checkbox(
-                value: false,
-                onChanged: (bool? value) {},
+                value: isChecked,
+                onChanged: (bool? value) {
+                  if (value == true) {
+                    // centang -> tambah ke list
+                    if (!controller.idSelected.any((e) => e['id'] == id)) {
+                      controller.idSelected.add({"id": id, "tipe": tipe});
+                    }
+                  } else {
+                    // batal -> hapus dari list
+                    controller.idSelected.removeWhere((e) => e['id'] == id);
+                  }
+                },
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               SizedBox(width: 5),
