@@ -154,146 +154,421 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                       ),
                                     ),
                           ),
-                          IconButton(
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                backgroundColor: Colors.white,
-                                isScrollControlled: true, // <-- penting
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(16),
-                                  ),
-                                ),
-                                builder: (context) {
-                                  return DraggableScrollableSheet(
-                                    expand: false,
-                                    initialChildSize:
-                                        0.7, // 70% tinggi layar saat muncul
-                                    minChildSize: 0.4,
-                                    maxChildSize: 0.95,
-                                    builder: (context, scrollController) {
+                          Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.white,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(16),
+                                      ),
+                                    ),
+                                    context: context,
+                                    builder: (context) {
                                       return Padding(
-                                        padding: const EdgeInsets.all(16),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            // drag handle
-                                            Center(
-                                              child: Container(
-                                                width: 40,
-                                                height: 4,
-                                                margin: const EdgeInsets.only(
-                                                  bottom: 12,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.black26,
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                ),
-                                              ),
-                                            ),
-                                            const Text(
-                                              "List Nomor Soal",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 12),
-
-                                            // isi grid scrollable
-                                            Expanded(
-                                              child: Obx(() {
-                                                if (controller
-                                                    .listPembahasan
-                                                    .isEmpty) {
-                                                  return const Center(
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  );
-                                                }
-
-                                                return GridView.builder(
-                                                  controller:
-                                                      scrollController, // <-- pakai controller dari Draggable
-                                                  gridDelegate:
-                                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                                        crossAxisCount: 5,
-                                                        crossAxisSpacing: 6,
-                                                        mainAxisSpacing: 6,
-                                                        childAspectRatio:
-                                                            1.8, // sesuaikan biar tombolnya pas
-                                                      ),
-                                                  itemCount:
-                                                      controller
-                                                          .listPembahasan
-                                                          .length,
-                                                  itemBuilder: (
-                                                    context,
-                                                    index,
-                                                  ) {
-                                                    final item =
-                                                        controller
-                                                            .listPembahasan[index];
-                                                    return ElevatedButton(
-                                                      style: ElevatedButton.styleFrom(
-                                                        backgroundColor:
-                                                            controller
-                                                                        .currentNumber
-                                                                        .value ==
-                                                                    index
-                                                                ? Colors
-                                                                    .green
-                                                                    .shade100
-                                                                : Colors.white,
-                                                        foregroundColor:
-                                                            Colors.black,
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                8,
-                                                              ),
-                                                          side: const BorderSide(
-                                                            color:
-                                                                Colors.black12,
-                                                          ),
+                                        padding: EdgeInsets.only(
+                                          left: 16,
+                                          right: 16,
+                                          top: 16,
+                                          bottom:
+                                              MediaQuery.of(
+                                                context,
+                                              ).viewInsets.bottom +
+                                              16,
+                                        ),
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              // Header modal
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  const Text(
+                                                    "Laporkan Soal",
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Icons.close,
+                                                    ),
+                                                    onPressed:
+                                                        () => Navigator.pop(
+                                                          context,
                                                         ),
-                                                        padding:
-                                                            const EdgeInsets.symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 10,
-                                                            ),
-                                                        elevation: 0,
-                                                      ),
-                                                      onPressed: () {
+                                                  ),
+                                                ],
+                                              ),
+                                              const Divider(height: 1),
+                                              const SizedBox(height: 12),
+                                              Text(
+                                                "Silahkan isi form di bawah untuk melaporkan soal:",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.grey[700],
+                                                ),
+                                              ),
+                                              const SizedBox(height: 16),
+                                              TextField(
+                                                controller:
+                                                    controller
+                                                        .laporanController,
+                                                maxLines: 6,
+                                                decoration: InputDecoration(
+                                                  hintText: "Isi laporan...",
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  contentPadding:
+                                                      const EdgeInsets.all(12),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              SizedBox(
+                                                width: double.infinity,
+                                                child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.teal,
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          vertical: 14,
+                                                        ),
+                                                  ),
+                                                  onPressed: () {
+                                                    if (controller
+                                                                .laporanController
+                                                                .text ==
+                                                            "" ||
                                                         controller
-                                                            .currentNumber
-                                                            .value = index;
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text(
-                                                        item['no_soal']
-                                                            .toString(),
+                                                            .laporanController
+                                                            .text
+                                                            .isEmpty) {
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                            "Isi laporan terlebih dahulu!",
+                                                            style:
+                                                                const TextStyle(
+                                                                  color:
+                                                                      Colors
+                                                                          .white,
+                                                                ),
+                                                          ),
+                                                          backgroundColor:
+                                                              Colors
+                                                                  .pink, // default warna teal
+                                                          behavior:
+                                                              SnackBarBehavior
+                                                                  .floating, // biar sedikit melayang
+                                                          duration:
+                                                              const Duration(
+                                                                seconds: 2,
+                                                              ), // lama muncul
+                                                        ),
+                                                      );
+                                                      Navigator.pop(context);
+                                                      return;
+                                                    }
+                                                    controller.sendLaporSoal(
+                                                      questionId:
+                                                          controller
+                                                              .listPembahasan[controller
+                                                              .currentNumber
+                                                              .value]['id'],
+                                                      laporan:
+                                                          controller
+                                                              .laporanController
+                                                              .text,
+                                                      context: context,
+                                                    );
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                          "Berhasil Mengirimkan Laporan",
+                                                          style:
+                                                              const TextStyle(
+                                                                color:
+                                                                    Colors
+                                                                        .white,
+                                                              ),
+                                                        ),
+                                                        backgroundColor:
+                                                            Colors
+                                                                .green, // default warna teal
+                                                        behavior:
+                                                            SnackBarBehavior
+                                                                .floating, // biar sedikit melayang
+                                                        duration:
+                                                            const Duration(
+                                                              seconds: 2,
+                                                            ), // lama muncul
                                                       ),
                                                     );
+
+                                                    Navigator.pop(context);
                                                   },
-                                                );
-                                              }),
-                                            ),
-                                          ],
+                                                  child: const Text(
+                                                    "Kirim Laporan",
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       );
                                     },
                                   );
                                 },
-                              );
-                            },
-                            icon: Icon(
-                              Icons.list,
-                              color: Colors.teal, // warna tombol,
-                            ),
+                                icon: Icon(Icons.flag, color: Colors.pink),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    backgroundColor: Colors.white,
+                                    isScrollControlled: true, // <-- penting
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(16),
+                                      ),
+                                    ),
+                                    builder: (context) {
+                                      return DraggableScrollableSheet(
+                                        expand: false,
+                                        initialChildSize:
+                                            0.7, // 70% tinggi layar saat muncul
+                                        minChildSize: 0.4,
+                                        maxChildSize: 0.95,
+                                        builder: (context, scrollController) {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // drag handle
+                                                Center(
+                                                  child: Container(
+                                                    width: 40,
+                                                    height: 4,
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                          bottom: 12,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black26,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            2,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const Text(
+                                                  "List Nomor Soal",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 12),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  spacing: 12,
+                                                  children: [
+                                                    Row(
+                                                      spacing: 4,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.circle,
+                                                          color: Colors.green,
+                                                        ),
+                                                        Text("Benar"),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      spacing: 4,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.circle,
+                                                          color: Colors.red,
+                                                        ),
+                                                        Text("Salah"),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      spacing: 4,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.circle,
+                                                          color: Colors.grey,
+                                                        ),
+                                                        Text("Kosong"),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 12),
+
+                                                // isi grid scrollable
+                                                Expanded(
+                                                  child: Obx(() {
+                                                    if (controller
+                                                        .listPembahasan
+                                                        .isEmpty) {
+                                                      return const Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      );
+                                                    }
+
+                                                    return GridView.builder(
+                                                      controller:
+                                                          scrollController, // <-- pakai controller dari Draggable
+                                                      gridDelegate:
+                                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount: 5,
+                                                            crossAxisSpacing: 6,
+                                                            mainAxisSpacing: 6,
+                                                            childAspectRatio:
+                                                                1.8, // sesuaikan biar tombolnya pas
+                                                          ),
+                                                      itemCount:
+                                                          controller
+                                                              .listPembahasan
+                                                              .length,
+                                                      itemBuilder: (
+                                                        context,
+                                                        index,
+                                                      ) {
+                                                        final item =
+                                                            controller
+                                                                .listPembahasan[index];
+                                                        bool hasTransaction =
+                                                            item['options'].any(
+                                                              (option) =>
+                                                                  option['transaction'] !=
+                                                                  null,
+                                                            );
+                                                        final options =
+                                                            item['options']
+                                                                as List;
+
+                                                        // Cari jawaban yang dipilih (punya transaction)
+                                                        final selectedOption =
+                                                            options.firstWhere(
+                                                              (option) =>
+                                                                  option['transaction'] !=
+                                                                  null,
+                                                              orElse:
+                                                                  () => null,
+                                                            );
+                                                        return ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                hasTransaction
+                                                                    ? selectedOption['iscorrect'] ==
+                                                                            1
+                                                                        ? Colors
+                                                                            .green
+                                                                        : Colors
+                                                                            .pink
+                                                                    : Colors
+                                                                        .grey,
+                                                            foregroundColor:
+                                                                Colors.black,
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8,
+                                                                  ),
+                                                              side: BorderSide(
+                                                                width:
+                                                                    controller.currentNumber.value ==
+                                                                            index
+                                                                        ? 4
+                                                                        : 1,
+                                                                color:
+                                                                    controller.currentNumber.value ==
+                                                                            index
+                                                                        ? Colors
+                                                                            .amber
+                                                                        : Colors
+                                                                            .black,
+                                                              ),
+                                                            ),
+                                                            padding:
+                                                                const EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      12,
+                                                                  vertical: 10,
+                                                                ),
+                                                            elevation: 0,
+                                                          ),
+                                                          onPressed: () {
+                                                            controller
+                                                                .currentNumber
+                                                                .value = index;
+                                                            Navigator.pop(
+                                                              context,
+                                                            );
+                                                          },
+                                                          child: Text(
+                                                            item['no_soal']
+                                                                .toString(),
+                                                          ),
+                                                        );
+                                                      },
+                                                    );
+                                                  }),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.list,
+                                  color: Colors.teal, // warna tombol,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -313,6 +588,47 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                           .value]['soal'],
                                 ),
                       ),
+
+                      Obx(() {
+                        if (controller.listPembahasan.isEmpty) {
+                          return Skeletonizer(
+                            child: Text(
+                              "<p>Adelaide adalah nama sebuah tempat, sehingga <i>pronoun</i> yang digunakan dapat menggunakan <i>where</i>.</p>",
+                            ),
+                          );
+                        }
+                        final data =
+                            controller.listPembahasan[controller
+                                .currentNumber
+                                .value];
+                        return SizedBox(
+                          width: double.infinity,
+                          child: ListView.builder(
+                            shrinkWrap:
+                                true, // <- penting agar ukuran mengikuti konten
+                            physics:
+                                const NeverScrollableScrollPhysics(), // biar ga bentrok scroll parent
+                            itemCount: data['options'].length,
+                            itemBuilder: (context, index) {
+                              final optionData = data['options'][index];
+                              return _option(
+                                optionData['inisial'],
+                                optionData['jawaban'],
+                                optionData['iscorrect'],
+                                optionData['transaction'],
+                              );
+                            },
+                          ),
+                        );
+                      }),
+                      SizedBox(height: 16),
+                      Text(
+                        "Pembahasan",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
                       //Pembahasan
                       Obx(
                         () =>
@@ -329,6 +645,13 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                           .value]['pembahasan'],
                                 ),
                       ),
+                      Text(
+                        "Bobot Opsi Jawaban",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
                       Obx(() {
                         if (controller.listPembahasan.isEmpty) {
                           return Skeletonizer(
@@ -343,7 +666,7 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                 .value];
                         return SizedBox(
                           width: double.infinity,
-                          height: 320,
+                          height: 240,
                           child: ListView.builder(
                             shrinkWrap: true,
                             physics:
@@ -352,9 +675,9 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                             itemBuilder: (context, index) {
                               final optionData =
                                   data['options'][index]; // ambil item
-                              return _option(
+                              return _optionPembahasan(
                                 optionData['inisial'],
-                                optionData['jawaban'],
+                                optionData['nilai'].toString(),
                                 optionData['iscorrect'],
                               );
                             },
@@ -372,9 +695,21 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
     );
   }
 
-  Widget _option(String initial, String body, int isCorrect) {
+  Widget _option(
+    String initial,
+    String body,
+    int isCorrect,
+    dynamic transaction,
+  ) {
     return Card(
-      color: isCorrect == 1 ? Colors.green.shade100 : Colors.white,
+      color:
+          transaction != null
+              ? isCorrect != 1
+                  ? Colors.pink
+                  : isCorrect == 1
+                  ? Colors.green.shade100
+                  : Colors.white
+              : Colors.white,
       shape: RoundedRectangleBorder(
         side: BorderSide(color: isCorrect == 1 ? Colors.green : Colors.black),
         borderRadius: BorderRadius.circular(8),
@@ -384,12 +719,21 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 32,
+              margin: EdgeInsets.symmetric(horizontal: 16),
               height: 32,
               alignment: Alignment.center,
-              child: Text(
-                "${initial}. ",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              child: Row(
+                spacing: 8,
+                children: [
+                  Icon(
+                    isCorrect == 1 ? Icons.check_circle : Icons.close_rounded,
+                    color: isCorrect == 1 ? Colors.green : Colors.pink,
+                  ),
+                  Text(
+                    "${initial}. ",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                ],
               ),
             ),
             Expanded(
@@ -404,6 +748,31 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                   ),
                 },
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _optionPembahasan(String initial, String bobot, int isCorrect) {
+    return Card(
+      color: isCorrect == 1 ? Colors.green.shade800 : Colors.grey,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: isCorrect == 1 ? Colors.green.shade800 : Colors.grey,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Container(
+        padding: EdgeInsets.all(8),
+
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "Opsi ${initial}: ${bobot}",
+              style: TextStyle(color: Colors.white),
             ),
           ],
         ),

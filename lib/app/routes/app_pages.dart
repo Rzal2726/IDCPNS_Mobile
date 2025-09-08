@@ -72,10 +72,16 @@ import '../modules/paymentCheckout/bindings/payment_checkout_binding.dart';
 import '../modules/paymentCheckout/views/payment_checkout_view.dart';
 import '../modules/paymentDetail/bindings/payment_detail_binding.dart';
 import '../modules/paymentDetail/views/payment_detail_view.dart';
+import '../modules/paymentCheckout/bindings/payment_checkout_binding.dart';
+import '../modules/paymentCheckout/views/payment_checkout_view.dart';
+import '../modules/paymentDetail/bindings/payment_detail_binding.dart';
+import '../modules/paymentDetail/views/payment_detail_view.dart';
 import '../modules/paymentWhislist/bindings/payment_whislist_binding.dart';
 import '../modules/paymentWhislist/views/payment_whislist_view.dart';
 import '../modules/payment_upgrade_akun/bindings/payment_upgrade_akun_binding.dart';
 import '../modules/payment_upgrade_akun/views/payment_upgrade_akun_view.dart';
+import '../modules/pdf_viewer/bindings/pdf_viewer_binding.dart';
+import '../modules/pdf_viewer/views/pdf_viewer_view.dart';
 import '../modules/pembahasan_tryout/bindings/pembahasan_tryout_binding.dart';
 import '../modules/pembahasan_tryout/views/pembahasan_tryout_view.dart';
 import '../modules/pembahasan_tryout_harian/bindings/pembahasan_tryout_harian_binding.dart';
@@ -481,6 +487,11 @@ class AppPages {
       name: _Paths.PRETEST_TOUR,
       page: () => const PretestTourView(),
       binding: PretestTourBinding(),
+    ),
+    GetPage(
+      name: _Paths.PDF_VIEWER,
+      page: () => const PdfViewerView(),
+      binding: PdfViewerBinding(),
     ),
     GetPage(
       name: _Paths.INVOICE,

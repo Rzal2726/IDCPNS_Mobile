@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
@@ -10,7 +12,7 @@ class TryoutCheckoutController extends GetxController {
   final prevController = Get.find<TryoutPaymentController>();
   final client = Get.find<RestClientProvider>();
   final restClient = RestClient();
-
+  Timer? _paymentTimer;
   RxMap<String, dynamic> transactionData = <String, dynamic>{}.obs;
   RxMap<String, dynamic> paymentDetails = <String, dynamic>{}.obs;
   RxList<String> option = ["ATM", "MBanking"].obs;
@@ -23,6 +25,7 @@ class TryoutCheckoutController extends GetxController {
     super.onInit();
     initPayment();
     fetchServerTime();
+    startFetchingDetailPayment();
   }
 
   @override
@@ -32,11 +35,29 @@ class TryoutCheckoutController extends GetxController {
 
   @override
   void onClose() {
+    stopFetchingDetailPayment();
+
     super.onClose();
   }
 
   Future<void> initPayment() async {
     fetchDetailPayment();
+  }
+
+  void startFetchingDetailPayment() {
+    // Hentikan timer lama jika ada
+    _paymentTimer?.cancel();
+
+    // Jalankan timer periodic setiap 5 detik
+    _paymentTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      fetchDetailPayment();
+      fetchServerTime();
+    });
+  }
+
+  void stopFetchingDetailPayment() {
+    _paymentTimer?.cancel();
+    _paymentTimer = null;
   }
 
   void fetchDetailPayment() async {
@@ -55,6 +76,17 @@ class TryoutCheckoutController extends GetxController {
       isDeveloper.value = true;
     }
     paymentDetails.assignAll(data);
+    if (paymentDetails.isNotEmpty) {
+      if (paymentDetails['tanggal_paid'] == null) {
+        print("Belum Dibayar");
+        if (compareTimeStamp(paymentDetails['tanggal_kadaluarsa'])) {
+          Get.offAllNamed("/tryout");
+        }
+      } else {
+        Get.offNamed("/pembayaran-berhasil");
+        print("Sudah Dibayar");
+      }
+    }
   }
 
   void fetchServerTime() async {
@@ -62,10 +94,14 @@ class TryoutCheckoutController extends GetxController {
     final response = await restClient.getData(url: baseUrl + apiGetServerTime);
 
     int timestampInMilliseconds =
-        response['data']; // Example timestamp in milliseconds
+        response['data']; // timestamp dari server (dalam detik)
+
+    // Konversi ke DateTime
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-      timestampInMilliseconds * 1000 + (86400 * 1000),
+      timestampInMilliseconds * 1000,
     );
+
+    // Simpan hasil ke observable
     timeStamp.value = dateTime.toString();
   }
 
@@ -96,5 +132,18 @@ class TryoutCheckoutController extends GetxController {
     final parsed = double.tryParse(normalized) ?? 0;
 
     return customFormatter.format(parsed);
+  }
+
+  bool compareTimeStamp(String fixedDateString) {
+    // Convert string ke DateTime
+    DateTime fixedDate = DateTime.parse(fixedDateString);
+
+    // Convert timeStamp.value (string) ke DateTime
+    DateTime currentDate = DateTime.parse(timeStamp.value);
+
+    // Bandingkan
+    print("kadaluarsa: ${fixedDate}");
+    print("timeStamp: ${currentDate}");
+    return currentDate.isAfter(fixedDate); // true jika currentDate > fixedDate
   }
 }

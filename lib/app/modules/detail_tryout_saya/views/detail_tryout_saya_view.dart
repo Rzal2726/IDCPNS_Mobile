@@ -27,6 +27,13 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back), // Example: Hamburger icon for a drawer
+          onPressed: () {
+            Get.offNamed("/tryout-saya");
+          },
+        ),
+
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -243,45 +250,53 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                               ],
                                             ),
                                             SizedBox(height: 12),
-                                            DropdownButtonFormField<String>(
-                                              value:
-                                                  controller
-                                                      .selectedInstansi
-                                                      .value,
-                                              hint: Text("Pilih opsi"),
-                                              decoration: InputDecoration(
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                            controller.listInstansi.isEmpty
+                                                ? Skeletonizer(
+                                                  child: Text("data"),
+                                                )
+                                                : DropdownButtonFormField<
+                                                  String
+                                                >(
+                                                  value:
+                                                      controller
+                                                          .selectedInstansi
+                                                          .value,
+                                                  hint: Text("Pilih opsi"),
+                                                  decoration: InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  isExpanded:
+                                                      true, // <- penting biar dropdown nggak overflow
+                                                  items:
+                                                      controller.listInstansi.map((
+                                                        instansi,
+                                                      ) {
+                                                        return DropdownMenuItem<
+                                                          String
+                                                        >(
+                                                          value:
+                                                              instansi['id']
+                                                                  .toString(),
+                                                          child: Text(
+                                                            instansi['nama']
+                                                                .toString(),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis, // handle nama panjang
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                  onChanged: (newValue) {
+                                                    controller
+                                                        .selectedInstansi
+                                                        .value = newValue ?? "";
+                                                  },
                                                 ),
-                                              ),
-                                              isExpanded:
-                                                  true, // <- penting biar dropdown nggak overflow
-                                              items:
-                                                  controller.listInstansi.map((
-                                                    instansi,
-                                                  ) {
-                                                    return DropdownMenuItem<
-                                                      String
-                                                    >(
-                                                      value:
-                                                          instansi['uuid']
-                                                              .toString(),
-                                                      child: Text(
-                                                        instansi['nama']
-                                                            .toString(),
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis, // handle nama panjang
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                              onChanged: (newValue) {
-                                                controller
-                                                    .selectedInstansi
-                                                    .value = newValue ?? "";
-                                              },
-                                            ),
                                             SizedBox(height: 12),
                                             Row(
                                               children: [
@@ -296,42 +311,52 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                               ],
                                             ),
                                             SizedBox(height: 12),
-                                            DropdownButtonFormField<String>(
-                                              value:
-                                                  controller
-                                                      .selectedJabatan
-                                                      .value,
-                                              hint: Text("Pilih opsi"),
-                                              decoration: InputDecoration(
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                            controller.listJabatan.isEmpty
+                                                ? Skeletonizer(
+                                                  child: Text("data"),
+                                                )
+                                                : DropdownButtonFormField<
+                                                  String
+                                                >(
+                                                  value:
+                                                      controller
+                                                          .selectedJabatan
+                                                          .value,
+                                                  hint: Text("Pilih opsi"),
+                                                  decoration: InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  isExpanded:
+                                                      true, // <- penting biar dropdown nggak overflow
+                                                  items:
+                                                      controller.listJabatan.map((
+                                                        jabatan,
+                                                      ) {
+                                                        return DropdownMenuItem<
+                                                          String
+                                                        >(
+                                                          value:
+                                                              jabatan['id']
+                                                                  .toString(),
+                                                          child: Text(
+                                                            jabatan['nama'],
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis, // handle nama panjang
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                  onChanged: (newValue) {
+                                                    controller
+                                                        .selectedJabatan
+                                                        .value = newValue ?? "";
+                                                  },
                                                 ),
-                                              ),
-                                              isExpanded:
-                                                  true, // <- penting biar dropdown nggak overflow
-                                              items:
-                                                  controller.listJabatan.map((
-                                                    jabatan,
-                                                  ) {
-                                                    return DropdownMenuItem<
-                                                      String
-                                                    >(
-                                                      value: jabatan['uuid'],
-                                                      child: Text(
-                                                        jabatan['nama'],
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis, // handle nama panjang
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                              onChanged: (newValue) {
-                                                controller
-                                                    .selectedJabatan
-                                                    .value = newValue ?? "";
-                                              },
-                                            ),
 
                                             SizedBox(height: 24),
                                             SizedBox(
@@ -352,6 +377,20 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                                       ),
                                                 ),
                                                 onPressed: () {
+                                                  controller.localStorage
+                                                      .setString(
+                                                        'jabatan',
+                                                        controller
+                                                            .selectedJabatan
+                                                            .value,
+                                                      );
+                                                  controller.localStorage
+                                                      .setString(
+                                                        'instansi',
+                                                        controller
+                                                            .selectedInstansi
+                                                            .value,
+                                                      );
                                                   Navigator.pop(context);
                                                   Get.offNamed(
                                                     "/detail-pengerjaan-tryout",

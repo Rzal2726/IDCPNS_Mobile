@@ -5,11 +5,13 @@ import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/tryout_saya/controllers/tryout_saya_controller.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailTryoutSayaController extends GetxController {
   //TODO: Implement DetailTryoutSayaController
   final restClient = RestClient();
   late String lateUuid;
+  late dynamic localStorage;
   final count = 0.obs;
   RxMap<String, dynamic> tryOutSaya = <String, dynamic>{}.obs;
   RxMap<String, dynamic> nilaiChart = <String, dynamic>{}.obs;
@@ -18,7 +20,7 @@ class DetailTryoutSayaController extends GetxController {
   RxString uuid = "".obs;
   RxString nilaiBenar = "0".obs;
   RxString totalSoal = "0".obs;
-  RxString selectedJabatan = " ".obs;
+  RxString selectedJabatan = "".obs;
   RxString selectedInstansi = "".obs;
 
   final List<ChartData> chartData = [];
@@ -39,6 +41,7 @@ class DetailTryoutSayaController extends GetxController {
   }
 
   Future<void> initTryoutSaya() async {
+    localStorage = await SharedPreferences.getInstance();
     lateUuid = await Get.arguments as String;
 
     await getDetailTryout();
@@ -93,6 +96,7 @@ class DetailTryoutSayaController extends GetxController {
       response['data'],
     );
     listInstansi.assignAll(data);
+    selectedInstansi.value = data[0]['id'].toString();
   }
 
   Future<void> getJabatan() async {
@@ -107,6 +111,7 @@ class DetailTryoutSayaController extends GetxController {
       response['data'],
     );
     listJabatan.assignAll(data);
+    selectedJabatan.value = data[0]['id'].toString();
   }
 
   Future<void> resetTryout() async {

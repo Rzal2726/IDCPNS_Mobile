@@ -12,41 +12,6 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Image.asset(
-          'assets/logo.png', // Dummy logo
-          height: 55,
-        ),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications_none, color: Colors.teal),
-                onPressed: () {
-                  Get.to(NotificationView());
-                },
-              ),
-              Positioned(
-                right: 10,
-                top: 10,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '4',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
       body: Obx(
         () => IndexedStack(
           index: controller.tabIndex.value,
@@ -67,8 +32,15 @@ class HomeView extends GetView<HomeController> {
           },
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.assignment),
+              label: 'Tryout',
+            ),
             BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Bimbel'),
-            BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Platinum'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.diamond_sharp),
+              label: 'Platinum',
+            ),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Akun'),
           ],
         ),

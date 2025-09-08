@@ -91,6 +91,9 @@ const String apiUpgradeDetail = "v1/account/upgrade/duration/";
 const String apiListVideoSeries = "v1/video-series/list";
 const String apiListVideoSeriesParents = "v1/video-series/parents/";
 
+const String apiGetEbook = "v1/ebook/list";
+const String apiGetEbookList = "v1/ebook/ebook-list";
+
 const String apiAddRekening = "v1/account/user/bank-account/add";
 const String apiGetDataBuyAllWhishlist = "v1/account/user/all-wishlist";
 const String apiGetDetailBimbelNoevent = "v1/bimbel/detail-noevent";
