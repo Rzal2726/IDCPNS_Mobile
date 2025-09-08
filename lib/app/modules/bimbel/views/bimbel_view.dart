@@ -129,7 +129,7 @@ class BimbelView extends GetView<BimbelController> {
                 children: [
                   Expanded(
                     child: TextField(
-                      onChanged: controller.searchPaket,
+                      controller: controller.searchController,
                       decoration: InputDecoration(
                         hintText: 'apa yang Anda cari',
                         hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
@@ -151,7 +151,14 @@ class BimbelView extends GetView<BimbelController> {
                   ),
                   SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      controller.getBimbel(
+                        menuCategoryId:
+                            controller.selectedKategoriId.value?.toString(),
+                        search: controller.searchController.text,
+                      );
+                    },
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
                       shape: RoundedRectangleBorder(
@@ -176,7 +183,9 @@ class BimbelView extends GetView<BimbelController> {
               Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    showBimbelBottomSheet(context);
+                  },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -238,6 +247,14 @@ class BimbelView extends GetView<BimbelController> {
               SizedBox(height: 32),
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        color: Colors.white,
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [_buildPagination()],
         ),
       ),
     );
@@ -351,4 +368,221 @@ class BimbelView extends GetView<BimbelController> {
       ),
     );
   }
+}
+
+void showBimbelBottomSheet(BuildContext context) {
+  final controller = Get.put(BimbelController());
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (ctx) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return SafeArea(
+            child: Padding(
+              padding: MediaQuery.of(ctx).viewInsets,
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Jenis Tryout",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+
+                    // List pilihan dengan ChoiceChip
+                    Obx(
+                      () => Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children:
+                            controller.options.map((option) {
+                              final isSelected =
+                                  controller.selectedKategoriId.value ==
+                                  option['id'];
+
+                              return ChoiceChip(
+                                label: Text(
+                                  option['menu'], // tampilkan name
+                                  style: TextStyle(
+                                    color:
+                                        isSelected
+                                            ? Colors.teal
+                                            : Colors.grey[700],
+                                    fontWeight:
+                                        isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                  ),
+                                ),
+                                selected: isSelected,
+                                selectedColor: Colors.teal.withOpacity(0.1),
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color:
+                                        isSelected
+                                            ? Colors.teal
+                                            : Colors.grey.shade400,
+                                  ),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                onSelected: (value) {
+                                  controller.selectedKategoriId.value =
+                                      option['id'];
+                                  controller.selectedEventKategori.value =
+                                      option['name'];
+                                },
+                              );
+                            }).toList(),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+
+                    // Tombol cari
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          controller.getBimbel(
+                            menuCategoryId:
+                                controller.selectedKategoriId.value?.toString(),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: Text("Cari"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+Widget _buildPagination() {
+  final controller = Get.put(BimbelController());
+
+  return Obx(() {
+    int current = controller.currentPage.value;
+    int total = controller.totalPage.value;
+
+    List<int> pagesToShow = [];
+    pagesToShow.add(1);
+    if (current - 1 > 1) pagesToShow.add(current - 1);
+    if (current != 1 && current != total) pagesToShow.add(current);
+    if (current + 1 < total) pagesToShow.add(current + 1);
+    if (total > 1) pagesToShow.add(total);
+    pagesToShow = pagesToShow.toSet().toList()..sort();
+
+    return SafeArea(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: current > 1 ? () => controller.goToPage(1) : null,
+              icon: Icon(Icons.first_page),
+              color: current > 1 ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+            IconButton(
+              onPressed: current > 1 ? controller.prevPage : null,
+              icon: Icon(Icons.chevron_left),
+              color: current > 1 ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+
+            ...pagesToShow.map((page) {
+              bool isActive = page == current;
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 2),
+                child: GestureDetector(
+                  onTap: () => controller.goToPage(page),
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isActive ? 14 : 10,
+                      vertical: isActive ? 8 : 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isActive ? Colors.teal.shade100 : Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isActive ? Colors.teal : Colors.grey.shade300,
+                        width: isActive ? 2 : 1,
+                      ),
+                    ),
+                    child: Text(
+                      '$page',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isActive ? Colors.teal : Colors.black,
+                        fontSize:
+                            isActive
+                                ? 16
+                                : 14, // font lebih besar untuk page aktif
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+
+            IconButton(
+              onPressed: current < total ? controller.nextPage : null,
+              icon: Icon(Icons.chevron_right),
+              color: current < total ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+            IconButton(
+              onPressed:
+                  current < total ? () => controller.goToPage(total) : null,
+              icon: Icon(Icons.last_page),
+              color: current < total ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+          ],
+        ),
+      ),
+    );
+  });
 }

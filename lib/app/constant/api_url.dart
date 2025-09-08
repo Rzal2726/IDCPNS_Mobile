@@ -99,6 +99,6 @@ const String apiApplyBimbelVoucherCode = "v1/bimbel/voucher/apply";
 const String apiGetMyBimbel = "v1/bimbel/me/list";
 
 const String apiGetDetailBimbelSaya = "v1/bimbel/me/detail";
-const String apiGetJadwalBimbelSaya = "v1/bimbel/pretest/ranking";
+const String apiGetRankingBimbel = "v1/bimbel/pretest/ranking";
 
 const String apiGetBimbelOther = "v1/bimbel/other-bimbel";

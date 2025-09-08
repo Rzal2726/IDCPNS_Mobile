@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 import '../controllers/wishlist_controller.dart';
@@ -157,12 +158,29 @@ class WishlistView extends GetView<WishlistController> {
                       ), // biar ada jarak antar item
                       child: _buildWishlistItem(
                         imageUrl: item['productDetail']['gambar'],
-                        title: item['productDetail']['name'] ?? "",
-                        oldPrice: item['productDetail']['harga'].toString(),
-                        newPrice: item['productDetail']['harga_fix'].toString(),
+                        title:
+                            item['productDetail']['name'] ??
+                            item['productDetail']['formasi'],
+                        oldPrice:
+                            (item['productDetail']?['price_list']?['harga_terendah'] ??
+                                    "")
+                                .toString(),
+                        oldPriceFix:
+                            (item['productDetail']['price_list']?['harga_fix_terendah'] ??
+                                    "")
+                                .toString(),
+                        newPrice:
+                            (item['productDetail']?['price_list']?['harga_tertinggi'] ??
+                                    item['productDetail']['harga'])
+                                .toString(),
+                        newPriceFix:
+                            (item['productDetail']['price_list']?['harga_fix_tertinggi'] ??
+                                    item['productDetail']['harga_fix'])
+                                .toString(),
                         tag: item['productDetail']['menu_category']['menu'],
                         tagColor:
                             item['productDetail']['menu_category']['warna']['hex'],
+                        isBimbel: item['bimbel_parent_id'] != null,
                       ),
                     ),
                 ],
@@ -177,8 +195,11 @@ class WishlistView extends GetView<WishlistController> {
   Widget _buildWishlistItem({
     required String imageUrl,
     required String title,
-    required String oldPrice,
-    required String newPrice,
+    String? oldPrice,
+    String? oldPriceFix,
+    String? newPrice,
+    String? newPriceFix,
+    required bool isBimbel,
     required String tag,
     required String tagColor,
   }) {
@@ -237,7 +258,9 @@ class WishlistView extends GetView<WishlistController> {
 
                   SizedBox(height: 10),
                   Text(
-                    oldPrice,
+                    isBimbel == true
+                        ? "${formatRupiah((oldPrice ?? ""))} - ${formatRupiah((newPrice ?? ""))}"
+                        : "${formatRupiah((newPrice ?? ""))}",
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 12,
@@ -246,7 +269,9 @@ class WishlistView extends GetView<WishlistController> {
                   ),
 
                   Text(
-                    newPrice,
+                    isBimbel == true
+                        ? "${formatRupiah((oldPriceFix ?? ""))} - ${formatRupiah((newPriceFix ?? ""))}"
+                        : "${formatRupiah((newPriceFix ?? ""))}",
                     style: TextStyle(
                       color: Colors.teal,
                       fontWeight: FontWeight.w900,

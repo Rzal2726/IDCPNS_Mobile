@@ -69,6 +69,7 @@ class RegisterController extends GetxController {
         final box = GetStorage();
         box.write("token", data["access_token"]);
         box.write("name", user["name"]);
+        box.write("idUser", user["id"]);
         box.write("email", user["email"]);
         box.write("password", regPasswordController.text);
         box.write("isEmailVerified", user["is_email_verified"] ?? false);

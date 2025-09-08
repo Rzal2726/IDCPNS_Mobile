@@ -58,6 +58,7 @@ class SplashController extends GetxController {
 
       box.write("token", data["access_token"]);
       box.write("name", user["name"]);
+      box.write("idUser", user["id"]);
       box.write("email", user["email"]);
       box.write("password", password); // simpan password kembali
       box.write("photoProfile", user['profile_image_url']);

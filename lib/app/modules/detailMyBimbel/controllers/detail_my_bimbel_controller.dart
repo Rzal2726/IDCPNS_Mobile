@@ -8,42 +8,16 @@ class DetailMyBimbelController extends GetxController {
   var paketName = "Bimbel SKD CPNS 2024 Batch 12".obs;
   var paketType = "Reguler".obs;
   var masaAktif = 178.obs; // hari aktif
-  var platinumZone = true.obs;
+  RxBool platinumZone = false.obs;
   RxMap bimbelData = {}.obs;
   RxMap rankBimbel = {}.obs;
   RxInt userRank = 0.obs;
-  var jadwalKelas = <Map<String, String>>[].obs;
+  RxList jadwalKelas = [].obs;
 
   final count = 0.obs;
   @override
   void onInit() {
     getData();
-    jadwalKelas.value = [
-      {
-        "judul": "Pertemuan 1 - TWK",
-        "hari": "Rabu",
-        "tanggal": "27 Agustus 2025",
-        "jam": "19:30 WIB",
-      },
-      {
-        "judul": "Pertemuan 2 - TKP",
-        "hari": "Senin",
-        "tanggal": "13 Januari 2025",
-        "jam": "19:30 WIB",
-      },
-      {
-        "judul": "Pertemuan 3 - TKP",
-        "hari": "Selasa",
-        "tanggal": "14 Januari 2025",
-        "jam": "19:30 WIB",
-      },
-      {
-        "judul": "Pertemuan 4 - TIU",
-        "hari": "Rabu",
-        "tanggal": "15 Januari 2025",
-        "jam": "19:30 WIB",
-      },
-    ];
     super.onInit();
   }
 
@@ -64,6 +38,9 @@ class DetailMyBimbelController extends GetxController {
       final result = await _restClient.getData(url: url);
       if (result["status"] == "success") {
         bimbelData.value = result['data'];
+        jadwalKelas.value = result['data']['bimbel']['events'];
+        platinumZone.value = result['data']['ispremium'] == 1;
+
         getJadwalBimbel(id: bimbelData['user_id']);
       }
     } catch (e) {
@@ -73,7 +50,7 @@ class DetailMyBimbelController extends GetxController {
 
   Future<void> getJadwalBimbel({required int id}) async {
     try {
-      final url = baseUrl + apiGetJadwalBimbelSaya + "/" + uuid;
+      final url = baseUrl + apiGetRankingBimbel + "/" + uuid;
       final result = await _restClient.postData(url: url);
 
       if (result["status"] == "success") {

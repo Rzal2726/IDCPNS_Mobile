@@ -1,8 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../controllers/detail_my_bimbel_controller.dart';
 
@@ -119,7 +121,19 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () async {
+                        final url = Uri.parse(
+                          "${data['bimbel']['link_materi']}",
+                        ); // ganti link kamu
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(
+                            url,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        } else {
+                          throw "Tidak bisa buka $url";
+                        }
+                      },
                       child: Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 20,
@@ -169,7 +183,19 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () async {
+                        final url = Uri.parse(
+                          "${data['bimbel']['link_grup']}",
+                        ); // ganti link kamu
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(
+                            url,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        } else {
+                          throw "Tidak bisa buka $url";
+                        }
+                      },
                       child: Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 20,
@@ -197,7 +223,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                 SizedBox(height: 16),
 
                 // ================== PLATINUM INFO ==================
-                controller.platinumZone.value
+                controller.platinumZone.value == true
                     ? Container(
                       padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
@@ -217,6 +243,13 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                 color: Colors.teal,
                                 decoration: TextDecoration.underline,
                               ),
+                              recognizer:
+                                  TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Get.toNamed(
+                                        Routes.PLATINUM_ZONE,
+                                      ); // ganti dengan rute kamu
+                                    },
                             ),
                           ],
                         ),
@@ -250,7 +283,10 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Get.toNamed(Routes.PRETEST_RANKING);
+                              Get.toNamed(
+                                Routes.PRETEST_RANKING,
+                                arguments: data['uuid'],
+                              );
                             },
                             child: Text(
                               'Lihat Ranking',
@@ -276,6 +312,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                               ),
                               TextSpan(
                                 text:
+                                    // ${controller.rankBimbel['data'].length}
                                     "/${controller.rankBimbel['data'].length}", // total peserta
                                 style: TextStyle(
                                   color: Colors.grey[700],
@@ -464,7 +501,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                   "Hari",
                                   style: TextStyle(color: Colors.grey),
                                 ),
-                                Text(item['hari']!),
+                                Text(item['jadwal_tanggal']['hari']!),
                               ],
                             ),
                             Column(
@@ -473,7 +510,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                   "Tanggal",
                                   style: TextStyle(color: Colors.grey),
                                 ),
-                                Text(item['tanggal']!),
+                                Text(item['jadwal_tanggal']['tanggal']!),
                               ],
                             ),
                             Column(
@@ -482,7 +519,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                   "Jam",
                                   style: TextStyle(color: Colors.grey),
                                 ),
-                                Text(item['jam']!),
+                                Text(item['jadwal_tanggal']['jam']!),
                               ],
                             ),
                           ],
@@ -496,7 +533,10 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                             Expanded(
                               child: ElevatedButton.icon(
                                 onPressed: () {
-                                  Get.toNamed(Routes.PRETEST_DETAIL);
+                                  Get.toNamed(
+                                    Routes.PRETEST_DETAIL,
+                                    arguments: item['uuid'],
+                                  );
                                 },
                                 icon: Icon(Icons.assignment, size: 18),
                                 label: Text('Pretest'),
