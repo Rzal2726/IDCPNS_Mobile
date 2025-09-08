@@ -70,6 +70,7 @@ abstract class Routes {
   static const PAYMENT_CHECKOUT = _Paths.PAYMENT_CHECKOUT;
   static const PRETEST = _Paths.PRETEST;
   static const PRETEST_TOUR = _Paths.PRETEST_TOUR;
+  static const PDF_VIEWER = _Paths.PDF_VIEWER;
   static const INVOICE = _Paths.INVOICE;
   static const PAYMENT_WHISLIST = _Paths.PAYMENT_WHISLIST;
 }
@@ -144,6 +145,7 @@ abstract class _Paths {
   static const PAYMENT_CHECKOUT = '/payment-checkout';
   static const PRETEST = '/pretest';
   static const PRETEST_TOUR = '/pretest-tour';
+  static const PDF_VIEWER = '/pdf-viewer';
   static const INVOICE = '/invoice';
   static const PAYMENT_WHISLIST = '/payment-whislist';
 }

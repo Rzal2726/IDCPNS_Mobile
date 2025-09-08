@@ -16,6 +16,12 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back), // Example: Hamburger icon for a drawer
+          onPressed: () {
+            Get.offNamed("/home", arguments: {"initialIndex": 1});
+          },
+        ),
         elevation: 0,
         scrolledUnderElevation: 0,
         backgroundColor: Colors.white,

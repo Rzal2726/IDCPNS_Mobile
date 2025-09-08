@@ -40,32 +40,169 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                     ),
                   ),
                   onPressed: () {
-                    Get.defaultDialog(
+                    showModalBottomSheet(
+                      isScrollControlled: true,
                       backgroundColor: Colors.white,
-                      title: "Konfirmasi",
-                      middleText:
-                          "Apakah kamu yakin ingin menyelesaikan tryout?",
-                      textCancel: "Batal",
-                      textConfirm: "Selesai",
-                      confirmTextColor: Colors.white,
-                      buttonColor: Colors.teal,
-                      onConfirm: () async {
-                        Get.back();
-                        if (controller.selectedAnswersList.isNotEmpty) {
-                          await controller.submitSoal();
-                          Get.offNamed(
-                            "/hasil-tryout",
-                            arguments: controller.uuid.value,
-                          );
-                        } else {
-                          Get.snackbar(
-                            "Error",
-                            "Tryout ini tidak bisa dikirim tanpa jawaban.",
-                          );
-                        }
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(16),
+                        ),
+                      ),
+                      context: context,
+                      builder: (context) {
+                        return Obx(
+                          () => Padding(
+                            padding: EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              top: 16,
+                              bottom:
+                                  MediaQuery.of(context).viewInsets.bottom + 16,
+                            ),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                spacing: 12,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Apakah kamu yakin ingin menyelesaikan tryout?",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        icon: Icon(Icons.close),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Total Soal"),
+                                      Text(
+                                        "${controller.soalList.length.toString()} Soal",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Terjawab"),
+                                      Text(
+                                        "${controller.selectedAnswersList.length.toString()} Soal",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Tidak Terjawab"),
+                                      Text(
+                                        "${(controller.soalList.length - controller.selectedAnswersList.length).toString()} Soal",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Ditandai"),
+                                      Text(
+                                        "${(controller.markedList.length).toString()} Soal",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white,
+                                            foregroundColor:
+                                                Colors.black, // warna teks/icon
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 14,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text(
+                                            "Cek Kembali",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 12,
+                                      ), // jarak antar tombol
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colors
+                                                    .blue, // warna tombol kedua
+                                            foregroundColor:
+                                                Colors.white, // warna teks/icon
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 14,
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            await controller.submitSoal();
+                                          },
+                                          child: const Text(
+                                            "Kirim Jawaban",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
                       },
-                      onCancel: () {},
-                      radius: 8,
                     );
                   },
                   child: Text("Selesai"),
@@ -241,6 +378,9 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                                       context,
                                                       index,
                                                     ) {
+                                                      final soal =
+                                                          controller
+                                                              .soalList[index];
                                                       return ElevatedButton(
                                                         style: ElevatedButton.styleFrom(
                                                           backgroundColor:
@@ -249,6 +389,17 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                                               Colors
                                                                   .black, // warna teks/icon
                                                           shape: RoundedRectangleBorder(
+                                                            side: BorderSide(
+                                                              color:
+                                                                  controller
+                                                                          .checkMark(
+                                                                            soal,
+                                                                          )
+                                                                      ? Colors
+                                                                          .amber
+                                                                      : Colors
+                                                                          .transparent,
+                                                            ),
                                                             borderRadius:
                                                                 BorderRadius.circular(
                                                                   8,
@@ -405,9 +556,18 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Row(
-                            children: const [
-                              Icon(Icons.bookmark, color: Colors.amberAccent),
-                              Icon(Icons.flag, color: Colors.redAccent),
+                            children: [
+                              IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.bookmark,
+                                  color: Colors.amberAccent,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {},
+                                icon: Icon(Icons.flag, color: Colors.redAccent),
+                              ),
                             ],
                           ),
                         ],
@@ -437,12 +597,21 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                           ),
                           Row(
                             children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.bookmark,
-                                  color: Colors.amberAccent,
-                                ),
+                              Obx(
+                                () =>
+                                    controller.soalList.isNotEmpty
+                                        ? IconButton(
+                                          onPressed: () {
+                                            controller.markSoal(soal);
+                                          },
+                                          icon: Icon(
+                                            controller.checkMark(soal)
+                                                ? Icons.bookmark_remove
+                                                : Icons.bookmark_add_outlined,
+                                            color: Colors.amberAccent,
+                                          ),
+                                        )
+                                        : SizedBox(),
                               ),
                               IconButton(
                                 icon: const Icon(
@@ -556,7 +725,9 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                                           controller
                                                               .laporanController
                                                               .text,
+                                                      context: context,
                                                     );
+
                                                     Navigator.pop(context);
                                                   },
                                                   child: const Text(

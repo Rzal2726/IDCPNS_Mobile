@@ -13,6 +13,43 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: Image.asset(
+          'assets/logo.png', // Dummy logo
+          height: 55,
+        ),
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.notifications_none, color: Colors.teal),
+                onPressed: () {
+                  Get.to(NotificationView());
+                },
+              ),
+              Positioned(
+                right: 10,
+                top: 10,
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '4',
+                    style: TextStyle(color: Colors.white, fontSize: 10),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Container(
@@ -67,33 +104,35 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
   }
 
   Widget _expireCard() {
-    return Card(
-      color: Colors.yellow.shade100,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.orange),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text("Member Platinum Sampai Dengan"),
-            Obx(() {
-              if (controller.data.isEmpty) {
-                return Skeletonizer(
-                  child: Text("Member Platinum Sampai Dengan"),
+    return InkWell(
+      child: Card(
+        color: Colors.yellow.shade100,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.orange),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text("Member Platinum Sampai Dengan"),
+              Obx(() {
+                if (controller.data.isEmpty) {
+                  return Skeletonizer(
+                    child: Text("Member Platinum Sampai Dengan"),
+                  );
+                }
+                return Text(
+                  controller.data['level_expired_at'] == null
+                      ? "Invalid Date"
+                      : controller.data['level_expired_at'].toString(),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 );
-              }
-              return Text(
-                controller.data['level_expired_at'] == null
-                    ? "Invalid Date"
-                    : controller.data['level_expired_at'].toString(),
-                style: TextStyle(fontWeight: FontWeight.bold),
-              );
-            }),
-          ],
+              }),
+            ],
+          ),
         ),
       ),
     );
@@ -105,72 +144,65 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
     required String routeName,
     required Color bgColor,
   }) {
-    return Card(
-      color: bgColor,
-      shape: RoundedRectangleBorder(
-        side: const BorderSide(color: Colors.transparent),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      clipBehavior: Clip.antiAlias, // biar image ikut rounded
-      child: Stack(
-        alignment: Alignment.centerLeft,
-        children: [
-          // Background image
-          Image.asset(
-            imageurl,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 180,
-          ),
+    return InkWell(
+      onTap: () {
+        Get.toNamed(routeName);
+      },
+      child: Card(
+        color: bgColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        clipBehavior: Clip.antiAlias, // biar rounded mengikuti shape
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-          // Overlay biar teks lebih jelas
-          Container(
-            width: double.infinity,
-            height: 180,
-            color: Colors.black.withOpacity(0.3),
-          ),
-
-          // Konten rata kiri tapi vertical center
-          Container(
-            margin: const EdgeInsets.all(16), // biar ada jarak dari pinggir
-            child: Column(
-              mainAxisSize: MainAxisSize.min, // biar ngepas kontennya
-              crossAxisAlignment: CrossAxisAlignment.center, // rata kiri
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+            children: [
+              /// Bagian Kiri -> Title dan Tombol
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black,
                     ),
                   ),
-                  onPressed: () {
-                    Get.toNamed(routeName);
-                  },
-                  child: const Text(
-                    "Lihat",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
+                    ),
+                    onPressed: () {
+                      Get.toNamed(routeName);
+                    },
+                    child: const Text(
+                      "Lihat",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+
+              /// Bagian Kanan -> Gambar ilustrasi
+              Image.asset(imageurl, height: 120, fit: BoxFit.cover),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

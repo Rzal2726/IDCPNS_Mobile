@@ -139,7 +139,7 @@ class DetailPengerjaanTryoutView
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                             onPressed: () {
-                              Get.offNamed(
+                              Get.offAllNamed(
                                 "/pengerjaan-tryout",
                                 arguments: controller.prevController.uuid.value,
                               );

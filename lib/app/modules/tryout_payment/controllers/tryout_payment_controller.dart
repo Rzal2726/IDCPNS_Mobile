@@ -116,7 +116,11 @@ class TryoutPaymentController extends GetxController {
       url: baseUrl + apiGetOtherTryout,
     );
 
-    otherTryout.assignAll(List<Map<String, dynamic>>.from(response['data']));
+    otherTryout.assignAll(
+      List<Map<String, dynamic>>.from(
+        response['data'],
+      ).where((test) => test['is_purchase'] == false),
+    );
   }
 
   Future<void> fetchListPayment() async {
@@ -201,6 +205,10 @@ class TryoutPaymentController extends GetxController {
   }
 
   void createPayment() async {
+    if (selectedPaymentMethod.isEmpty) {
+      Get.snackbar("Error", "Silahlan pilih metode pembayaran terlebih dahulu");
+      return;
+    }
     final payload = {
       "type": "tryout",
       "total_amount": totalHarga.value,

@@ -7,6 +7,5 @@ class TryoutBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<TryoutController>(() => TryoutController());
-    Get.lazyPut<RestClientProvider>(() => RestClientProvider());
   }
 }

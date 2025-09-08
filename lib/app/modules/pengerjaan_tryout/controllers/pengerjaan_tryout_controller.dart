@@ -6,11 +6,13 @@ import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PengerjaanTryoutController extends GetxController {
   //TODO: Implement PengerjaanTryoutController
 
   late final String tryoutUuid;
+  late dynamic localStorage;
   final laporanController = TextEditingController();
   final restClient = RestClient();
   // total waktu dalam detik
@@ -32,6 +34,7 @@ class PengerjaanTryoutController extends GetxController {
   RxInt instansiId = 1.obs;
   RxMap<String, dynamic> tryoutData = <String, dynamic>{}.obs;
   RxList<Map<String, dynamic>> soalList = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> markedList = <Map<String, dynamic>>[].obs;
   RxString timeStamp = "".obs;
   RxInt currentQuestion = 0.obs;
   RxMap<int, dynamic> selectedAnswers = <int, dynamic>{}.obs;
@@ -59,6 +62,7 @@ class PengerjaanTryoutController extends GetxController {
   }
 
   Future<void> initPengerjaan() async {
+    localStorage = await SharedPreferences.getInstance();
     await getDetailTryout();
     await getTryoutSoal();
     if (soalList.isNotEmpty) {
@@ -66,6 +70,8 @@ class PengerjaanTryoutController extends GetxController {
       startCountdown(tryoutData['tryout']['waktu_pengerjaan']);
     }
     uuid.value = tryoutData['uuid'];
+    print("Target Instansi: ${localStorage.getString('instansi')}");
+    print("Target Jabatan: ${localStorage.getString('jabatan')}");
   }
 
   Future<void> getDetailTryout() async {
@@ -94,6 +100,7 @@ class PengerjaanTryoutController extends GetxController {
   Future<void> sendLaporSoal({
     required int questionId,
     required String laporan,
+    required BuildContext context,
   }) async {
     final payload = {
       "tryout_question_id": questionId.toString(),
@@ -103,21 +110,52 @@ class PengerjaanTryoutController extends GetxController {
       url: baseUrl + apiLaporSoal,
       payload: payload,
     );
+
+    if (response["status"] == "success") {
+      laporanController.text = "";
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Berhasil Mengirimkan Laporan",
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green, // default warna teal
+          behavior: SnackBarBehavior.floating, // biar sedikit melayang
+          duration: const Duration(seconds: 2), // lama muncul
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Gagal Mengirimkan Laporan",
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.pink, // default warna teal
+          behavior: SnackBarBehavior.floating, // biar sedikit melayang
+          duration: const Duration(seconds: 2), // lama muncul
+        ),
+      );
+    }
   }
 
   Future<void> submitSoal() async {
-    final payload = {
-      "tryout_transaction_id": tryoutData['uuid'],
-      "instansi_id": instansiId.value,
-      "jabatan_id": jabatanId.value,
-      "items": selectedAnswersList,
-    };
-    print(payload);
-    final response = await restClient.postData(
-      url: baseUrl + apiSubmitSoal,
-      payload: payload,
-    );
-    print(response);
+    try {
+      final payload = {
+        "tryout_transaction_id": tryoutData['uuid'],
+        "instansi_id": localStorage.getString('instansi'),
+        "jabatan_id": localStorage.getString('jabatan'),
+        "items": selectedAnswersList,
+      };
+      print(payload);
+      final response = await restClient.postData(
+        url: baseUrl + apiSubmitSoal,
+        payload: payload,
+      );
+      Get.offAllNamed("/hasil-tryout", arguments: uuid.value);
+    } catch (e) {
+      Get.snackbar("Error", "Tidak dapat mengirim jawaban");
+    }
   }
 
   void fetchServerTime() async {
@@ -197,5 +235,19 @@ class PengerjaanTryoutController extends GetxController {
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     return "$hours:$minutes:$seconds";
+  }
+
+  void markSoal(Map<String, dynamic> soal) {
+    if (checkMark(soal)) {
+      markedList.remove(soal);
+    } else {
+      markedList.add(soal);
+    }
+    print(markedList);
+    print(markedList.length);
+  }
+
+  bool checkMark(Map<String, dynamic> soal) {
+    return markedList.contains(soal);
   }
 }

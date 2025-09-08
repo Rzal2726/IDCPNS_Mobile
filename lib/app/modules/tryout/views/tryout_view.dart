@@ -29,8 +29,8 @@ class TryoutView extends GetView<TryoutController> {
     <svg width="184" height="152" viewBox="0 0 184 152" xmlns="http://www.w3.org/2000/svg"><title>No data</title><g fill="none" fill-rule="evenodd"><g transform="translate(24 31.67)"><ellipse fill-opacity=".8" fill="#F5F5F7" cx="67.797" cy="106.89" rx="67.797" ry="12.668"></ellipse><path d="M122.034 69.674L98.109 40.229c-1.148-1.386-2.826-2.225-4.593-2.225h-51.44c-1.766 0-3.444.839-4.592 2.225L13.56 69.674v15.383h108.475V69.674z" fill="#AEB8C2"></path><path d="M101.537 86.214L80.63 61.102c-1.001-1.207-2.507-1.867-4.048-1.867H31.724c-1.54 0-3.047.66-4.048 1.867L6.769 86.214v13.792h94.768V86.214z" fill="url(#linearGradient-1)" transform="translate(13.56)"></path><path d="M33.83 0h67.933a4 4 0 0 1 4 4v93.344a4 4 0 0 1-4 4H33.83a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill="#F5F5F7"></path><path d="M42.678 9.953h50.237a2 2 0 0 1 2 2V36.91a2 2 0 0 1-2 2H42.678a2 2 0 0 1-2-2V11.953a2 2 0 0 1 2-2zM42.94 49.767h49.713a2.262 2.262 0 1 1 0 4.524H42.94a2.262 2.262 0 0 1 0-4.524zM42.94 61.53h49.713a2.262 2.262 0 1 1 0 4.525H42.94a2.262 2.262 0 0 1 0-4.525zM121.813 105.032c-.775 3.071-3.497 5.36-6.735 5.36H20.515c-3.238 0-5.96-2.29-6.734-5.36a7.309 7.309 0 0 1-.222-1.79V69.675h26.318c2.907 0 5.25 2.448 5.25 5.42v.04c0 2.971 2.37 5.37 5.277 5.37h34.785c2.907 0 5.277-2.421 5.277-5.393V75.1c0-2.972 2.343-5.426 5.25-5.426h26.318v33.569c0 .617-.077 1.216-.221 1.789z" fill="#DCE0E6"></path></g><path d="M149.121 33.292l-6.83 2.65a1 1 0 0 1-1.317-1.23l1.937-6.207c-2.589-2.944-4.109-6.534-4.109-10.408C138.802 8.102 148.92 0 161.402 0 173.881 0 184 8.102 184 18.097c0 9.995-10.118 18.097-22.599 18.097-4.528 0-8.744-1.066-12.28-2.902z" fill="#DCE0E6"></path><g transform="translate(149.65 15.383)" fill="#FFF"><ellipse cx="20.654" cy="3.167" rx="2.849" ry="2.815"></ellipse><path d="M5.698 5.63H0L2.898.704zM9.259.704h4.985V5.63H9.259z"></path></g></g></svg>
     ''';
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -42,7 +42,7 @@ class TryoutView extends GetView<TryoutController> {
           Stack(
             children: [
               IconButton(
-                icon: Icon(Icons.notifications_rounded, color: Colors.teal),
+                icon: Icon(Icons.notifications_none, color: Colors.teal),
                 onPressed: () {
                   Get.to(NotificationView());
                 },
@@ -66,6 +66,7 @@ class TryoutView extends GetView<TryoutController> {
           ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           // 🚀 Hapus Expanded
@@ -73,40 +74,41 @@ class TryoutView extends GetView<TryoutController> {
             // Tryout Saya box
             InkWell(
               onTap: () {
-                Get.toNamed("tryout-saya");
+                Get.offNamed("/tryout-saya");
               },
               child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.tealAccent.shade100,
-                    width: 1.5,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                  color: Color.fromRGBO(238, 255, 250, 1),
+                  color: Colors.teal.shade50,
+                  border: Border.all(color: Colors.teal.shade200, width: 1.6),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                margin: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
-                        SvgPicture.network(
-                          "https://idcpns.com/app/assets/elearning-118a04aa.svg",
-                          width: 32,
-                          height: 32,
+                        Container(
+                          width: 40,
+                          height: 40,
+
+                          child: Center(
+                            child: SvgPicture.asset("assets/computerIcon.svg"),
+                          ),
                         ),
-                        SizedBox(width: 16),
+                        SizedBox(width: 13),
                         Text(
-                          "Tryout Saya",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          'Tryout Saya',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
                         ),
                       ],
                     ),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.tealAccent.shade100,
-                    ),
+                    Spacer(),
+                    Icon(Icons.arrow_forward_ios, color: Colors.teal, size: 16),
                   ],
                 ),
               ),
@@ -349,8 +351,8 @@ class TryoutView extends GetView<TryoutController> {
 
               return SizedBox(
                 height: 224,
-                child: PageView.builder(
-                  controller: PageController(viewportFraction: 0.85),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
                   itemCount: controller.eventTryout.length,
                   itemBuilder: (ctx, index) {
                     final event = controller.eventTryout[index];
@@ -369,6 +371,92 @@ class TryoutView extends GetView<TryoutController> {
               );
             }),
 
+            SizedBox(height: 8),
+
+            Obx(() {
+              if (controller.paketTryoutRecommendation.isEmpty) {
+                return const SizedBox();
+              }
+
+              return Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Color.fromARGB(130, 0, 150, 135), // warna cerah di atas
+                        Colors.teal, // warna gelap di bawah
+                      ],
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Judul di atas
+                      Row(
+                        spacing: 8,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Rekomendasi Khusus Buat Kamu",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Icon(Icons.stars_sharp, color: Colors.amber),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      // List horizontal
+                      SizedBox(
+                        height: 154, // ✅ penting untuk horizontal list
+                        child: PageView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount:
+                              controller.paketTryoutRecommendation.length,
+                          itemBuilder: (context, index) {
+                            final data =
+                                controller.paketTryoutRecommendation[index];
+                            final option =
+                                controller.options[data['menu_category_id']];
+
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                right: 12,
+                              ), // jarak antar item
+                              child: _cardPaketTryoutRekomendasi(
+                                data['uuid']?.toString() ?? '',
+                                data['gambar']?.toString() ?? '',
+                                data['formasi']?.toString() ?? '',
+                                controller.formatCurrency(
+                                  data['harga']?.toString() ?? '0',
+                                ),
+                                controller.formatCurrency(
+                                  data['harga_fix']?.toString() ?? '0',
+                                ),
+                                option,
+                                context,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
             SizedBox(height: 8),
 
             // Paket Tryout section
@@ -912,6 +1000,132 @@ class TryoutView extends GetView<TryoutController> {
     );
   }
 
+  Widget _cardPaketTryoutRekomendasi(
+    String uuid,
+    String image,
+    String title,
+    String hargaFull,
+    String hargaDiskon,
+    String kategori,
+    BuildContext context,
+  ) {
+    return InkWell(
+      onTap: () {
+        Get.toNamed("/detail-tryout", arguments: uuid);
+      },
+      child: Card(
+        color: Colors.white,
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 4,
+        child: SizedBox(
+          width: 250,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Bagian kiri: gambar
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomLeft: Radius.circular(8),
+                ),
+                child: Image.network(
+                  image,
+                  width: 128,
+                  height: 128,
+                  fit: BoxFit.fill,
+                  errorBuilder: (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return Image.asset("assets/logo.png");
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              // Bagian kanan: teks
+              Flexible(
+                // ✅ ganti Expanded dengan Flexible
+                fit: FlexFit.loose,
+                child: Container(
+                  margin: const EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                            overflow: TextOverflow.ellipsis, // ✅ biar rapi
+                            maxLines: 2,
+                          ),
+                          const SizedBox(height: 4),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                hargaFull,
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                hargaDiskon,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      // Label CPNS
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: controller.categoryColor[kategori],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            kategori,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _eventTryoutGratis(
     String uuid,
     String status,
@@ -929,7 +1143,7 @@ class TryoutView extends GetView<TryoutController> {
         decoration: BoxDecoration(
           color: Color.fromARGB(255, 242, 255, 251),
           border: Border.all(
-            color: Colors.transparent, // bisa atur warna border
+            color: Colors.teal, // bisa atur warna border
             width: 2,
           ),
           borderRadius: BorderRadius.all(Radius.circular(8)),

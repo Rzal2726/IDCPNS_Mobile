@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/tryout_checkout_controller.dart';
@@ -71,21 +72,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                           fontSize: 20,
                         ),
                       ),
-                      Obx(
-                        () =>
-                            controller.timeStamp.value == ""
-                                ? Skeletonizer(
-                                  enabled: true,
-                                  child: Text("00:00:00"),
-                                )
-                                : Text(
-                                  controller.timeStamp.value,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                      ),
+                      buildCountdown(86400),
                     ],
                   ),
                 ),
@@ -134,6 +121,14 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                                 ? Skeletonizer(
                                   enabled: true,
                                   child: Text("Nama Bank"),
+                                )
+                                : controller
+                                        .paymentDetails['payment_details'][0]['xendit_payment_method_id'] ==
+                                    16
+                                ? PrettyQrView.data(
+                                  data:
+                                      controller
+                                          .paymentDetails['payment_details'][0]['payment_code'],
                                 )
                                 : Text(
                                   controller
@@ -543,6 +538,30 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildCountdown(int seconds) {
+    return TweenAnimationBuilder<Duration>(
+      duration: Duration(seconds: seconds),
+      tween: Tween(begin: Duration(seconds: seconds), end: Duration.zero),
+      onEnd: () {
+        debugPrint("Countdown selesai!");
+      },
+      builder: (context, value, child) {
+        // Ambil jam, menit, detik
+        String hours = value.inHours.toString().padLeft(2, '0');
+        String minutes = value.inMinutes
+            .remainder(60)
+            .toString()
+            .padLeft(2, '0');
+        String secs = value.inSeconds.remainder(60).toString().padLeft(2, '0');
+
+        return Text(
+          "$hours:$minutes:$secs",
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        );
+      },
     );
   }
 }
