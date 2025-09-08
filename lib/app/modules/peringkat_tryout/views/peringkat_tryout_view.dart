@@ -86,7 +86,296 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                         ),
                         IconButton(
                           tooltip: "Filter",
-                          onPressed: () {},
+                          onPressed: () {
+                            if (controller.loading['filter'] == true) {
+                              return;
+                            }
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled:
+                                  true, // biar bisa full height kalau perlu
+                              builder: (context) {
+                                return SizedBox(
+                                  width: double.infinity, // <- kasih full width
+                                  child: Padding(
+                                    padding: EdgeInsets.all(32),
+                                    child: Column(
+                                      mainAxisSize:
+                                          MainAxisSize
+                                              .min, // biar nggak full screen
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text("Lengkapi Form"),
+                                            IconButton(
+                                              onPressed:
+                                                  () => Navigator.pop(context),
+                                              icon: Icon(Icons.close),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 16),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "*",
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text("Provinsi"),
+                                          ],
+                                        ),
+                                        SizedBox(height: 12),
+                                        controller.listProvinsi.isEmpty
+                                            ? Skeletonizer(child: Text("data"))
+                                            : DropdownButtonFormField<String>(
+                                              value:
+                                                  controller
+                                                      .selectedProvinsi
+                                                      .value,
+                                              hint: Text("Pilih opsi"),
+                                              decoration: InputDecoration(
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              isExpanded:
+                                                  true, // <- penting biar dropdown nggak overflow
+                                              items:
+                                                  controller.listProvinsi.map((
+                                                    jabatan,
+                                                  ) {
+                                                    return DropdownMenuItem<
+                                                      String
+                                                    >(
+                                                      value:
+                                                          jabatan['id']
+                                                              .toString(),
+                                                      child: Text(
+                                                        jabatan['nama'],
+                                                        overflow:
+                                                            TextOverflow
+                                                                .ellipsis, // handle nama panjang
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                              onChanged: (newValue) {
+                                                controller
+                                                    .selectedProvinsi
+                                                    .value = newValue ?? "";
+                                                controller.getKota();
+                                              },
+                                            ),
+
+                                        SizedBox(height: 12),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "*",
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text("Kota/Kabupaten"),
+                                          ],
+                                        ),
+                                        SizedBox(height: 12),
+                                        Obx(() {
+                                          return controller.listKota.isEmpty
+                                              ? Skeletonizer(
+                                                child: Text("data"),
+                                              )
+                                              : DropdownButtonFormField<String>(
+                                                value:
+                                                    controller
+                                                        .selectedKota
+                                                        .value,
+                                                hint: Text("Pilih opsi"),
+                                                decoration: InputDecoration(
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                ),
+                                                isExpanded:
+                                                    true, // <- penting biar dropdown nggak overflow
+                                                items:
+                                                    controller.listKota.map((
+                                                      instansi,
+                                                    ) {
+                                                      return DropdownMenuItem<
+                                                        String
+                                                      >(
+                                                        value:
+                                                            instansi['id']
+                                                                .toString(),
+                                                        child: Text(
+                                                          instansi['nama']
+                                                              .toString(),
+                                                          overflow:
+                                                              TextOverflow
+                                                                  .ellipsis, // handle nama panjang
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                onChanged: (newValue) {
+                                                  controller
+                                                      .selectedKota
+                                                      .value = newValue ?? "";
+                                                },
+                                              );
+                                        }),
+
+                                        SizedBox(height: 12),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "*",
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text("Instansi Tujuan"),
+                                          ],
+                                        ),
+
+                                        controller.listInstansi.isEmpty
+                                            ? Skeletonizer(child: Text("data"))
+                                            : DropdownButtonFormField<String>(
+                                              value:
+                                                  controller
+                                                      .selectedInstansi
+                                                      .value,
+                                              hint: Text("Pilih opsi"),
+                                              decoration: InputDecoration(
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              isExpanded:
+                                                  true, // <- penting biar dropdown nggak overflow
+                                              items:
+                                                  controller.listInstansi.map((
+                                                    instansi,
+                                                  ) {
+                                                    return DropdownMenuItem<
+                                                      String
+                                                    >(
+                                                      value:
+                                                          instansi['id']
+                                                              .toString(),
+                                                      child: Text(
+                                                        instansi['nama']
+                                                            .toString(),
+                                                        overflow:
+                                                            TextOverflow
+                                                                .ellipsis, // handle nama panjang
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                              onChanged: (newValue) {
+                                                controller
+                                                    .selectedInstansi
+                                                    .value = newValue ?? "";
+                                              },
+                                            ),
+                                        SizedBox(height: 12),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "*",
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text("Jabatan Tujuan"),
+                                          ],
+                                        ),
+                                        SizedBox(height: 12),
+                                        controller.listJabatan.isEmpty
+                                            ? Skeletonizer(child: Text("data"))
+                                            : DropdownButtonFormField<String>(
+                                              value:
+                                                  controller
+                                                      .selectedJabatan
+                                                      .value,
+                                              hint: Text("Pilih opsi"),
+                                              decoration: InputDecoration(
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              isExpanded:
+                                                  true, // <- penting biar dropdown nggak overflow
+                                              items:
+                                                  controller.listJabatan.map((
+                                                    jabatan,
+                                                  ) {
+                                                    return DropdownMenuItem<
+                                                      String
+                                                    >(
+                                                      value:
+                                                          jabatan['id']
+                                                              .toString(),
+                                                      child: Text(
+                                                        jabatan['nama'],
+                                                        overflow:
+                                                            TextOverflow
+                                                                .ellipsis, // handle nama panjang
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                              onChanged: (newValue) {
+                                                controller
+                                                    .selectedJabatan
+                                                    .value = newValue ?? "";
+                                              },
+                                            ),
+
+                                        SizedBox(height: 24),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.teal,
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                  ),
+                                            ),
+                                            onPressed: () {
+                                              controller.getRanking();
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("Filter"),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
                           icon: const Icon(
                             Icons.filter_list,
                             color: Colors.teal,
@@ -202,13 +491,7 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                       ],
                     ),
                     SizedBox(height: 16),
-                    Text(
-                      "Catatan",
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+
                     Obx(
                       () =>
                           controller.listPeringkat.isEmpty
@@ -271,7 +554,13 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                         ),
                       ],
                     ),
-
+                    Text(
+                      "Catatan",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Container(
                       child: Center(
                         child: Html(
@@ -341,10 +630,10 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
           children: [
             // Badge nomor
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: 100,
+                  width: 64,
                   child: _badge(color: Colors.blueAccent, text: num),
                 ),
                 Text(
@@ -382,43 +671,28 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
 
             // Nilai & Keterangan
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 // Nilai
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Nilai",
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
-                    ),
-                    const SizedBox(height: 6),
-                    SizedBox(
-                      width: 100,
-                      child: _badge(
-                        color: status == 1 ? Colors.green : Colors.red,
-                        text: score,
-                      ),
-                    ),
-                  ],
+                const Text(
+                  "Nilai",
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
                 ),
-                // Keterangan
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Keterangan",
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
-                    ),
-                    const SizedBox(height: 6),
-                    SizedBox(
-                      width: 100,
-                      child: _badge(
-                        color: status == 1 ? Colors.green : Colors.red,
-                        text: status == 1 ? "Lulus" : "Tidak Lulus",
-                      ),
-                    ),
-                  ],
+                Flexible(
+                  child: _badge(
+                    color: status == 1 ? Colors.green : Colors.red,
+                    text: score,
+                  ),
+                ),
+                const Text(
+                  "Keterangan",
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+                Flexible(
+                  child: _badge(
+                    color: status == 1 ? Colors.green : Colors.red,
+                    text: status == 1 ? "Lulus" : "Tidak Lulus",
+                  ),
                 ),
               ],
             ),
@@ -432,7 +706,7 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
     return Card(
       color: color,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: Center(child: Text(text, style: TextStyle(color: Colors.white))),
       ),
     );

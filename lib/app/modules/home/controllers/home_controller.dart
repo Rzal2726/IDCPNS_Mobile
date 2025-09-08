@@ -8,6 +8,8 @@ import 'package:idcpns_mobile/app/modules/dashboard/controllers/dashboard_contro
 import 'package:idcpns_mobile/app/modules/dashboard/views/dashboard_view.dart';
 import 'package:idcpns_mobile/app/modules/platinum_zone/controllers/platinum_zone_controller.dart';
 import 'package:idcpns_mobile/app/modules/platinum_zone/views/platinum_zone_view.dart';
+import 'package:idcpns_mobile/app/modules/tryout/controllers/tryout_controller.dart';
+import 'package:idcpns_mobile/app/modules/tryout/views/tryout_view.dart';
 
 class HomeController extends GetxController {
   RxInt currentIndex = 0.obs;
@@ -16,6 +18,7 @@ class HomeController extends GetxController {
   // List halaman yang ingin ditampilkan
   final List<Widget> pages = [
     DashboardView(),
+    TryoutView(),
     BimbelView(),
     PlatinumZoneView(),
     AccountView(),
@@ -25,6 +28,7 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     Get.lazyPut(() => AccountController());
+    Get.lazyPut(() => TryoutController());
     Get.lazyPut(() => BimbelController());
     Get.lazyPut(() => PlatinumZoneController());
     Get.lazyPut(() => DashboardController());

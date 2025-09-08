@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,6 +17,43 @@ class DashboardView extends GetView<DashboardController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: Image.asset(
+          'assets/logo.png', // Dummy logo
+          height: 55,
+        ),
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.notifications_none, color: Colors.teal),
+                onPressed: () {
+                  Get.to(NotificationView());
+                },
+              ),
+              Positioned(
+                right: 10,
+                top: 10,
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '4',
+                    style: TextStyle(color: Colors.white, fontSize: 10),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Obx(() {
@@ -287,11 +325,16 @@ class DashboardView extends GetView<DashboardController> {
                     ),
                     SizedBox(width: 20),
                     Expanded(
-                      child: _buildServiceCard(
-                        'assets/platinumHomeIcon.svg',
-                        'Platinum',
-                        Colors.orange,
-                        badge: 'Baru',
+                      child: InkWell(
+                        onTap: () {
+                          Get.offNamed(Routes.PLATINUM_ZONE);
+                        },
+                        child: _buildServiceCard(
+                          'assets/platinumHomeIcon.svg',
+                          'Platinum',
+                          Colors.orange,
+                          badge: 'Baru',
+                        ),
                       ),
                     ),
                   ],

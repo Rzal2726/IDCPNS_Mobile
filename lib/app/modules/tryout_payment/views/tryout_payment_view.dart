@@ -146,7 +146,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                           ),
                                         ),
                                   ),
-                              child: _menuTile(
+                              child: _voucherTile(
                                 leading: Icon(
                                   Icons.redeem,
                                   color: Colors.orange,
@@ -191,7 +191,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                 },
                               ),
 
-                          child: _menuTile(
+                          child: _voucherTile(
                             leading: Icon(Icons.redeem, color: Colors.orange),
                             iconColor: Colors.orange,
                             text: "Gunakan Kode Promo",
@@ -425,6 +425,54 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
             color: Color.fromARGB(255, 42, 42, 42),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _voucherTile({
+    required Widget leading, // bisa Icon, Image, atau SvgPicture
+    required String text,
+    Color? iconColor,
+  }) {
+    return Obx(
+      () => Container(
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Color.fromARGB(255, 215, 215, 215),
+            width: 1.5,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          color: Colors.white,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                leading, // 👈 langsung pakai widget
+                const SizedBox(width: 16),
+                Text(text),
+              ],
+            ),
+            controller.promoCode.isEmpty
+                ? Icon(
+                  Icons.arrow_forward_ios,
+                  color: Color.fromARGB(255, 42, 42, 42),
+                )
+                : IconButton(
+                  onPressed: () {
+                    controller.promoCode.value = "";
+                    controller.diskon.value = 0;
+                  },
+                  icon: Icon(
+                    Icons.close,
+                    color: Color.fromARGB(255, 42, 42, 42),
+                  ),
+                ),
+          ],
+        ),
       ),
     );
   }

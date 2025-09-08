@@ -21,10 +21,15 @@ class KategoriView extends GetView<KategoriController> {
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Image.asset(
-          'assets/logo.png', // Dummy logo
-          height: 55,
-        ),
+        title: Obx(() {
+          if (controller.categoryList.isEmpty) {
+            return Skeletonizer(child: Text("data"));
+          }
+          return Text(
+            "Zona ${controller.categoryData['menu']}",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          );
+        }),
         actions: [
           Stack(
             children: [
@@ -57,151 +62,19 @@ class KategoriView extends GetView<KategoriController> {
         child: Column(
           // 🚀 Hapus Expanded
           children: [
-            // Tryout Saya box
-            Stack(
-              children: [
-                Obx(
-                  () =>
-                      controller.categoryList.isEmpty
-                          ? Skeletonizer(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.5,
-                                ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(16),
-                                ),
-                                color: Colors.grey,
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 32,
-                                vertical: 16,
-                              ),
-                              margin: EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 32,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Zona 'Kategori'",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        width: 0.5,
-                                        color: Colors.white,
-                                      ),
-                                      color: Colors.white,
-                                    ),
-                                    child: SizedBox(width: double.infinity),
-                                  ),
-                                  Text(
-                                    "Zona 'Kategori'",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                          : Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: controller.currentCategoryColor,
-                                width: 1.5,
-                              ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(16),
-                              ),
-                              color: controller.currentCategoryColor,
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 16,
-                            ),
-                            margin: EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 32,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Obx(
-                                  () =>
-                                      controller.categoryData.isEmpty
-                                          ? Skeletonizer(
-                                            child: Text(
-                                              "Zona 'Kategori'",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          )
-                                          : Text(
-                                            "Zona ${controller.categoryData['menu'].toString()}",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: 0.5,
-                                      color: Colors.white,
-                                    ),
-                                    color: Colors.white,
-                                  ),
-                                  child: SizedBox(width: double.infinity),
-                                ),
-                                Obx(
-                                  () =>
-                                      controller.categoryData.isEmpty
-                                          ? Skeletonizer(
-                                            child: Text(
-                                              "Zona 'Kategori'",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          )
-                                          : Text(
-                                            "Tingkatkan persiapan seleksi ${controller.categoryData['menu'].toString()} anda disini",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                ),
-                              ],
-                            ),
-                          ),
-                ),
-              ],
+            Obx(
+              () =>
+                  controller.categoryList.isEmpty
+                      ? Skeletonizer(
+                        child: Image.asset(
+                          "assets/zona_cpns.png",
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                      : controller.categoryImage[controller
+                          .categoryData['menu']]!,
             ),
-
             SizedBox(height: 32),
-
             // Event Tryout Gratis
             screenWidth > 800
                 ? Row(

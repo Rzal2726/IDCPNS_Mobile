@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
@@ -40,6 +39,8 @@ class TryoutController extends GetxController {
   RxList<Map<String, dynamic>> eventBaseTryout = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> eventTryout = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> paketTryout = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> paketTryoutRecommendation =
+      <Map<String, dynamic>>[].obs;
   RxString selectedPaketKategori = "Semua".obs;
   RxString selectedEventKategori = "Semua".obs;
   RxString selectedUuid = "".obs;
@@ -47,9 +48,7 @@ class TryoutController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    fetchEventsTryout();
-    fetchPaketTryout();
-    print(paketTryout);
+    initTryout();
   }
 
   @override
@@ -62,7 +61,13 @@ class TryoutController extends GetxController {
     super.onClose();
   }
 
-  void fetchEventsTryout() async {
+  Future<void> initTryout() async {
+    await fetchEventsTryout();
+    await fetchPaketTryout();
+    getRecommendation();
+  }
+
+  Future<void> fetchEventsTryout() async {
     loading['event'] = true;
     final response = await restClient.getData(url: baseUrl + apiGetTryoutEvent);
 
@@ -96,7 +101,7 @@ class TryoutController extends GetxController {
     print("Kategori: ${category}");
   }
 
-  void fetchPaketTryout({
+  Future<void> fetchPaketTryout({
     String menuCategory = "",
     String subMenuCategory = "",
     String search = "",
@@ -105,7 +110,6 @@ class TryoutController extends GetxController {
     try {
       isLoading.value = true;
       loading['paket'] = true;
-      final client = Get.find<RestClientProvider>();
       final payload = {
         "perpage": perPage.value,
         "menu_category_id": menuCategory,
@@ -131,6 +135,24 @@ class TryoutController extends GetxController {
       isLoading.value = false;
       loading['paket'] = false;
     }
+  }
+
+  void getRecommendation() async {
+    loading['paket'] = true;
+    final payload = {};
+
+    final response = await restClient.postData(
+      url: baseUrl + apiGetTryoutPaket,
+      payload: payload,
+    );
+
+    final List<Map<String, dynamic>> paket = List<Map<String, dynamic>>.from(
+      response['data']['data'],
+    );
+    List<Map<String, dynamic>> paketRekomendasi =
+        paket.where((data) => data['isfeatured'] == 1).toList();
+    paketTryoutRecommendation.assignAll(paketRekomendasi);
+    loading['paket'] = false;
   }
 
   String formatCurrency(dynamic number) {

@@ -66,18 +66,20 @@ import '../modules/panduan_tryout/bindings/panduan_tryout_binding.dart';
 import '../modules/panduan_tryout/views/panduan_tryout_view.dart';
 import '../modules/panduan_tryout_harian/bindings/panduan_tryout_harian_binding.dart';
 import '../modules/panduan_tryout_harian/views/panduan_tryout_harian_view.dart';
+import '../modules/paymentCheckout/bindings/payment_checkout_binding.dart';
+import '../modules/paymentCheckout/views/payment_checkout_view.dart';
+import '../modules/paymentDetail/bindings/payment_detail_binding.dart';
+import '../modules/paymentDetail/views/payment_detail_view.dart';
 import '../modules/payment_upgrade_akun/bindings/payment_upgrade_akun_binding.dart';
 import '../modules/payment_upgrade_akun/views/payment_upgrade_akun_view.dart';
+import '../modules/pdf_viewer/bindings/pdf_viewer_binding.dart';
+import '../modules/pdf_viewer/views/pdf_viewer_view.dart';
 import '../modules/pembahasan_tryout/bindings/pembahasan_tryout_binding.dart';
 import '../modules/pembahasan_tryout/views/pembahasan_tryout_view.dart';
 import '../modules/pembahasan_tryout_harian/bindings/pembahasan_tryout_harian_binding.dart';
 import '../modules/pembahasan_tryout_harian/views/pembahasan_tryout_harian_view.dart';
 import '../modules/pembayaran_berhasil/bindings/pembayaran_berhasil_binding.dart';
 import '../modules/pembayaran_berhasil/views/pembayaran_berhasil_view.dart';
-import '../modules/paymentCheckout/bindings/payment_checkout_binding.dart';
-import '../modules/paymentCheckout/views/payment_checkout_view.dart';
-import '../modules/paymentDetail/bindings/payment_detail_binding.dart';
-import '../modules/paymentDetail/views/payment_detail_view.dart';
 import '../modules/pengerjaan_tryout/bindings/pengerjaan_tryout_binding.dart';
 import '../modules/pengerjaan_tryout/views/pengerjaan_tryout_view.dart';
 import '../modules/pengerjaan_tryout_harian/bindings/pengerjaan_tryout_harian_binding.dart';
@@ -477,6 +479,11 @@ class AppPages {
       name: _Paths.PRETEST_TOUR,
       page: () => const PretestTourView(),
       binding: PretestTourBinding(),
+    ),
+    GetPage(
+      name: _Paths.PDF_VIEWER,
+      page: () => const PdfViewerView(),
+      binding: PdfViewerBinding(),
     ),
   ];
 }

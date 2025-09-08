@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/e_book_controller.dart';
 
@@ -61,124 +62,119 @@ class EBookView extends GetView<EBookController> {
                       ),
                       iconAlignment: IconAlignment.end,
                       onPressed: () {
-                        // showModalBottomSheet(
-                        //   context: context,
-                        //   builder: (ctx) {
-                        //     return StatefulBuilder(
-                        //       builder: (context, setState) {
-                        //         return Container(
-                        //           color: Colors.white,
-                        //           padding: EdgeInsets.all(16),
-                        //           child: Column(
-                        //             mainAxisSize:
-                        //                 MainAxisSize
-                        //                     .min, // biar bottomsheet menyesuaikan isi
-                        //             crossAxisAlignment:
-                        //                 CrossAxisAlignment.start,
-                        //             children: [
-                        //               const Text(
-                        //                 "Jenis Tryout",
-                        //                 style: TextStyle(
-                        //                   fontSize: 16,
-                        //                   fontWeight: FontWeight.bold,
-                        //                 ),
-                        //               ),
-                        //               const SizedBox(height: 8),
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (ctx) {
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return Container(
+                                  color: Colors.white,
+                                  padding: EdgeInsets.all(16),
+                                  child: Column(
+                                    mainAxisSize:
+                                        MainAxisSize
+                                            .min, // biar bottomsheet menyesuaikan isi
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "Kategori",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
 
-                        //               Obx(
-                        //                 () => Wrap(
-                        //                   spacing: 8,
-                        //                   children:
-                        //                       controller.options.value.map((
-                        //                         option,
-                        //                       ) {
-                        //                         final isSelected =
-                        //                             controller
-                        //                                 .selectedEventKategori
-                        //                                 .value ==
-                        //                             option;
-                        //                         return ChoiceChip(
-                        //                           label: Text(
-                        //                             option,
-                        //                             style: TextStyle(
-                        //                               color:
-                        //                                   isSelected
-                        //                                       ? Colors.teal
-                        //                                       : Colors
-                        //                                           .grey[700],
-                        //                               fontWeight:
-                        //                                   isSelected
-                        //                                       ? FontWeight.bold
-                        //                                       : FontWeight
-                        //                                           .normal,
-                        //                             ),
-                        //                           ),
-                        //                           selected: isSelected,
-                        //                           selectedColor: Colors.teal
-                        //                               .withOpacity(0.1),
-                        //                           backgroundColor: Colors.white,
-                        //                           shape: RoundedRectangleBorder(
-                        //                             side: BorderSide(
-                        //                               color:
-                        //                                   isSelected
-                        //                                       ? Colors.teal
-                        //                                       : Colors
-                        //                                           .grey
-                        //                                           .shade400,
-                        //                             ),
-                        //                             borderRadius:
-                        //                                 BorderRadius.circular(
-                        //                                   6,
-                        //                                 ),
-                        //                           ),
-                        //                           onSelected: (value) {
-                        //                             controller
-                        //                                 .selectedEventKategori
-                        //                                 .value = option;
-                        //                           },
-                        //                         );
-                        //                       }).toList(),
-                        //                 ),
-                        //               ),
+                                      Obx(
+                                        () => Wrap(
+                                          spacing: 8,
+                                          children:
+                                              controller.categoryList.map((
+                                                option,
+                                              ) {
+                                                final isSelected =
+                                                    controller
+                                                        .selectedKategori
+                                                        .value ==
+                                                    option['id'].toString();
+                                                return ChoiceChip(
+                                                  label: Text(
+                                                    option['menu'],
+                                                    style: TextStyle(
+                                                      color:
+                                                          isSelected
+                                                              ? Colors.teal
+                                                              : Colors
+                                                                  .grey[700],
+                                                      fontWeight:
+                                                          isSelected
+                                                              ? FontWeight.bold
+                                                              : FontWeight
+                                                                  .normal,
+                                                    ),
+                                                  ),
+                                                  selected: isSelected,
+                                                  selectedColor: Colors.teal
+                                                      .withOpacity(0.1),
+                                                  backgroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                      color:
+                                                          isSelected
+                                                              ? Colors.teal
+                                                              : Colors
+                                                                  .grey
+                                                                  .shade400,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          6,
+                                                        ),
+                                                  ),
+                                                  onSelected: (value) {
+                                                    controller
+                                                            .selectedKategori
+                                                            .value =
+                                                        option['id'].toString();
+                                                  },
+                                                );
+                                              }).toList(),
+                                        ),
+                                      ),
 
-                        //               const SizedBox(height: 12),
-                        //               SizedBox(
-                        //                 width: double.infinity,
-                        //                 child: ElevatedButton(
-                        //                   style: ElevatedButton.styleFrom(
-                        //                     backgroundColor:
-                        //                         Colors.teal, // warna tombol
-                        //                     foregroundColor:
-                        //                         Colors.white, // warna teks/icon
-                        //                     shape: RoundedRectangleBorder(
-                        //                       borderRadius:
-                        //                           BorderRadius.circular(8),
-                        //                     ),
-                        //                     padding: const EdgeInsets.symmetric(
-                        //                       horizontal: 24,
-                        //                       vertical: 12,
-                        //                     ),
-                        //                   ),
-                        //                   onPressed: () {
-                        //                     Navigator.pop(context);
-                        //                     controller.showEventTryout(
-                        //                       name: eventTextController.text,
-                        //                       category:
-                        //                           controller
-                        //                               .selectedEventKategori
-                        //                               .value,
-                        //                     );
-                        //                   },
-                        //                   child: const Text("Cari"),
-                        //                 ),
-                        //               ),
-                        //             ],
-                        //           ),
-                        //         );
-                        //       },
-                        //     );
-                        //   },
-                        // );
+                                      const SizedBox(height: 12),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.teal, // warna tombol
+                                            foregroundColor:
+                                                Colors.white, // warna teks/icon
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 24,
+                                              vertical: 12,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            controller.getEbook();
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("Cari"),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
                       },
                       label: Text(
                         "Filter",
@@ -188,12 +184,42 @@ class EBookView extends GetView<EBookController> {
                     ),
                   ],
                 ),
-                _dataCard(
-                  category: "CPNS",
-                  judul: "Teks Materi Lengkap CPNS",
-                  categoryColor: Colors.teal,
-                  bab: "23",
-                ),
+                Obx(() {
+                  if (controller.loading['ebook'] == true) {
+                    return Skeletonizer(
+                      child: _dataCard(
+                        category: "CPNS",
+                        judul: "Teks Materi Lengkap CPNS",
+                        categoryColor: Colors.teal,
+                        bab: "23",
+                        id: "1",
+                        context: context,
+                      ),
+                    );
+                  }
+                  if (controller.eBook.isEmpty) {
+                    return Center(child: Text("Tidak ada data"));
+                  }
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: controller.eBook.length,
+                    itemBuilder: (itemBuilder, index) {
+                      final data = controller.eBook[index];
+                      return SizedBox(
+                        child: _dataCard(
+                          category: data['menu_category']['menu'],
+                          judul: data['nama'],
+                          categoryColor:
+                              controller
+                                  .categoryColor[data['menu_category']['menu']]!,
+                          bab: data['ebook_list'].length.toString(),
+                          id: data['id'].toString(),
+                          context: context,
+                        ),
+                      );
+                    },
+                  );
+                }),
               ],
             ),
           ),
@@ -207,6 +233,8 @@ class EBookView extends GetView<EBookController> {
     required String judul,
     required Color categoryColor,
     required String bab,
+    required String id,
+    required BuildContext context,
   }) {
     return Card(
       color: Colors.white,
@@ -246,7 +274,177 @@ class EBookView extends GetView<EBookController> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                onPressed: () {},
+                onPressed: () async {
+                  await controller.getEbookList(id);
+                  showModalBottomSheet(
+                    backgroundColor: Colors.white,
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (context) {
+                      return Obx(() {
+                        if (controller.loading['ebook-list'] == true) {
+                          return CircularProgressIndicator();
+                        }
+                        if (controller.eBookList.isEmpty) {
+                          return Center(child: Text("Tidak Ada Data"));
+                        }
+                        return SingleChildScrollView(
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Pilih E-Book",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    icon: Icon(Icons.close),
+                                  ),
+                                ],
+                              ),
+                              ...controller.eBookList.map((data) {
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    // Text dari title
+                                    Text(
+                                      data['nama'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+
+                                    // Tombol aksi
+                                    TextButton(
+                                      onPressed: () {
+                                        Get.dialog(
+                                          Dialog(
+                                            backgroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(16),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  // Title
+                                                  Text(
+                                                    "Syarat dan Ketentuan",
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 12),
+
+                                                  // Message
+                                                  Text(
+                                                    "Saya setuju untuk tidak menyebarkan konten-konten yang ada di website IDCPNS kepada pihak lain.",
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 20),
+
+                                                  // Actions
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      // Cancel Button
+                                                      ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  8,
+                                                                ),
+                                                            side: BorderSide(
+                                                              color:
+                                                                  Colors.teal,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          Get.back();
+                                                        },
+                                                        child: Text(
+                                                          "Tidak Setuju",
+                                                          style: TextStyle(
+                                                            color: Colors.teal,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 8),
+
+                                                      // Confirm Button
+                                                      ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.teal,
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  8,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          Get.back();
+                                                          Get.toNamed(
+                                                            "/pdf-viewer",
+                                                            arguments:
+                                                                data['link'],
+                                                          );
+                                                        },
+                                                        child: Text(
+                                                          "Setuju",
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        data['action'] ?? 'Aksi',
+                                        style: const TextStyle(
+                                          color: Colors.teal,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            ],
+                          ),
+                        );
+                      });
+                    },
+                  );
+                },
                 child: const Text(
                   "Buka E-Book",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

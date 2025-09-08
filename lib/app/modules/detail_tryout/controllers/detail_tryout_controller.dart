@@ -6,12 +6,15 @@ import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/tryout/controllers/tryout_controller.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
 class DetailTryoutController extends GetxController {
   //TODO: Implement DetailTryoutController
 
   final count = 0.obs;
+  late final localStorage;
+
   late String uuid;
   final restClient = RestClient();
   RxMap<dynamic, dynamic> detailData = {}.obs;
@@ -49,6 +52,7 @@ class DetailTryoutController extends GetxController {
   }
 
   Future<void> initData() async {
+    localStorage = await SharedPreferences.getInstance();
     uuid = await Get.arguments;
     await getDetailTryout(); // tunggu sampai selesai
     await checkWishList();

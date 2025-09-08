@@ -51,6 +51,10 @@ dependencies:
   webview_flutter_android: ^4.10.1
   webview_flutter_wkwebview: ^3.23.0
   table_calendar: ^3.2.0
+  shared_preferences: ^2.5.3
+  syncfusion_flutter_pdfviewer: ^30.2.7
+  device_info_plus: ^11.5.0
+  pretty_qr_code: ^3.5.0
 
 
 

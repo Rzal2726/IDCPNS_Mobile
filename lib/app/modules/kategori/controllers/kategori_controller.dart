@@ -21,6 +21,13 @@ class KategoriController extends GetxController {
         "Kedinasan": Colors.orangeAccent,
         "PPPK": Colors.redAccent,
       }.obs;
+  RxMap<String, Image> categoryImage =
+      <String, Image>{
+        "CPNS": Image.asset("assets/zona_cpns.png"),
+        "BUMN": Image.asset("assets/zona_bumn.png"),
+        "Kedinasan": Image.asset("assets/zona_sekdin.png"),
+        "PPPK": Image.asset("assets/zona_pppk.png"),
+      }.obs;
   RxMap<String, bool> loading = <String, bool>{}.obs;
   Color currentCategoryColor = Colors.teal;
   RxList<Map<String, dynamic>> eventBaseTryout = <Map<String, dynamic>>[].obs;

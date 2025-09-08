@@ -37,7 +37,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                 child: Obx(
                   () =>
                       controller.detailData['gambar'] == null
-                          ? CircularProgressIndicator()
+                          ? Skeletonizer(child: Icon(Icons.image_search))
                           : Image.network(
                             controller.detailData['gambar'] ??
                                 '', // pastikan ada url
@@ -163,96 +163,158 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
             ),
             SizedBox(height: 8),
 
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 32),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Obx(
-                      () => ElevatedButton(
-                        onPressed:
-                            controller.isLoading['wishlist'] == true
-                                ? null // disable tombol saat loading
-                                : () async {
-                                  ScaffoldMessenger.of(
-                                    context,
-                                  ).clearSnackBars();
+            Obx(
+              () =>
+                  controller.detailData.isEmpty
+                      ? Skeletonizer(
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          child: Text("data"),
+                        ),
+                      )
+                      : Container(
+                        margin: EdgeInsets.symmetric(horizontal: 32),
+                        child: Obx(
+                          () =>
+                              controller.detailData['is_purchase'] == true
+                                  ? SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Get.toNamed(
+                                          "tryout-saya",
+                                          arguments:
+                                              controller.detailData['uuid'],
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.teal.shade300,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
+                                      ),
+                                      child: Text("Tryout Saya"),
+                                    ),
+                                  )
+                                  : Row(
+                                    children: [
+                                      Expanded(
+                                        child: Obx(
+                                          () => ElevatedButton(
+                                            onPressed:
+                                                controller.isLoading['wishlist'] ==
+                                                        true
+                                                    ? null // disable tombol saat loading
+                                                    : () async {
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).clearSnackBars();
 
-                                  bool success;
-                                  if (!controller.isOnWishlist.value) {
-                                    success = await controller.addToWishList();
-                                    _showSnackBar(
-                                      context,
-                                      success,
-                                      "Wishlist berhasil disimpan!",
-                                      "Gagal menyimpan wishlist!",
-                                    );
-                                    if (success)
-                                      controller.isOnWishlist.value = true;
-                                  } else {
-                                    success =
-                                        await controller.removeFromWishList();
-                                    _showSnackBar(
-                                      context,
-                                      success,
-                                      "Wishlist berhasil dihapus!",
-                                      "Gagal menghapus wishlist!",
-                                    );
-                                    if (success)
-                                      controller.isOnWishlist.value = false;
-                                  }
-                                },
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          foregroundColor: Colors.teal.shade300,
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            side: BorderSide(
-                              color: Colors.teal.shade300,
-                              width: 1.5,
-                            ),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        child:
-                            controller.isLoading['wishlist'] == true
-                                ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
+                                                      bool success;
+                                                      if (!controller
+                                                          .isOnWishlist
+                                                          .value) {
+                                                        success =
+                                                            await controller
+                                                                .addToWishList();
+                                                        _showSnackBar(
+                                                          context,
+                                                          success,
+                                                          "Wishlist berhasil disimpan!",
+                                                          "Gagal menyimpan wishlist!",
+                                                        );
+                                                        if (success)
+                                                          controller
+                                                              .isOnWishlist
+                                                              .value = true;
+                                                      } else {
+                                                        success =
+                                                            await controller
+                                                                .removeFromWishList();
+                                                        _showSnackBar(
+                                                          context,
+                                                          success,
+                                                          "Wishlist berhasil dihapus!",
+                                                          "Gagal menghapus wishlist!",
+                                                        );
+                                                        if (success)
+                                                          controller
+                                                              .isOnWishlist
+                                                              .value = false;
+                                                      }
+                                                    },
+                                            style: ElevatedButton.styleFrom(
+                                              elevation: 0,
+                                              foregroundColor:
+                                                  Colors.teal.shade300,
+                                              backgroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                side: BorderSide(
+                                                  color: Colors.teal.shade300,
+                                                  width: 1.5,
+                                                ),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                  ),
+                                            ),
+                                            child:
+                                                controller.isLoading['wishlist'] ==
+                                                        true
+                                                    ? const SizedBox(
+                                                      height: 20,
+                                                      width: 20,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                          ),
+                                                    )
+                                                    : Text(
+                                                      controller
+                                                              .isOnWishlist
+                                                              .value
+                                                          ? "Hapus Dari Wishlist -"
+                                                          : "Tambahkan Ke Wishlist +",
+                                                    ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 8), // jarak antar tombol
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            controller.selectedUUid.value =
+                                                controller.detailData['uuid'];
+                                            Get.toNamed("/tryout-payment");
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.teal.shade300,
+                                            foregroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 12,
+                                            ),
+                                          ),
+                                          child: Text("Daftar"),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                )
-                                : Text(
-                                  controller.isOnWishlist.value
-                                      ? "Hapus Dari Wishlist -"
-                                      : "Tambahkan Ke Wishlist +",
-                                ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8), // jarak antar tombol
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        controller.selectedUUid.value =
-                            controller.detailData['uuid'];
-                        Get.toNamed("/tryout-payment");
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal.shade300,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
-                      child: Text("Daftar"),
-                    ),
-                  ),
-                ],
-              ),
             ),
             SizedBox(height: 32),
 

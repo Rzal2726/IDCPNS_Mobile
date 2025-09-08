@@ -11,13 +11,35 @@ class PeringkatTryoutController extends GetxController {
   final restClient = RestClient();
   final searchController = TextEditingController();
   RxMap<String, dynamic> tryoutSaya = <String, dynamic>{}.obs;
+  RxMap<String, bool> loading = <String, bool>{"filter": false}.obs;
   RxList<Map<String, dynamic>> listPeringkat = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> listProvinsi =
+      <Map<String, dynamic>>[
+        {"id": "", "nama": "Pilih Provinsi"},
+      ].obs;
+  RxList<Map<String, dynamic>> listKota =
+      <Map<String, dynamic>>[
+        {"id": "", "nama": "Pilih Kota/Kabupaten"},
+      ].obs;
+  RxList<Map<String, dynamic>> listJabatan =
+      <Map<String, dynamic>>[
+        {"id": "", "nama": "Pilih Jabatan"},
+      ].obs;
+  RxList<Map<String, dynamic>> listInstansi =
+      <Map<String, dynamic>>[
+        {"id": "", "nama": "Pilih Instansi"},
+      ].obs;
   RxInt currentPage = 1.obs;
   RxInt pesertaLulus = 0.obs;
   RxInt pesertTidakLulus = 0.obs;
   RxInt rank = 0.obs;
   RxInt total = 0.obs;
   RxInt totalPage = 0.obs;
+  RxString selectedInstansi = "".obs;
+  RxString selectedJabatan = "".obs;
+  RxString selectedPeringkat = "".obs;
+  RxString selectedProvinsi = "".obs;
+  RxString selectedKota = "".obs;
   @override
   void onInit() {
     super.onInit();
@@ -35,9 +57,14 @@ class PeringkatTryoutController extends GetxController {
   }
 
   Future<void> initPeringkat() async {
+    loading['filter'] = true;
     uuid = await Get.arguments;
     await getDetailTryout();
     await getRanking();
+    await getInstansi();
+    await getJabatan();
+    await getProvinsi();
+    loading['filter'] = false;
   }
 
   Future<void> getDetailTryout() async {
@@ -51,13 +78,54 @@ class PeringkatTryoutController extends GetxController {
     tryoutSaya.assignAll(data);
   }
 
+  Future<void> getProvinsi() async {
+    final response = await restClient.getData(url: baseUrl + apiGetProvince);
+    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    listProvinsi.addAll(data);
+  }
+
+  Future<void> getKota() async {
+    selectedKota.value = "";
+    final response = await restClient.getData(
+      url: baseUrl + apiGetKabup + "/" + selectedProvinsi.value,
+    );
+    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    listKota.assign({"id": "", "nama": "Pilih Kota/Kabupaten"});
+    listKota.addAll(data);
+  }
+
+  Future<void> getJabatan() async {
+    final response = await restClient.getData(url: baseUrl + apiGetJabatan);
+    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    listJabatan.addAll(data);
+  }
+
+  Future<void> getInstansi() async {
+    final response = await restClient.getData(url: baseUrl + apiGetInstansi);
+    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    listInstansi.addAll(data);
+  }
+
   Future<void> getRanking() async {
     final payload = {
       "perpage": "10",
       "page": currentPage.toString(),
       "tryout_id": tryoutSaya['tryout']['uuid'].toString(),
       "search": searchController.text,
+      "instansi_id": selectedInstansi.value,
+      "jabatan_id": selectedJabatan.value,
+      "kotakab_id": selectedKota.value,
+      "provinsi_id": selectedProvinsi.value,
     };
+
     final response = await restClient.postData(
       url: baseUrl + apiRankingTryout + uuid,
       payload: payload,
