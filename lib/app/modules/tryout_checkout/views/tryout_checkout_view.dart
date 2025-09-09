@@ -495,7 +495,8 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                             [];
 
                         String getInstruction(int index) {
-                          if (instructions.isEmpty) return "<p>No Data</p>";
+                          if (instructions.isEmpty)
+                            return "<p>Tidak ada instruksi untuk metode pembayaran ini</p>";
                           if (index < 0 || index >= instructions.length)
                             return "<p>No Instruction</p>";
                           return instructions[index]?['instruction'] ??

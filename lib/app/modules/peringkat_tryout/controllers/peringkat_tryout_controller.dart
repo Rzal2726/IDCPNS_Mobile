@@ -120,18 +120,26 @@ class PeringkatTryoutController extends GetxController {
       "page": currentPage.toString(),
       "tryout_id": tryoutSaya['tryout']['uuid'].toString(),
       "search": searchController.text,
-      "instansi_id": selectedInstansi.value,
-      "jabatan_id": selectedJabatan.value,
-      "kotakab_id": selectedKota.value,
-      "provinsi_id": selectedProvinsi.value,
     };
+    if (selectedInstansi.value != "") {
+      payload['instansi_id'] = selectedInstansi.value;
+    }
+    if (selectedJabatan.value != "") {
+      payload['jabatan_id'] = selectedJabatan.value;
+    }
+    if (selectedKota.value != "") {
+      payload['kotakab_id'] = selectedKota.value;
+    }
+    if (selectedProvinsi.value != "") {
+      payload['provinsi_id'] = selectedProvinsi.value;
+    }
 
     final response = await restClient.postData(
       url: baseUrl + apiRankingTryout + uuid,
       payload: payload,
     );
 
-    print(response);
+    print("payload: ${payload}");
     final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
       response['data']['data'],
     );

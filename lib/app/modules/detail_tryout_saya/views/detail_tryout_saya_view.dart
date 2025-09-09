@@ -5,18 +5,12 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 
 import '../controllers/detail_tryout_saya_controller.dart';
+import '../models/chart_data_model.dart';
 
 class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
-  // 💡 Note: The chartData should ideally come from your controller and be reactive.
-  // This is just a placeholder.
-  final List<ChartData> chartData = [
-    ChartData('Benar', 7, Colors.green),
-    ChartData('Salah', 1, Colors.red),
-    ChartData('Kosong', 2, Colors.grey), // Example for empty answers
-  ];
-
   // ❌ REMOVED: Never put a controller inside the build method or as a view property.
   // final controller = Get.put(DetailTryoutSayaController());
 
@@ -135,16 +129,52 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                         child:
                             controller.tryOutSaya.isEmpty
                                 ? Skeletonizer(child: _badge(isi: "180 Hari"))
-                                : _badge(
-                                  isi:
-                                      "${controller.hitungMasaAktif(controller.tryOutSaya['expireddate'])} Hari Lagi",
-                                  backgroundColor: Colors.teal.shade300,
-                                  foregroundColor: const Color.fromARGB(
-                                    255,
-                                    255,
-                                    255,
-                                    255,
-                                  ),
+                                : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Progress Bar
+                                    LinearProgressIndicator(
+                                      value:
+                                          (controller
+                                                  .tryOutSaya['tryout']['reamining_day'] /
+                                              controller
+                                                  .hitungTotalMasaAktif(
+                                                    controller
+                                                        .tryOutSaya['created_at'],
+                                                    controller
+                                                        .tryOutSaya['expireddate'],
+                                                  )
+                                                  .toDouble()), // Progress 0.0 - 1.0
+                                      backgroundColor: Colors.grey.shade300,
+                                      color: Colors.teal.shade300,
+                                      minHeight: 12, // Tinggi progress bar
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    const SizedBox(height: 8),
+
+                                    // Text Sisa Hari
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Sisa Hari",
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          "${controller.tryOutSaya['tryout']['reamining_day'].toString()} Hari Lagi",
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                       ),
                       SizedBox(height: 16), // ✅ ADDED: Spacing
@@ -175,7 +205,10 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                           width: double.infinity,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.teal,
+                              backgroundColor:
+                                  controller.tryOutSaya['isdone'] == 1
+                                      ? Colors.pink
+                                      : Colors.teal,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -204,6 +237,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                 );
                               } else {
                                 showModalBottomSheet(
+                                  backgroundColor: Colors.white,
                                   context: context,
                                   isScrollControlled:
                                       true, // biar bisa full height kalau perlu
@@ -254,49 +288,85 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                                 ? Skeletonizer(
                                                   child: Text("data"),
                                                 )
-                                                : DropdownButtonFormField<
-                                                  String
-                                                >(
-                                                  value:
+                                                : DropdownSearch<String>(
+                                                  items: (f, cs) {
+                                                    // Return Future<List<String>>
+                                                    return controller
+                                                        .listInstansi
+                                                        .map(
+                                                          (instansi) =>
+                                                              instansi['nama']
+                                                                  .toString(),
+                                                        )
+                                                        .toList();
+                                                  },
+                                                  selectedItem:
                                                       controller
-                                                          .selectedInstansi
-                                                          .value,
-                                                  hint: Text("Pilih opsi"),
-                                                  decoration: InputDecoration(
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
+                                                                  .selectedInstansi
+                                                                  .value ==
+                                                              ""
+                                                          ? null
+                                                          : controller
+                                                              .listInstansi
+                                                              .firstWhere(
+                                                                (jabatan) =>
+                                                                    jabatan['id']
+                                                                        .toString() ==
+                                                                    controller
+                                                                        .selectedInstansi
+                                                                        .value,
+                                                                orElse:
+                                                                    () => {
+                                                                      'nama':
+                                                                          '',
+                                                                    },
+                                                              )['nama'],
+
+                                                  popupProps: PopupProps.dialog(
+                                                    showSearchBox:
+                                                        true, // ✅ Ada search bawaan
+                                                    searchFieldProps: TextFieldProps(
+                                                      decoration: InputDecoration(
+                                                        labelText:
+                                                            'Cari Instansi',
+                                                        border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
-                                                  isExpanded:
-                                                      true, // <- penting biar dropdown nggak overflow
-                                                  items:
-                                                      controller.listInstansi.map((
-                                                        instansi,
-                                                      ) {
-                                                        return DropdownMenuItem<
-                                                          String
-                                                        >(
-                                                          value:
-                                                              instansi['id']
-                                                                  .toString(),
-                                                          child: Text(
-                                                            instansi['nama']
-                                                                .toString(),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis, // handle nama panjang
-                                                          ),
+                                                  decoratorProps: DropDownDecoratorProps(
+                                                    decoration: InputDecoration(
+                                                      labelText:
+                                                          "Pilih Instansi",
+                                                      border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              8,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onChanged: (value) {
+                                                    final selected = controller
+                                                        .listInstansi
+                                                        .firstWhere(
+                                                          (instansi) =>
+                                                              instansi['nama']
+                                                                  .toString() ==
+                                                              value,
+                                                          orElse: () => {},
                                                         );
-                                                      }).toList(),
-                                                  onChanged: (newValue) {
                                                     controller
                                                         .selectedInstansi
-                                                        .value = newValue ?? "";
+                                                        .value = selected['id']
+                                                            .toString();
                                                   },
                                                 ),
+
                                             SizedBox(height: 12),
                                             Row(
                                               children: [
@@ -315,46 +385,81 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                                 ? Skeletonizer(
                                                   child: Text("data"),
                                                 )
-                                                : DropdownButtonFormField<
-                                                  String
-                                                >(
-                                                  value:
+                                                : DropdownSearch<String>(
+                                                  items: (f, cs) {
+                                                    // Return Future<List<String>>
+                                                    return controller
+                                                        .listJabatan
+                                                        .map(
+                                                          (instansi) =>
+                                                              instansi['nama']
+                                                                  .toString(),
+                                                        )
+                                                        .toList();
+                                                  },
+                                                  selectedItem:
                                                       controller
-                                                          .selectedJabatan
-                                                          .value,
-                                                  hint: Text("Pilih opsi"),
-                                                  decoration: InputDecoration(
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
+                                                                  .selectedJabatan
+                                                                  .value ==
+                                                              ""
+                                                          ? null
+                                                          : controller
+                                                              .listJabatan
+                                                              .firstWhere(
+                                                                (jabatan) =>
+                                                                    jabatan['id']
+                                                                        .toString() ==
+                                                                    controller
+                                                                        .selectedJabatan
+                                                                        .value,
+                                                                orElse:
+                                                                    () => {
+                                                                      'nama':
+                                                                          '',
+                                                                    },
+                                                              )['nama'],
+                                                  popupProps: PopupProps.dialog(
+                                                    showSearchBox:
+                                                        true, // ✅ Ada search bawaan
+                                                    searchFieldProps: TextFieldProps(
+                                                      decoration: InputDecoration(
+                                                        labelText:
+                                                            'Cari Jabatan',
+                                                        border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
-                                                  isExpanded:
-                                                      true, // <- penting biar dropdown nggak overflow
-                                                  items:
-                                                      controller.listJabatan.map((
-                                                        jabatan,
-                                                      ) {
-                                                        return DropdownMenuItem<
-                                                          String
-                                                        >(
-                                                          value:
-                                                              jabatan['id']
-                                                                  .toString(),
-                                                          child: Text(
-                                                            jabatan['nama'],
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis, // handle nama panjang
-                                                          ),
+                                                  decoratorProps: DropDownDecoratorProps(
+                                                    decoration: InputDecoration(
+                                                      labelText:
+                                                          "Pilih Jabatan",
+                                                      border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              8,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onChanged: (value) {
+                                                    final selected = controller
+                                                        .listJabatan
+                                                        .firstWhere(
+                                                          (instansi) =>
+                                                              instansi['nama']
+                                                                  .toString() ==
+                                                              value,
+                                                          orElse: () => {},
                                                         );
-                                                      }).toList(),
-                                                  onChanged: (newValue) {
                                                     controller
                                                         .selectedJabatan
-                                                        .value = newValue ?? "";
+                                                        .value = selected['id']
+                                                            .toString();
                                                   },
                                                 ),
 
@@ -377,6 +482,41 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                                       ),
                                                 ),
                                                 onPressed: () {
+                                                  if (controller
+                                                              .selectedInstansi
+                                                              .value ==
+                                                          "" ||
+                                                      controller
+                                                              .selectedInstansi
+                                                              .value ==
+                                                          "0") {
+                                                    Get.snackbar(
+                                                      "Alert",
+                                                      "Mohon pilih instansi tujuan anda",
+                                                      backgroundColor:
+                                                          Colors.pink,
+                                                      colorText: Colors.white,
+                                                    );
+                                                    return;
+                                                  }
+                                                  if (controller
+                                                              .selectedJabatan
+                                                              .value ==
+                                                          "" ||
+                                                      controller
+                                                              .selectedJabatan
+                                                              .value ==
+                                                          "0") {
+                                                    Get.snackbar(
+                                                      "Alert",
+                                                      "Mohon pilih jabatan tujuan anda",
+                                                      backgroundColor:
+                                                          Colors.pink,
+                                                      colorText: Colors.white,
+                                                    );
+                                                    return;
+                                                  }
+
                                                   controller.localStorage
                                                       .setString(
                                                         'jabatan',
@@ -431,7 +571,9 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
             // If the tryout is not done, show a message. Otherwise, show the charts.
             Obx(
               () =>
-                  controller.tryOutSaya['isdone'] == 1
+                  controller.nilaiChart.isEmpty
+                      ? Skeletonizer(child: Text("data"))
+                      : controller.tryOutSaya['isdone'] == 1
                       ? _buildResultCharts()
                       : _buildPlaceholder(
                         "Kerjakan tryout untuk melihat hasil dan statistik.",
@@ -460,118 +602,325 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
     );
   }
 
-  // Helper method to build the results section
+  Widget _passingGrade({
+    required String title,
+    required String score,
+    required String passingGrade,
+  }) {
+    return Card(
+      color: Colors.pink.shade100,
+      elevation: 0,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            SizedBox(height: 12),
+            Text(
+              score,
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+                fontSize: 40,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Passing Grade: ", style: TextStyle(color: Colors.red)),
+                Text(
+                  passingGrade,
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildResultCharts() {
     return Column(
       children: [
+        // Pie Chart untuk total nilai
         Card(
           color: Colors.white,
           elevation: 1,
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
             child: Obx(
               () =>
                   controller.nilaiChart.isEmpty
-                      ? Skeletonizer(
-                        child: Card(child: Center(child: Text("Skeleton"))),
-                      )
+                      ? const Center(child: CircularProgressIndicator())
                       : SfCircularChart(
                         title: ChartTitle(
                           text: "Total Nilai",
-                          textStyle: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        annotations: <CircularChartAnnotation>[
-                          CircularChartAnnotation(
-                            widget: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '${controller.nilaiChart['total_nilai'].toString()}/${controller.nilaiChart['total_nilai_sempurna']}', // ✅ Dynamic data from controller
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                Text(
-                                  'Nilai/Nilai Sempurna', // subtitle optional
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
+                        ),
                         series: <CircularSeries>[
                           DoughnutSeries<ChartData, String>(
                             dataSource: [
-                              ChartData(
-                                "Nilai",
-                                double.parse(
-                                  controller.nilaiChart['total_nilai']
-                                      .toString(),
+                              // Loop otomatis dari data charts
+                              ...List.generate(
+                                controller
+                                    .nilaiChart['charts']['labels']
+                                    .length,
+                                (i) => ChartData(
+                                  controller
+                                      .nilaiChart['charts']['labels'][i], // Label: TWK, TIU, TKP
+                                  controller
+                                      .nilaiChart['charts']['values'][i], // Nilai masing-masing
+                                  Colors.primaries[i %
+                                      Colors.primaries.length], // Warna dinamis
                                 ),
-                                Colors.green,
                               ),
-                              ChartData(
-                                "Nilai Sempurna",
-                                double.parse(
-                                  controller.nilaiChart['total_nilai_sempurna'],
-                                ),
-                                Colors.pink,
-                              ),
-                            ], // ✅ Dynamic data from controller
+                            ],
                             xValueMapper: (ChartData data, _) => data.x,
-                            yValueMapper: (ChartData data, _) => data.y,
-                            innerRadius: '80%',
+                            yValueMapper:
+                                (ChartData data, _) =>
+                                    int.tryParse(data.y) ?? 0,
                             pointColorMapper: (ChartData data, _) => data.color,
+                            innerRadius: '80%',
+                            dataLabelSettings: const DataLabelSettings(
+                              isVisible: true, // WAJIB untuk menampilkan label
+                              labelPosition:
+                                  ChartDataLabelPosition
+                                      .outside, // label di luar chart
+                              overflowMode:
+                                  OverflowMode
+                                      .shift, // geser label kalau sempit
+                            ),
                           ),
                         ],
                       ),
             ),
           ),
         ),
+
+        const SizedBox(height: 16),
+        Obx(
+          () =>
+              controller.nilaiChart['statistics'].isEmpty
+                  ? Skeletonizer(child: Text("data"))
+                  : Container(
+                    child: Column(
+                      children:
+                          controller.nilaiChart['statistics'].map<Widget>((
+                            data,
+                          ) {
+                            return _passingGrade(
+                              title: data['title'],
+                              score: data['result_nilai'].toString(),
+                              passingGrade: data['nilai'].toString(),
+                            );
+                          }).toList(), // ✅ Convert ke List<Widget>
+                    ),
+                  ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Bar Chart untuk Benar / Salah / Kosong
         Obx(
           () => Card(
             color: Colors.white,
             elevation: 1,
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-              child:
-                  controller.nilaiChart.isEmpty
-                      ? Skeletonizer(
-                        child: Card(child: Center(child: Text("Skeleton"))),
-                      )
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+              child: Column(
+                children: [
+                  controller.chartData.isEmpty
+                      ? const Center(child: CircularProgressIndicator())
                       : SfCartesianChart(
-                        backgroundColor: Colors.white,
                         title: ChartTitle(
-                          text: controller.nilaiChart['charts']['labels'][0],
+                          text: "Waktu Pengerjaan",
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        primaryXAxis: CategoryAxis(),
-                        series: <CartesianSeries>[
-                          LineSeries<LineChart, String>(
-                            name: "Nilai",
-                            dataSource: [
-                              LineChart(
-                                "",
-                                double.parse(
-                                  controller.nilaiChart['charts']['values'][0],
-                                ),
-                              ),
-                            ],
-                            xValueMapper: (LineChart data, _) => data.x,
-                            yValueMapper: (LineChart data, _) => data.y,
-                            dataLabelSettings: DataLabelSettings(
+                        primaryXAxis: CategoryAxis(
+                          labelRotation: -45,
+                          majorGridLines: const MajorGridLines(width: 0),
+                        ),
+                        primaryYAxis: NumericAxis(
+                          minimum: 0,
+                          title: AxisTitle(text: 'Waktu(Detik)'),
+                        ),
+                        tooltipBehavior: TooltipBehavior(enable: true),
+                        series: <ColumnSeries>[
+                          ColumnSeries<ChartData, String>(
+                            dataSource: controller.chartDataList,
+                            xValueMapper: (ChartData data, _) => data.x,
+                            yValueMapper:
+                                (ChartData data, _) => int.tryParse(data.y),
+                            pointColorMapper: (ChartData data, _) => data.color,
+                            dataLabelSettings: const DataLabelSettings(
                               isVisible: true,
                             ),
-                            markerSettings: MarkerSettings(isVisible: true),
                           ),
                         ],
                       ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Total Waktu",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text("5 Menit"),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
+        ),
+        Obx(
+          () =>
+              controller.nilaiChartStat.isEmpty
+                  ? const Skeletonizer(child: Text("data"))
+                  : Column(
+                    children:
+                        (controller.nilaiChartStat['statistics']
+                                as List<dynamic>)
+                            .map((item) {
+                              final subcategories =
+                                  item['subcategories'] as List<dynamic>;
+
+                              // Ubah subcategories menjadi list ChartData
+                              final chartData =
+                                  subcategories
+                                      .map((sub) {
+                                        return [
+                                          ChartData(
+                                            "${sub['title']} (Benar)",
+                                            sub['benar'].toString(),
+                                            Colors.green,
+                                          ),
+                                          ChartData(
+                                            "${sub['title']} (Salah)",
+                                            sub['salah'].toString(),
+                                            Colors.red,
+                                          ),
+                                          ChartData(
+                                            "${sub['title']} (Kosong)",
+                                            sub['kosong'].toString(),
+                                            Colors.orange,
+                                          ),
+                                        ];
+                                      })
+                                      .expand((e) => e)
+                                      .toList();
+
+                              return Card(
+                                color: Colors.white,
+                                elevation: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 0,
+                                    horizontal: 0,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      // Chart untuk masing-masing label seperti TWK, TIU, TKP
+                                      SfCartesianChart(
+                                        title: ChartTitle(
+                                          text: item['label'], // contoh: "TWK"
+                                          textStyle: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        legend: Legend(
+                                          isVisible: true,
+                                          position: LegendPosition.bottom,
+                                        ),
+                                        tooltipBehavior: TooltipBehavior(
+                                          enable: true,
+                                        ),
+                                        primaryXAxis: CategoryAxis(
+                                          labelRotation: 0, // memutar text 45°
+                                          labelStyle: const TextStyle(
+                                            fontSize: 10,
+                                          ), // memperkecil font
+                                          majorGridLines: const MajorGridLines(
+                                            width: 0,
+                                          ),
+                                        ),
+                                        primaryYAxis: NumericAxis(
+                                          minimum: 0,
+                                          title: AxisTitle(text: 'Jumlah Soal'),
+                                        ),
+
+                                        series:
+                                            <StackedBarSeries<dynamic, String>>[
+                                              // Benar
+                                              StackedBarSeries<dynamic, String>(
+                                                name: 'Benar',
+                                                color: Colors.green,
+                                                dataSource: subcategories,
+                                                xValueMapper:
+                                                    (data, _) => data['title'],
+                                                yValueMapper:
+                                                    (data, _) => data['benar'],
+                                                dataLabelSettings:
+                                                    const DataLabelSettings(
+                                                      isVisible: true,
+                                                    ),
+                                              ),
+                                              // Salah
+                                              StackedBarSeries<dynamic, String>(
+                                                name: 'Salah',
+                                                color: Colors.red,
+                                                dataSource: subcategories,
+                                                xValueMapper:
+                                                    (data, _) => data['title'],
+                                                yValueMapper:
+                                                    (data, _) => data['salah'],
+                                                dataLabelSettings:
+                                                    const DataLabelSettings(
+                                                      isVisible: true,
+                                                    ),
+                                              ),
+                                              // Kosong
+                                              StackedBarSeries<dynamic, String>(
+                                                name: 'Kosong',
+                                                color: Colors.grey,
+                                                dataSource: subcategories,
+                                                xValueMapper:
+                                                    (data, _) => data['title'],
+                                                yValueMapper:
+                                                    (data, _) => data['kosong'],
+                                                dataLabelSettings:
+                                                    const DataLabelSettings(
+                                                      isVisible: true,
+                                                    ),
+                                              ),
+                                            ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            })
+                            .toList(),
+                  ),
         ),
       ],
     );
@@ -683,18 +1032,4 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
       ),
     );
   }
-}
-
-// This class should be in its own file, but is here for completeness.
-class ChartData {
-  ChartData(this.x, this.y, this.color);
-  final String x;
-  final double y;
-  final Color color;
-}
-
-class LineChart {
-  LineChart(this.x, this.y);
-  final String x;
-  final double y;
 }

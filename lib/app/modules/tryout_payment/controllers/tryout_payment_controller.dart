@@ -117,9 +117,11 @@ class TryoutPaymentController extends GetxController {
     );
 
     otherTryout.assignAll(
-      List<Map<String, dynamic>>.from(
-        response['data'],
-      ).where((test) => test['is_purchase'] == false),
+      List<Map<String, dynamic>>.from(response['data']).where(
+        (test) =>
+            test['is_purchase'] == false &&
+            test['uuid'] != prevController.selectedUUid.value,
+      ),
     );
   }
 

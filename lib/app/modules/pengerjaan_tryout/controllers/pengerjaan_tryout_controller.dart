@@ -41,7 +41,9 @@ class PengerjaanTryoutController extends GetxController {
   RxList<Map<String, dynamic>> selectedAnswersList =
       <Map<String, dynamic>>[].obs;
   RxString uuid = "".obs;
+  RxInt totalSoal = 0.obs;
   final count = 0.obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -94,7 +96,15 @@ class PengerjaanTryoutController extends GetxController {
       response['data'],
     );
     soalList.assignAll(data);
+    totalSoal.value = response['total'];
     startQuestion(soalList[currentQuestion.value]['id']);
+    for (var i in data) {
+      selectedAnswersList.add({
+        "tryout_question_id": i['id'],
+        "tryout_question_option_id": 0,
+        "waktu_pengerjaan": 0,
+      });
+    }
   }
 
   Future<void> sendLaporSoal({
@@ -152,6 +162,7 @@ class PengerjaanTryoutController extends GetxController {
         url: baseUrl + apiSubmitSoal,
         payload: payload,
       );
+      stop();
       Get.offAllNamed("/hasil-tryout", arguments: uuid.value);
     } catch (e) {
       Get.snackbar("Error", "Tidak dapat mengirim jawaban");
@@ -174,41 +185,65 @@ class PengerjaanTryoutController extends GetxController {
     required int optionId,
     required int waktuPengerjaan,
   }) {
-    // cek index kalau sudah ada jawaban untuk questionId
-    final index = selectedAnswersList.indexWhere(
-      (answer) => answer['tryout_question_id'] == questionId,
-    );
-
     final newAnswer = {
       "tryout_question_id": questionId,
       "tryout_question_option_id": optionId,
       "waktu_pengerjaan": waktuPengerjaan,
     };
 
-    if (index != -1) {
-      // replace data lama
+    // Cek apakah jawaban untuk soal ini sudah ada
+    final index = selectedAnswersList.indexWhere(
+      (answer) => answer['tryout_question_id'] == questionId,
+    );
+
+    if (index >= 0) {
+      // Jika sudah ada → replace data lama
       selectedAnswersList[index] = newAnswer;
     } else {
-      // tambahin baru
+      // Jika belum ada → tambah data baru
       selectedAnswersList.add(newAnswer);
     }
-    print("Jawaban: ${selectedAnswersList}");
+
+    print("Jawaban terbaru: $selectedAnswersList");
   }
 
+  /// Mulai soal baru, simpan waktu lama terlebih dahulu
   void startQuestion(int questionId) {
-    // simpan waktu lama sebelum pindah soal
+    final now = DateTime.now();
+
+    // Jika ada soal aktif sebelumnya, simpan durasinya
+    if (activeQuestionId != null && startTime != null) {
+      final diff = now.difference(startTime!).inSeconds;
+
+      // Update total waktu soal sebelumnya
+      waktuSoal[activeQuestionId!] = (waktuSoal[activeQuestionId!] ?? 0) + diff;
+    }
+
+    // Update soal aktif ke soal baru
+    activeQuestionId = questionId;
+    startTime = now;
+  }
+
+  /// Ambil total waktu untuk soal tertentu
+  int getWaktuSoal(int questionId) {
+    // Jika soal ini sedang aktif, hitung waktu tambahan sementara
+    if (activeQuestionId == questionId && startTime != null) {
+      final diff = DateTime.now().difference(startTime!).inSeconds;
+      return (waktuSoal[questionId] ?? 0) + diff;
+    }
+
+    // Jika soal tidak aktif, kembalikan waktu yang sudah tersimpan
+    return waktuSoal[questionId] ?? 0;
+  }
+
+  /// Hentikan pencatatan waktu dan simpan soal terakhir
+  void stop() {
     if (activeQuestionId != null && startTime != null) {
       final diff = DateTime.now().difference(startTime!).inSeconds;
       waktuSoal[activeQuestionId!] = (waktuSoal[activeQuestionId!] ?? 0) + diff;
     }
-
-    // update soal aktif
-    activeQuestionId = questionId;
-    startTime = DateTime.now();
-  }
-
-  int getWaktuSoal(int questionId) {
-    return waktuSoal[questionId] ?? 0;
+    activeQuestionId = null;
+    startTime = null;
   }
 
   void startCountdown(int minutes) {
@@ -221,9 +256,17 @@ class PengerjaanTryoutController extends GetxController {
       if (remainingSeconds.value > 0) {
         remainingSeconds.value--;
       } else {
+        // Hentikan timer
         timer.cancel();
-        // TODO: aksi kalau waktu habis
-        print("Waktu habis!");
+
+        // Pastikan waktu tidak negatif
+        remainingSeconds.value = 0;
+
+        // Stop tracking waktu soal terakhir
+        stop();
+
+        // Otomatis submit jawaban
+        submitSoal();
       }
     });
   }

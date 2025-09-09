@@ -66,6 +66,7 @@ class TryoutCheckoutController extends GetxController {
       url:
           baseUrl +
           apiGetPaymentDetail +
+          "/" +
           prevController.transactionData['payment_id'],
     );
 

@@ -108,7 +108,7 @@ class DetailTryoutController extends GetxController {
     final client = Get.find<RestClientProvider>();
     restClient.getData(url: baseUrl + apiCheckWishList + uuid);
     final response = await restClient.getData(
-      url: baseUrl + apiCheckWishList + uuid,
+      url: baseUrl + apiCheckWishList + "/" + uuid,
     );
 
     final data = response;

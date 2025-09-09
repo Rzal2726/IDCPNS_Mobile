@@ -23,6 +23,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               decoration: BoxDecoration(
@@ -83,6 +84,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                             ),
                           )
                           : Text(
+                            textAlign: TextAlign.start,
                             controller.detailData['formasi'],
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -470,16 +472,19 @@ Widget _cardBundling(String Judul, String soal, String durasi) {
 }
 
 Widget _htmlCard(String isi) {
-  return Html(
-    data: isi,
-    style: {
-      ".mt-3": Style(margin: Margins.only(top: 12)),
-      ".p-4": Style(padding: HtmlPaddings.all(16)),
-      ".border": Style(border: Border.all(color: Colors.grey.shade300)),
-      ".text-lg": Style(fontSize: FontSize(18)),
-      ".font-bold": Style(fontWeight: FontWeight.bold),
-      ".text-muted-700": Style(color: Colors.grey.shade700),
-    },
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Html(
+      data: isi,
+      style: {
+        ".mt-3": Style(margin: Margins.only(top: 12)),
+        ".p-4": Style(padding: HtmlPaddings.all(16)),
+        ".border": Style(border: Border.all(color: Colors.grey.shade300)),
+        ".text-lg": Style(fontSize: FontSize(18)),
+        ".font-bold": Style(fontWeight: FontWeight.bold),
+        ".text-muted-700": Style(color: Colors.grey.shade700),
+      },
+    ),
   );
 }
 

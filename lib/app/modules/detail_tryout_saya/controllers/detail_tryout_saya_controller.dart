@@ -6,6 +6,7 @@ import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/tryout_saya/controllers/tryout_saya_controller.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/chart_data_model.dart';
 
 class DetailTryoutSayaController extends GetxController {
   //TODO: Implement DetailTryoutSayaController
@@ -15,15 +16,24 @@ class DetailTryoutSayaController extends GetxController {
   final count = 0.obs;
   RxMap<String, dynamic> tryOutSaya = <String, dynamic>{}.obs;
   RxMap<String, dynamic> nilaiChart = <String, dynamic>{}.obs;
-  RxList<Map<String, dynamic>> listJabatan = <Map<String, dynamic>>[].obs;
-  RxList<Map<String, dynamic>> listInstansi = <Map<String, dynamic>>[].obs;
+  RxMap<String, dynamic> nilaiChartStat = <String, dynamic>{}.obs;
+  RxList<Map<String, dynamic>> listJabatan =
+      <Map<String, dynamic>>[
+        {"id": 0, "uuid": "", "nama": "Pilih Jabatan", "menu_category_id": 0},
+      ].obs;
+  RxList<Map<String, dynamic>> listInstansi =
+      <Map<String, dynamic>>[
+        {"id": 0, "uuid": "", "nama": "Pilih Instansi", "menu_category_id": 0},
+      ].obs;
   RxString uuid = "".obs;
   RxString nilaiBenar = "0".obs;
   RxString totalSoal = "0".obs;
-  RxString selectedJabatan = "".obs;
-  RxString selectedInstansi = "".obs;
+  RxString selectedJabatan = "0".obs;
+  RxString selectedInstansi = "0".obs;
 
-  final List<ChartData> chartData = [];
+  final RxList<ChartData> chartData = <ChartData>[].obs;
+  List<ChartData>? get chartDataList => chartData;
+
   @override
   void onInit() async {
     super.onInit();
@@ -46,7 +56,7 @@ class DetailTryoutSayaController extends GetxController {
 
     await getDetailTryout();
     await getNilai();
-    // await getStatsNilai();
+    await getStatsNilai();
     await getServerTime();
     await getInstansi();
     await getJabatan();
@@ -78,6 +88,45 @@ class DetailTryoutSayaController extends GetxController {
     final response = await restClient.getData(
       url: baseUrl + apiGetNilaiDetail + lateUuid,
     );
+
+    final Map<String, dynamic> data = Map<String, dynamic>.from(
+      response['data'],
+    );
+    print("chart nilai: ${data}");
+
+    // Simpan semua data untuk digunakan di widget
+    nilaiChartStat.assignAll(data);
+
+    // Bersihkan data lama
+    chartData.clear();
+
+    // Ambil statistik untuk subcategories agar masuk ke Bar Chart
+    if (data['statistics'] != null) {
+      for (var stat in data['statistics']) {
+        String label = stat['label']; // TWK, TIU, TKP
+
+        for (var soal in stat['waktu_pengerjaan']) {
+          final title = soal['title'] ?? '';
+          final noSoal = soal['no_soal'] ?? 0;
+          final value = soal['value'] ?? 0;
+
+          // Misal value 1 = benar, 0 = salah/kosong
+          Color color;
+          String status;
+          if (value == 1) {
+            color = Colors.green;
+            status = 'Benar';
+          } else {
+            color = Colors.red;
+            status = 'Salah';
+          }
+
+          chartData.add(
+            ChartData('Soal $noSoal', value.toString(), Colors.amberAccent),
+          );
+        }
+      }
+    }
   }
 
   Future<void> getServerTime() async {
@@ -95,8 +144,7 @@ class DetailTryoutSayaController extends GetxController {
     final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
       response['data'],
     );
-    listInstansi.assignAll(data);
-    selectedInstansi.value = data[0]['id'].toString();
+    listInstansi.addAll(data);
   }
 
   Future<void> getJabatan() async {
@@ -110,8 +158,7 @@ class DetailTryoutSayaController extends GetxController {
     final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
       response['data'],
     );
-    listJabatan.assignAll(data);
-    selectedJabatan.value = data[0]['id'].toString();
+    listJabatan.addAll(data);
   }
 
   Future<void> resetTryout() async {
@@ -137,14 +184,29 @@ class DetailTryoutSayaController extends GetxController {
     return diff.inDays.toString();
   }
 
+  int hitungTotalMasaAktif(String tanggalBeli, String tanggalKadaluarsa) {
+    String expiredDate = tanggalKadaluarsa;
+    String buyDate = tanggalBeli;
+
+    // parse string ke DateTime
+    DateTime target = DateTime.parse(expiredDate);
+    DateTime targetBuy = DateTime.parse(buyDate);
+
+    // hitung difference
+    Duration diff = target.difference(targetBuy);
+    return diff.inDays;
+  }
+
   void checkList() {
     print("listJabatan: ${listJabatan}");
     print("listInstansi: ${listInstansi}");
   }
 }
 
-class ChartData {
-  ChartData(this.x, this.y);
+class LineChartData {
+  LineChartData(this.x, this.y, this.color);
+
   final String x;
-  final double y;
+  final String y;
+  final Color color;
 }

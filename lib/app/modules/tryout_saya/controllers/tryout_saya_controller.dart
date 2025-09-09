@@ -49,6 +49,8 @@ class TryoutSayaController extends GetxController {
   RxString isLulus = "".obs;
   RxString search = "".obs;
   RxString selectedUuid = "".obs;
+  RxInt currentPage = 1.obs;
+  RxInt totalPage = 1.obs;
   final count = 0.obs;
   @override
   void onInit() {
@@ -75,6 +77,7 @@ class TryoutSayaController extends GetxController {
     isLoading['list'] = true;
     final payload = {
       "perpage": "15",
+      "page": currentPage.toString(),
       "isdone": int.tryParse(isDone.value),
       "islulus": int.tryParse(isLulus.value),
       "menu_category_id": int.tryParse(kategoriId.value),
@@ -89,6 +92,7 @@ class TryoutSayaController extends GetxController {
     final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
       response['data']['data'],
     );
+    totalPage.value = data.length - 1;
     listData.assignAll(data);
     isLoading['list'] = false;
   }
