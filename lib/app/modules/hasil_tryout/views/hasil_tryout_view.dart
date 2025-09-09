@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -7,6 +6,7 @@ import '../controllers/hasil_tryout_controller.dart';
 
 class HasilTryoutView extends GetView<HasilTryoutController> {
   const HasilTryoutView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,192 +16,109 @@ class HasilTryoutView extends GetView<HasilTryoutController> {
         title: const Text('Hasil Tryout'),
       ),
       body: Container(
-        margin: EdgeInsets.all(32),
+        margin: const EdgeInsets.all(32),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               "Terima Kasih Atas Partisipasi Anda",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
-            Text(
+            const SizedBox(height: 4),
+            const Text(
               "Berikut adalah hasil tryout yang telah Anda kerjakan",
               style: TextStyle(fontSize: 14),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
+
+            /// === OBSERVER ===
             Obx(() {
               final tryOutSaya = controller.tryOutSaya;
               final nilaiChart = controller.nilaiChart;
 
-              // Kondisi kalau datanya kosong/null
+              // Loading state
               if (tryOutSaya.isEmpty || nilaiChart.isEmpty) {
-                return Skeletonizer(
-                  child: Card(
-                    color: Colors.white,
-                    child: Container(
-                      padding: EdgeInsets.all(32),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                "Hasil",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [Text("TBI"), Text("0/0")],
-                          ),
-                          SizedBox(height: 32),
-                          Divider(color: Colors.grey.shade300),
-                          SizedBox(height: 32),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Total Poin",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text("0"),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Keterangan",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text("-"),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+                return Skeletonizer(child: _buildSkeletonCard());
               }
 
-              if (nilaiChart['statistics'] == null ||
-                  (nilaiChart['statistics'] as List).isEmpty) {
-                return Skeletonizer(
-                  child: Card(
-                    color: Colors.white,
-                    child: Container(
-                      padding: EdgeInsets.all(32),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                "Hasil",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [Text("TBI"), Text("0/0")],
-                          ),
-                          SizedBox(height: 32),
-                          Divider(color: Colors.grey.shade300),
-                          SizedBox(height: 32),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Total Poin",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text("0"),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Keterangan",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text("-"),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }
-
+              final List<dynamic> statistics = nilaiChart['statistics'] ?? [];
               final totalNilai = nilaiChart['total_nilai'] ?? 0;
-              final targetNilai = (nilaiChart['statistics']?[0]?['nilai']) ?? 0;
+              final totalNilaiSempurna =
+                  nilaiChart['total_nilai_sempurna'] ?? 0;
               final isLulus = tryOutSaya['islulus'] == 1;
+
+              if (statistics.isEmpty) {
+                return Skeletonizer(child: _buildSkeletonCard());
+              }
 
               return Card(
                 color: Colors.white,
                 child: Container(
-                  padding: EdgeInsets.all(32),
+                  padding: const EdgeInsets.all(32),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            "Hasil",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
+                      const Text(
+                        "Hasil",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("TBI"),
-                          Row(
-                            children: [
-                              Text(
-                                "$totalNilai",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: isLulus ? Colors.green : Colors.pink,
+                      const SizedBox(height: 16),
+
+                      /// === LIST DARI API ===
+                      Column(
+                        children:
+                            statistics.map((stat) {
+                              final title = stat['title'] ?? '-';
+                              final resultNilai = stat['result_nilai'] ?? '0';
+                              final nilai = stat['nilai'] ?? 0;
+
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 6,
                                 ),
-                              ),
-                              Text("/"),
-                              Text("$targetNilai"),
-                            ],
-                          ),
-                        ],
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      title,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "$resultNilai",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color:
+                                                isLulus
+                                                    ? Colors.green
+                                                    : Colors.pink,
+                                          ),
+                                        ),
+                                        const Text("/"),
+                                        Text("$nilai"),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
                       ),
-                      SizedBox(height: 32),
+
+                      const SizedBox(height: 24),
                       Divider(color: Colors.grey.shade300),
-                      SizedBox(height: 32),
+                      const SizedBox(height: 24),
+
+                      /// === TOTAL NILAI ===
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             "Total Poin",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -209,7 +126,7 @@ class HasilTryoutView extends GetView<HasilTryoutController> {
                             ),
                           ),
                           Text(
-                            "$totalNilai",
+                            "$totalNilai/$totalNilaiSempurna",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: isLulus ? Colors.green : Colors.pink,
@@ -217,10 +134,13 @@ class HasilTryoutView extends GetView<HasilTryoutController> {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 8),
+
+                      /// === KETERANGAN ===
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             "Keterangan",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -230,6 +150,7 @@ class HasilTryoutView extends GetView<HasilTryoutController> {
                           Text(
                             isLulus ? "Lulus" : "Tidak Lulus",
                             style: TextStyle(
+                              fontWeight: FontWeight.bold,
                               color: isLulus ? Colors.green : Colors.pink,
                             ),
                           ),
@@ -240,6 +161,10 @@ class HasilTryoutView extends GetView<HasilTryoutController> {
                 ),
               );
             }),
+
+            const SizedBox(height: 20),
+
+            /// === BUTTON KEMBALI ===
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -257,8 +182,58 @@ class HasilTryoutView extends GetView<HasilTryoutController> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                child: Text("Kembali"),
+                child: const Text("Kembali"),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Skeleton untuk loading state
+  Widget _buildSkeletonCard() {
+    return Card(
+      color: Colors.white,
+      child: Container(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          children: [
+            Row(
+              children: const [
+                Text(
+                  "Hasil",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [Text("TBI"), Text("0/0")],
+            ),
+            const SizedBox(height: 32),
+            Divider(color: Colors.grey),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text(
+                  "Total Poin",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                Text("0"),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text(
+                  "Keterangan",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                Text("-"),
+              ],
             ),
           ],
         ),

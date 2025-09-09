@@ -22,7 +22,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+          padding: const EdgeInsets.all(12),
           child: Card(
             color: Colors.white,
             child: Padding(
@@ -87,7 +87,6 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                         );
                   }),
 
-                  const Divider(color: Color.fromARGB(250, 230, 230, 230)),
                   const Text(
                     "Metode Pembayaran",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -115,10 +114,15 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                               )
                               : _menuTile(
                                 leading: SvgPicture.network(
+                                  height: 30,
                                   controller.selectedPaymentMethod['image_url'],
                                 ),
                                 iconColor: Colors.teal,
-                                text: controller.selectedPaymentMethod['name'],
+                                text:
+                                    controller.ovoNumber.value.length <= 0
+                                        ? controller
+                                            .selectedPaymentMethod['name']
+                                        : controller.ovoNumber.value,
                               ),
                     ),
                   ),
@@ -337,8 +341,8 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
         borderRadius: BorderRadius.circular(8),
       ),
       width: 160,
-      padding: const EdgeInsets.only(left: 8, top: 8),
-      margin: EdgeInsets.all(16),
+      padding: const EdgeInsets.only(left: 16, top: 16),
+      margin: EdgeInsets.all(8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -602,6 +606,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
         child: InkWell(
           borderRadius: BorderRadius.circular(8),
           onTap: () {
+            controller.ovoNumber.value = "";
             controller.selectedPaymentMethod.value = value;
             controller.countAdmin();
             Navigator.pop(context);
@@ -616,6 +621,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
             // Jika OVO dipilih, munculkan modal input nomor
             if (controller.selectedPaymentMethod['code'] == "OVO") {
               showModalBottomSheet(
+                isDismissible: false,
                 context: context,
                 backgroundColor: Colors.white,
                 isScrollControlled: true, // supaya bisa full screen jika perlu
@@ -623,7 +629,12 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                   borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                 ),
                 builder: (context) => _nomorOvo(context),
-              );
+              ).whenComplete(() {
+                if (controller.ovoNumber.value.length <= 0) {
+                  controller.selectedPaymentMethod.assignAll({});
+                }
+              });
+              ;
             }
           },
           child: Padding(
@@ -678,17 +689,11 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
               labelStyle: const TextStyle(color: Colors.grey),
               labelText: "Masukkan Kode Promo",
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.tealAccent.shade100,
-                  width: 1.5,
-                ),
+                borderSide: BorderSide(color: Colors.teal, width: 1.5),
                 borderRadius: BorderRadius.circular(12),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.tealAccent.shade100,
-                  width: 2.0,
-                ),
+                borderSide: BorderSide(color: Colors.teal, width: 2.0),
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
@@ -736,6 +741,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               TextField(
+                maxLength: 16,
                 controller: ovoNumController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
@@ -772,6 +778,15 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   onPressed: () {
+                    if (ovoNumController.text.length <= 0) {
+                      Get.snackbar(
+                        "Alert",
+                        "Mohon isi nomor ovo anda",
+                        backgroundColor: Colors.pink,
+                        colorText: Colors.white,
+                      );
+                      return;
+                    }
                     controller.ovoNumber.value = ovoNumController.text;
                     Navigator.pop(context);
                   },

@@ -354,7 +354,8 @@ class EBookView extends GetView<EBookController> {
                                                   // Message
                                                   Text(
                                                     "Saya setuju untuk tidak menyebarkan konten-konten yang ada di website IDCPNS kepada pihak lain.",
-                                                    textAlign: TextAlign.center,
+                                                    textAlign:
+                                                        TextAlign.justify,
                                                     style: const TextStyle(
                                                       fontSize: 14,
                                                     ),
@@ -368,55 +369,63 @@ class EBookView extends GetView<EBookController> {
                                                             .spaceBetween,
                                                     children: [
                                                       // Cancel Button
-                                                      ElevatedButton(
-                                                        style: ElevatedButton.styleFrom(
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  8,
-                                                                ),
-                                                            side: BorderSide(
+                                                      Expanded(
+                                                        child: ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8,
+                                                                  ),
+                                                              side: BorderSide(
+                                                                color:
+                                                                    Colors.teal,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            Get.back();
+                                                          },
+                                                          child: Text(
+                                                            "Tidak Setuju",
+                                                            style: TextStyle(
                                                               color:
                                                                   Colors.teal,
                                                             ),
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          Get.back();
-                                                        },
-                                                        child: Text(
-                                                          "Tidak Setuju",
-                                                          style: TextStyle(
-                                                            color: Colors.teal,
                                                           ),
                                                         ),
                                                       ),
                                                       const SizedBox(width: 8),
 
                                                       // Confirm Button
-                                                      ElevatedButton(
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor:
-                                                              Colors.teal,
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  8,
-                                                                ),
+                                                      Expanded(
+                                                        child: ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                Colors.teal,
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8,
+                                                                  ),
+                                                            ),
                                                           ),
-                                                        ),
-                                                        onPressed: () {
-                                                          Get.back();
-                                                          Get.toNamed(
-                                                            "/pdf-viewer",
-                                                            arguments:
-                                                                data['link'],
-                                                          );
-                                                        },
-                                                        child: Text(
-                                                          "Setuju",
-                                                          style: TextStyle(
-                                                            color: Colors.white,
+                                                          onPressed: () {
+                                                            Get.back();
+                                                            Get.toNamed(
+                                                              "/pdf-viewer",
+                                                              arguments:
+                                                                  data['link'],
+                                                            );
+                                                          },
+                                                          child: Text(
+                                                            "Setuju",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
                                                           ),
                                                         ),
                                                       ),

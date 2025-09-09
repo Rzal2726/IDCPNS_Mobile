@@ -16,10 +16,11 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         leading: IconButton(
           icon: Icon(Icons.arrow_back), // Example: Hamburger icon for a drawer
           onPressed: () {
-            Get.offNamed("/home", arguments: {"initialIndex": 1});
+            Get.offAllNamed("/home", arguments: {"initialIndex": 1});
           },
         ),
         elevation: 0,
@@ -96,6 +97,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                     ),
                   ),
                   onPressed: () {
+                    controller.currentPage.value = 1;
                     controller.fetchTryoutSaya();
                   },
                   label: Text("Cari"),
@@ -339,6 +341,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                                         ),
                                       ),
                                       onPressed: () {
+                                        controller.currentPage.value = 1;
                                         controller.fetchTryoutSaya();
                                         Navigator.pop(context);
                                         // kirim balik pilihan
@@ -422,118 +425,114 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                   ),
                 );
           }),
-          // Obx(() {
-          //   final current = controller.currentPage.value;
-          //   final total = controller.totalPage.value;
+          Obx(() {
+            final current = controller.currentPage.value;
+            final total = controller.totalPage.value;
 
-          //   if (total == 0) {
-          //     return const SizedBox.shrink(); // tidak ada halaman
-          //   }
+            if (total == 0) {
+              return const SizedBox.shrink(); // tidak ada halaman
+            }
 
-          //   // Tentukan window
-          //   int start = current - 1;
-          //   int end = current + 1;
+            // Tentukan window
+            int start = current - 1;
+            int end = current + 1;
 
-          //   // clamp biar tetap di antara 1 dan total
-          //   start = start < 1 ? 1 : start;
-          //   end = end > total ? total : end;
+            // clamp biar tetap di antara 1 dan total
+            start = start < 1 ? 1 : start;
+            end = end > total ? total : end;
 
-          //   // Kalau total < 3, pakai semua halaman yg ada
-          //   if (total <= 3) {
-          //     start = 1;
-          //     end = total;
-          //   } else {
-          //     // Kalau current di awal → 1,2,3
-          //     if (current == 1) {
-          //       start = 1;
-          //       end = 3;
-          //     }
-          //     // Kalau current di akhir → total-2, total-1, total
-          //     else if (current == total) {
-          //       start = total - 2;
-          //       end = total;
-          //     }
-          //   }
+            // Kalau total < 3, pakai semua halaman yg ada
+            if (total <= 3) {
+              start = 1;
+              end = total;
+            } else {
+              // Kalau current di awal → 1,2,3
+              if (current == 1) {
+                start = 1;
+                end = 3;
+              }
+              // Kalau current di akhir → total-2, total-1, total
+              else if (current == total) {
+                start = total - 2;
+                end = total;
+              }
+            }
 
-          //   // Generate daftar halaman
-          //   final pages = List.generate(end - start + 1, (i) => start + i);
+            // Generate daftar halaman
+            final pages = List.generate(end - start + 1, (i) => start + i);
 
-          //   return Container(
-          //     margin: const EdgeInsets.symmetric(horizontal: 16),
-          //     height: 40,
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         ElevatedButton(
-          //           onPressed:
-          //               current > 1
-          //                   ? () => controller.fetchPaketTryout(
-          //                     page: current - 1,
-          //                     search: paketTextController.text,
-          //                     menuCategory:
-          //                         controller
-          //                             .optionsId[controller
-          //                                 .selectedPaketKategori
-          //                                 .value]
-          //                             .toString(),
-          //                   )
-          //                   : null,
-          //           child: const Icon(Icons.arrow_back_ios, size: 16),
-          //         ),
-          //         const SizedBox(width: 8),
+            return Container(
+              margin: const EdgeInsets.all(16),
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                    ),
 
-          //         ...pages.map((page) {
-          //           final isActive = page == current;
-          //           return Padding(
-          //             padding: const EdgeInsets.symmetric(horizontal: 2),
-          //             child: ElevatedButton(
-          //               onPressed:
-          //                   () => controller.fetchPaketTryout(
-          //                     page: page,
-          //                     search: paketTextController.text,
-          //                     menuCategory:
-          //                         controller
-          //                             .optionsId[controller
-          //                                 .selectedPaketKategori
-          //                                 .value]
-          //                             .toString(),
-          //                   ),
-          //               style: ElevatedButton.styleFrom(
-          //                 minimumSize: const Size(36, 36),
-          //                 backgroundColor:
-          //                     isActive ? Colors.teal : Colors.white,
-          //                 foregroundColor:
-          //                     isActive ? Colors.white : Colors.black54,
-          //               ),
-          //               child: Text(
-          //                 page.toString(),
-          //                 style: const TextStyle(fontSize: 14),
-          //               ),
-          //             ),
-          //           );
-          //         }),
+                    onPressed: () async {
+                      if (controller.currentPage.value > 1) {
+                        controller.currentPage.value--;
+                        controller.fetchTryoutSaya();
+                      }
+                    },
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                      size: 16,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
 
-          //         const SizedBox(width: 8),
-          //         ElevatedButton(
-          //           onPressed:
-          //               current < total
-          //                   ? () => controller.fetchPaketTryout(
-          //                     page: current + 1,
-          //                     search: paketTextController.text,
-          //                     menuCategory:
-          //                         controller
-          //                             .optionsId[controller
-          //                                 .selectedPaketKategori
-          //                                 .value]
-          //                             .toString(),
-          //                   )
-          //                   : null,
-          //           child: const Icon(Icons.arrow_forward_ios, size: 16),
-          //         ),
-          //       ],
-          //     ),
-          //   );
-          // }),
+                  ...pages.map((page) {
+                    final isActive = page == current;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          controller.currentPage.value = page;
+                          controller.fetchTryoutSaya();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(36, 36),
+                          backgroundColor:
+                              isActive ? Colors.teal : Colors.white,
+                          foregroundColor:
+                              isActive ? Colors.white : Colors.black54,
+                        ),
+                        child: Text(
+                          page.toString(),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    );
+                  }),
+
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                    ),
+                    onPressed: () {
+                      if (controller.currentPage.value <
+                          controller.totalPage.value) {
+                        controller.currentPage.value++;
+                        controller.fetchTryoutSaya();
+                      }
+                    },
+                    child: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+          SizedBox(height: 16),
         ],
       ),
     );

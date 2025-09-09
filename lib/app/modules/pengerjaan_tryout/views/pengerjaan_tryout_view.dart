@@ -102,7 +102,7 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                     children: [
                                       Text("Terjawab"),
                                       Text(
-                                        "${controller.selectedAnswersList.length.toString()} Soal",
+                                        "${controller.selectedAnswersList.where((answer) => answer['tryout_question_option_id'] != 0).length.toString()} Soal",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -115,7 +115,7 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                     children: [
                                       Text("Tidak Terjawab"),
                                       Text(
-                                        "${(controller.soalList.length - controller.selectedAnswersList.length).toString()} Soal",
+                                        "${(controller.soalList.length - controller.selectedAnswersList.where((answer) => answer['tryout_question_option_id'] != 0).length).toString()} Soal",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -318,88 +318,31 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                 backgroundColor: Colors.white,
                                 context: context,
                                 builder: (context) {
-                                  return SingleChildScrollView(
+                                  return Padding(
                                     padding: const EdgeInsets.all(32),
                                     child: Column(
-                                      spacing: 8,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "List Nomor Soal",
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        SizedBox(height: 12),
-                                        Obx(
-                                          () =>
-                                              controller.soalList.isEmpty
-                                                  ? Skeletonizer(
-                                                    child: ElevatedButton(
-                                                      style: ElevatedButton.styleFrom(
-                                                        backgroundColor:
-                                                            Colors.white,
-                                                        foregroundColor:
-                                                            Colors
-                                                                .black, // warna teks/icon
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                8,
-                                                              ),
-                                                        ),
-                                                        padding:
-                                                            const EdgeInsets.symmetric(
-                                                              horizontal: 24,
-                                                              vertical: 12,
-                                                            ),
-                                                      ),
-                                                      onPressed: () {},
-                                                      child: Text("5"),
-                                                    ),
-                                                  )
-                                                  : GridView.builder(
-                                                    shrinkWrap: true,
-                                                    itemCount:
-                                                        controller
-                                                            .soalList
-                                                            .length,
-                                                    gridDelegate:
-                                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                                          crossAxisCount:
-                                                              5, // jumlah kolom
-                                                          crossAxisSpacing: 4,
-                                                          mainAxisSpacing: 4,
-                                                        ),
-                                                    itemBuilder: (
-                                                      context,
-                                                      index,
-                                                    ) {
-                                                      final soal =
-                                                          controller
-                                                              .soalList[index];
-                                                      return ElevatedButton(
+                                        const SizedBox(height: 12),
+                                        Expanded(
+                                          child: Obx(
+                                            () =>
+                                                controller.soalList.isEmpty
+                                                    ? Skeletonizer(
+                                                      child: ElevatedButton(
                                                         style: ElevatedButton.styleFrom(
                                                           backgroundColor:
                                                               Colors.white,
                                                           foregroundColor:
-                                                              Colors
-                                                                  .black, // warna teks/icon
+                                                              Colors.black,
                                                           shape: RoundedRectangleBorder(
-                                                            side: BorderSide(
-                                                              color:
-                                                                  controller
-                                                                          .checkMark(
-                                                                            soal,
-                                                                          )
-                                                                      ? Colors
-                                                                          .amber
-                                                                      : Colors
-                                                                          .transparent,
-                                                            ),
                                                             borderRadius:
                                                                 BorderRadius.circular(
                                                                   8,
@@ -411,28 +354,81 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                                                 vertical: 12,
                                                               ),
                                                         ),
-                                                        onPressed: () {
+                                                        onPressed: () {},
+                                                        child: const Text("5"),
+                                                      ),
+                                                    )
+                                                    : GridView.builder(
+                                                      itemCount:
                                                           controller
-                                                              .currentQuestion
-                                                              .value = index;
-                                                          controller.startQuestion(
+                                                              .soalList
+                                                              .length,
+                                                      gridDelegate:
+                                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount:
+                                                                5, // jumlah kolom
+                                                            crossAxisSpacing: 4,
+                                                            mainAxisSpacing: 4,
+                                                          ),
+                                                      itemBuilder: (
+                                                        context,
+                                                        index,
+                                                      ) {
+                                                        final soal =
                                                             controller
-                                                                .soalList[controller
+                                                                .soalList[index];
+                                                        return ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            foregroundColor:
+                                                                Colors.black,
+                                                            shape: RoundedRectangleBorder(
+                                                              side: BorderSide(
+                                                                color:
+                                                                    controller.checkMark(
+                                                                          soal,
+                                                                        )
+                                                                        ? Colors
+                                                                            .amber
+                                                                        : Colors
+                                                                            .transparent,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8,
+                                                                  ),
+                                                            ),
+                                                            padding:
+                                                                const EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      12,
+                                                                  vertical: 12,
+                                                                ),
+                                                          ),
+                                                          onPressed: () {
+                                                            controller
                                                                 .currentQuestion
-                                                                .value]['id'],
-                                                          );
-                                                          Navigator.pop(
-                                                            context,
-                                                          );
-                                                        },
-                                                        child: Text(
-                                                          controller
-                                                              .soalList[index]['no_soal']
-                                                              .toString(),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
+                                                                .value = index;
+                                                            controller.startQuestion(
+                                                              controller
+                                                                  .soalList[controller
+                                                                  .currentQuestion
+                                                                  .value]['id'],
+                                                            );
+                                                            Navigator.pop(
+                                                              context,
+                                                            );
+                                                          },
+                                                          child: Text(
+                                                            controller
+                                                                .soalList[index]['no_soal']
+                                                                .toString(),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                          ),
                                         ),
                                       ],
                                     ),
