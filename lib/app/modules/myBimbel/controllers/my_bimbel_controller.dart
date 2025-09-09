@@ -7,7 +7,7 @@ class MyBimbelController extends GetxController {
   final _restClient = RestClient();
   var searchText = ''.obs;
   RxMap listBimbel = {}.obs;
-
+  RxBool isLoading = false.obs;
   RxInt selectedKategoriId = 0.obs; // RxnInt karena bisa null
   final options = <Map<String, dynamic>>[].obs;
   final TextEditingController searchController = TextEditingController();
@@ -45,6 +45,7 @@ class MyBimbelController extends GetxController {
     String? submenuCategoryId,
     String? search,
   }) async {
+    isLoading.value = true;
     try {
       final url = await baseUrl + apiGetMyBimbel;
       var payload = {
@@ -66,6 +67,7 @@ class MyBimbelController extends GetxController {
     } catch (e) {
       print("Error polling email verification: $e");
     }
+    isLoading.value = false;
   }
 
   Future<void> getKategori() async {

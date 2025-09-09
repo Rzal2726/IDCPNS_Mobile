@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/my_bimbel_controller.dart';
 
@@ -50,178 +51,186 @@ class MyBimbelView extends GetView<MyBimbelController> {
           ],
         ),
       ),
-      body: Padding(
-        padding: AppStyle.screenPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Bimbel Saya',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 4),
-            Text(
-              'Pilih bimbel dan belajar bersama peserta lainnya.',
-              style: TextStyle(color: Colors.grey),
-            ),
-            SizedBox(height: 16),
-
-            // Search bar
-            Row(
+      body: SafeArea(
+        child: Obx(() {
+          return Padding(
+            padding: AppStyle.screenPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller.searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Cari',
-                      suffixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(color: Colors.teal),
+                Text(
+                  'Bimbel Saya',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Pilih bimbel dan belajar bersama peserta lainnya.',
+                  style: TextStyle(color: Colors.grey),
+                ),
+                SizedBox(height: 16),
+
+                // Search bar
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: controller.searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Cari',
+                          suffixIcon: Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(color: Colors.teal),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(color: Colors.teal),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 0,
+                            horizontal: 8,
+                          ),
+                        ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(color: Colors.teal),
+                    ),
+                    SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        controller.getData(
+                          menuCategoryId:
+                              controller.selectedKategoriId.value?.toString(),
+                          search: controller.searchController.text,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
                       ),
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 0,
-                        horizontal: 8,
+                      child: Text(
+                        'Cari',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                       ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30),
+
+                // Filter button
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      showBimbelBottomSheet(context);
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Filter',
+                          style: TextStyle(color: Colors.teal, fontSize: 16),
+                        ),
+                        Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                      ],
                     ),
                   ),
                 ),
-                SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    controller.getData(
-                      menuCategoryId:
-                          controller.selectedKategoriId.value?.toString(),
-                      search: controller.searchController.text,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  child: Text(
-                    'Cari',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                SizedBox(height: 15),
+
+                // List Bimbel + Skeletonizer
+                Expanded(
+                  child: Skeletonizer(
+                    enabled: controller.isLoading.value,
+                    child: ListView.builder(
+                      itemCount: controller.listBimbel['data'].length,
+                      itemBuilder: (context, index) {
+                        var item = controller.listBimbel['data'][index];
+                        return InkWell(
+                          onTap: () {
+                            Get.toNamed(
+                              Routes.DETAIL_MY_BIMBEL,
+                              arguments: item['uuid'],
+                            );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 20),
+                            padding: EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.shade300,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Color(
+                                      int.parse(
+                                        item['hex'].toString().replaceFirst(
+                                          '#',
+                                          '0xff',
+                                        ),
+                                      ),
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    item['menu']!,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 7),
+                                Text(
+                                  item['bimbel_parent_name']!,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 7),
+                                Text(
+                                  item['bimbel_name']!,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 30),
-
-            // Filter button
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  showBimbelBottomSheet(context);
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Filter',
-                      style: TextStyle(color: Colors.teal, fontSize: 16),
-                    ),
-                    Icon(Icons.keyboard_arrow_down, color: Colors.teal),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 15),
-
-            // List Bimbel
-            Expanded(
-              child: Obx(
-                () => ListView.builder(
-                  itemCount: controller.listBimbel['data'].length,
-                  itemBuilder: (context, index) {
-                    var item = controller.listBimbel['data'][index];
-                    return InkWell(
-                      onTap: () {
-                        Get.toNamed(
-                          Routes.DETAIL_MY_BIMBEL,
-                          arguments: item['uuid'],
-                        );
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 20),
-                        padding: EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade300,
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Color(
-                                  int.parse(
-                                    item['hex'].toString().replaceFirst(
-                                      '#',
-                                      '0xff',
-                                    ),
-                                  ),
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                item['menu']!,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 7),
-                            Text(
-                              item['bimbel_parent_name']!,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 7),
-                            Text(
-                              item['bimbel_name']!,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        }),
       ),
       bottomNavigationBar: Container(
         color: Colors.white,

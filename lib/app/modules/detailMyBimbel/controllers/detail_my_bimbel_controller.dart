@@ -13,6 +13,7 @@ class DetailMyBimbelController extends GetxController {
   RxMap rankBimbel = {}.obs;
   RxInt userRank = 0.obs;
   RxList jadwalKelas = [].obs;
+  RxList jadwalKelasIsRunning = [].obs;
 
   final count = 0.obs;
   @override
@@ -39,6 +40,10 @@ class DetailMyBimbelController extends GetxController {
       if (result["status"] == "success") {
         bimbelData.value = result['data'];
         jadwalKelas.value = result['data']['bimbel']['events'];
+        jadwalKelasIsRunning.value =
+            (result['data']['bimbel']['events'] as List)
+                .where((e) => e['is_running'] == true)
+                .toList();
         platinumZone.value = result['data']['ispremium'] == 1;
 
         getJadwalBimbel(id: bimbelData['user_id']);

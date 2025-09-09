@@ -11,9 +11,7 @@ class AffiliateController extends GetxController {
   RxInt komisiTersedia = 0.obs;
   RxInt komisiDitarik = 0.obs;
 
-  TextEditingController kodeController = TextEditingController(
-    text: "E14F7E74",
-  );
+  TextEditingController kodeController = TextEditingController();
   @override
   void onInit() {
     getCheckAffiliate();

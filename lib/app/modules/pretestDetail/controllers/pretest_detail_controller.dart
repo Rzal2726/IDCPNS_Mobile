@@ -1,18 +1,31 @@
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class PretestDetailController extends GetxController {
+  final _restClient = RestClient();
   var isLoading = true.obs;
   var judul = "".obs;
   var jumlahSoal = 0.obs;
   var waktuMenit = 0.obs;
-
-  var peraturan = <String>[].obs;
+  final Map item = Get.arguments;
+  var peraturan =
+      <String>[
+        "Browser yang bisa digunakan hanya Google Chrome / Mozilla Firefox versi terbaru.",
+        "Pastikan koneksi internet stabil.",
+        "Jangan membuka tab lain saat mengerjakan Pretest.",
+        "Jangan menekan tombol Selesai saat mengerjakan soal, kecuali saat Anda telah selesai mengerjakan seluruh soal.",
+        "Perhatikan sisa waktu ujian, sistem akan mengumpulkan jawaban saat waktu sudah selesai.",
+        "Waktu ujian akan dimulai saat tombol \"Mulai Pretest\" di klik.",
+        "Jangan menutup/keluar dari halaman pengerjaan apabila Anda sudah menekan tombol \"Mulai Pretest\".",
+        "Kerjakan dengan jujur dan serius.",
+      ].obs;
+  RxList bimbelData = [].obs;
 
   final count = 0.obs;
   @override
   void onInit() {
-    fetchPretestDetail();
     super.onInit();
   }
 
@@ -44,6 +57,19 @@ class PretestDetailController extends GetxController {
     ];
     isLoading.value = false;
   }
+
+  // Future<void> getData() async {
+  //   try {
+  //     final url = await baseUrl + apiGetDetailBimbelSaya + "/" + uuid;
+  //
+  //     final result = await _restClient.getData(url: url);
+  //     if (result["status"] == "success") {
+  //       bimbelData.value = result['data'];
+  //     }
+  //   } catch (e) {
+  //     print("Error polling email verification: $e");
+  //   }
+  // }
 
   void mulaiPretest() {
     Get.snackbar("Pretest", "Mulai pretest ${judul.value} (dummy)");
