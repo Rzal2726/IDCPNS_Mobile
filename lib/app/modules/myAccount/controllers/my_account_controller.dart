@@ -1,7 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart' as dio;
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:intl/intl.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:http/http.dart' as http;
 
 class MyAccountController extends GetxController {
   final _restClient = RestClient();
@@ -13,24 +20,32 @@ class MyAccountController extends GetxController {
   final waController = TextEditingController();
   final kabupatenController = TextEditingController();
   final pendidikanController = TextEditingController();
-
+  RxString fotoProfile = "".obs;
+  RxString newProfile = "".obs;
   // Rx untuk dropdown / date
   var tanggalLahir = ''.obs;
   var jenisKelamin = ''.obs;
-  var provinsi = ''.obs;
+  RxString provinsi = ''.obs;
   var sumberInfo = ''.obs;
   RxString referensi = ''.obs;
+  RxString sosmed = ''.obs;
+  RxInt referensiId = 0.obs;
+  RxInt sosmedId = 0.obs;
+  RxInt provinsiId = 0.obs;
+  RxInt kabupatenId = 0.obs;
+  RxInt pendidikanId = 0.obs;
   RxList provinceData = [].obs;
   RxList pendidikanData = [].obs;
-  RxList kabupData = [].obs;
   RxList referensiData = [].obs;
+  RxList kabupatenData = [].obs;
+  RxList sosmedData = [].obs;
 
   @override
   void onInit() {
     getUser();
     getPendidikan();
-    getProvince();
     getRreferensi();
+    getSosmed();
     super.onInit();
   }
 
@@ -47,33 +62,21 @@ class MyAccountController extends GetxController {
   }
 
   // nanti buat function ambil data API
-  void loadDataDariApi() async {
-    // contoh isi value dari API
-    namaLengkapController.text = "Nama dari API";
-    emailController.text = "email@email.com";
-    hpController.text = "08123456789";
-    waController.text = "08123456789";
-    kabupatenController.text = "Bandung";
-    pendidikanController.text = "S1";
-
-    tanggalLahir.value = "1998-01-01";
-    jenisKelamin.value = "Laki-laki";
-    provinsi.value = "JAWA BARAT";
-    sumberInfo.value = "Instagram";
-  }
 
   void simpanData() {
-    // contoh simpan ke API
-    print("Nama Lengkap: ${namaLengkapController.text}");
-    print("Email: ${emailController.text}");
-    print("Nomor HP: ${hpController.text}");
-    print("Nomor WA: ${waController.text}");
-    print("Kabupaten: ${kabupatenController.text}");
-    print("Pendidikan: ${pendidikanController.text}");
-    print("Tanggal Lahir: ${tanggalLahir.value}");
-    print("Jenis Kelamin: ${jenisKelamin.value}");
-    print("Provinsi: ${provinsi.value}");
-    print("Darimana tahu: ${sumberInfo.value}");
+    postProfile();
+  }
+
+  Future<void> pickFile() async {
+    final XFile? file = await openFile(
+      acceptedTypeGroups: [
+        XTypeGroup(label: 'images', extensions: ['jpg', 'jpeg', 'png']),
+      ],
+    );
+
+    if (file != null) {
+      newProfile.value = file.path; // ganti fotoProfile di tampilan sementara
+    }
   }
 
   Future<void> getUser() async {
@@ -89,16 +92,60 @@ class MyAccountController extends GetxController {
         hpController.text = data["no_hp"];
         waController.text = data["no_wa"];
         kabupatenController.text = "Bandung";
+        referensiId.value = data['menu_category']['id'];
+        pendidikanId.value = data['pendidikan_id'];
+        sosmedId.value = data['referensi_id'];
         await getPendidikan(id: data['pendidikan_id'].toString());
         await getRreferensi(id: data['referensi_id'].toString());
         await getProvince(id: data['provinsi_id'].toString());
-
+        await getKabupaten(
+          id: data['provinsi_id'].toString(),
+          selectedId: int.parse(data['kotakab_id'].toString()),
+        );
+        fotoProfile.value = data['profile_image_url'];
+        provinsiId.value = data['provinsi_id'];
+        kabupatenId.value = data['kotakab_id'];
         tanggalLahir.value = data["tanggal_lahir"];
         jenisKelamin.value = data["jenis_kelamin"];
-        sumberInfo.value = "Instagram";
       }
     } catch (e) {
       print("Error polling email verification: $e");
+    }
+  }
+
+  Future<void> postProfile() async {
+    try {
+      final url = baseUrl + apiGetUser;
+
+      final formData = dio.FormData.fromMap({
+        "foto": await dio.MultipartFile.fromFile(
+          newProfile.value,
+          filename: "profile.jpg",
+        ),
+        "name": namaLengkapController.text,
+        "email": emailController.text,
+        "no_hp": hpController.text,
+        "no_wa": waController.text,
+        "provinsi_id": provinsiId.value,
+        "kotakab_id": kabupatenId.value,
+        "menu_category_id": referensiId.value,
+        "pendidikan_id": pendidikanId.value,
+        "referensi_id": sosmedId.value,
+        "tanggal_lahir": DateFormat(
+          "yyyy-MM-dd",
+        ).format(DateTime.parse(tanggalLahir.value)),
+        "jenis_kelamin": jenisKelamin.value,
+      });
+
+      print("xxx $formData");
+      final result = await _restClient.postData(url: url, payload: formData);
+      print("response ${result.toString()}");
+
+      if (result["status"] == "success") {
+        getUser();
+      }
+    } catch (e) {
+      print("Error post profile: $e");
     }
   }
 
@@ -120,14 +167,11 @@ class MyAccountController extends GetxController {
           );
 
           if (match != null) {
-            print("sadasd ${match.toString()}");
             pendidikanController.text = match['pendidikan'] ?? '';
           }
         }
       }
-    } catch (e) {
-      print("xx verification: $e");
-    }
+    } catch (e) {}
   }
 
   Future<void> getProvince({String? id}) async {
@@ -158,9 +202,37 @@ class MyAccountController extends GetxController {
     }
   }
 
-  Future<void> getRreferensi({String? id}) async {
+  Future<void> getSosmed({String? id}) async {
     try {
       final url = await baseUrl + apiGetReference;
+
+      final result = await _restClient.getData(url: url);
+
+      if (result["status"] == "success") {
+        var data = result['data'];
+        sosmedData.value = data;
+
+        // Kalau ada id, cari data yg sesuai
+        if (id != null) {
+          final found = data.firstWhere(
+            (item) => item['id'].toString() == id,
+            orElse: () => null,
+          );
+
+          if (found != null) {
+            // preferensiBelajar.value = found['nama'] ?? "";
+            sosmed.value = found['nama'] ?? "";
+          }
+        }
+      }
+    } catch (e) {
+      print("Error getRreferensi: $e");
+    }
+  }
+
+  Future<void> getRreferensi({String? id}) async {
+    try {
+      final url = await baseUrl + apiGetKategori;
 
       final result = await _restClient.getData(url: url);
       print("Result Referensi: ${result.toString()}");
@@ -187,17 +259,22 @@ class MyAccountController extends GetxController {
     }
   }
 
-  Future<void> getKabupaten({required id}) async {
+  Future<void> getKabupaten({required id, int? selectedId}) async {
     try {
-      final url = await baseUrl + apiGetKabup + "/" + id;
-
+      final url = baseUrl + apiGetKabup + "/" + id.toString();
       final result = await _restClient.getData(url: url);
+
       if (result["status"] == "success") {
         var data = result['data'];
-        kabupData.value = data;
+        kabupatenData.value = data;
+
+        if (selectedId != null) {
+          kabupatenId.value = selectedId; // set value setelah data ada
+          print("xxc ${kabupatenId.value = selectedId}");
+        }
       }
     } catch (e) {
-      print("Error polling email verification: $e");
+      print("Error getKabupaten: $e");
     }
   }
 

@@ -7,12 +7,9 @@ class RekeningController extends GetxController {
   final _restClient = RestClient();
   var selectedBank = ''.obs;
   RxList rekeningUserData = [].obs;
-  var bankList = [
-    'Bank Mandiri',
-    'Bank Rakyat Indonesia',
-    'Bank BCA',
-    'Bank BNI',
-  ];
+  RxList<Map<String, dynamic>> bankList = <Map<String, dynamic>>[].obs;
+  RxString selectedBankName = ''.obs; // untuk menampilkan nama di dropdown
+  RxInt bankId = 0.obs; // untuk simpan id bank yang dipilih
   final accountNumberController = TextEditingController();
   final ownerNameController = TextEditingController();
   final List<String> informationPoints = [
@@ -25,6 +22,7 @@ class RekeningController extends GetxController {
   @override
   void onInit() {
     getRekeningUser();
+    getBank();
     super.onInit();
   }
 
@@ -52,22 +50,11 @@ class RekeningController extends GetxController {
         },
       ].obs;
   void saveAccount() async {
-    // if (selectedBank.isNotEmpty &&
-    //     accountNumberController.text.isNotEmpty &&
-    //     ownerNameController.text.isNotEmpty) {
-    //   savedAccounts.add({
-    //     'bank': selectedBank.value,
-    //     'number': accountNumberController.text,
-    //     'owner': ownerNameController.text,
-    //   });
-    //
-    // }
-
     try {
       final url = await baseUrl + apiAddRekening;
 
       var payload = {
-        "bank": 1,
+        "bank": bankId.value, // ambil dari RxInt bankId
         "nama_pemilik": ownerNameController.text,
         "no_rekening": int.parse(accountNumberController.text),
       };
@@ -80,9 +67,12 @@ class RekeningController extends GetxController {
     } catch (e) {
       print("Error polling email verification: $e");
     }
+
+    // Reset semua field
     accountNumberController.clear();
     ownerNameController.clear();
     selectedBank.value = '';
+    bankId.value = 0;
   }
 
   Future<void> getRekeningUser() async {
@@ -95,6 +85,29 @@ class RekeningController extends GetxController {
       }
     } catch (e) {
       print("Error polling email verification: $e");
+    }
+  }
+
+  Future<void> getBank() async {
+    try {
+      final url = baseUrl + apiGetBank;
+      final result = await _restClient.getData(url: url);
+
+      if (result["status"] == "success") {
+        // map data ke format id + name
+        bankList.value =
+            (result['data'] as List)
+                .map(
+                  (e) => {
+                    'id': e['id'], // id bank
+                    'name': e['name'], // nama bank
+                  },
+                )
+                .toList();
+        print("xxx ${bankList.toString()}");
+      }
+    } catch (e) {
+      print("Error getBank: $e");
     }
   }
 }

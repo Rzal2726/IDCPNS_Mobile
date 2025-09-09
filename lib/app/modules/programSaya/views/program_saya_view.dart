@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import '../controllers/program_saya_controller.dart';
 
 class ProgramSayaView extends GetView<ProgramSayaController> {
@@ -53,82 +54,129 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
           SizedBox(width: 12),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                _buildTabItem('Tryout', 0),
-                SizedBox(width: 16),
-                _buildTabItem('Bimbel', 1),
-              ],
-            ),
-            Divider(thickness: 1, color: Colors.grey.withOpacity(0.2)),
-            SizedBox(height: 8),
-            TextField(
-              onChanged: controller.updateSearch,
-              decoration: InputDecoration(
-                hintText: 'Cari',
-                suffixIcon: Icon(Icons.search, color: Colors.grey),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Color(0xFF009379)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Color(0xFF009379)),
-                ),
-                isDense: true,
-                contentPadding: EdgeInsets.all(10),
-              ),
-            ),
-            SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Program Saya',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
-            ),
-            SizedBox(height: 12),
-            Container(
+      body: SafeArea(
+        child: Obx(() {
+          // Pilih data sesuai tab
+          final programList =
+              controller.selectedTab.value == 0
+                  ? controller.tryoutData
+                  : controller.bimbelData;
+
+          return SingleChildScrollView(
+            child: Padding(
               padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
+              child: Column(
+                children: [
+                  // Tabs
+                  Row(
+                    children: [
+                      _buildTabItem('Tryout', 0),
+                      SizedBox(width: 16),
+                      _buildTabItem('Bimbel', 1),
+                    ],
+                  ),
+                  Divider(thickness: 1, color: Colors.grey.withOpacity(0.2)),
+                  SizedBox(height: 8),
+
+                  // Search
+                  TextField(
+                    controller: controller.searchController,
+                    onSubmitted:
+                        (_) => controller.searchData(), // enter keyboard
+                    decoration: InputDecoration(
+                      hintText: 'Cari',
+                      suffixIcon: GestureDetector(
+                        onTap: () => controller.searchData(), // tap icon search
+                        child: Icon(Icons.search, color: Colors.grey),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.teal),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.teal),
+                      ),
+                      isDense: true,
+                      contentPadding: EdgeInsets.all(10),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+
+                  // Title
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Program Saya',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12),
+
+                  // Program List
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          blurRadius: 5,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child:
+                        programList.isEmpty
+                            ? Text(
+                              "Tidak ada program ditemukan",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                            : Column(
+                              children: [
+                                for (var program in programList)
+                                  _buildProgramCard(
+                                    controller.selectedTab.value == 0
+                                        ? program['name']
+                                        : program['bimbel_parent_name'],
+                                    () {
+                                      if (controller.selectedTab.value == 0) {
+                                        Get.toNamed(
+                                          Routes.DETAIL_TRYOUT_SAYA,
+                                          arguments: program['uuid'],
+                                        );
+                                      } else {
+                                        Get.toNamed(
+                                          Routes.DETAIL_MY_BIMBEL,
+                                          arguments: program['uuid'],
+                                        );
+                                      }
+                                    },
+                                  ),
+                              ],
+                            ),
                   ),
                 ],
               ),
-              child: Obx(() {
-                final programList = controller.filteredPrograms;
-
-                if (programList.isEmpty) {
-                  return Text(
-                    "Tidak ada program ditemukan",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  );
-                }
-
-                return Column(
-                  children: [
-                    // loop isi program
-                    ...programList.map((title) {
-                      return Column(children: [_buildProgramCard(title)]);
-                    }).toList(),
-                    Divider(color: Colors.grey[200]),
-                    // pagination di bawah
-                    _buildPagination(),
-                  ],
-                );
-              }),
             ),
-          ],
+          );
+        }),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          color: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [_buildPagination()],
+          ),
         ),
       ),
     );
@@ -136,7 +184,21 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
 
   Widget _buildTabItem(String title, int index) {
     return GestureDetector(
-      onTap: () => controller.changeTab(index),
+      onTap: () {
+        controller.selectedTab.value = index;
+
+        // Reset pagination
+        controller.currentPage.value = 1;
+        controller.totalPage.value = 1; // sementara, nanti diupdate dari API
+
+        // Panggil fetch API sesuai tab
+        if (index == 0) {
+          controller.getTryout(page: 1); // mulai dari page 1
+        } else if (index == 1) {
+          controller.getBimbel(page: 1);
+        }
+      },
+
       child: Obx(() {
         bool isSelected = controller.selectedTab.value == index;
         return Column(
@@ -146,21 +208,23 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
               title,
               style: TextStyle(
                 color: isSelected ? Colors.teal : Colors.black54,
-                fontWeight: FontWeight.w600,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
             SizedBox(height: 4),
-            if (isSelected)
-              Container(height: 2, width: 40, color: Colors.teal)
-            else
-              SizedBox(height: 2),
+            AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              height: 2,
+              width: isSelected ? 40 : 0,
+              color: Colors.teal,
+            ),
           ],
         );
       }),
     );
   }
 
-  Widget _buildProgramCard(String title) {
+  Widget _buildProgramCard(String title, VoidCallback onTap) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(20),
@@ -169,10 +233,10 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1), // warna shadow
-            blurRadius: 6, // tingkat blur
-            spreadRadius: 2, // sebaran shadow
-            offset: Offset(0, 3), // posisi shadow (x, y)
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 6,
+            spreadRadius: 2,
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -187,13 +251,20 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.teal,
-              shape: BoxShape.circle,
+          GestureDetector(
+            onTap: onTap, // langsung pakai callback
+            child: Container(
+              padding: EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.teal,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white,
+                size: 16,
+              ),
             ),
-            child: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
           ),
         ],
       ),
@@ -202,96 +273,94 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
 
   Widget _buildPagination() {
     final controller = Get.put(ProgramSayaController());
+
     return Obx(() {
-      List<int> pagesToShow = [];
       int current = controller.currentPage.value;
-      int total = controller.totalPages.value;
+      int total = controller.totalPage.value;
 
+      List<int> pagesToShow = [];
       pagesToShow.add(1);
-
-      if (current > 2) {
-        pagesToShow.add(current - 1);
-      }
-
-      if (current != 1 && current != total) {
-        pagesToShow.add(current);
-      }
-
-      if (current < total - 1) {
-        pagesToShow.add(current + 1);
-      }
-
-      if (total > 1) {
-        pagesToShow.add(total);
-      }
-
+      if (current - 1 > 1) pagesToShow.add(current - 1);
+      if (current != 1 && current != total) pagesToShow.add(current);
+      if (current + 1 < total) pagesToShow.add(current + 1);
+      if (total > 1) pagesToShow.add(total);
       pagesToShow = pagesToShow.toSet().toList()..sort();
 
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: controller.prevPage,
-            child: Icon(
-              Icons.chevron_left,
-              color:
-                  controller.currentPage.value > 1 ? Colors.teal : Colors.grey,
-            ),
-          ),
-          SizedBox(width: 8),
-          ...List.generate(pagesToShow.length, (index) {
-            final page = pagesToShow[index];
-            final isActive = page == controller.currentPage.value;
-            bool addEllipsis = false;
-            if (index < pagesToShow.length - 1) {
-              if (pagesToShow[index + 1] - page > 1) {
-                addEllipsis = true;
-              }
-            }
-            return Row(
-              children: [
-                GestureDetector(
-                  onTap: () => controller.goToPage(page),
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 4),
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: isActive ? Colors.teal.shade50 : Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: isActive ? Colors.teal : Colors.grey.shade300,
-                        width: isActive ? 2 : 1,
+      return SafeArea(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: current > 1 ? () => controller.goToPage(1) : null,
+                icon: Icon(Icons.first_page),
+                color: current > 1 ? Colors.teal : Colors.grey,
+                iconSize: 28,
+                padding: EdgeInsets.symmetric(horizontal: 4),
+              ),
+              IconButton(
+                onPressed: current > 1 ? controller.prevPage : null,
+                icon: Icon(Icons.chevron_left),
+                color: current > 1 ? Colors.teal : Colors.grey,
+                iconSize: 28,
+                padding: EdgeInsets.symmetric(horizontal: 4),
+              ),
+
+              ...pagesToShow.map((page) {
+                bool isActive = page == current;
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 2),
+                  child: GestureDetector(
+                    onTap: () => controller.goToPage(page),
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isActive ? 14 : 10,
+                        vertical: isActive ? 8 : 6,
                       ),
-                    ),
-                    child: Text(
-                      '$page',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isActive ? Colors.teal : Colors.black,
+                      decoration: BoxDecoration(
+                        color: isActive ? Colors.teal.shade100 : Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isActive ? Colors.teal : Colors.grey.shade300,
+                          width: isActive ? 2 : 1,
+                        ),
+                      ),
+                      child: Text(
+                        '$page',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isActive ? Colors.teal : Colors.black,
+                          fontSize:
+                              isActive
+                                  ? 16
+                                  : 14, // font lebih besar untuk page aktif
+                        ),
                       ),
                     ),
                   ),
-                ),
-                if (addEllipsis)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Text("..."),
-                  ),
-              ],
-            );
-          }),
-          SizedBox(width: 8),
-          GestureDetector(
-            onTap: controller.nextPage,
-            child: Icon(
-              Icons.chevron_right,
-              color:
-                  controller.currentPage.value < controller.totalPages.value
-                      ? Colors.teal
-                      : Colors.grey,
-            ),
+                );
+              }).toList(),
+
+              IconButton(
+                onPressed: current < total ? controller.nextPage : null,
+                icon: Icon(Icons.chevron_right),
+                color: current < total ? Colors.teal : Colors.grey,
+                iconSize: 28,
+                padding: EdgeInsets.symmetric(horizontal: 4),
+              ),
+              IconButton(
+                onPressed:
+                    current < total ? () => controller.goToPage(total) : null,
+                icon: Icon(Icons.last_page),
+                color: current < total ? Colors.teal : Colors.grey,
+                iconSize: 28,
+                padding: EdgeInsets.symmetric(horizontal: 4),
+              ),
+            ],
           ),
-        ],
+        ),
       );
     });
   }

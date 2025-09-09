@@ -242,17 +242,22 @@ class AccountView extends GetView<AccountController> {
                       SizedBox(height: 30),
 
                       // Banner (Upgrade ke Platinum)
-                      Container(
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.blue.shade200,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Banner Highlight\n(Placeholder)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.UPGRADE_AKUN);
+                        },
+                        child: Container(
+                          height: 150,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            // Kalau mau efek shadow atau overlay, bisa ditambah di sini
+                          ),
+                          clipBehavior:
+                              Clip.antiAlias, // supaya borderRadius berlaku
+                          child: Image.asset(
+                            'assets/premiumBanner.png',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
                           ),
                         ),
                       ),

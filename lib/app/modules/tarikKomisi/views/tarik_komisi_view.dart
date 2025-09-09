@@ -86,17 +86,39 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                   SizedBox(height: 16),
                   Text('Rekening', style: TextStyle(color: Colors.black)),
                   SizedBox(height: 5),
-                  DropdownButtonFormField(
-                    items: [
-                      DropdownMenuItem(value: 'Bank A', child: Text('Bank A')),
-                    ],
-                    onChanged: (value) {},
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                      hintText: 'Pilih Rekening',
+                  Obx(
+                    () => DropdownButtonFormField<int>(
+                      value:
+                          controller.rekeningNum.value == 0
+                              ? null
+                              : controller
+                                  .rekeningNum
+                                  .value, // simpan no_rekening sebagai int
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                        hintText: 'Pilih Rekening',
+                      ),
+                      items:
+                          controller.bankList
+                              .map(
+                                (item) => DropdownMenuItem<int>(
+                                  value: int.parse(
+                                    item['no_rekening'],
+                                  ), // convert ke int
+                                  child: Text(
+                                    "${item['bank_name']} - ${item['no_rekening']}",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                      onChanged: (value) {
+                        controller.rekeningNum.value = value ?? 0;
+                      },
                     ),
                   ),
+
                   SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,

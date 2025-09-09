@@ -105,21 +105,28 @@ class RekeningView extends GetView<RekeningController> {
                         Obx(() {
                           return DropdownButtonFormField<String>(
                             value:
-                                controller.selectedBank.value.isEmpty
+                                controller.selectedBankName.value.isEmpty
                                     ? null
-                                    : controller.selectedBank.value,
+                                    : controller.selectedBankName.value,
                             items:
                                 controller.bankList
                                     .map(
                                       (bank) => DropdownMenuItem<String>(
-                                        value: bank,
-                                        child: Text(bank),
+                                        value: bank['name'],
+                                        child: Text(bank['name']),
                                       ),
                                     )
                                     .toList(),
                             onChanged: (value) {
-                              if (value != null)
-                                controller.selectedBank.value = value;
+                              if (value != null) {
+                                controller.selectedBankName.value = value;
+
+                                // ambil id sesuai nama yang dipilih
+                                final selected = controller.bankList.firstWhere(
+                                  (bank) => bank['name'] == value,
+                                );
+                                controller.bankId.value = selected['id'];
+                              }
                             },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),

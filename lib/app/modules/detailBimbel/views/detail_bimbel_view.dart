@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/detail_bimbel_controller.dart';
 
@@ -55,12 +56,146 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
       body: SafeArea(
         child: Obx(() {
           var data = controller.datalBimbelData;
+
+          // Kalau data kosong, tampilkan skeleton
+          if (data.isEmpty) {
+            return SingleChildScrollView(
+              padding: AppStyle.screenPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Banner
+                  Skeletonizer(
+                    child: Container(
+                      height: 300,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+
+                  // Judul
+                  Skeletonizer(
+                    child: Container(
+                      height: 30,
+                      width: 200,
+                      color: Colors.grey.shade300,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+
+                  // Rating & Peserta
+                  Row(
+                    children: [
+                      Skeletonizer(
+                        child: Container(
+                          height: 16,
+                          width: 50,
+                          color: Colors.grey.shade300,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Skeletonizer(
+                        child: Container(
+                          height: 16,
+                          width: 150,
+                          color: Colors.grey.shade300,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 25),
+
+                  // Jenis Paket
+                  Skeletonizer(
+                    child: Container(
+                      height: 16,
+                      width: 120,
+                      color: Colors.grey.shade300,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+
+                  // List paket
+                  Column(
+                    children: List.generate(3, (index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Skeletonizer(
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  SizedBox(height: 16),
+
+                  // Tombol Wishlist
+                  Skeletonizer(
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+
+                  // Tombol Daftar
+                  Skeletonizer(
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  // TabBar
+                  Skeletonizer(
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12),
+
+                  // Konten tab
+                  Skeletonizer(
+                    child: Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // Kalau data sudah ada, tampilkan konten sebenarnya
           return SingleChildScrollView(
             padding: AppStyle.screenPadding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Gambar dummy
+                // Banner
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
@@ -109,6 +244,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                   ],
                 ),
                 SizedBox(height: 25),
+
                 // Jenis Paket
                 Text(
                   'Jenis Paket',
@@ -130,7 +266,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                 ),
                 SizedBox(height: 16),
 
-                // Tombol
+                // Tombol Wishlist
                 OutlinedButton.icon(
                   icon: Icon(
                     controller.datalCheckList.isNotEmpty
@@ -173,14 +309,14 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                     }
                   },
                 ),
-
                 SizedBox(height: 8),
+
+                // Tombol Daftar
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
                     minimumSize: Size.fromHeight(50),
                     shape: RoundedRectangleBorder(
-                      // 🔹 border radius
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
@@ -193,16 +329,13 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                         backgroundColor: Colors.red.withOpacity(0.8),
                         colorText: Colors.white,
                       );
-                      return; // stop di sini
+                      return;
                     }
-
-                    // lanjut kalau sudah pilih paket
                     Get.toNamed(
                       Routes.PAYMENT_DETAIL,
                       arguments: [data["uuid"], controller.selectedPaket.value],
                     );
                   },
-
                   child: Text(
                     'Daftar Sekarang',
                     style: TextStyle(
@@ -212,7 +345,6 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 20),
 
                 // TabBar
@@ -229,6 +361,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                 ),
                 SizedBox(height: 12),
 
+                // Konten tab
                 Obx(() {
                   switch (controller.currentIndex.value) {
                     case 0:

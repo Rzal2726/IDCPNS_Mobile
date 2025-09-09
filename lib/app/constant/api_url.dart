@@ -79,6 +79,7 @@ const String apiGetFinance = "v1/account/user/finance";
 const String apiGetSubmitAfiliansi = "v1/account/user/afiliasi";
 
 const String apiGetMutasiSaldo = "v1/account/user/balance-mutation/list";
+const String apiPostMutasiSaldo = "v1/account/user/balance-mutation";
 const String apiGetRincianKomisi = "v1/transaction/payment-history/list";
 
 const String apiGetRekeningUser = "v1/account/user/bank-account";

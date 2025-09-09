@@ -63,6 +63,7 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
                 children: [
                   // Search box
                   TextField(
+                    controller: controller.searchController,
                     decoration: InputDecoration(
                       hintText: "Cari",
                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
@@ -74,9 +75,22 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide(color: Colors.teal),
                       ),
-                      suffixIcon: Icon(Icons.search, color: Colors.black54),
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          // Panggil API saat icon search ditekan
+                          controller.getMutasiSaldo(
+                            search: controller.searchController.text,
+                          );
+                        },
+                        child: Icon(Icons.search, color: Colors.black54),
+                      ),
                     ),
+                    onSubmitted: (value) {
+                      // Panggil API saat user tekan "Enter"
+                      controller.getMutasiSaldo(search: value);
+                    },
                   ),
+
                   SizedBox(height: 30),
 
                   // Card Rincian Komisi
@@ -168,6 +182,16 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
           );
         }),
       ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          color: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [_buildPagination()],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -223,6 +247,100 @@ Widget buildbalanceTransfer({
       ],
     ),
   );
+}
+
+Widget _buildPagination() {
+  final controller = Get.put(MutasiSaldoController());
+
+  return Obx(() {
+    int current = controller.currentPage.value;
+    int total = controller.totalPage.value;
+
+    List<int> pagesToShow = [];
+    pagesToShow.add(1);
+    if (current - 1 > 1) pagesToShow.add(current - 1);
+    if (current != 1 && current != total) pagesToShow.add(current);
+    if (current + 1 < total) pagesToShow.add(current + 1);
+    if (total > 1) pagesToShow.add(total);
+    pagesToShow = pagesToShow.toSet().toList()..sort();
+
+    return SafeArea(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: current > 1 ? () => controller.goToPage(1) : null,
+              icon: Icon(Icons.first_page),
+              color: current > 1 ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+            IconButton(
+              onPressed: current > 1 ? controller.prevPage : null,
+              icon: Icon(Icons.chevron_left),
+              color: current > 1 ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+
+            ...pagesToShow.map((page) {
+              bool isActive = page == current;
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 2),
+                child: GestureDetector(
+                  onTap: () => controller.goToPage(page),
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isActive ? 14 : 10,
+                      vertical: isActive ? 8 : 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isActive ? Colors.teal.shade100 : Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isActive ? Colors.teal : Colors.grey.shade300,
+                        width: isActive ? 2 : 1,
+                      ),
+                    ),
+                    child: Text(
+                      '$page',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isActive ? Colors.teal : Colors.black,
+                        fontSize:
+                            isActive
+                                ? 16
+                                : 14, // font lebih besar untuk page aktif
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+
+            IconButton(
+              onPressed: current < total ? controller.nextPage : null,
+              icon: Icon(Icons.chevron_right),
+              color: current < total ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+            IconButton(
+              onPressed:
+                  current < total ? () => controller.goToPage(total) : null,
+              icon: Icon(Icons.last_page),
+              color: current < total ? Colors.teal : Colors.grey,
+              iconSize: 28,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+            ),
+          ],
+        ),
+      ),
+    );
+  });
 }
 
 Color _getStatusColor(String? status) {
