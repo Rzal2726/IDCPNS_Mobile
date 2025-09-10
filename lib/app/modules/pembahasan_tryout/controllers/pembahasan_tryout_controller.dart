@@ -71,28 +71,18 @@ class PembahasanTryoutController extends GetxController {
 
     if (response["status"] == "success") {
       laporanController.text = "";
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Berhasil Mengirimkan Laporan",
-            style: const TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green, // default warna teal
-          behavior: SnackBarBehavior.floating, // biar sedikit melayang
-          duration: const Duration(seconds: 2), // lama muncul
-        ),
+      Get.snackbar(
+        "Alert",
+        "Berhasil mengirimkan laporan!",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Gagal Mengirimkan Laporan",
-            style: const TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.pink, // default warna teal
-          behavior: SnackBarBehavior.floating, // biar sedikit melayang
-          duration: const Duration(seconds: 2), // lama muncul
-        ),
+      Get.snackbar(
+        "Alert",
+        "Gagal mengirimkan laporan!",
+        backgroundColor: Colors.pink,
+        colorText: Colors.white,
       );
     }
   }

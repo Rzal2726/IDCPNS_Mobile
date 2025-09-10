@@ -123,28 +123,18 @@ class PengerjaanTryoutController extends GetxController {
 
     if (response["status"] == "success") {
       laporanController.text = "";
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Berhasil Mengirimkan Laporan",
-            style: const TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green, // default warna teal
-          behavior: SnackBarBehavior.floating, // biar sedikit melayang
-          duration: const Duration(seconds: 2), // lama muncul
-        ),
+      Get.snackbar(
+        "Alert",
+        "Berhasil Mengirimkan Laporan",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Gagal Mengirimkan Laporan",
-            style: const TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.pink, // default warna teal
-          behavior: SnackBarBehavior.floating, // biar sedikit melayang
-          duration: const Duration(seconds: 2), // lama muncul
-        ),
+      Get.snackbar(
+        "Alert",
+        "Gagal Mengirimkan Laporan",
+        backgroundColor: Colors.pink,
+        colorText: Colors.white,
       );
     }
   }
@@ -292,5 +282,14 @@ class PengerjaanTryoutController extends GetxController {
 
   bool checkMark(Map<String, dynamic> soal) {
     return markedList.contains(soal);
+  }
+
+  bool checkAnswer(int id) {
+    print(selectedAnswersList);
+    return selectedAnswersList.any(
+      (element) =>
+          element['tryout_question_id'] == id &&
+          element['tryout_question_option_id'] != 0,
+    );
   }
 }

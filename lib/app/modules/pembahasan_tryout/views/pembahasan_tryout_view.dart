@@ -121,7 +121,7 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                 color: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(),
+                  side: BorderSide(width: 0),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Container(
@@ -215,8 +215,8 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                               Text(
                                                 "Silahkan isi form di bawah untuk melaporkan soal:",
                                                 style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
                                                   fontSize: 14,
-                                                  color: Colors.grey[700],
                                                 ),
                                               ),
                                               const SizedBox(height: 16),
@@ -266,32 +266,14 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                                             .laporanController
                                                             .text
                                                             .isEmpty) {
-                                                      ScaffoldMessenger.of(
-                                                        context,
-                                                      ).showSnackBar(
-                                                        SnackBar(
-                                                          content: Text(
-                                                            "Isi laporan terlebih dahulu!",
-                                                            style:
-                                                                const TextStyle(
-                                                                  color:
-                                                                      Colors
-                                                                          .white,
-                                                                ),
-                                                          ),
-                                                          backgroundColor:
-                                                              Colors
-                                                                  .pink, // default warna teal
-                                                          behavior:
-                                                              SnackBarBehavior
-                                                                  .floating, // biar sedikit melayang
-                                                          duration:
-                                                              const Duration(
-                                                                seconds: 2,
-                                                              ), // lama muncul
-                                                        ),
+                                                      Get.snackbar(
+                                                        "Alert",
+                                                        "Isi laporan terlebih dahulu!",
+                                                        backgroundColor:
+                                                            Colors.pink,
+                                                        colorText: Colors.white,
                                                       );
-                                                      Navigator.pop(context);
+
                                                       return;
                                                     }
                                                     controller.sendLaporSoal(
@@ -305,31 +287,6 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                                               .laporanController
                                                               .text,
                                                       context: context,
-                                                    );
-                                                    ScaffoldMessenger.of(
-                                                      context,
-                                                    ).showSnackBar(
-                                                      SnackBar(
-                                                        content: Text(
-                                                          "Berhasil Mengirimkan Laporan",
-                                                          style:
-                                                              const TextStyle(
-                                                                color:
-                                                                    Colors
-                                                                        .white,
-                                                              ),
-                                                        ),
-                                                        backgroundColor:
-                                                            Colors
-                                                                .green, // default warna teal
-                                                        behavior:
-                                                            SnackBarBehavior
-                                                                .floating, // biar sedikit melayang
-                                                        duration:
-                                                            const Duration(
-                                                              seconds: 2,
-                                                            ), // lama muncul
-                                                      ),
                                                     );
 
                                                     Navigator.pop(context);
@@ -414,7 +371,7 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                                       children: [
                                                         Icon(
                                                           Icons.circle,
-                                                          color: Colors.green,
+                                                          color: Colors.teal,
                                                         ),
                                                         Text("Benar"),
                                                       ],
@@ -424,7 +381,7 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                                       children: [
                                                         Icon(
                                                           Icons.circle,
-                                                          color: Colors.red,
+                                                          color: Colors.pink,
                                                         ),
                                                         Text("Salah"),
                                                       ],
@@ -503,9 +460,11 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                                                     ? selectedOption['iscorrect'] ==
                                                                             1
                                                                         ? Colors
-                                                                            .green
+                                                                            .teal
+                                                                            .shade100
                                                                         : Colors
                                                                             .pink
+                                                                            .shade100
                                                                     : Colors
                                                                         .grey,
                                                             foregroundColor:
@@ -527,7 +486,7 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                                                         ? Colors
                                                                             .amber
                                                                         : Colors
-                                                                            .black,
+                                                                            .transparent,
                                                               ),
                                                             ),
                                                             padding:
@@ -666,7 +625,6 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                 .value];
                         return SizedBox(
                           width: double.infinity,
-                          height: 240,
                           child: ListView.builder(
                             shrinkWrap: true,
                             physics:
@@ -705,13 +663,13 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
       color:
           transaction != null
               ? isCorrect != 1
-                  ? Colors.pink
+                  ? Colors.pink.shade100
                   : isCorrect == 1
-                  ? Colors.green.shade100
+                  ? Colors.teal.shade100
                   : Colors.white
               : Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: isCorrect == 1 ? Colors.green : Colors.black),
+        side: BorderSide(color: isCorrect == 1 ? Colors.teal : Colors.pink),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Container(
@@ -727,7 +685,7 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                 children: [
                   Icon(
                     isCorrect == 1 ? Icons.check_circle : Icons.close_rounded,
-                    color: isCorrect == 1 ? Colors.green : Colors.pink,
+                    color: isCorrect == 1 ? Colors.teal : Colors.pink,
                   ),
                   Text(
                     "${initial}. ",
@@ -757,16 +715,13 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
 
   Widget _optionPembahasan(String initial, String bobot, int isCorrect) {
     return Card(
-      color: isCorrect == 1 ? Colors.green.shade800 : Colors.grey,
+      color: isCorrect == 1 ? Colors.teal : Colors.grey,
       shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: isCorrect == 1 ? Colors.green.shade800 : Colors.grey,
-        ),
+        side: BorderSide(color: isCorrect == 1 ? Colors.teal : Colors.grey),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Container(
         padding: EdgeInsets.all(8),
-
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

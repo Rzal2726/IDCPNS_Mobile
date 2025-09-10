@@ -14,6 +14,8 @@ class DetailTryoutSayaController extends GetxController {
   late String lateUuid;
   late dynamic localStorage;
   final count = 0.obs;
+  RxMap<String, dynamic> loading = <String, dynamic>{}.obs;
+
   RxMap<String, dynamic> tryOutSaya = <String, dynamic>{}.obs;
   RxMap<String, dynamic> nilaiChart = <String, dynamic>{}.obs;
   RxMap<String, dynamic> nilaiChartStat = <String, dynamic>{}.obs;
@@ -30,6 +32,7 @@ class DetailTryoutSayaController extends GetxController {
   RxString totalSoal = "0".obs;
   RxString selectedJabatan = "0".obs;
   RxString selectedInstansi = "0".obs;
+  RxInt totalValue = 0.obs;
 
   final RxList<ChartData> chartData = <ChartData>[].obs;
   List<ChartData>? get chartDataList => chartData;
@@ -56,10 +59,10 @@ class DetailTryoutSayaController extends GetxController {
 
     await getDetailTryout();
     await getNilai();
-    await getStatsNilai();
     await getServerTime();
     await getInstansi();
     await getJabatan();
+    await getStatsNilai();
   }
 
   Future<void> getDetailTryout() async {
@@ -85,47 +88,61 @@ class DetailTryoutSayaController extends GetxController {
   }
 
   Future<void> getStatsNilai() async {
-    final response = await restClient.getData(
-      url: baseUrl + apiGetNilaiDetail + lateUuid,
-    );
+    try {
+      loading['chart'] = true;
+      final response = await restClient.getData(
+        url: baseUrl + apiGetNilaiDetail + lateUuid,
+      );
 
-    final Map<String, dynamic> data = Map<String, dynamic>.from(
-      response['data'],
-    );
-    print("chart nilai: ${data}");
+      final Map<String, dynamic> data = Map<String, dynamic>.from(
+        response['data'],
+      );
+      print("chart nilai: ${data}");
 
-    // Simpan semua data untuk digunakan di widget
-    nilaiChartStat.assignAll(data);
+      // Simpan semua data untuk digunakan di widget
+      nilaiChartStat.assignAll(data);
 
-    // Bersihkan data lama
-    chartData.clear();
+      // Bersihkan data lama
+      chartData.clear();
 
-    // Ambil statistik untuk subcategories agar masuk ke Bar Chart
-    if (data['statistics'] != null) {
-      for (var stat in data['statistics']) {
-        String label = stat['label']; // TWK, TIU, TKP
+      // Ambil statistik untuk subcategories agar masuk ke Bar Chart
+      if (data['statistics'] != null) {
+        for (var stat in data['statistics']) {
+          String label = stat['label']; // TWK, TIU, TKP
 
-        for (var soal in stat['waktu_pengerjaan']) {
-          final title = soal['title'] ?? '';
-          final noSoal = soal['no_soal'] ?? 0;
-          final value = soal['value'] ?? 0;
+          for (var soal in stat['waktu_pengerjaan']) {
+            final title = soal['title'] ?? '';
+            final noSoal = soal['no_soal'] ?? 0;
+            final value = soal['value'] ?? 0;
 
-          // Misal value 1 = benar, 0 = salah/kosong
-          Color color;
-          String status;
-          if (value == 1) {
-            color = Colors.green;
-            status = 'Benar';
-          } else {
-            color = Colors.red;
-            status = 'Salah';
+            // Misal value 1 = benar, 0 = salah/kosong
+            Color color;
+            String status;
+            if (value == 1) {
+              color = Colors.green;
+              status = 'Benar';
+            } else {
+              color = Colors.red;
+              status = 'Salah';
+            }
+
+            chartData.add(
+              ChartData('Soal $noSoal', value.toString(), Colors.amberAccent),
+            );
           }
-
-          chartData.add(
-            ChartData('Soal $noSoal', value.toString(), Colors.amberAccent),
-          );
         }
       }
+
+      for (var stat in nilaiChartStat['statistics']) {
+        for (var waktu in stat['waktu_pengerjaan']) {
+          totalValue.value += waktu['value'] as int;
+        }
+      }
+    } catch (e) {
+      loading['chart'] = false;
+      return;
+    } finally {
+      loading['chart'] = false;
     }
   }
 

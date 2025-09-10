@@ -527,32 +527,34 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                               ),
                     ),
 
-                    Row(
-                      spacing: 16,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            if (controller.currentPage.value > 1) {
-                              controller.currentPage.value--;
-                              controller.getRanking();
-                            }
-                          },
-                          icon: Icon(Icons.arrow_back_ios),
-                        ),
-                        Text("1"),
-                        IconButton(
-                          onPressed: () {
-                            if (controller.currentPage.value <
-                                controller.totalPage.value) {
-                              controller.currentPage.value++;
-                              controller.getRanking();
-                            }
-                          },
-                          icon: Icon(Icons.arrow_forward_ios),
-                        ),
-                      ],
+                    Obx(
+                      () => Row(
+                        spacing: 16,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              if (controller.currentPage.value > 1) {
+                                controller.currentPage.value--;
+                                controller.getRanking();
+                              }
+                            },
+                            icon: Icon(Icons.arrow_back_ios),
+                          ),
+                          Text(controller.currentPage.value.toString()),
+                          IconButton(
+                            onPressed: () {
+                              if (controller.currentPage.value <
+                                  controller.totalPage.value) {
+                                controller.currentPage.value++;
+                                controller.getRanking();
+                              }
+                            },
+                            icon: Icon(Icons.arrow_forward_ios),
+                          ),
+                        ],
+                      ),
                     ),
                     Text(
                       "Catatan",

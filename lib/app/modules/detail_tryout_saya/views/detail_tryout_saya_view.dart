@@ -79,16 +79,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                       Row(
                         spacing: 8,
                         children: [
-                          _badge(
-                            isi:
-                                controller.tryOutSaya['isdone'] == 1
-                                    ? "Selesai Dikerjakan"
-                                    : "Belum Dikerjakan",
-                            backgroundColor:
-                                controller.tryOutSaya['isdone'] == 1
-                                    ? Colors.green
-                                    : Colors.orange,
-                          ),
+                          _badge(isi: "Premium", backgroundColor: Colors.amber),
                           controller.tryOutSaya['isdone'] == 1
                               ? _badge(
                                 isi:
@@ -100,7 +91,10 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                         ? Colors.green
                                         : Colors.pink,
                               )
-                              : SizedBox(),
+                              : _badge(
+                                isi: "Belum Dikerjakan",
+                                backgroundColor: Colors.grey,
+                              ),
                         ],
                       ),
                       SizedBox(height: 12), // ✅ ADDED: Spacing
@@ -567,7 +561,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
             // Make sure to apply the `colorFilter` fix to all your SVGs.
             // Example for the 'Rapor' button:
             Obx(() => _buildFeatureButtons()),
-
+            SizedBox(height: 16),
             // If the tryout is not done, show a message. Otherwise, show the charts.
             Obx(
               () =>
@@ -662,135 +656,176 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
           elevation: 1,
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-            child: Obx(
-              () =>
-                  controller.nilaiChart.isEmpty
-                      ? const Center(child: CircularProgressIndicator())
-                      : SfCircularChart(
-                        title: ChartTitle(
-                          text: "Total Nilai",
-                          textStyle: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+            child: Obx(() {
+              if (controller.loading['chart'] == true) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (controller.nilaiChart.isEmpty) {
+                return const SizedBox();
+              }
+
+              final labels = controller.nilaiChart['charts']['labels'] as List;
+              final values = controller.nilaiChart['charts']['values'] as List;
+
+              // Cek apakah semua value 0
+              final allZero = values.every(
+                (value) => int.tryParse(value.toString()) == 0,
+              );
+
+              // Data yang akan ditampilkan di chart
+              final List<ChartData> chartData =
+                  allZero
+                      ? [
+                        ChartData(
+                          "Tidak ada data",
+                          "1",
+                          Colors.grey.shade300, // Placeholder abu-abu
                         ),
-                        series: <CircularSeries>[
-                          DoughnutSeries<ChartData, String>(
-                            dataSource: [
-                              // Loop otomatis dari data charts
-                              ...List.generate(
-                                controller
-                                    .nilaiChart['charts']['labels']
-                                    .length,
-                                (i) => ChartData(
-                                  controller
-                                      .nilaiChart['charts']['labels'][i], // Label: TWK, TIU, TKP
-                                  controller
-                                      .nilaiChart['charts']['values'][i], // Nilai masing-masing
-                                  Colors.primaries[i %
-                                      Colors.primaries.length], // Warna dinamis
-                                ),
-                              ),
-                            ],
-                            xValueMapper: (ChartData data, _) => data.x,
-                            yValueMapper:
-                                (ChartData data, _) =>
-                                    int.tryParse(data.y) ?? 0,
-                            pointColorMapper: (ChartData data, _) => data.color,
-                            innerRadius: '80%',
-                            dataLabelSettings: const DataLabelSettings(
-                              isVisible: true, // WAJIB untuk menampilkan label
-                              labelPosition:
-                                  ChartDataLabelPosition
-                                      .outside, // label di luar chart
-                              overflowMode:
-                                  OverflowMode
-                                      .shift, // geser label kalau sempit
-                            ),
-                          ),
-                        ],
-                      ),
-            ),
+                      ]
+                      : List.generate(
+                        labels.length,
+                        (i) => ChartData(
+                          labels[i], // Label: TWK, TIU, TKP
+                          values[i],
+                          Colors.primaries[i %
+                              Colors.primaries.length], // Warna dinamis
+                        ),
+                      );
+
+              return SfCircularChart(
+                title: ChartTitle(
+                  text: "Total Nilai",
+                  textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                legend: const Legend(
+                  isVisible: true, // ✅ Menampilkan legenda
+                  position: LegendPosition.bottom, // Posisi di bawah
+                  overflowMode:
+                      LegendItemOverflowMode.wrap, // Bungkus kalau kepanjangan
+                  textStyle: TextStyle(fontSize: 12),
+                ),
+                series: <CircularSeries>[
+                  DoughnutSeries<ChartData, String>(
+                    dataSource: chartData,
+                    xValueMapper: (ChartData data, _) => data.x,
+                    yValueMapper:
+                        (ChartData data, _) => int.tryParse(data.y) ?? 0,
+                    pointColorMapper: (ChartData data, _) => data.color,
+                    innerRadius: '80%',
+                    dataLabelSettings: const DataLabelSettings(
+                      isVisible: true, // ✅ Menampilkan label
+                      labelPosition: ChartDataLabelPosition.outside,
+                      overflowMode: OverflowMode.shift,
+                    ),
+                  ),
+                ],
+              );
+            }),
           ),
         ),
 
         const SizedBox(height: 16),
-        Obx(
-          () =>
-              controller.nilaiChart['statistics'].isEmpty
-                  ? Skeletonizer(child: Text("data"))
-                  : Container(
-                    child: Column(
-                      children:
-                          controller.nilaiChart['statistics'].map<Widget>((
-                            data,
-                          ) {
-                            return _passingGrade(
-                              title: data['title'],
-                              score: data['result_nilai'].toString(),
-                              passingGrade: data['nilai'].toString(),
-                            );
-                          }).toList(), // ✅ Convert ke List<Widget>
-                    ),
-                  ),
-        ),
+        Obx(() {
+          if (controller.loading['chart'] == true) {
+            return Skeletonizer(child: Text("data"));
+          }
+          if (controller.nilaiChart['statistics'].isEmpty) {
+            return SizedBox();
+          }
+
+          return Container(
+            child: Column(
+              children:
+                  controller.nilaiChart['statistics'].map<Widget>((data) {
+                    return _passingGrade(
+                      title: data['title'],
+                      score: data['result_nilai'].toString(),
+                      passingGrade: data['nilai'].toString(),
+                    );
+                  }).toList(), // ✅ Convert ke List<Widget>
+            ),
+          );
+        }),
 
         const SizedBox(height: 16),
 
         // Bar Chart untuk Benar / Salah / Kosong
-        Obx(
-          () => Card(
+        Obx(() {
+          if (controller.loading['chart'] == true) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (controller.chartData.isEmpty) {
+            return SizedBox();
+          }
+          return Card(
             color: Colors.white,
             elevation: 1,
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
               child: Column(
                 children: [
-                  controller.chartData.isEmpty
-                      ? const Center(child: CircularProgressIndicator())
-                      : SfCartesianChart(
-                        title: ChartTitle(
-                          text: "Waktu Pengerjaan",
-                          textStyle: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                  SfCartesianChart(
+                    title: ChartTitle(
+                      text: "Waktu Pengerjaan",
+                      textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    primaryXAxis: CategoryAxis(
+                      labelRotation: -45,
+                      majorGridLines: const MajorGridLines(width: 0),
+                    ),
+                    primaryYAxis: NumericAxis(
+                      minimum: 0,
+                      labelRotation: 0,
+                      title: AxisTitle(text: 'Waktu(Detik)'),
+                    ),
+                    tooltipBehavior: TooltipBehavior(enable: true),
+                    series: <ColumnSeries>[
+                      ColumnSeries<ChartData, String>(
+                        dataSource: controller.chartDataList,
+                        xValueMapper: (ChartData data, _) => data.x,
+                        yValueMapper:
+                            (ChartData data, _) => int.tryParse(data.y),
+                        pointColorMapper: (ChartData data, _) => data.color,
+                        dataLabelSettings: const DataLabelSettings(
+                          isVisible: true,
                         ),
-                        primaryXAxis: CategoryAxis(
-                          labelRotation: -45,
-                          majorGridLines: const MajorGridLines(width: 0),
-                        ),
-                        primaryYAxis: NumericAxis(
-                          minimum: 0,
-                          title: AxisTitle(text: 'Waktu(Detik)'),
-                        ),
-                        tooltipBehavior: TooltipBehavior(enable: true),
-                        series: <ColumnSeries>[
-                          ColumnSeries<ChartData, String>(
-                            dataSource: controller.chartDataList,
-                            xValueMapper: (ChartData data, _) => data.x,
-                            yValueMapper:
-                                (ChartData data, _) => int.tryParse(data.y),
-                            pointColorMapper: (ChartData data, _) => data.color,
-                            dataLabelSettings: const DataLabelSettings(
-                              isVisible: true,
-                            ),
-                          ),
-                        ],
                       ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Total Waktu",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text("5 Menit"),
                     ],
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          width: 0.5,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      spacing: 16,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Total Waktu: ",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "${(controller.totalValue.value / 60).floor().toString()} Menit",
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
-        ),
+          );
+        }),
         Obx(
           () =>
               controller.nilaiChartStat.isEmpty

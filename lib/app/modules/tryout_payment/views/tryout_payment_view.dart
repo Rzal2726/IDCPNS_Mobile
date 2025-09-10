@@ -467,8 +467,8 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                 )
                 : IconButton(
                   onPressed: () {
-                    controller.promoCode.value = "";
-                    controller.diskon.value = 0;
+                    voucherController.text = "";
+                    controller.removeCode();
                   },
                   icon: Icon(
                     Icons.close,
@@ -621,7 +621,6 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
             // Jika OVO dipilih, munculkan modal input nomor
             if (controller.selectedPaymentMethod['code'] == "OVO") {
               showModalBottomSheet(
-                isDismissible: false,
                 context: context,
                 backgroundColor: Colors.white,
                 isScrollControlled: true, // supaya bisa full screen jika perlu
@@ -713,6 +712,15 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
               onPressed: () {
+                if (voucherController.text.length < 1) {
+                  Get.snackbar(
+                    "Alert",
+                    "Mohon isi kode terlebih dahulu",
+                    backgroundColor: Colors.pink,
+                    colorText: Colors.white,
+                  );
+                  return;
+                }
                 controller.applyCode(voucherController.text);
                 Navigator.pop(context);
               },

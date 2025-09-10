@@ -128,11 +128,13 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                                 ? PrettyQrView.data(
                                   data:
                                       controller
-                                          .paymentDetails['payment_details'][0]['payment_code'],
+                                          .paymentDetails['payment_details'][0]['payment_code'] ??
+                                      "",
                                 )
                                 : Text(
                                   controller
-                                      .paymentDetails['payment_details'][0]['payment_code'],
+                                          .paymentDetails['payment_details'][0]['payment_code'] ??
+                                      "",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,

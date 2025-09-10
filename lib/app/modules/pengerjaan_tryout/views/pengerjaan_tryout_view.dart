@@ -24,12 +24,7 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                 margin: EdgeInsets.only(right: 16),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(
-                      183,
-                      57,
-                      213,
-                      213,
-                    ), // warna tombol
+                    backgroundColor: Colors.teal, // warna tombol
                     foregroundColor: Colors.white, // warna teks/icon
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -172,7 +167,7 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
                                                 Colors
-                                                    .blue, // warna tombol kedua
+                                                    .teal, // warna tombol kedua
                                             foregroundColor:
                                                 Colors.white, // warna teks/icon
                                             shape: RoundedRectangleBorder(
@@ -380,19 +375,29 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                                         return ElevatedButton(
                                                           style: ElevatedButton.styleFrom(
                                                             backgroundColor:
-                                                                Colors.white,
+                                                                controller
+                                                                        .checkMark(
+                                                                          soal,
+                                                                        )
+                                                                    ? Colors
+                                                                        .amber
+                                                                        .shade100
+                                                                    : controller
+                                                                        .checkAnswer(
+                                                                          soal['id'],
+                                                                        )
+                                                                    ? Colors
+                                                                        .teal
+                                                                        .shade100
+                                                                    : Colors
+                                                                        .white,
                                                             foregroundColor:
                                                                 Colors.black,
                                                             shape: RoundedRectangleBorder(
                                                               side: BorderSide(
                                                                 color:
-                                                                    controller.checkMark(
-                                                                          soal,
-                                                                        )
-                                                                        ? Colors
-                                                                            .amber
-                                                                        : Colors
-                                                                            .transparent,
+                                                                    Colors
+                                                                        .transparent,
                                                               ),
                                                               borderRadius:
                                                                   BorderRadius.circular(
@@ -436,15 +441,7 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                 },
                               );
                             },
-                            icon: Icon(
-                              Icons.list,
-                              color: Color.fromARGB(
-                                183,
-                                57,
-                                213,
-                                213,
-                              ), // warna tombol,
-                            ),
+                            icon: Icon(Icons.list, color: Colors.teal),
                           ),
                         ],
                       ),
@@ -491,12 +488,23 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
-                                      controller.currentQuestion.value ==
+                                      controller.checkMark(
+                                            controller.soalList[questionNumber -
+                                                1],
+                                          )
+                                          ? Colors.amber
+                                          : controller.checkAnswer(
+                                            controller.soalList[questionNumber -
+                                                1]['id'],
+                                          )
+                                          ? Color.fromARGB(255, 208, 255, 244)
+                                          : controller.currentQuestion.value ==
                                               questionNumber - 1
                                           ? Colors.green.shade100
                                           : Colors.white,
                                   foregroundColor: Colors.black,
                                   shape: RoundedRectangleBorder(
+                                    side: BorderSide(color: Colors.transparent),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   padding: const EdgeInsets.symmetric(
@@ -673,7 +681,7 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                                 "Silahkan isi form di bawah untuk melaporkan soal:",
                                                 style: TextStyle(
                                                   fontSize: 14,
-                                                  color: Colors.grey[700],
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                               const SizedBox(height: 16),
@@ -715,6 +723,20 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                                         ),
                                                   ),
                                                   onPressed: () {
+                                                    if (controller
+                                                            .laporanController
+                                                            .text
+                                                            .length <
+                                                        1) {
+                                                      Get.snackbar(
+                                                        "Alert",
+                                                        "Mohon isi laporan terlebih dahulu",
+                                                        backgroundColor:
+                                                            Colors.pink,
+                                                        colorText: Colors.white,
+                                                      );
+                                                      return;
+                                                    }
                                                     controller.sendLaporSoal(
                                                       questionId: soal['id'],
                                                       laporan:
