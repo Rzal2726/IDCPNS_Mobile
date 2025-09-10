@@ -116,7 +116,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          data['productDetail']?['name'] ?? '',
+                                          data['name'] ?? '',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,

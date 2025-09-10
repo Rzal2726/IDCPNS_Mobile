@@ -216,7 +216,7 @@ class PaymentDetailController extends GetxController {
       "amount_diskon": promoAmount.value,
       "description": wishListFirstProduct.value,
       "bundling": true,
-      "tryout_formasi_id": parentId.value,
+      "bimbel_id": parentId.value,
       "kode_promo": promoCodeName.value,
       "items": getSelectedItems(),
       "source": "",

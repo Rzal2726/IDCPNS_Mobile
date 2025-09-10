@@ -35,7 +35,7 @@ class LoginController extends GetxController {
 
     final url = baseUrl + apiLogin;
     final payload = {"email": email, "password": password};
-
+    print("xxx ${payload.toString()}");
     isLoading.value = true;
     try {
       final result = await _restClient.postData(url: url, payload: payload);
