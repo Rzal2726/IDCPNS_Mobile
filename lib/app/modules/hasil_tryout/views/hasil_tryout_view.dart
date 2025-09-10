@@ -95,7 +95,13 @@ class HasilTryoutView extends GetView<HasilTryoutController> {
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
                                             color:
-                                                isLulus
+                                                int.parse(
+                                                          resultNilai
+                                                              .toString(),
+                                                        ) >
+                                                        int.parse(
+                                                          nilai.toString(),
+                                                        )
                                                     ? Colors.green
                                                     : Colors.pink,
                                           ),

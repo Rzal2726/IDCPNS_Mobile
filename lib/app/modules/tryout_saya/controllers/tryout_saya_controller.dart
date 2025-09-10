@@ -69,6 +69,7 @@ class TryoutSayaController extends GetxController {
   }
 
   Future<void> initAll() async {
+    currentPage.value = 1;
     await fetchTryoutSaya();
     fetchKategori();
   }

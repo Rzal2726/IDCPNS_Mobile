@@ -149,7 +149,7 @@ class TryoutView extends GetView<TryoutController> {
                     ],
                   )
                   : Container(
-                    padding: EdgeInsets.symmetric(horizontal: 32),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -395,7 +395,7 @@ class TryoutView extends GetView<TryoutController> {
                 );
               }),
 
-              SizedBox(height: 8),
+              SizedBox(height: 16),
 
               Obx(() {
                 if (controller.paketTryoutRecommendation.isEmpty) {
@@ -403,8 +403,11 @@ class TryoutView extends GetView<TryoutController> {
                 }
 
                 return Container(
+                  margin: EdgeInsets.all(16),
                   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                   decoration: BoxDecoration(
+                    border: Border.all(width: 0, color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(16),
                     gradient: const LinearGradient(
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
@@ -491,7 +494,7 @@ class TryoutView extends GetView<TryoutController> {
                     ],
                   )
                   : Container(
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -812,84 +815,132 @@ class TryoutView extends GetView<TryoutController> {
                 final pages = List.generate(end - start + 1, (i) => start + i);
 
                 return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton.icon(
+                          onPressed:
+                              current > 1
+                                  ? () => controller.fetchPaketTryout(
+                                    page: 1,
+                                    search: paketTextController.text,
+                                    menuCategory:
+                                        controller
+                                            .optionsId[controller
+                                                .selectedPaketKategori
+                                                .value]
+                                            .toString(),
+                                  )
+                                  : null,
+                          label: const Icon(Icons.first_page, size: 16),
                         ),
-                        onPressed:
-                            current > 1
-                                ? () => controller.fetchPaketTryout(
-                                  page: current - 1,
-                                  search: paketTextController.text,
-                                  menuCategory:
-                                      controller
-                                          .optionsId[controller
-                                              .selectedPaketKategori
-                                              .value]
-                                          .toString(),
-                                )
-                                : null,
-                        child: const Icon(Icons.arrow_back_ios, size: 16),
-                      ),
-                      const SizedBox(width: 8),
+                        TextButton.icon(
+                          onPressed:
+                              current > 1
+                                  ? () => controller.fetchPaketTryout(
+                                    page: current - 1,
+                                    search: paketTextController.text,
+                                    menuCategory:
+                                        controller
+                                            .optionsId[controller
+                                                .selectedPaketKategori
+                                                .value]
+                                            .toString(),
+                                  )
+                                  : null,
+                          label: const Icon(Icons.arrow_back_ios, size: 16),
+                        ),
 
-                      ...pages.map((page) {
-                        final isActive = page == current;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          child: ElevatedButton(
-                            onPressed:
-                                () => controller.fetchPaketTryout(
-                                  page: page,
-                                  search: paketTextController.text,
-                                  menuCategory:
-                                      controller
-                                          .optionsId[controller
-                                              .selectedPaketKategori
-                                              .value]
-                                          .toString(),
+                        ...pages.map((page) {
+                          final isActive = page == current;
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 2),
+                            child: GestureDetector(
+                              onTap:
+                                  () => controller.fetchPaketTryout(
+                                    page: page,
+                                    search: paketTextController.text,
+                                    menuCategory:
+                                        controller
+                                            .optionsId[controller
+                                                .selectedPaketKategori
+                                                .value]
+                                            .toString(),
+                                  ),
+                              child: AnimatedContainer(
+                                duration: Duration(milliseconds: 200),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isActive ? 14 : 10,
+                                  vertical: isActive ? 8 : 6,
                                 ),
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(36, 36),
-                              backgroundColor:
-                                  isActive ? Colors.teal : Colors.white,
-                              foregroundColor:
-                                  isActive ? Colors.white : Colors.black54,
+                                decoration: BoxDecoration(
+                                  color:
+                                      isActive
+                                          ? Colors.teal.shade100
+                                          : Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color:
+                                        isActive
+                                            ? Colors.teal
+                                            : Colors.grey.shade300,
+                                    width: isActive ? 2 : 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  '$page',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        isActive ? Colors.teal : Colors.black,
+                                    fontSize:
+                                        isActive
+                                            ? 16
+                                            : 14, // font lebih besar untuk page aktif
+                                  ),
+                                ),
+                              ),
                             ),
-                            child: Text(
-                              page.toString(),
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        );
-                      }),
+                          );
+                        }),
 
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
+                        TextButton.icon(
+                          onPressed:
+                              current < total
+                                  ? () => controller.fetchPaketTryout(
+                                    page: current + 1,
+                                    search: paketTextController.text,
+                                    menuCategory:
+                                        controller
+                                            .optionsId[controller
+                                                .selectedPaketKategori
+                                                .value]
+                                            .toString(),
+                                  )
+                                  : null,
+                          label: const Icon(Icons.arrow_forward_ios, size: 16),
                         ),
-                        onPressed:
-                            current < total
-                                ? () => controller.fetchPaketTryout(
-                                  page: current + 1,
-                                  search: paketTextController.text,
-                                  menuCategory:
-                                      controller
-                                          .optionsId[controller
-                                              .selectedPaketKategori
-                                              .value]
-                                          .toString(),
-                                )
-                                : null,
-                        child: const Icon(Icons.arrow_forward_ios, size: 16),
-                      ),
-                    ],
+                        TextButton.icon(
+                          onPressed:
+                              current < total
+                                  ? () => controller.fetchPaketTryout(
+                                    page: controller.totalPage.value,
+                                    search: paketTextController.text,
+                                    menuCategory:
+                                        controller
+                                            .optionsId[controller
+                                                .selectedPaketKategori
+                                                .value]
+                                            .toString(),
+                                  )
+                                  : null,
+                          label: const Icon(Icons.last_page, size: 16),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }),
@@ -1175,93 +1226,102 @@ class TryoutView extends GetView<TryoutController> {
       onTap: () {
         Get.toNamed("/detail-event", arguments: uuid);
       },
-      child: Card(
-        elevation: 3,
-        shadowColor: Colors.teal.withOpacity(0.2),
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: Colors.teal.shade100, width: 1),
-        ),
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Badge status
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.teal.shade400,
-                  borderRadius: BorderRadius.circular(8),
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Card(
+          elevation: 3,
+          shadowColor: Colors.teal.withOpacity(0.2),
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.teal.shade100, width: 1),
+          ),
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Badge status
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.teal.shade400,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  child: Text(
+                    status,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Text(
-                  status,
+
+                const SizedBox(height: 10),
+
+                // Judul Tryout
+                Text(
+                  judul,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: Colors.black87,
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 10),
+                const SizedBox(height: 6),
 
-              // Judul Tryout
-              Text(
-                judul,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
-                  color: Colors.black87,
-                ),
-              ),
-
-              const SizedBox(height: 6),
-
-              // Tanggal
-              Row(
-                children: [
-                  const Icon(
-                    Icons.calendar_today,
-                    size: 14,
-                    color: Colors.black45,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    tanggal,
-                    style: const TextStyle(fontSize: 12, color: Colors.black87),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 4),
-
-              // Periode
-              Row(
-                children: [
-                  const Icon(
-                    Icons.access_time,
-                    size: 14,
-                    color: Colors.black45,
-                  ),
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      "Periode: $periode",
+                // Tanggal
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_today,
+                      size: 14,
+                      color: Colors.black45,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      tanggal,
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.black87,
-                        fontWeight: FontWeight.w500,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+
+                const SizedBox(height: 4),
+
+                // Periode
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.access_time,
+                      size: 14,
+                      color: Colors.black45,
+                    ),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        "Periode: $periode",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

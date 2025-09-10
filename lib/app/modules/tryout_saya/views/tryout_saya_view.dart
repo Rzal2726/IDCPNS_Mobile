@@ -29,511 +29,582 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
         title: const Text('Tryout Saya'),
         centerTitle: false,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: EdgeInsets.only(left: 32, top: 16, right: 32),
-            child: Text(
-              "Tryout Saya",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+      body: RefreshIndicator(
+        onRefresh: () => controller.initAll(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: EdgeInsets.only(left: 32, top: 16, right: 32),
+              child: Text(
+                "Tryout Saya",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              ),
             ),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 32, bottom: 16, right: 32),
-            child: Text(
-              "Segera kerjakan tryout kamu dan dapatkan hasil tertinggi.",
-              style: TextStyle(color: Colors.grey),
+            Container(
+              margin: EdgeInsets.only(left: 32, bottom: 16, right: 32),
+              child: Text(
+                "Segera kerjakan tryout kamu dan dapatkan hasil tertinggi.",
+                style: TextStyle(color: Colors.grey),
+              ),
             ),
-          ),
-          SizedBox(height: 8),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 32),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: cariController,
-                    decoration: InputDecoration(
-                      labelStyle: TextStyle(color: Colors.grey),
-                      labelText: "Cari",
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: const Color.fromRGBO(185, 246, 202, 1),
-                          width: 1.5,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.tealAccent.shade100,
-                          width: 2.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onChanged: (value) {
-                      controller.search.value = value;
-                    },
-                  ),
-                ),
-                SizedBox(width: 8),
-
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal, // warna tombol
-                    foregroundColor: Colors.white, // warna teks/icon
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 12,
-                    ),
-                  ),
-                  onPressed: () {
-                    controller.currentPage.value = 1;
-                    controller.fetchTryoutSaya();
-                  },
-                  label: Text("Cari"),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 24),
-          // filter button
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 32),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                InkWell(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
-                      ),
-                      builder: (ctx) {
-                        return StatefulBuilder(
-                          builder: (context, setState) {
-                            return Container(
-                              color: Colors.white,
-                              padding: EdgeInsets.all(16),
-                              child: Column(
-                                mainAxisSize:
-                                    MainAxisSize
-                                        .min, // biar bottomsheet menyesuaikan isi
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Jenis Tryout",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-
-                                  Obx(
-                                    () => Wrap(
-                                      spacing: 8,
-                                      children:
-                                          controller.listCategory.map((option) {
-                                            final isSelected =
-                                                controller
-                                                    .selectedPaketKategori
-                                                    .value ==
-                                                option['menu'];
-                                            return ChoiceChip(
-                                              label: Text(
-                                                option['menu'],
-                                                style: TextStyle(
-                                                  color:
-                                                      isSelected
-                                                          ? Colors.teal
-                                                          : Colors.grey[700],
-                                                  fontWeight:
-                                                      isSelected
-                                                          ? FontWeight.bold
-                                                          : FontWeight.normal,
-                                                ),
-                                              ),
-                                              selected: isSelected,
-                                              selectedColor: Colors.teal
-                                                  .withOpacity(0.1),
-                                              backgroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                side: BorderSide(
-                                                  color:
-                                                      isSelected
-                                                          ? Colors.teal
-                                                          : Colors
-                                                              .grey
-                                                              .shade400,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                              ),
-                                              onSelected: (value) {
-                                                controller
-                                                    .selectedPaketKategori
-                                                    .value = option['menu'];
-                                                controller.kategoriId.value =
-                                                    option['id'].toString();
-                                              },
-                                            );
-                                          }).toList(),
-                                    ),
-                                  ),
-
-                                  SizedBox(height: 12),
-
-                                  const Text(
-                                    "Status Pengerjaan",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-
-                                  Obx(
-                                    () => Wrap(
-                                      spacing: 8,
-                                      children:
-                                          controller.optionsPengerjaan.map((
-                                            option,
-                                          ) {
-                                            final isSelected =
-                                                controller
-                                                    .selectedPengerjaan
-                                                    .value ==
-                                                option['isDone']!;
-                                            return ChoiceChip(
-                                              label: Text(
-                                                option['isDone']!,
-                                                style: TextStyle(
-                                                  color:
-                                                      isSelected
-                                                          ? Colors.teal
-                                                          : Colors.grey[700],
-                                                  fontWeight:
-                                                      isSelected
-                                                          ? FontWeight.bold
-                                                          : FontWeight.normal,
-                                                ),
-                                              ),
-                                              selected: isSelected,
-                                              selectedColor: Colors.teal
-                                                  .withOpacity(0.1),
-                                              backgroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                side: BorderSide(
-                                                  color:
-                                                      isSelected
-                                                          ? Colors.teal
-                                                          : Colors
-                                                              .grey
-                                                              .shade400,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                              ),
-                                              onSelected: (value) {
-                                                controller
-                                                    .selectedPengerjaan
-                                                    .value = option['isDone']!;
-                                                controller.isDone.value =
-                                                    option['value']!;
-                                              },
-                                            );
-                                          }).toList(),
-                                    ),
-                                  ),
-
-                                  SizedBox(height: 12),
-
-                                  const Text(
-                                    "Hasil Pengerjaan",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-
-                                  Obx(
-                                    () => Wrap(
-                                      spacing: 8,
-                                      children:
-                                          controller.optionsHasil.map((option) {
-                                            final isSelected =
-                                                controller
-                                                    .selectedHasil
-                                                    .value ==
-                                                option['isLulus'];
-                                            return ChoiceChip(
-                                              label: Text(
-                                                option['isLulus']!,
-                                                style: TextStyle(
-                                                  color:
-                                                      isSelected
-                                                          ? Colors.teal
-                                                          : Colors.grey[700],
-                                                  fontWeight:
-                                                      isSelected
-                                                          ? FontWeight.bold
-                                                          : FontWeight.normal,
-                                                ),
-                                              ),
-                                              selected: isSelected,
-                                              selectedColor: Colors.teal
-                                                  .withOpacity(0.1),
-                                              backgroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                side: BorderSide(
-                                                  color:
-                                                      isSelected
-                                                          ? Colors.teal
-                                                          : Colors
-                                                              .grey
-                                                              .shade400,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                              ),
-                                              onSelected: (value) {
-                                                controller.selectedHasil.value =
-                                                    option['isLulus']!;
-                                                controller.isLulus.value =
-                                                    option['value']!;
-                                              },
-                                            );
-                                          }).toList(),
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 12),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            Colors.teal, // warna tombol
-                                        foregroundColor:
-                                            Colors.white, // warna teks/icon
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 24,
-                                          vertical: 12,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        controller.currentPage.value = 1;
-                                        controller.fetchTryoutSaya();
-                                        Navigator.pop(context);
-                                        // kirim balik pilihan
-                                      },
-                                      child: const Text("Cari"),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      Text("Filter", style: TextStyle(color: Colors.teal)),
-                      Icon(Icons.keyboard_arrow_down, color: Colors.teal),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          Obx(() {
-            if (controller.isLoading['list'] == true) {
-              // 🔹 Loading state
-              return SizedBox(
-                width: double.infinity,
-                child: Skeletonizer(
-                  enabled: true,
-                  child: _paketCard(
-                    "",
-                    "kategori",
-                    "judul",
-                    "bundle",
-                    isDone: true,
-                    isLulus: true,
-                  ),
-                ),
-              );
-            }
-
-            return controller.listData.isNotEmpty
-                ? Expanded(
-                  child: ListView.builder(
-                    itemCount: controller.listData.length,
-                    itemBuilder: (context, index) {
-                      final data = controller.listData[index];
-                      return _paketCard(
-                        data['uuid'],
-                        data['id']['menu'].toString(),
-                        data['name'].toString(),
-                        data['id']['formasi'].toString(),
-                        bgcolor: controller.categoryColors[data['id']['menu']],
-                        isDone: data['isdone'] == 1,
-                        isLulus: data['islulus'] == 1,
-                      );
-                    },
-                  ),
-                )
-                : SizedBox(
-                  width: double.infinity,
-                  child: Center(
-                    child: Container(
-                      padding: EdgeInsets.all(32),
-                      child: Column(
-                        children: [
-                          SvgPicture.asset(
-                            "assets/learning-empty-e208cbbc.svg",
-                          ),
-                          Text(
-                            "Tidak ada tryout",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-          }),
-          Obx(() {
-            final current = controller.currentPage.value;
-            final total = controller.totalPage.value;
-
-            if (total == 0) {
-              return const SizedBox.shrink(); // tidak ada halaman
-            }
-
-            // Tentukan window
-            int start = current - 1;
-            int end = current + 1;
-
-            // clamp biar tetap di antara 1 dan total
-            start = start < 1 ? 1 : start;
-            end = end > total ? total : end;
-
-            // Kalau total < 3, pakai semua halaman yg ada
-            if (total <= 3) {
-              start = 1;
-              end = total;
-            } else {
-              // Kalau current di awal → 1,2,3
-              if (current == 1) {
-                start = 1;
-                end = 3;
-              }
-              // Kalau current di akhir → total-2, total-1, total
-              else if (current == total) {
-                start = total - 2;
-                end = total;
-              }
-            }
-
-            // Generate daftar halaman
-            final pages = List.generate(end - start + 1, (i) => start + i);
-
-            return Container(
-              margin: const EdgeInsets.all(16),
-              height: 40,
+            SizedBox(height: 8),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 32),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                    ),
-
-                    onPressed: () async {
-                      if (controller.currentPage.value > 1) {
-                        controller.currentPage.value--;
-                        controller.fetchTryoutSaya();
-                      }
-                    },
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                      size: 16,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  ...pages.map((page) {
-                    final isActive = page == current;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          controller.currentPage.value = page;
-                          controller.fetchTryoutSaya();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(36, 36),
-                          backgroundColor:
-                              isActive ? Colors.teal : Colors.white,
-                          foregroundColor:
-                              isActive ? Colors.white : Colors.black54,
+                  Expanded(
+                    child: TextField(
+                      controller: cariController,
+                      decoration: InputDecoration(
+                        labelStyle: TextStyle(color: Colors.grey),
+                        labelText: "Cari",
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
                         ),
-                        child: Text(
-                          page.toString(),
-                          style: const TextStyle(fontSize: 14),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.teal,
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.tealAccent.shade100,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                    );
-                  }),
+                      onChanged: (value) {
+                        controller.search.value = value;
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 8),
 
-                  const SizedBox(width: 8),
-                  ElevatedButton(
+                  ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
+                      backgroundColor: Colors.teal, // warna tombol
+                      foregroundColor: Colors.white, // warna teks/icon
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
                     ),
                     onPressed: () {
-                      if (controller.currentPage.value <
-                          controller.totalPage.value) {
-                        controller.currentPage.value++;
-                        controller.fetchTryoutSaya();
-                      }
+                      controller.currentPage.value = 1;
+                      controller.fetchTryoutSaya();
                     },
-                    child: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Colors.black,
+                    label: Text("Cari"),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 24),
+            // filter button
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 32),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                        ),
+                        builder: (ctx) {
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return Container(
+                                color: Colors.white,
+                                padding: EdgeInsets.all(16),
+                                child: Column(
+                                  mainAxisSize:
+                                      MainAxisSize
+                                          .min, // biar bottomsheet menyesuaikan isi
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Jenis Tryout",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+
+                                    Obx(
+                                      () => Wrap(
+                                        spacing: 8,
+                                        children:
+                                            controller.listCategory.map((
+                                              option,
+                                            ) {
+                                              final isSelected =
+                                                  controller
+                                                      .selectedPaketKategori
+                                                      .value ==
+                                                  option['menu'];
+                                              return ChoiceChip(
+                                                label: Text(
+                                                  option['menu'],
+                                                  style: TextStyle(
+                                                    color:
+                                                        isSelected
+                                                            ? Colors.teal
+                                                            : Colors.grey[700],
+                                                    fontWeight:
+                                                        isSelected
+                                                            ? FontWeight.bold
+                                                            : FontWeight.normal,
+                                                  ),
+                                                ),
+                                                selected: isSelected,
+                                                selectedColor: Colors.teal
+                                                    .withOpacity(0.1),
+                                                backgroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                    color:
+                                                        isSelected
+                                                            ? Colors.teal
+                                                            : Colors
+                                                                .grey
+                                                                .shade400,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                ),
+                                                onSelected: (value) {
+                                                  controller
+                                                      .selectedPaketKategori
+                                                      .value = option['menu'];
+                                                  controller.kategoriId.value =
+                                                      option['id'].toString();
+                                                },
+                                              );
+                                            }).toList(),
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 12),
+
+                                    const Text(
+                                      "Status Pengerjaan",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+
+                                    Obx(
+                                      () => Wrap(
+                                        spacing: 8,
+                                        children:
+                                            controller.optionsPengerjaan.map((
+                                              option,
+                                            ) {
+                                              final isSelected =
+                                                  controller
+                                                      .selectedPengerjaan
+                                                      .value ==
+                                                  option['isDone']!;
+                                              return ChoiceChip(
+                                                label: Text(
+                                                  option['isDone']!,
+                                                  style: TextStyle(
+                                                    color:
+                                                        isSelected
+                                                            ? Colors.teal
+                                                            : Colors.grey[700],
+                                                    fontWeight:
+                                                        isSelected
+                                                            ? FontWeight.bold
+                                                            : FontWeight.normal,
+                                                  ),
+                                                ),
+                                                selected: isSelected,
+                                                selectedColor: Colors.teal
+                                                    .withOpacity(0.1),
+                                                backgroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                    color:
+                                                        isSelected
+                                                            ? Colors.teal
+                                                            : Colors
+                                                                .grey
+                                                                .shade400,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                ),
+                                                onSelected: (value) {
+                                                  controller
+                                                          .selectedPengerjaan
+                                                          .value =
+                                                      option['isDone']!;
+                                                  controller.isDone.value =
+                                                      option['value']!;
+                                                },
+                                              );
+                                            }).toList(),
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 12),
+
+                                    const Text(
+                                      "Hasil Pengerjaan",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+
+                                    Obx(
+                                      () => Wrap(
+                                        spacing: 8,
+                                        children:
+                                            controller.optionsHasil.map((
+                                              option,
+                                            ) {
+                                              final isSelected =
+                                                  controller
+                                                      .selectedHasil
+                                                      .value ==
+                                                  option['isLulus'];
+                                              return ChoiceChip(
+                                                label: Text(
+                                                  option['isLulus']!,
+                                                  style: TextStyle(
+                                                    color:
+                                                        isSelected
+                                                            ? Colors.teal
+                                                            : Colors.grey[700],
+                                                    fontWeight:
+                                                        isSelected
+                                                            ? FontWeight.bold
+                                                            : FontWeight.normal,
+                                                  ),
+                                                ),
+                                                selected: isSelected,
+                                                selectedColor: Colors.teal
+                                                    .withOpacity(0.1),
+                                                backgroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                    color:
+                                                        isSelected
+                                                            ? Colors.teal
+                                                            : Colors
+                                                                .grey
+                                                                .shade400,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                ),
+                                                onSelected: (value) {
+                                                  controller
+                                                          .selectedHasil
+                                                          .value =
+                                                      option['isLulus']!;
+                                                  controller.isLulus.value =
+                                                      option['value']!;
+                                                },
+                                              );
+                                            }).toList(),
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 12),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              Colors.teal, // warna tombol
+                                          foregroundColor:
+                                              Colors.white, // warna teks/icon
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 24,
+                                            vertical: 12,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          controller.currentPage.value = 1;
+                                          controller.fetchTryoutSaya();
+                                          Navigator.pop(context);
+                                          // kirim balik pilihan
+                                        },
+                                        child: const Text("Cari"),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Text("Filter", style: TextStyle(color: Colors.teal)),
+                        Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                      ],
                     ),
                   ),
                 ],
               ),
-            );
-          }),
-          SizedBox(height: 16),
-        ],
+            ),
+
+            // The rest of your code is unchanged...
+            Obx(() {
+              if (controller.isLoading['list'] == true) {
+                // 🔹 Loading state
+                return SizedBox(
+                  width: double.infinity,
+                  child: Skeletonizer(
+                    enabled: true,
+                    child: _paketCard(
+                      "",
+                      "kategori",
+                      "judul",
+                      "bundle",
+                      isDone: true,
+                      isLulus: true,
+                    ),
+                  ),
+                );
+              }
+
+              return controller.listData.isNotEmpty
+                  ? Expanded(
+                    // Keep Expanded to provide a constrained height
+                    child: ListView.builder(
+                      itemCount:
+                          controller.listData.length +
+                          1, // Add 1 for the pagination widget
+                      itemBuilder: (context, index) {
+                        if (index == controller.listData.length) {
+                          // Render the pagination widget at the end
+                          final current = controller.currentPage.value;
+                          final total = controller.totalPage.value;
+
+                          if (total == 0 || current < 1) {
+                            return const SizedBox.shrink();
+                          }
+
+                          int start = current - 1;
+                          int end = current + 1;
+
+                          start = start < 1 ? 1 : start;
+                          end = end > total ? total : end;
+
+                          if (total <= 3) {
+                            start = 1;
+                            end = total;
+                          } else {
+                            if (current == 1) {
+                              start = 1;
+                              end = 3;
+                            } else if (current == total) {
+                              start = total - 2;
+                              end = total;
+                            }
+                          }
+
+                          if (end < start) {
+                            end = start;
+                          }
+
+                          final pages = List.generate(
+                            end - start + 1,
+                            (i) => start + i,
+                          );
+
+                          return Container(
+                            margin: const EdgeInsets.symmetric(vertical: 16),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // Tombol pertama
+                                  TextButton.icon(
+                                    onPressed: () async {
+                                      controller.currentPage.value = 1;
+                                      controller.fetchTryoutSaya();
+                                    },
+                                    label: const Icon(
+                                      Icons.first_page,
+                                      size: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+
+                                  // Tombol sebelumnya
+                                  TextButton.icon(
+                                    onPressed: () async {
+                                      if (controller.currentPage.value > 1) {
+                                        controller.currentPage.value--;
+                                        controller.fetchTryoutSaya();
+                                      }
+                                    },
+                                    label: Icon(
+                                      Icons.arrow_back_ios,
+                                      size: 16,
+                                      color:
+                                          controller.currentPage.value > 1
+                                              ? Colors.black
+                                              : Colors.grey,
+                                    ),
+                                  ),
+
+                                  // Nomor halaman
+                                  ...pages.map((page) {
+                                    final isActive = page == current;
+                                    return Container(
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 2,
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          controller.currentPage.value = page;
+                                          controller.fetchTryoutSaya();
+                                        },
+                                        child: AnimatedContainer(
+                                          duration: Duration(milliseconds: 200),
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: isActive ? 14 : 10,
+                                            vertical: isActive ? 8 : 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                isActive
+                                                    ? Colors.teal.shade100
+                                                    : Colors.white,
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            border: Border.all(
+                                              color:
+                                                  isActive
+                                                      ? Colors.teal
+                                                      : Colors.grey.shade300,
+                                              width: isActive ? 2 : 1,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '$page',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  isActive
+                                                      ? Colors.teal
+                                                      : Colors.black,
+                                              fontSize: isActive ? 16 : 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+
+                                  // Tombol berikutnya
+                                  TextButton.icon(
+                                    onPressed: () {
+                                      if (controller.currentPage.value <
+                                          controller.totalPage.value) {
+                                        controller.currentPage.value++;
+                                        controller.fetchTryoutSaya();
+                                      }
+                                    },
+                                    label: Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 16,
+                                      color:
+                                          controller.currentPage.value <
+                                                  controller.totalPage.value
+                                              ? Colors.black
+                                              : Colors.grey,
+                                    ),
+                                  ),
+
+                                  // Tombol terakhir
+                                  TextButton.icon(
+                                    onPressed: () {
+                                      controller.currentPage.value =
+                                          controller.totalPage.value;
+                                      controller.fetchTryoutSaya();
+                                    },
+                                    label: const Icon(
+                                      Icons.last_page,
+                                      size: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+
+                        // Render the _paketCard for all other indices
+                        final data = controller.listData[index];
+                        return _paketCard(
+                          data['uuid'],
+                          data['id']['menu'].toString(),
+                          data['name'].toString(),
+                          data['id']['formasi'].toString(),
+                          bgcolor:
+                              controller.categoryColors[data['id']['menu']],
+                          isDone: data['isdone'] == 1,
+                          isLulus: data['islulus'] == 1,
+                        );
+                      },
+                    ),
+                  )
+                  : SizedBox(
+                    width: double.infinity,
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.all(32),
+                        child: Column(
+                          children: [
+                            SvgPicture.asset(
+                              "assets/learning-empty-e208cbbc.svg",
+                            ),
+                            Text(
+                              "Tidak ada tryout",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+            }),
+          ],
+        ),
       ),
     );
   }
@@ -593,6 +664,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                     ),
                   ),
                 ),
+
                 Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),

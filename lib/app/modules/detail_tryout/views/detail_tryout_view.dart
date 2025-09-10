@@ -214,10 +214,6 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                                         true
                                                     ? null // disable tombol saat loading
                                                     : () async {
-                                                      ScaffoldMessenger.of(
-                                                        context,
-                                                      ).clearSnackBars();
-
                                                       bool success;
                                                       if (!controller
                                                           .isOnWishlist
@@ -494,11 +490,10 @@ void _showSnackBar(
   String successMessage,
   String failureMessage,
 ) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(success ? successMessage : failureMessage),
-      duration: const Duration(seconds: 2),
-      backgroundColor: success ? Colors.teal : Colors.red,
-    ),
+  Get.snackbar(
+    success ? "Berhasil" : "Gagal",
+    success ? successMessage : failureMessage,
+    backgroundColor: success ? Colors.teal : Colors.pink,
+    colorText: Colors.white,
   );
 }

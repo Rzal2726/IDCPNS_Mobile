@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_cli/common/utils/json_serialize/json_ast/parse.dart';
 import 'package:get_storage/get_storage.dart';
@@ -195,20 +196,49 @@ class TryoutPaymentController extends GetxController {
   }
 
   void applyCode(String code) async {
-    final payload = {"kode_promo": code, "amount": totalHarga.toString()};
-    final response = await restClient.postData(
-      url: baseUrl + apiApplyVoucher,
-      payload: payload,
-    );
+    try {
+      final payload = {"kode_promo": code, "amount": totalHarga.toString()};
+      final response = await restClient.postData(
+        url: baseUrl + apiApplyVoucher,
+        payload: payload,
+      );
 
-    diskon.value = double.parse(response['data']['nominal'].toString());
-    promoCode.value = code;
+      if (response['data'] == null) {
+        Get.snackbar(
+          "Gagal",
+          "Kode promo tidak tersedia",
+          backgroundColor: Colors.pink,
+          colorText: Colors.white,
+        );
+      } else {
+        diskon.value = double.parse(response['data']['nominal'].toString());
+        promoCode.value = code;
+        initHarga();
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Gagal",
+        "Kode promo tidak tersedia",
+        backgroundColor: Colors.pink,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  void removeCode() {
+    promoCode.value = "";
+    diskon.value = 0;
     initHarga();
   }
 
   void createPayment() async {
     if (selectedPaymentMethod.isEmpty) {
-      Get.snackbar("Error", "Silahlan pilih metode pembayaran terlebih dahulu");
+      Get.snackbar(
+        "Gagal",
+        "Silahlan pilih metode pembayaran terlebih dahulu",
+        backgroundColor: Colors.pink,
+        colorText: Colors.white,
+      );
       return;
     }
     final payload = {

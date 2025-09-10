@@ -64,7 +64,7 @@ class DetailPengerjaanTryoutView
                       spacing: 12,
                       children: [
                         Text(
-                          "Pengerjaan Tryout",
+                          "Informasi Tryout",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -110,7 +110,7 @@ class DetailPengerjaanTryoutView
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Durasi tryout"),
+                            Text("Waktu Pengerjaan"),
                             controller.tryOutSaya.isEmpty
                                 ? Skeletonizer(
                                   child: Text(
@@ -154,6 +154,7 @@ class DetailPengerjaanTryoutView
                               foregroundColor: Colors.teal,
                               backgroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.teal),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 12),

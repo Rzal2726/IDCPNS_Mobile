@@ -1,3 +1,4 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
@@ -92,17 +93,14 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                             }
                             showModalBottomSheet(
                               context: context,
-                              isScrollControlled:
-                                  true, // biar bisa full height kalau perlu
+                              isScrollControlled: true,
                               builder: (context) {
                                 return SizedBox(
-                                  width: double.infinity, // <- kasih full width
+                                  width: double.infinity,
                                   child: Padding(
                                     padding: EdgeInsets.all(32),
                                     child: Column(
-                                      mainAxisSize:
-                                          MainAxisSize
-                                              .min, // biar nggak full screen
+                                      mainAxisSize: MainAxisSize.min,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -119,233 +117,257 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                           ],
                                         ),
                                         SizedBox(height: 16),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "*",
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                            SizedBox(width: 4),
-                                            Text("Provinsi"),
-                                          ],
-                                        ),
+                                        Row(children: [Text("Provinsi")]),
                                         SizedBox(height: 12),
                                         controller.listProvinsi.isEmpty
                                             ? Skeletonizer(child: Text("data"))
-                                            : DropdownButtonFormField<String>(
-                                              value:
-                                                  controller
-                                                      .selectedProvinsi
-                                                      .value,
-                                              hint: Text("Pilih opsi"),
-                                              decoration: InputDecoration(
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                            : DropdownSearch<String>(
+                                              popupProps: PopupProps.dialog(
+                                                showSearchBox: true,
+                                                searchFieldProps: TextFieldProps(
+                                                  decoration: InputDecoration(
+                                                    labelText: 'Cari Provinsi',
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                              isExpanded:
-                                                  true, // <- penting biar dropdown nggak overflow
                                               items:
-                                                  controller.listProvinsi.map((
-                                                    jabatan,
-                                                  ) {
-                                                    return DropdownMenuItem<
-                                                      String
-                                                    >(
-                                                      value:
-                                                          jabatan['id']
-                                                              .toString(),
-                                                      child: Text(
-                                                        jabatan['nama'],
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis, // handle nama panjang
-                                                      ),
-                                                    );
-                                                  }).toList(),
+                                                  (f, cs) =>
+                                                      controller.listProvinsi
+                                                          .map(
+                                                            (provinsi) =>
+                                                                provinsi['nama']
+                                                                    .toString(),
+                                                          )
+                                                          .toList(),
+                                              selectedItem:
+                                                  controller
+                                                              .selectedProvinsi
+                                                              .value ==
+                                                          ""
+                                                      ? "Pilih Provinsi"
+                                                      : controller.listProvinsi
+                                                          .firstWhere(
+                                                            (provinsi) =>
+                                                                provinsi['id']
+                                                                    .toString() ==
+                                                                controller
+                                                                    .selectedProvinsi
+                                                                    .value,
+                                                            orElse: () => {},
+                                                          )['nama']
+                                                          .toString(),
                                               onChanged: (newValue) {
+                                                final selected = controller
+                                                    .listProvinsi
+                                                    .firstWhere(
+                                                      (provinsi) =>
+                                                          provinsi['nama'] ==
+                                                          newValue,
+                                                      orElse: () => {},
+                                                    );
                                                 controller
-                                                    .selectedProvinsi
-                                                    .value = newValue ?? "";
+                                                        .selectedProvinsi
+                                                        .value =
+                                                    selected['id'].toString();
                                                 controller.getKota();
                                               },
                                             ),
-
                                         SizedBox(height: 12),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "*",
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                            SizedBox(width: 4),
-                                            Text("Kota/Kabupaten"),
-                                          ],
-                                        ),
+                                        Row(children: [Text("Kota/Kabupaten")]),
                                         SizedBox(height: 12),
                                         Obx(() {
                                           return controller.listKota.isEmpty
                                               ? Skeletonizer(
                                                 child: Text("data"),
                                               )
-                                              : DropdownButtonFormField<String>(
-                                                value:
-                                                    controller
-                                                        .selectedKota
-                                                        .value,
-                                                hint: Text("Pilih opsi"),
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
+                                              : DropdownSearch<String>(
+                                                popupProps: PopupProps.dialog(
+                                                  showSearchBox: true,
+                                                  searchFieldProps: TextFieldProps(
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Cari Kota',
+                                                      border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              8,
+                                                            ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
-                                                isExpanded:
-                                                    true, // <- penting biar dropdown nggak overflow
                                                 items:
-                                                    controller.listKota.map((
-                                                      instansi,
-                                                    ) {
-                                                      return DropdownMenuItem<
-                                                        String
-                                                      >(
-                                                        value:
-                                                            instansi['id']
-                                                                .toString(),
-                                                        child: Text(
-                                                          instansi['nama']
-                                                              .toString(),
-                                                          overflow:
-                                                              TextOverflow
-                                                                  .ellipsis, // handle nama panjang
-                                                        ),
-                                                      );
-                                                    }).toList(),
+                                                    (f, cs) =>
+                                                        controller.listKota
+                                                            .map(
+                                                              (kota) =>
+                                                                  kota['nama']
+                                                                      .toString(),
+                                                            )
+                                                            .toList(),
+                                                selectedItem:
+                                                    controller
+                                                                .selectedKota
+                                                                .value ==
+                                                            ""
+                                                        ? "Pilih Kota/Kabupaten"
+                                                        : controller.listKota
+                                                            .firstWhere(
+                                                              (kota) =>
+                                                                  kota['id']
+                                                                      .toString() ==
+                                                                  controller
+                                                                      .selectedKota
+                                                                      .value,
+                                                              orElse: () => {},
+                                                            )['nama']
+                                                            .toString(),
                                                 onChanged: (newValue) {
+                                                  final selected = controller
+                                                      .listKota
+                                                      .firstWhere(
+                                                        (kota) =>
+                                                            kota['nama'] ==
+                                                            newValue,
+                                                        orElse: () => {},
+                                                      );
                                                   controller
-                                                      .selectedKota
-                                                      .value = newValue ?? "";
+                                                          .selectedKota
+                                                          .value =
+                                                      selected['id'].toString();
+                                                  controller.getInstansi();
                                                 },
                                               );
                                         }),
-
                                         SizedBox(height: 12),
                                         Row(
-                                          children: [
-                                            Text(
-                                              "*",
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                            SizedBox(width: 4),
-                                            Text("Instansi Tujuan"),
-                                          ],
+                                          children: [Text("Instansi Tujuan")],
                                         ),
-
+                                        SizedBox(height: 12),
                                         controller.listInstansi.isEmpty
                                             ? Skeletonizer(child: Text("data"))
-                                            : DropdownButtonFormField<String>(
-                                              value:
-                                                  controller
-                                                      .selectedInstansi
-                                                      .value,
-                                              hint: Text("Pilih opsi"),
-                                              decoration: InputDecoration(
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                            : DropdownSearch<String>(
+                                              popupProps: PopupProps.dialog(
+                                                showSearchBox: true,
+                                                searchFieldProps: TextFieldProps(
+                                                  decoration: InputDecoration(
+                                                    labelText: 'Cari Instansi',
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                              isExpanded:
-                                                  true, // <- penting biar dropdown nggak overflow
                                               items:
-                                                  controller.listInstansi.map((
-                                                    instansi,
-                                                  ) {
-                                                    return DropdownMenuItem<
-                                                      String
-                                                    >(
-                                                      value:
-                                                          instansi['id']
-                                                              .toString(),
-                                                      child: Text(
-                                                        instansi['nama']
-                                                            .toString(),
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis, // handle nama panjang
-                                                      ),
-                                                    );
-                                                  }).toList(),
+                                                  (f, cs) =>
+                                                      controller.listInstansi
+                                                          .map(
+                                                            (instansi) =>
+                                                                instansi['nama']
+                                                                    .toString(),
+                                                          )
+                                                          .toList(),
+                                              selectedItem:
+                                                  controller
+                                                              .selectedInstansi
+                                                              .value ==
+                                                          ""
+                                                      ? "Pilih Instansi"
+                                                      : controller.listInstansi
+                                                          .firstWhere(
+                                                            (instansi) =>
+                                                                instansi['id']
+                                                                    .toString() ==
+                                                                controller
+                                                                    .selectedInstansi
+                                                                    .value,
+                                                            orElse: () => {},
+                                                          )['nama']
+                                                          .toString(),
                                               onChanged: (newValue) {
+                                                final selected = controller
+                                                    .listInstansi
+                                                    .firstWhere(
+                                                      (instansi) =>
+                                                          instansi['nama'] ==
+                                                          newValue,
+                                                      orElse: () => {},
+                                                    );
                                                 controller
-                                                    .selectedInstansi
-                                                    .value = newValue ?? "";
+                                                        .selectedInstansi
+                                                        .value =
+                                                    selected['id'].toString();
                                               },
                                             ),
                                         SizedBox(height: 12),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "*",
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                            SizedBox(width: 4),
-                                            Text("Jabatan Tujuan"),
-                                          ],
-                                        ),
+                                        Row(children: [Text("Jabatan Tujuan")]),
                                         SizedBox(height: 12),
                                         controller.listJabatan.isEmpty
                                             ? Skeletonizer(child: Text("data"))
-                                            : DropdownButtonFormField<String>(
-                                              value:
-                                                  controller
-                                                      .selectedJabatan
-                                                      .value,
-                                              hint: Text("Pilih opsi"),
-                                              decoration: InputDecoration(
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                            : DropdownSearch<String>(
+                                              popupProps: PopupProps.dialog(
+                                                showSearchBox: true,
+                                                searchFieldProps: TextFieldProps(
+                                                  decoration: InputDecoration(
+                                                    labelText: 'Cari Jabatan',
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                              isExpanded:
-                                                  true, // <- penting biar dropdown nggak overflow
                                               items:
-                                                  controller.listJabatan.map((
-                                                    jabatan,
-                                                  ) {
-                                                    return DropdownMenuItem<
-                                                      String
-                                                    >(
-                                                      value:
-                                                          jabatan['id']
-                                                              .toString(),
-                                                      child: Text(
-                                                        jabatan['nama'],
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis, // handle nama panjang
-                                                      ),
-                                                    );
-                                                  }).toList(),
+                                                  (f, cs) =>
+                                                      controller.listJabatan
+                                                          .map(
+                                                            (jabatan) =>
+                                                                jabatan['nama']
+                                                                    .toString(),
+                                                          )
+                                                          .toList(),
+                                              selectedItem:
+                                                  controller
+                                                              .selectedJabatan
+                                                              .value ==
+                                                          ""
+                                                      ? "Pilih Jabatan"
+                                                      : controller.listJabatan
+                                                          .firstWhere(
+                                                            (jabatan) =>
+                                                                jabatan['id']
+                                                                    .toString() ==
+                                                                controller
+                                                                    .selectedJabatan
+                                                                    .value,
+                                                            orElse: () => {},
+                                                          )['nama']
+                                                          .toString(),
                                               onChanged: (newValue) {
+                                                final selected = controller
+                                                    .listJabatan
+                                                    .firstWhere(
+                                                      (jabatan) =>
+                                                          jabatan['nama'] ==
+                                                          newValue,
+                                                      orElse: () => {},
+                                                    );
                                                 controller
-                                                    .selectedJabatan
-                                                    .value = newValue ?? "";
+                                                        .selectedJabatan
+                                                        .value =
+                                                    selected['id'].toString();
                                               },
                                             ),
-
                                         SizedBox(height: 24),
                                         SizedBox(
                                           width: double.infinity,
@@ -527,33 +549,136 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                               ),
                     ),
 
-                    Row(
-                      spacing: 16,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            if (controller.currentPage.value > 1) {
-                              controller.currentPage.value--;
-                              controller.getRanking();
-                            }
-                          },
-                          icon: Icon(Icons.arrow_back_ios),
-                        ),
-                        Text("1"),
-                        IconButton(
-                          onPressed: () {
-                            if (controller.currentPage.value <
-                                controller.totalPage.value) {
-                              controller.currentPage.value++;
-                              controller.getRanking();
-                            }
-                          },
-                          icon: Icon(Icons.arrow_forward_ios),
-                        ),
-                      ],
-                    ),
+                    Obx(() {
+                      final current = controller.currentPage.value;
+                      final total = controller.totalPage.value;
+
+                      if (total == 0) {
+                        return const SizedBox.shrink(); // tidak ada halaman
+                      }
+
+                      // Tentukan window
+                      int start = current - 1;
+                      int end = current + 1;
+
+                      // clamp biar tetap di antara 1 dan total
+                      start = start < 1 ? 1 : start;
+                      end = end > total ? total : end;
+
+                      // Kalau total < 3, pakai semua halaman yg ada
+                      if (total <= 3) {
+                        start = 1;
+                        end = total;
+                      } else {
+                        // Kalau current di awal → 1,2,3
+                        if (current == 1) {
+                          start = 1;
+                          end = 3;
+                        }
+                        // Kalau current di akhir → total-2, total-1, total
+                        else if (current == total) {
+                          start = total - 2;
+                          end = total;
+                        }
+                      }
+
+                      // Generate daftar halaman
+                      final pages = List.generate(
+                        end - start + 1,
+                        (i) => start + i,
+                      );
+                      return Row(
+                        spacing: 16,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              if (controller.currentPage.value > 1) {
+                                controller.currentPage.value = 1;
+                                controller.getRanking();
+                              }
+                            },
+                            icon: Icon(Icons.first_page),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              if (controller.currentPage.value > 1) {
+                                controller.currentPage.value--;
+                                controller.getRanking();
+                              }
+                            },
+                            icon: Icon(Icons.arrow_back_ios),
+                          ),
+                          ...pages.map((page) {
+                            final isActive = page == current;
+                            return Container(
+                              margin: EdgeInsets.symmetric(horizontal: 2),
+                              child: GestureDetector(
+                                onTap: () {
+                                  controller.currentPage.value = current;
+                                  controller.getRanking();
+                                },
+                                child: AnimatedContainer(
+                                  duration: Duration(milliseconds: 200),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isActive ? 14 : 10,
+                                    vertical: isActive ? 8 : 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        isActive
+                                            ? Colors.teal.shade100
+                                            : Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color:
+                                          isActive
+                                              ? Colors.teal
+                                              : Colors.grey.shade300,
+                                      width: isActive ? 2 : 1,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    '$page',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          isActive ? Colors.teal : Colors.black,
+                                      fontSize:
+                                          isActive
+                                              ? 16
+                                              : 14, // font lebih besar untuk page aktif
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                          IconButton(
+                            onPressed: () {
+                              if (controller.currentPage.value <
+                                  controller.totalPage.value) {
+                                controller.currentPage.value++;
+                                controller.getRanking();
+                              }
+                            },
+                            icon: Icon(Icons.arrow_forward_ios),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              if (controller.currentPage.value <
+                                  controller.totalPage.value) {
+                                controller.currentPage.value =
+                                    controller.totalPage.value;
+                                controller.getRanking();
+                              }
+                            },
+                            icon: Icon(Icons.last_page),
+                          ),
+                        ],
+                      );
+                    }),
                     Text(
                       "Catatan",
                       style: TextStyle(
