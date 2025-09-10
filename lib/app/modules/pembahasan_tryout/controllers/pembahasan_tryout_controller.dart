@@ -72,14 +72,14 @@ class PembahasanTryoutController extends GetxController {
     if (response["status"] == "success") {
       laporanController.text = "";
       Get.snackbar(
-        "Alert",
+        "Berhasil",
         "Berhasil mengirimkan laporan!",
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.teal,
         colorText: Colors.white,
       );
     } else {
       Get.snackbar(
-        "Alert",
+        "Gagal",
         "Gagal mengirimkan laporan!",
         backgroundColor: Colors.pink,
         colorText: Colors.white,

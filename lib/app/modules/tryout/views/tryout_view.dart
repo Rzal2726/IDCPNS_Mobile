@@ -406,7 +406,7 @@ class TryoutView extends GetView<TryoutController> {
                   margin: EdgeInsets.all(16),
                   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                   decoration: BoxDecoration(
-                    border: Border.all(width: 0),
+                    border: Border.all(width: 0, color: Colors.transparent),
                     borderRadius: BorderRadius.circular(16),
                     gradient: const LinearGradient(
                       begin: Alignment.centerLeft,
@@ -821,11 +821,7 @@ class TryoutView extends GetView<TryoutController> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.white,
-                          ),
+                        TextButton.icon(
                           onPressed:
                               current > 1
                                   ? () => controller.fetchPaketTryout(
@@ -839,13 +835,9 @@ class TryoutView extends GetView<TryoutController> {
                                             .toString(),
                                   )
                                   : null,
-                          child: const Icon(Icons.first_page, size: 16),
+                          label: const Icon(Icons.first_page, size: 16),
                         ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.white,
-                          ),
+                        TextButton.icon(
                           onPressed:
                               current > 1
                                   ? () => controller.fetchPaketTryout(
@@ -859,7 +851,7 @@ class TryoutView extends GetView<TryoutController> {
                                             .toString(),
                                   )
                                   : null,
-                          child: const Icon(Icons.arrow_back_ios, size: 16),
+                          label: const Icon(Icons.arrow_back_ios, size: 16),
                         ),
 
                         ...pages.map((page) {
@@ -915,11 +907,7 @@ class TryoutView extends GetView<TryoutController> {
                           );
                         }),
 
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.white,
-                          ),
+                        TextButton.icon(
                           onPressed:
                               current < total
                                   ? () => controller.fetchPaketTryout(
@@ -933,13 +921,9 @@ class TryoutView extends GetView<TryoutController> {
                                             .toString(),
                                   )
                                   : null,
-                          child: const Icon(Icons.arrow_forward_ios, size: 16),
+                          label: const Icon(Icons.arrow_forward_ios, size: 16),
                         ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.white,
-                          ),
+                        TextButton.icon(
                           onPressed:
                               current < total
                                   ? () => controller.fetchPaketTryout(
@@ -953,7 +937,7 @@ class TryoutView extends GetView<TryoutController> {
                                             .toString(),
                                   )
                                   : null,
-                          child: const Icon(Icons.last_page, size: 16),
+                          label: const Icon(Icons.last_page, size: 16),
                         ),
                       ],
                     ),

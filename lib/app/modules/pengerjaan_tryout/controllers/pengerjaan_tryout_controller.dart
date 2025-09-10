@@ -124,14 +124,14 @@ class PengerjaanTryoutController extends GetxController {
     if (response["status"] == "success") {
       laporanController.text = "";
       Get.snackbar(
-        "Alert",
+        "Berhasil",
         "Berhasil Mengirimkan Laporan",
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.teal,
         colorText: Colors.white,
       );
     } else {
       Get.snackbar(
-        "Alert",
+        "Gagal",
         "Gagal Mengirimkan Laporan",
         backgroundColor: Colors.pink,
         colorText: Colors.white,
@@ -155,7 +155,12 @@ class PengerjaanTryoutController extends GetxController {
       stop();
       Get.offAllNamed("/hasil-tryout", arguments: uuid.value);
     } catch (e) {
-      Get.snackbar("Error", "Tidak dapat mengirim jawaban");
+      Get.snackbar(
+        "Error",
+        "Tidak dapat mengirim jawaban",
+        colorText: Colors.white,
+        backgroundColor: Colors.pink,
+      );
     }
   }
 

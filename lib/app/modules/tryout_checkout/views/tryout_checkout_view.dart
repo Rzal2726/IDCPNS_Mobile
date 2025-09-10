@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -54,7 +55,6 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          spacing: 32,
           children: [
             Card(
               color: Colors.white,
@@ -131,15 +131,35 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                                           .paymentDetails['payment_details'][0]['payment_code'] ??
                                       "",
                                 )
-                                : Text(
-                                  controller
-                                          .paymentDetails['payment_details'][0]['payment_code'] ??
-                                      "",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.tealAccent,
-                                  ),
+                                : Row(
+                                  children: [
+                                    SelectableText(
+                                      controller
+                                              .paymentDetails['payment_details'][0]['payment_code'] ??
+                                          "",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        color: Colors.teal,
+                                      ),
+                                    ),
+                                    controller.paymentDetails['payment_details'][0]['payment_code'] !=
+                                            null
+                                        ? TextButton.icon(
+                                          onPressed: () {
+                                            Clipboard.setData(
+                                              ClipboardData(
+                                                text:
+                                                    controller
+                                                        .paymentDetails['payment_details'][0]['payment_code'] ??
+                                                    "",
+                                              ),
+                                            );
+                                          },
+                                          label: Icon(Icons.copy),
+                                        )
+                                        : SizedBox(),
+                                  ],
                                 ),
                       ),
                       SizedBox(height: 16),
@@ -177,6 +197,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                 ),
               ),
             ),
+            SizedBox(height: 16),
 
             Container(
               margin: EdgeInsets.symmetric(horizontal: 32),
@@ -291,6 +312,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                                                   (item) => Container(
                                                     width: 240,
                                                     child: Text(
+                                                      textAlign: TextAlign.end,
                                                       item['item_name'],
                                                       style: TextStyle(),
                                                     ),
@@ -419,6 +441,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                       )
                       : SizedBox(),
             ),
+            SizedBox(height: 16),
 
             Card(
               color: Colors.white,

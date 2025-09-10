@@ -205,7 +205,7 @@ class TryoutPaymentController extends GetxController {
 
       if (response['data'] == null) {
         Get.snackbar(
-          "Alert",
+          "Gagal",
           "Kode promo tidak tersedia",
           backgroundColor: Colors.pink,
           colorText: Colors.white,
@@ -217,7 +217,7 @@ class TryoutPaymentController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        "Alert",
+        "Gagal",
         "Kode promo tidak tersedia",
         backgroundColor: Colors.pink,
         colorText: Colors.white,
@@ -234,7 +234,7 @@ class TryoutPaymentController extends GetxController {
   void createPayment() async {
     if (selectedPaymentMethod.isEmpty) {
       Get.snackbar(
-        "Alert",
+        "Gagal",
         "Silahlan pilih metode pembayaran terlebih dahulu",
         backgroundColor: Colors.pink,
         colorText: Colors.white,

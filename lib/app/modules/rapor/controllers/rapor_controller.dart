@@ -13,7 +13,7 @@ class RaporController extends GetxController {
   RxMap<String, dynamic> tryoutSaya = <String, dynamic>{}.obs;
   RxMap<String, dynamic> nilaiChart = <String, dynamic>{}.obs;
   RxList<Statistic> statistics = <Statistic>[].obs;
-  final selectedStatistic = ''.obs; // untuk simpan pilihan filter
+  RxString selectedStatistic = ''.obs; // untuk simpan pilihan filter
 
   @override
   void onInit() async {
@@ -33,6 +33,10 @@ class RaporController extends GetxController {
 
   Future<void> initRapor() async {
     uuid = Get.arguments as String;
+    nilaiChart = <String, dynamic>{}.obs;
+    statistics = <Statistic>[].obs;
+    tryoutSaya = <String, dynamic>{}.obs;
+    selectedStatistic = ''.obs;
     await getDetailTryout();
     await getNilai();
     await getRapor();

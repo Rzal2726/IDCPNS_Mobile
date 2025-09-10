@@ -66,7 +66,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: const Color.fromRGBO(185, 246, 202, 1),
+                            color: Colors.teal,
                             width: 1.5,
                           ),
                           borderRadius: BorderRadius.circular(12),
@@ -377,6 +377,7 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
               ),
             ),
 
+            // The rest of your code is unchanged...
             Obx(() {
               if (controller.isLoading['list'] == true) {
                 // 🔹 Loading state
@@ -398,9 +399,176 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
 
               return controller.listData.isNotEmpty
                   ? Expanded(
+                    // Keep Expanded to provide a constrained height
                     child: ListView.builder(
-                      itemCount: controller.listData.length,
+                      itemCount:
+                          controller.listData.length +
+                          1, // Add 1 for the pagination widget
                       itemBuilder: (context, index) {
+                        if (index == controller.listData.length) {
+                          // Render the pagination widget at the end
+                          final current = controller.currentPage.value;
+                          final total = controller.totalPage.value;
+
+                          if (total == 0 || current < 1) {
+                            return const SizedBox.shrink();
+                          }
+
+                          int start = current - 1;
+                          int end = current + 1;
+
+                          start = start < 1 ? 1 : start;
+                          end = end > total ? total : end;
+
+                          if (total <= 3) {
+                            start = 1;
+                            end = total;
+                          } else {
+                            if (current == 1) {
+                              start = 1;
+                              end = 3;
+                            } else if (current == total) {
+                              start = total - 2;
+                              end = total;
+                            }
+                          }
+
+                          if (end < start) {
+                            end = start;
+                          }
+
+                          final pages = List.generate(
+                            end - start + 1,
+                            (i) => start + i,
+                          );
+
+                          return Container(
+                            margin: const EdgeInsets.symmetric(vertical: 16),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // Tombol pertama
+                                  TextButton.icon(
+                                    onPressed: () async {
+                                      controller.currentPage.value = 1;
+                                      controller.fetchTryoutSaya();
+                                    },
+                                    label: const Icon(
+                                      Icons.first_page,
+                                      size: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+
+                                  // Tombol sebelumnya
+                                  TextButton.icon(
+                                    onPressed: () async {
+                                      if (controller.currentPage.value > 1) {
+                                        controller.currentPage.value--;
+                                        controller.fetchTryoutSaya();
+                                      }
+                                    },
+                                    label: Icon(
+                                      Icons.arrow_back_ios,
+                                      size: 16,
+                                      color:
+                                          controller.currentPage.value > 1
+                                              ? Colors.black
+                                              : Colors.grey,
+                                    ),
+                                  ),
+
+                                  // Nomor halaman
+                                  ...pages.map((page) {
+                                    final isActive = page == current;
+                                    return Container(
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 2,
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          controller.currentPage.value = page;
+                                          controller.fetchTryoutSaya();
+                                        },
+                                        child: AnimatedContainer(
+                                          duration: Duration(milliseconds: 200),
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: isActive ? 14 : 10,
+                                            vertical: isActive ? 8 : 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                isActive
+                                                    ? Colors.teal.shade100
+                                                    : Colors.white,
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            border: Border.all(
+                                              color:
+                                                  isActive
+                                                      ? Colors.teal
+                                                      : Colors.grey.shade300,
+                                              width: isActive ? 2 : 1,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '$page',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  isActive
+                                                      ? Colors.teal
+                                                      : Colors.black,
+                                              fontSize: isActive ? 16 : 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+
+                                  // Tombol berikutnya
+                                  TextButton.icon(
+                                    onPressed: () {
+                                      if (controller.currentPage.value <
+                                          controller.totalPage.value) {
+                                        controller.currentPage.value++;
+                                        controller.fetchTryoutSaya();
+                                      }
+                                    },
+                                    label: Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 16,
+                                      color:
+                                          controller.currentPage.value <
+                                                  controller.totalPage.value
+                                              ? Colors.black
+                                              : Colors.grey,
+                                    ),
+                                  ),
+
+                                  // Tombol terakhir
+                                  TextButton.icon(
+                                    onPressed: () {
+                                      controller.currentPage.value =
+                                          controller.totalPage.value;
+                                      controller.fetchTryoutSaya();
+                                    },
+                                    label: const Icon(
+                                      Icons.last_page,
+                                      size: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+
+                        // Render the _paketCard for all other indices
                         final data = controller.listData[index];
                         return _paketCard(
                           data['uuid'],
@@ -435,183 +603,6 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                     ),
                   );
             }),
-            Obx(() {
-              if (controller.listData.isEmpty) {
-                return SizedBox();
-              }
-              final current = controller.currentPage.value;
-              final total = controller.totalPage.value;
-
-              if (total == 0 || current < 1) {
-                return const SizedBox.shrink(); // Tidak ada halaman
-              }
-
-              // Tentukan window aman
-              int start = current - 1;
-              int end = current + 1;
-
-              // Clamp supaya tidak negatif
-              start = start < 1 ? 1 : start;
-              end = end > total ? total : end;
-
-              // Kalau total <= 3 → pakai semua halaman
-              if (total <= 3) {
-                start = 1;
-                end = total;
-              } else {
-                // Kalau current di awal → 1,2,3
-                if (current == 1) {
-                  start = 1;
-                  end = 3;
-                }
-                // Kalau current di akhir → total-2,total-1,total
-                else if (current == total) {
-                  start = total - 2;
-                  end = total;
-                }
-              }
-
-              // Pastikan end >= start
-              if (end < start) {
-                end = start;
-              }
-
-              // Generate daftar halaman
-              final pages = List.generate(end - start + 1, (i) => start + i);
-
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 16),
-                child: Center(
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 4, // jarak antar tombol
-                    runSpacing: 4, // jarak antar baris jika pindah ke bawah
-                    children: [
-                      // Tombol pertama
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.white,
-                        ),
-                        onPressed: () async {
-                          controller.currentPage.value = 1;
-                          controller.fetchTryoutSaya();
-                        },
-                        child: const Icon(
-                          Icons.first_page,
-                          size: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-
-                      // Tombol sebelumnya
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.white,
-                        ),
-                        onPressed: () async {
-                          if (controller.currentPage.value > 1) {
-                            controller.currentPage.value--;
-                            controller.fetchTryoutSaya();
-                          }
-                        },
-                        child: const Icon(
-                          Icons.arrow_back_ios,
-                          size: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-
-                      // Nomor halaman
-                      ...pages.map((page) {
-                        final isActive = page == current;
-                        return Container(
-                          margin: EdgeInsets.symmetric(horizontal: 2),
-                          child: GestureDetector(
-                            onTap: () {
-                              controller.currentPage.value = page;
-                              controller.fetchTryoutSaya();
-                            },
-                            child: AnimatedContainer(
-                              duration: Duration(milliseconds: 200),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: isActive ? 14 : 10,
-                                vertical: isActive ? 8 : 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color:
-                                    isActive
-                                        ? Colors.teal.shade100
-                                        : Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color:
-                                      isActive
-                                          ? Colors.teal
-                                          : Colors.grey.shade300,
-                                  width: isActive ? 2 : 1,
-                                ),
-                              ),
-                              child: Text(
-                                '$page',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: isActive ? Colors.teal : Colors.black,
-                                  fontSize:
-                                      isActive
-                                          ? 16
-                                          : 14, // font lebih besar untuk page aktif
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-
-                      // Tombol berikutnya
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.white,
-                        ),
-                        onPressed: () {
-                          if (controller.currentPage.value <
-                              controller.totalPage.value) {
-                            controller.currentPage.value++;
-                            controller.fetchTryoutSaya();
-                          }
-                        },
-                        child: const Icon(
-                          Icons.arrow_forward_ios,
-                          size: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-
-                      // Tombol terakhir
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.white,
-                        ),
-                        onPressed: () {
-                          controller.currentPage.value =
-                              controller.totalPage.value;
-                          controller.fetchTryoutSaya();
-                        },
-                        child: const Icon(
-                          Icons.last_page,
-                          size: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }),
-            SizedBox(height: 16),
           ],
         ),
       ),

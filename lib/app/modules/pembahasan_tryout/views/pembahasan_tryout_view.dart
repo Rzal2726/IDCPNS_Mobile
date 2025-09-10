@@ -267,7 +267,7 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                                             .text
                                                             .isEmpty) {
                                                       Get.snackbar(
-                                                        "Alert",
+                                                        "Gagal",
                                                         "Isi laporan terlebih dahulu!",
                                                         backgroundColor:
                                                             Colors.pink,
@@ -341,8 +341,8 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                                     width: 40,
                                                     height: 4,
                                                     margin:
-                                                        const EdgeInsets.only(
-                                                          bottom: 12,
+                                                        const EdgeInsets.all(
+                                                          16,
                                                         ),
                                                     decoration: BoxDecoration(
                                                       color: Colors.black26,

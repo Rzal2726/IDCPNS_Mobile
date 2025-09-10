@@ -331,68 +331,84 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
     String harga, {
     required Map<String, dynamic> value,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(
-          color: Color.fromARGB(250, 230, 230, 230),
-          width: 1.0,
-        ),
-        borderRadius: BorderRadius.circular(8),
+    return Card(
+      // Use a Card for a polished, elevated look with subtle shadows
+      elevation: 2,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12), // Adds rounded corners
       ),
-      width: 160,
-      padding: const EdgeInsets.only(left: 16, top: 16),
-      margin: EdgeInsets.all(8),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            judul,
-            softWrap: true,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-
-            style: const TextStyle(fontSize: 14),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(harga, style: const TextStyle(fontWeight: FontWeight.bold)),
-              IconButton(
-                tooltip:
-                    value['is_purchase'] == true
-                        ? "Hapus dari keranjang"
-                        : "Tambah ke keranjang",
-                onPressed: () {
-                  final idx = controller.otherTryout.indexOf(value);
-
-                  if (value['is_purchase'] == false) {
-                    value['is_purchase'] = true;
-                    controller.addTryout(value);
-                  } else {
-                    controller.removeTryout(value);
-                    value['is_purchase'] = false;
-                  }
-
-                  controller.otherTryout[idx] = Map<String, dynamic>.from(
-                    value,
-                  ); // 🔥 ini penting supaya Obx rebuild
-                },
-                icon: Icon(
-                  value['is_purchase'] != true
-                      ? Icons.add_box
-                      : Icons.disabled_by_default,
-                  color:
-                      value['is_purchase'] != true ? Colors.teal : Colors.pink,
-                  size: 32,
-                ),
+      child: Container(
+        width: 160,
+        padding: const EdgeInsets.all(12), // Consistent padding on all sides
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Judul Tryout
+            Text(
+              judul,
+              textAlign: TextAlign.start,
+              softWrap: true,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis, // Use ellipsis for overflow
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold, // Make the title bold for emphasis
               ),
-            ],
-          ),
-        ],
+            ),
+
+            const SizedBox(
+              height: 12,
+            ), // Increased spacing for visual separation
+            // Harga and action button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  harga,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.teal, // Use a brand color for the price
+                  ),
+                ),
+
+                // Use IconButton for a cleaner, more direct action
+                IconButton(
+                  padding: EdgeInsets.zero, // Remove default padding
+                  constraints:
+                      const BoxConstraints(), // Removes size constraints
+                  icon: Icon(
+                    value['is_purchase'] != true
+                        ? Icons.add_circle
+                        : Icons.remove_circle,
+                    color:
+                        value['is_purchase'] != true
+                            ? Colors.teal
+                            : Colors.pink,
+                    size: 30, // Slightly smaller icon for better balance
+                  ),
+                  onPressed: () {
+                    final idx = controller.otherTryout.indexOf(value);
+                    if (value['is_purchase'] == false) {
+                      value['is_purchase'] = true;
+                      controller.addTryout(value);
+                    } else {
+                      controller.removeTryout(value);
+                      value['is_purchase'] = false;
+                    }
+                    // Force rebuild using a new Map
+                    controller.otherTryout[idx] = Map<String, dynamic>.from(
+                      value,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -630,7 +646,9 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                 builder: (context) => _nomorOvo(context),
               ).whenComplete(() {
                 if (controller.ovoNumber.value.length <= 0) {
+                  controller.biayaAdmin.value = 0;
                   controller.selectedPaymentMethod.assignAll({});
+                  controller.initHarga();
                 }
               });
               ;
@@ -673,61 +691,64 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
   Widget _kodePromo(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        spacing: 8,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            "Voucher",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          TextField(
-            controller: voucherController,
-            decoration: InputDecoration(
-              labelStyle: const TextStyle(color: Colors.grey),
-              labelText: "Masukkan Kode Promo",
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.teal, width: 1.5),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.teal, width: 2.0),
-                borderRadius: BorderRadius.circular(12),
-              ),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Column(
+          spacing: 8,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "Voucher",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-                backgroundColor: Colors.teal,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: Colors.teal, width: 1.5),
+            TextField(
+              controller: voucherController,
+              decoration: InputDecoration(
+                labelStyle: const TextStyle(color: Colors.grey),
+                labelText: "Masukkan Kode Promo",
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.teal, width: 1.5),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.teal, width: 2.0),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-              onPressed: () {
-                if (voucherController.text.length < 1) {
-                  Get.snackbar(
-                    "Alert",
-                    "Mohon isi kode terlebih dahulu",
-                    backgroundColor: Colors.pink,
-                    colorText: Colors.white,
-                  );
-                  return;
-                }
-                controller.applyCode(voucherController.text);
-                Navigator.pop(context);
-              },
-              child: const Text("Klaim"),
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(color: Colors.teal, width: 1.5),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                onPressed: () {
+                  if (voucherController.text.length < 1) {
+                    Get.snackbar(
+                      "Gagal",
+                      "Mohon isi kode terlebih dahulu",
+                      backgroundColor: Colors.pink,
+                      colorText: Colors.white,
+                    );
+                    return;
+                  }
+                  controller.applyCode(voucherController.text);
+                  Navigator.pop(context);
+                },
+                child: const Text("Klaim"),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -739,6 +760,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
       child: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             spacing: 8,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -756,17 +778,11 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                   labelStyle: const TextStyle(color: Colors.grey),
                   labelText: "Masukkan Nomor OVO",
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.tealAccent.shade100,
-                      width: 1.5,
-                    ),
+                    borderSide: BorderSide(color: Colors.teal, width: 1.5),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.tealAccent.shade100,
-                      width: 2.0,
-                    ),
+                    borderSide: BorderSide(color: Colors.teal, width: 2.0),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -788,7 +804,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                   onPressed: () {
                     if (ovoNumController.text.length <= 0) {
                       Get.snackbar(
-                        "Alert",
+                        "Gagal",
                         "Mohon isi nomor ovo anda",
                         backgroundColor: Colors.pink,
                         colorText: Colors.white,

@@ -491,7 +491,7 @@ void _showSnackBar(
   String failureMessage,
 ) {
   Get.snackbar(
-    "Alert",
+    success ? "Berhasil" : "Gagal",
     success ? successMessage : failureMessage,
     backgroundColor: success ? Colors.teal : Colors.pink,
     colorText: Colors.white,
