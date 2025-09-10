@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/wishlist_controller.dart';
 
@@ -117,83 +118,146 @@ class WishlistView extends GetView<WishlistController> {
                     ],
                   ),
                   SizedBox(height: 7),
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Get.toNamed(Routes.PAYMENT_WHISLIST);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                  Visibility(
+                    visible: controller.whistlistData.isNotEmpty,
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Get.toNamed(Routes.PAYMENT_WHISLIST);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Beli Semua',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
-                        child: Text(
-                          'Beli Semua',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                      ),
-                      Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          showBimbelBottomSheet(context);
-                        },
-                        child: Row(
-                          children: [
-                            Text(
-                              'Filter',
-                              style: TextStyle(
-                                color: Colors.teal,
-                                fontSize: 16,
+                        Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            showBimbelBottomSheet(context);
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                'Filter',
+                                style: TextStyle(
+                                  color: Colors.teal,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 4),
-                            Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 18,
-                              color: Colors.teal,
-                            ),
-                          ],
+                              SizedBox(width: 4),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                size: 18,
+                                color: Colors.teal,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   SizedBox(height: 16),
 
                   // Loop manual pakai for
-                  for (var item in controller.whistlistData['data'])
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: 12,
-                      ), // biar ada jarak antar item
-                      child: _buildWishlistItem(
-                        imageUrl: item['productDetail']['gambar'],
-                        title:
-                            item['productDetail']['name'] ??
-                            item['productDetail']['formasi'],
-                        oldPrice:
-                            (item['productDetail']?['price_list']?['harga_terendah'] ??
-                                    "")
-                                .toString(),
-                        oldPriceFix:
-                            (item['productDetail']['price_list']?['harga_fix_terendah'] ??
-                                    "")
-                                .toString(),
-                        newPrice:
-                            (item['productDetail']?['price_list']?['harga_tertinggi'] ??
-                                    item['productDetail']['harga'])
-                                .toString(),
-                        newPriceFix:
-                            (item['productDetail']['price_list']?['harga_fix_tertinggi'] ??
-                                    item['productDetail']['harga_fix'])
-                                .toString(),
-                        tag: item['productDetail']['menu_category']['menu'],
-                        tagColor:
-                            item['productDetail']['menu_category']['warna']['hex'],
-                        isBimbel: item['bimbel_parent_id'] != null,
-                      ),
+                  Skeletonizer(
+                    enabled:
+                        controller.whistlistData['data'] == null ||
+                        controller.whistlistData['data'].isEmpty,
+                    child: Column(
+                      children:
+                          (controller.whistlistData['data'] ?? List.filled(5, {})).map<
+                            Widget
+                          >((item) {
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12),
+                              child:
+                                  controller.whistlistData['data'] == null ||
+                                          controller
+                                              .whistlistData['data']
+                                              .isEmpty
+                                      ? Row(
+                                        children: [
+                                          // Gambar skeleton
+                                          Container(
+                                            width: 80,
+                                            height: 80,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.shade300,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // Title skeleton
+                                                Container(
+                                                  width: double.infinity,
+                                                  height: 16,
+                                                  color: Colors.grey.shade300,
+                                                ),
+                                                SizedBox(height: 8),
+                                                // Harga skeleton
+                                                Container(
+                                                  width: 100,
+                                                  height: 14,
+                                                  color: Colors.grey.shade300,
+                                                ),
+                                                SizedBox(height: 8),
+                                                // Tag skeleton
+                                                Container(
+                                                  width: 60,
+                                                  height: 14,
+                                                  color: Colors.grey.shade300,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                      : _buildWishlistItem(
+                                        imageUrl:
+                                            item['productDetail']['gambar'],
+                                        title:
+                                            item['productDetail']['name'] ??
+                                            item['productDetail']['formasi'],
+                                        oldPrice:
+                                            (item['productDetail']?['price_list']?['harga_terendah'] ??
+                                                    "")
+                                                .toString(),
+                                        oldPriceFix:
+                                            (item['productDetail']['price_list']?['harga_fix_terendah'] ??
+                                                    "")
+                                                .toString(),
+                                        newPrice:
+                                            (item['productDetail']?['price_list']?['harga_tertinggi'] ??
+                                                    item['productDetail']['harga'])
+                                                .toString(),
+                                        newPriceFix:
+                                            (item['productDetail']['price_list']?['harga_fix_tertinggi'] ??
+                                                    item['productDetail']['harga_fix'])
+                                                .toString(),
+                                        tag:
+                                            item['productDetail']['menu_category']['menu'],
+                                        tagColor:
+                                            item['productDetail']['menu_category']['warna']['hex'],
+                                        isBimbel:
+                                            item['bimbel_parent_id'] != null,
+                                      ),
+                            );
+                          }).toList(),
                     ),
+                  ),
                 ],
               ),
             ),

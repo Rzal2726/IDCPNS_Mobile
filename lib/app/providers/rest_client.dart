@@ -97,23 +97,32 @@ class RestClient {
     Map<String, dynamic>? headers,
   }) async {
     await init();
-    if (url == null) {
-      return;
-    }
+    if (url == null) return;
 
     try {
       if (headers != null) {
         dio.options.headers.addAll(headers);
       }
-      var response = await dio.post(url, data: payload ?? {});
 
-      return _processResponse(response);
-    } on DioException catch (DioException) {
-      throw _dioException(DioException);
-    } on SocketException catch (_) {
-      if (kDebugMode) {
-        print('not connected');
+      var response = await dio.post(
+        url,
+        data: payload ?? {},
+        options: Options(
+          validateStatus: (status) => true, // semua status dianggap valid
+        ),
+      );
+
+      // kembalikan data JSON apapun statusnya
+      return response.data;
+    } on DioException catch (e) {
+      // tangkap DioException dan ambil response.data jika ada
+      if (e.response != null) {
+        return e.response!.data;
+      } else {
+        rethrow;
       }
+    } on SocketException catch (_) {
+      if (kDebugMode) print('Not connected');
     } catch (e) {
       rethrow;
     }

@@ -9,7 +9,7 @@ class DetailBimbelController extends GetxController
   RxMap datalBimbelData = {}.obs;
   RxMap datalCheckList = {}.obs;
   RxString wishlistUuid = "".obs;
-  RxInt selectedPaket = 0.obs;
+  RxString selectedPaket = "".obs;
   late TabController tabController;
   var idBimbel = Get.arguments;
   RxInt currentIndex = 0.obs;
@@ -40,9 +40,9 @@ class DetailBimbelController extends GetxController
 
         // ambil id pertama dari list result['data']['bimbel']
         if (data['bimbel'] is List && (data['bimbel'] as List).isNotEmpty) {
-          selectedPaket.value = data['bimbel'][0]['id'];
+          selectedPaket.value = data['bimbel'][0]['uuid'];
         } else {
-          selectedPaket.value = 0; // fallback, misal 0 berarti belum dipilih
+          selectedPaket.value = ""; // fallback, misal 0 berarti belum dipilih
         }
       }
     } catch (e) {
@@ -100,7 +100,7 @@ class DetailBimbelController extends GetxController
     }
   }
 
-  void pilihPaket(int paket) {
+  void pilihPaket(String paket) {
     selectedPaket.value = paket;
     print("xxx${paket.toString()}");
   }

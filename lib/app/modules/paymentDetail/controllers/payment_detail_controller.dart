@@ -5,25 +5,27 @@ import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class PaymentDetailController extends GetxController {
-  final _restClient = RestClient();
-
-  var id = Get.arguments[0];
-  var idPaket = Get.arguments[1];
-
-  RxBool bimbelChecked = false.obs;
-  RxBool tryoutChecked = false.obs;
-
+  var uuid = Get.arguments;
   RxString subPaketName = "".obs;
+  RxMap<int, String> selectedSub = <int, String>{}.obs;
   RxMap<int, bool> checked = <int, bool>{}.obs;
+  RxMap bimbelData = {}.obs;
+  RxList otherBimbelData = [].obs;
+  // var selectedSub = ''.obs; // bisa kosong kalau belum dipilih
   final selectedPaketPerCard = <int, Map<String, dynamic>>{}.obs;
+
+  // daftar opsi sub
 
   RxString ovoNumber = "".obs;
   RxInt paymentMethodId = 0.obs;
   RxString paymentMethod = "".obs;
+  RxString promoCodeName = "".obs;
+  RxString paymentImage = "".obs;
   RxString paymentType = "".obs;
   RxInt baseHarga = 0.obs;
-
-  RxMap<int, String> selectedSub = <int, String>{}.obs;
+  RxInt promoAmount = 0.obs;
+  RxInt parentId = 0.obs;
+  // untuk state radio pilihan (sub bimbel)
 
   @override
   void onInit() {
@@ -35,8 +37,8 @@ class PaymentDetailController extends GetxController {
     // Tambahkan properti reactive untuk checkbox & radio
   }
 
-  RxMap bimbelData = {}.obs;
-  RxList otherBimbelData = [].obs;
+  final _restClient = RestClient();
+  RxMap wishLishData = {}.obs;
   RxList paymantListData = [].obs;
 
   final TextEditingController promoController = TextEditingController();
@@ -48,6 +50,7 @@ class PaymentDetailController extends GetxController {
 
   var metodePembayaran = "".obs;
   var kodePromo = "".obs;
+  RxString wishListFirstProduct = "".obs;
   final count = 0.obs;
 
   @override
@@ -60,68 +63,78 @@ class PaymentDetailController extends GetxController {
     super.onClose();
   }
 
+  void pilihPaket(int parentId, Map<String, dynamic> paket) {
+    selectedPaketPerCard[parentId] = paket;
+    selectedPaketPerCard.refresh(); // biar Obx ke-update
+  }
+
   void pilihMetode(String metode) {
     metodePembayaran.value = metode;
   }
 
-  void pakaiPromo(String kode) {
-    kodePromo.value = kode;
-    // Dummy: diskon Rp 20.000
-    // totalHarga.value = (totalHarga.value - 20000).clamp(0, 99999999);
+  Future<void> bayarSekarang() async {
+    // Seolah-olah panggil API
+
+    Get.snackbar(
+      "Sukses",
+      "Pembayaran berhasil diproses (dummy)!",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.teal.withOpacity(0.8),
+      colorText: Colors.white,
+      margin: EdgeInsets.all(12),
+      borderRadius: 8,
+    );
+    Get.toNamed(Routes.PAYMENT_CHECKOUT);
+  }
+
+  List<int> getSelectedItems() {
+    return selectedPaketPerCard.values
+        .map((paket) => paket["id"] as int)
+        .toList();
   }
 
   Future<void> getData() async {
-    try {
-      // final url = baseUrl + apiGetDetailBimbelNoevent + "/" + id;
-      final url = await baseUrl + apiGetDetailBimbel + "/" + id;
-      final result = await _restClient.getData(url: url);
-      print("wishlist response: $result");
+    final url = baseUrl + apiGetDetailBimbelNoevent + "/" + uuid;
+    print("xxx ${url.toString()}");
 
-      if (result["status"] == "success") {
-        bimbelData.value = result['data'];
-        getOherBimbel();
-        print("xxx ${idPaket.toString()}");
-        final List bimbelList = result['data']['bimbel'];
+    final result = await _restClient.getData(url: url);
 
-        final paket = bimbelList.firstWhere(
-          (e) => e['id'].toString() == idPaket.toString(),
-          orElse: () => null,
-        );
-        print("xxx ${bimbelList.toString()}");
-        if (paket != null) {
-          subPaketName.value = paket['name'];
-          baseHarga.value = paket['harga_fix'];
-        }
+    // cek status dulu, kalau success lanjut
+    if (result["status"] == "success") {
+      bimbelData.value = result["data"];
+      parentId.value = result['data']['bimbel_parent_id'];
+      final parent = result["data"]['bimbel_parent'];
+      if (parent != null) {
+        wishListFirstProduct.value = parent['name'] ?? '';
       } else {
-        bimbelData.clear();
+        wishListFirstProduct.value = ''; // fallback kalau null
       }
-    } catch (e) {
-      print("Error fetch wishlist1: $e");
-      bimbelData.clear();
+      getOtherBimbel();
+    } else {
+      // kalau status bukan success, tampilkan pesan server
+      print("Fetch failed: ${result['message']}");
+      // bisa juga kasih notif ke user
+      Get.snackbar("Gagal", result['message'] ?? "Terjadi kesalahan");
     }
   }
 
-  Future<void> getOherBimbel() async {
-    try {
-      final url = baseUrl + apiGetBimbelOther;
+  Future<void> getOtherBimbel() async {
+    final url = baseUrl + apiGetBimbelOther;
+    print("xxx ${url.toString()}");
 
-      final result = await _restClient.getData(url: url);
-      print("wishlist response: $result");
+    final result = await _restClient.getData(url: url);
 
-      if (result["status"] == "success" && result["data"] is List) {
-        // filter data yang id-nya sama dengan bimbelData['id']
-        final filteredData =
-            (result["data"] as List)
-                .where((item) => item['id'] != bimbelData['id'])
-                .toList();
+    if (result["status"] == "success") {
+      final List allBimbel = result["data"] ?? [];
 
-        otherBimbelData.value = filteredData;
-      } else {
-        otherBimbelData.clear();
-      }
-    } catch (e) {
-      print("Error fetch wishlist2: $e");
-      otherBimbelData.clear();
+      // filter kecuali yang id == parentId.value
+      otherBimbelData.value =
+          allBimbel.where((bimbel) => bimbel['id'] != parentId.value).toList();
+
+      print("Other Bimbel: ${otherBimbelData.value}");
+    } else {
+      print("Fetch failed: ${result['message']}");
+      Get.snackbar("Gagal", result['message'] ?? "Terjadi kesalahan");
     }
   }
 
@@ -135,22 +148,45 @@ class PaymentDetailController extends GetxController {
         paymantListData.value = result['data'];
       }
     } catch (e) {
-      print("Error polling email verification: $e");
+      print("Errorxx: $e");
     }
   }
 
   Future<void> getApplyCode() async {
-    try {
-      final url = await baseUrl + apiApplyBimbelVoucherCode;
-      var payload = {"kode_promo": promoController.text, "amount": 1000};
-      final result = await _restClient.postData(url: url, payload: payload);
-      if (result["status"] == "success") {
-        Get.snackbar("Berhasil", "voucher berhasil");
-        promoController.clear();
-      }
-    } catch (e) {
-      print("Error polling email verification: $e");
+    final url = await baseUrl + apiApplyBimbelVoucherCode;
+    var payload = {
+      "kode_promo": promoController.text,
+      "amount": getTotalHargaFix(),
+    };
+
+    final result = await _restClient.postData(url: url, payload: payload);
+
+    if (result == null) {
+      Get.snackbar("Gagal", "Terjadi kesalahan jaringan");
+      return;
     }
+
+    if (result["status"] == "success") {
+      // jika sukses
+      promoAmount.value = result['data']['nominal'];
+      promoCodeName.value = result['data']['voucher_code'];
+      promoController.clear();
+      Get.snackbar(
+        "Berhasil",
+        "Kode promo berhasil diterapkan: +Rp ${promoAmount.value}",
+      );
+    } else {
+      // error dari server, walau status 500
+      Get.snackbar("Gagal", result["message"] ?? "Terjadi kesalahan");
+    }
+  }
+
+  int getTotalHargaFix() {
+    return (baseHarga.value +
+        selectedPaketPerCard.values
+            .map((paket) => paket["harga_fix"] as int)
+            .fold(0, (total, harga) => total + harga));
+    ;
   }
 
   Future<void> getAddOvoNumber() async {
@@ -163,51 +199,6 @@ class PaymentDetailController extends GetxController {
     print('OVO number saved: ${ovoNumber.value}');
   }
 
-  void pilihPaket(int parentId, Map<String, dynamic> paket) {
-    selectedPaketPerCard[parentId] = paket;
-    selectedPaketPerCard.refresh(); // biar Obx ke-update
-  }
-
-  List<int> getSelectedItems() {
-    return selectedPaketPerCard.values
-        .map((paket) => paket["id"] as int)
-        .toList();
-  }
-
-  int getTotalHargaFix() {
-    return (baseHarga.value +
-        selectedPaketPerCard.values
-            .map((paket) => paket["harga_fix"] as int)
-            .fold(0, (total, harga) => total + harga));
-    ;
-  }
-
-  void createPayment() async {
-    final payload = {
-      "type": "bimbel",
-      "total_amount": getTotalHargaFix(),
-      "amount_diskon": 0,
-      "description": bimbelData['name'] ?? "",
-      "bundling": true,
-      "bimbel_parent_id": bimbelData['id'] ?? 0,
-      "kode_promo": "",
-      "items": getSelectedItems(),
-      "source": "",
-      "useBalance": false,
-      "payment_method_id": paymentMethodId.value,
-      "payment_method": paymentMethod.value,
-      "payment_type": paymentType.value,
-      "mobile_number": ovoNumber.value,
-    };
-    print("xxx ${payload.toString()}");
-    // final response = await _restClient.postData(
-    //   url: baseUrl + apiCreatePayment,
-    //   payload: payload,
-    // );
-
-    //  Get.toNamed(Routes.PAYMENT_CHECKOUT);
-  }
-
   void paymentSelected({
     required int id,
     required String methode,
@@ -216,5 +207,51 @@ class PaymentDetailController extends GetxController {
     paymentMethod.value = methode;
     paymentMethodId.value = id;
     paymentType.value = type;
+  }
+
+  void createPayment() async {
+    final payload = {
+      "type": "bimbel",
+      "total_amount": getTotalHargaFix(),
+      "amount_diskon": promoAmount.value,
+      "description": wishListFirstProduct.value,
+      "bundling": true,
+      "tryout_formasi_id": parentId.value,
+      "kode_promo": promoCodeName.value,
+      "items": getSelectedItems(),
+      "source": "",
+      "useBalance": false,
+      "payment_method_id": paymentMethodId.value,
+      "payment_method": paymentMethod.value,
+      "payment_type": paymentType.value,
+      "mobile_number": ovoNumber.value,
+      // "type": "bimbel",
+      // "total_amount": getTotalHargaFix(),
+      // "amount_diskon": promoAmount.value,
+      // "description": wishListFirstProduct.value,
+      // "bundling": true,
+      // "bimbel_parent_id": parentId.value,
+      // "kode_promo": promoCodeName.value,
+      // "items": getSelectedItems(),
+      // "source": "",
+      // "useBalance": false,
+      // "payment_method_id": paymentMethodId.value,
+      // "payment_method": paymentMethod.value,
+      // "payment_type": paymentType.value,
+      // "mobile_number": ovoNumber.value,
+    };
+    print("xxx${payload.toString()}");
+    final result = await _restClient.postData(
+      url: baseUrl + apiCreatePayment,
+      payload: payload,
+    );
+    if (result["status"] == "success") {
+      Get.toNamed(
+        Routes.PAYMENT_CHECKOUT,
+        arguments: result['data']['payment_id'],
+      );
+    } else {
+      print("Error: ${result['message']}");
+    }
   }
 }

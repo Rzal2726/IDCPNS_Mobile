@@ -100,6 +100,9 @@ const String apiGetDataBuyAllWhishlist = "v1/account/user/all-wishlist";
 const String apiGetDetailBimbelNoevent = "v1/bimbel/detail-noevent";
 
 const String apiApplyBimbelVoucherCode = "v1/bimbel/voucher/apply";
+const String apiApplyWishListVoucherCode =
+    "v1/account/user/wishlist/voucher/apply";
+
 const String apiGetMyBimbel = "v1/bimbel/me/list";
 
 const String apiGetDetailBimbelSaya = "v1/bimbel/me/detail";

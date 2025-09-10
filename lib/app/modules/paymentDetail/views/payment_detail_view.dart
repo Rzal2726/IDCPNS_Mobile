@@ -46,9 +46,9 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                   Text("Checkout Paket Bimbel", style: AppStyle.styleW900),
                   SizedBox(height: 16),
                   // Bimbel Section
-                  controller.bimbelData['name'] != null
+                  controller.bimbelData.isNotEmpty
                       ? Text(
-                        controller.bimbelData['name'],
+                        controller.bimbelData['bimbel_parent']['name'],
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -73,8 +73,8 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                         return Container(
                           width: 240,
                           child:
-                              controller.subPaketName.value != ""
-                                  ? Text(controller.subPaketName.value)
+                              controller.bimbelData.isNotEmpty
+                                  ? Text(controller.bimbelData['name'])
                                   : Skeletonizer(
                                     enabled: true,
                                     child: Text("Judul Bimbel"),
@@ -116,7 +116,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          data['name'],
+                                          data['productDetail']?['name'] ?? '',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
@@ -133,8 +133,15 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                                             maintainState: true,
                                             child: GestureDetector(
                                               onTap: () {
+                                                // hapus paket dari selected
                                                 controller.selectedPaketPerCard
                                                     .remove(data['id']);
+
+                                                // langsung hapus promo code dan reset amountPromo
+                                                controller.promoController
+                                                    .clear();
+                                                controller.promoAmount.value =
+                                                    0;
                                               },
                                               child: Container(
                                                 padding: EdgeInsets.all(4),
@@ -152,18 +159,56 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
 
                                     SizedBox(height: 8),
 
-                                    // list radio option
                                     Column(
                                       children: [
-                                        for (var subData in data['bimbel_list'])
-                                          _buildRadioOption(
-                                            '${subData['name']}',
-                                            '${formatRupiah(subData['harga'])}',
-                                            '${formatRupiah(subData['harga_fix'])}',
-                                            subData['id'], // paket id
-                                            data['id'], // parent id
-                                            subData['harga_fix'],
-                                            controller,
+                                        for (
+                                          var i = 0;
+                                          i < data['bimbel_list'].length;
+                                          i++
+                                        )
+                                          Builder(
+                                            builder: (_) {
+                                              final subData =
+                                                  data['bimbel_list'][i];
+
+                                              // index paket pertama yang sudah dibeli
+                                              final firstPurchasedIndex =
+                                                  data['bimbel_list']
+                                                      .indexWhere(
+                                                        (e) =>
+                                                            e['is_purchase'] ==
+                                                            true,
+                                                      );
+
+                                              // skip paket yang lebih murah dari paket yang sudah dibeli
+                                              if (firstPurchasedIndex != -1 &&
+                                                  i < firstPurchasedIndex) {
+                                                return SizedBox.shrink();
+                                              }
+
+                                              // harga yang ditampilkan dikurangi harga paket yang sudah dibeli
+                                              final hargaTampil =
+                                                  (firstPurchasedIndex != -1 &&
+                                                          i > firstPurchasedIndex)
+                                                      ? subData['harga_fix'] -
+                                                          data['bimbel_list'][firstPurchasedIndex]['harga_fix']
+                                                      : subData['harga_fix'];
+
+                                              // disable jika paket sudah dibeli
+                                              final isDisabled =
+                                                  (firstPurchasedIndex != -1 &&
+                                                      i == firstPurchasedIndex);
+
+                                              return _buildRadioOption(
+                                                subData['name'], // title
+                                                subData['id'], // paketId
+                                                data['id'], // parentId
+                                                hargaTampil, // hargaFix
+                                                controller,
+                                                isDisabled:
+                                                    isDisabled, // disable jika sudah dibeli
+                                              );
+                                            },
                                           ),
                                       ],
                                     ),
@@ -177,39 +222,12 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                   ),
                   SizedBox(height: 20),
 
-                  // ListView.builder(
-                  //   shrinkWrap: true,
-                  //   physics: NeverScrollableScrollPhysics(),
-                  //   itemCount: controller.wishLishData.length,
-                  //   itemBuilder: (context, index) {
-                  //     final item = controller.wishLishData[index];
-                  //     return Padding(
-                  //       padding: EdgeInsets.only(bottom: 20),
-                  //       child: buildProductSection(
-                  //         parentId: item['bimbel_parent_id'],
-                  //         title:
-                  //             item['productDetail']['name'] ??
-                  //             item['productDetail']['formasi'],
-                  //         selectedValue: controller.selectedPaketLainnya.value,
-                  //         onChanged: (v) => controller.pilihPaketLainnya(v),
-                  //         productDetail: item['productDetail'],
-                  //         isChecked: controller.productChecked[index] ?? false,
-                  //         // tambahin ini
-                  //         onCheckChanged:
-                  //             (v) => controller.toggleCheck(
-                  //               index,
-                  //               v ?? false,
-                  //             ), // tambahin ini
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-
                   // Paket Lainnya
                   SizedBox(height: 15),
                   Divider(height: 1),
                   SizedBox(height: 15),
 
+                  // Metode Pembayaran
                   // Metode Pembayaran
                   Text(
                     "Metode Pembayaran",
@@ -231,11 +249,32 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                       ),
                       child: Row(
                         children: [
-                          Container(
-                            width: 36,
-                            height: 36,
-                            child: Icon(Icons.credit_card, color: Colors.teal),
-                          ),
+                          Obx(() {
+                            if (controller.paymentImage.value.isEmpty) {
+                              return Container(
+                                width: 36,
+                                height: 36,
+                                child: Icon(
+                                  Icons.credit_card,
+                                  color: Colors.teal,
+                                ),
+                              );
+                            } else {
+                              return Container(
+                                width: 50,
+                                height: 50,
+                                child: SvgPicture.network(
+                                  controller.paymentImage.value,
+                                  fit: BoxFit.contain,
+                                  placeholderBuilder:
+                                      (_) => Icon(
+                                        Icons.credit_card,
+                                        color: Colors.teal,
+                                      ),
+                                ),
+                              );
+                            }
+                          }),
                           SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -293,9 +332,30 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                       ),
                     ),
                   ),
+                  Visibility(
+                    visible: controller.promoAmount.value != 0,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle, // icon ceklis bulat
+                              color: Colors.green,
+                              size: 20, // bisa disesuaikan
+                            ),
+                            SizedBox(width: 6), // jarak antara icon dan text
+                            Text(
+                              "Kode promo berhasil digunakan.",
+                              style: TextStyle(color: Colors.green),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
 
-                  SizedBox(height: 12),
-                  SizedBox(height: 12),
+                  SizedBox(height: 24),
 
                   // Rincian Pesanan
                   Text(
@@ -315,7 +375,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                             ),
                           ),
                           Text(
-                            "Rp.${controller.getTotalHargaFix()}",
+                            "${formatRupiah(controller.getTotalHargaFix())}",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -334,7 +394,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                             ),
                           ),
                           Text(
-                            "Rp.${controller.getTotalHargaFix()}",
+                            "${formatRupiah((controller.getTotalHargaFix() - controller.promoAmount.value))}",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -385,59 +445,52 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
 // helper radio widget
 Widget _buildRadioOption(
   String title,
-  String oldPrice,
-  String newPrice,
   int paketId,
   int parentId,
   int hargaFix,
-  PaymentDetailController controller,
-) {
+  PaymentDetailController controller, {
+  bool isDisabled = false, // disable radio jika paket sudah dibeli
+}) {
   return Padding(
-    padding: EdgeInsets.symmetric(vertical: 4),
+    padding: const EdgeInsets.symmetric(vertical: 4),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        // Radio + Title
         Row(
           children: [
             Obx(
               () => Radio<int>(
-                value: paketId, // ID paket dari subData['id']
-                groupValue:
-                    controller
-                        .selectedPaketPerCard[parentId]?["id"], // bandingin id aja
-                onChanged: (value) {
-                  if (value != null) {
-                    controller.pilihPaket(parentId, {
-                      "id": value, // simpan id paket
-                      "harga_fix": hargaFix, // simpan harga_fix paket ini
-                    });
-                  }
-                },
+                value: paketId,
+                groupValue: controller.selectedPaketPerCard[parentId]?["id"],
+                onChanged:
+                    isDisabled
+                        ? null
+                        : (value) {
+                          if (value != null) {
+                            controller.pilihPaket(parentId, {
+                              "id": value,
+                              "harga_fix": hargaFix,
+                            });
+                            print(
+                              "xxx ${controller.selectedPaketPerCard.toString()}",
+                            );
+                          }
+                        },
                 activeColor: Colors.teal,
                 visualDensity: VisualDensity.compact,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ),
-            Text(title, style: TextStyle(fontSize: 12)),
+            const SizedBox(width: 4),
+            Text(title, style: const TextStyle(fontSize: 12)),
           ],
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              oldPrice,
-              style: TextStyle(
-                fontSize: 11,
-                decoration: TextDecoration.lineThrough,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 2),
-            Text(
-              newPrice,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-            ),
-          ],
+
+        // Harga
+        Text(
+          isDisabled ? '' : formatRupiah(hargaFix),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
       ],
     ),

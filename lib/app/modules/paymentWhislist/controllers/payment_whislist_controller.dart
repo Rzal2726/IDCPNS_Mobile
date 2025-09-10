@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
@@ -18,8 +19,11 @@ class PaymentWhislistController extends GetxController {
   RxString ovoNumber = "".obs;
   RxInt paymentMethodId = 0.obs;
   RxString paymentMethod = "".obs;
+  RxString promoCodeName = "".obs;
+  RxString paymentImage = "".obs;
   RxString paymentType = "".obs;
   RxInt baseHarga = 0.obs;
+  RxInt promoAmount = 0.obs;
   // untuk state radio pilihan (sub bimbel)
   RxMap<int, String> selectedSub = <int, String>{}.obs;
 
@@ -46,6 +50,7 @@ class PaymentWhislistController extends GetxController {
 
   var metodePembayaran = "".obs;
   var kodePromo = "".obs;
+  RxString wishListFirstProduct = "".obs;
   final count = 0.obs;
 
   @override
@@ -82,9 +87,14 @@ class PaymentWhislistController extends GetxController {
     Get.toNamed(Routes.PAYMENT_CHECKOUT);
   }
 
-  List<int> getSelectedItems() {
+  List<Map<String, dynamic>> getSelectedItems() {
     return selectedPaketPerCard.values
-        .map((paket) => paket["id"] as int)
+        .map(
+          (paket) => {
+            "type": paket["type"], // ambil type (bimbel / tryout)
+            "id": paket["id"], // ambil id
+          },
+        )
         .toList();
   }
 
@@ -97,7 +107,18 @@ class PaymentWhislistController extends GetxController {
 
       if (result["status"] == "success") {
         wishLishData.value = result["data"];
-        print("xxx ${wishLishData.toString()}");
+
+        final firstItem = result["data"][0]; // ambil index pertama
+        final productDetail = firstItem["productDetail"];
+
+        // cek bimbel_parent_id
+        if (firstItem["bimbel_parent_id"] != null) {
+          // bukan null → ambil name
+          wishListFirstProduct.value = productDetail["name"];
+        } else {
+          // null → ambil formasi
+          wishListFirstProduct.value = productDetail["formasi"];
+        }
       } else {
         wishLishData.clear();
       }
@@ -122,16 +143,31 @@ class PaymentWhislistController extends GetxController {
   }
 
   Future<void> getApplyCode() async {
-    try {
-      final url = await baseUrl + apiApplyBimbelVoucherCode;
-      var payload = {"kode_promo": promoController.text, "amount": 1000};
-      final result = await _restClient.postData(url: url, payload: payload);
-      if (result["status"] == "success") {
-        Get.snackbar("Berhasil", "voucher berhasil");
-        promoController.clear();
-      }
-    } catch (e) {
-      print("Error polling email verification: $e");
+    final url = await baseUrl + apiApplyWishListVoucherCode;
+    var payload = {
+      "kode_promo": promoController.text,
+      "amount": getTotalHargaFix(),
+    };
+
+    final result = await _restClient.postData(url: url, payload: payload);
+
+    if (result == null) {
+      Get.snackbar("Gagal", "Terjadi kesalahan jaringan");
+      return;
+    }
+
+    if (result["status"] == "success") {
+      // jika sukses
+      promoAmount.value = result['data']['nominal'];
+      promoCodeName.value = result['data']['voucher_code'];
+      promoController.clear();
+      Get.snackbar(
+        "Berhasil",
+        "Kode promo berhasil diterapkan: +Rp ${promoAmount.value}",
+      );
+    } else {
+      // error dari server, walau status 500
+      Get.snackbar("Gagal", result["message"] ?? "Terjadi kesalahan");
     }
   }
 
@@ -155,13 +191,13 @@ class PaymentWhislistController extends GetxController {
 
   void createPayment() async {
     final payload = {
-      "type": "bimbel",
+      "type": "wishlist",
       "total_amount": getTotalHargaFix(),
-      "amount_diskon": 0,
-      "description": "",
+      "amount_diskon": promoAmount.value,
+      "description": wishListFirstProduct.value,
       "bundling": true,
-      "bimbel_parent_id": 0,
-      "kode_promo": "",
+      // "bimbel_parent_id": 0,
+      "kode_promo": promoCodeName.value,
       "items": getSelectedItems(),
       "source": "",
       "useBalance": false,
@@ -170,12 +206,18 @@ class PaymentWhislistController extends GetxController {
       "payment_type": paymentType.value,
       "mobile_number": ovoNumber.value,
     };
-    print("xxx ${payload.toString()}");
-    // final response = await _restClient.postData(
-    //   url: baseUrl + apiCreatePayment,
-    //   payload: payload,
-    // );
-
-    //  Get.toNamed(Routes.PAYMENT_CHECKOUT);
+    print("xxx${payload.toString()}");
+    final result = await _restClient.postData(
+      url: baseUrl + apiCreatePayment,
+      payload: payload,
+    );
+    if (result["status"] == "success") {
+      Get.toNamed(
+        Routes.PAYMENT_CHECKOUT,
+        arguments: result['data']['payment_id'],
+      );
+    } else {
+      print("Error: $result");
+    }
   }
 }

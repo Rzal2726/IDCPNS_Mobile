@@ -92,8 +92,15 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                             maintainState: true,
                                             child: GestureDetector(
                                               onTap: () {
+                                                // hapus paket dari selected
                                                 controller.selectedPaketPerCard
                                                     .remove(data['id']);
+
+                                                // langsung hapus promo code dan reset amountPromo
+                                                controller.promoController
+                                                    .clear();
+                                                controller.promoAmount.value =
+                                                    0;
                                               },
                                               child: Container(
                                                 padding: EdgeInsets.all(4),
@@ -111,24 +118,6 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
 
                                     SizedBox(height: 8),
 
-                                    // list radio option
-                                    // Column(
-                                    //   children: [
-                                    //     for (var subData
-                                    //         in (data['productDetail']?['is_not_purchased'] ??
-                                    //             []))
-                                    //       _buildRadioOption(
-                                    //         '${subData['name']}',
-                                    //         subData['id'], // paket id
-                                    //         data['id'], // parent id
-                                    //         subData['final_price'],
-                                    //         data['bimbel_parent_id'] != null
-                                    //             ? true
-                                    //             : false,
-                                    //         controller,
-                                    //       ),
-                                    //   ],
-                                    // ),
                                     Column(
                                       children:
                                           data['bimbel_parent_id'] != null
@@ -138,12 +127,14 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                     in (data['productDetail']?['is_not_purchased'] ??
                                                         []))
                                                   _buildRadioOption(
-                                                    '${subData['name']}',
-                                                    subData['id'],
-                                                    data['id'],
+                                                    subData['name'],
+                                                    subData['id'], // id sub-paket sebagai value
+                                                    data['id'], // parent id
                                                     subData['final_price'],
-                                                    true,
+                                                    true, // isBimbel
                                                     controller,
+                                                    type:
+                                                        "bimbel", // tambahkan type
                                                   ),
                                               ]
                                               : [
@@ -155,6 +146,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                   data['productDetail']?['harga_fix'],
                                                   false,
                                                   controller,
+                                                  type: "tryout", // type tryout
                                                 ),
                                               ],
                                     ),
@@ -167,34 +159,6 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                     ),
                   ),
                   SizedBox(height: 20),
-
-                  // ListView.builder(
-                  //   shrinkWrap: true,
-                  //   physics: NeverScrollableScrollPhysics(),
-                  //   itemCount: controller.wishLishData.length,
-                  //   itemBuilder: (context, index) {
-                  //     final item = controller.wishLishData[index];
-                  //     return Padding(
-                  //       padding: EdgeInsets.only(bottom: 20),
-                  //       child: buildProductSection(
-                  //         parentId: item['bimbel_parent_id'],
-                  //         title:
-                  //             item['productDetail']['name'] ??
-                  //             item['productDetail']['formasi'],
-                  //         selectedValue: controller.selectedPaketLainnya.value,
-                  //         onChanged: (v) => controller.pilihPaketLainnya(v),
-                  //         productDetail: item['productDetail'],
-                  //         isChecked: controller.productChecked[index] ?? false,
-                  //         // tambahin ini
-                  //         onCheckChanged:
-                  //             (v) => controller.toggleCheck(
-                  //               index,
-                  //               v ?? false,
-                  //             ), // tambahin ini
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
 
                   // Paket Lainnya
                   SizedBox(height: 15),
@@ -222,11 +186,32 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                       ),
                       child: Row(
                         children: [
-                          Container(
-                            width: 36,
-                            height: 36,
-                            child: Icon(Icons.credit_card, color: Colors.teal),
-                          ),
+                          Obx(() {
+                            if (controller.paymentImage.value.isEmpty) {
+                              return Container(
+                                width: 36,
+                                height: 36,
+                                child: Icon(
+                                  Icons.credit_card,
+                                  color: Colors.teal,
+                                ),
+                              );
+                            } else {
+                              return Container(
+                                width: 50,
+                                height: 50,
+                                child: SvgPicture.network(
+                                  controller.paymentImage.value,
+                                  fit: BoxFit.contain,
+                                  placeholderBuilder:
+                                      (_) => Icon(
+                                        Icons.credit_card,
+                                        color: Colors.teal,
+                                      ),
+                                ),
+                              );
+                            }
+                          }),
                           SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -284,9 +269,30 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                       ),
                     ),
                   ),
+                  Visibility(
+                    visible: controller.promoAmount.value != 0,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle, // icon ceklis bulat
+                              color: Colors.green,
+                              size: 20, // bisa disesuaikan
+                            ),
+                            SizedBox(width: 6), // jarak antara icon dan text
+                            Text(
+                              "Kode promo berhasil digunakan.",
+                              style: TextStyle(color: Colors.green),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
 
-                  SizedBox(height: 12),
-                  SizedBox(height: 12),
+                  SizedBox(height: 24),
 
                   // Rincian Pesanan
                   Text(
@@ -306,7 +312,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                             ),
                           ),
                           Text(
-                            "Rp.${controller.getTotalHargaFix()}",
+                            "${formatRupiah(controller.getTotalHargaFix())}",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -325,7 +331,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                             ),
                           ),
                           Text(
-                            "Rp.${controller.getTotalHargaFix()}",
+                            "${formatRupiah((controller.getTotalHargaFix() - controller.promoAmount.value))}",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -371,21 +377,6 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
       ),
     );
   }
-
-  Widget _rowItem(String label, String value, {bool bold = false}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label),
-        Text(
-          value,
-          style: TextStyle(
-            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 Widget _buildRadioOption(
@@ -394,8 +385,9 @@ Widget _buildRadioOption(
   int parentId,
   int hargaFix,
   bool isBimbel,
-  PaymentWhislistController controller,
-) {
+  PaymentWhislistController controller, {
+  String type = "tryout", // default type
+}) {
   return Padding(
     padding: EdgeInsets.symmetric(vertical: 4),
     child: Row(
@@ -410,8 +402,9 @@ Widget _buildRadioOption(
                 onChanged: (value) {
                   if (value != null) {
                     controller.pilihPaket(parentId, {
-                      "id": value, // simpan id paket
-                      "harga_fix": hargaFix, // simpan harga_fix paket ini
+                      "type": type, // simpan type
+                      "id": value, // id paket
+                      "harga_fix": hargaFix,
                     });
                   }
                 },
@@ -498,8 +491,17 @@ void showPaymentBottomSheet(BuildContext context) {
                                   subtitle:
                                       "Biaya Admin: ${method['biaya_admin']}",
                                   onTap: () {
-                                    if (method['code'] == "OVO") Get.back();
-                                    showPhoneNumberBottomSheet(context);
+                                    Get.back();
+                                    controller.paymentMethod.value =
+                                        method['code'];
+                                    controller.paymentMethodId.value =
+                                        method['id'];
+                                    controller.paymentImage.value =
+                                        method['image_url'];
+                                    controller.paymentType.value = data['code'];
+
+                                    if (method['code'] == "OVO")
+                                      showPhoneNumberBottomSheet(context);
                                   },
                                 ),
                               ),
@@ -591,79 +593,89 @@ void showPromoCodeBottomSheet(BuildContext context) {
         child: Obx(() {
           return controller.paymantListData.isEmpty
               ? Center(child: CircularProgressIndicator())
-              : SizedBox(
-                height: MediaQuery.of(context).size.height * 0.25,
-                child: SingleChildScrollView(
-                  padding: AppStyle.contentPadding,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Voucher",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.close),
-                            onPressed: () => Get.back(),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 12),
-
-                      Padding(
-                        padding: EdgeInsets.only(top: 1),
-                        child: Row(
+              : Padding(
+                padding: EdgeInsets.only(
+                  bottom:
+                      MediaQuery.of(context)
+                          .viewInsets
+                          .bottom, // ini bikin konten naik saat keyboard muncul
+                ),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  child: SingleChildScrollView(
+                    padding: AppStyle.contentPadding,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: TextField(
-                                controller: controller.promoController,
-                                decoration: InputDecoration(
-                                  hintText: "Cari",
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                    borderSide: BorderSide(color: Colors.teal),
-                                  ),
-                                ),
+                            Text(
+                              "Voucher",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(width: 8),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.teal,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 14,
-                                ),
-                              ),
-                              onPressed: () {
-                                controller.getApplyCode();
-                                Get.back();
-                              },
-                              child: Text(
-                                "Klaim",
-                                style: TextStyle(color: Colors.white),
-                              ),
+                            IconButton(
+                              icon: Icon(Icons.close),
+                              onPressed: () => Get.back(),
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 12),
+
+                        Padding(
+                          padding: EdgeInsets.only(top: 1),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: controller.promoController,
+                                  decoration: InputDecoration(
+                                    hintText: "Cari",
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 10,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                      borderSide: BorderSide(
+                                        color: Colors.teal,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 14,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  controller.getApplyCode();
+                                  Get.back();
+                                },
+                                child: Text(
+                                  "Klaim",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );

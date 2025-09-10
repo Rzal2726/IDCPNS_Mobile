@@ -1,18 +1,26 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class PaymentCheckoutController extends GetxController {
-  //TODO: Implement PaymentCheckoutController
-
-  var countdown = "23:59:55".obs;
-  var bank = "BANK BRI".obs;
-  var vaNumber = "262159999402839".obs;
-  var namaAkun = "IDC PNS INDONESIA".obs;
-  var totalHarga = 203440.obs;
-
+  final _restClient = RestClient();
+  var uuid = Get.arguments;
+  Timer? _paymentTimer;
+  RxList<String> option = ["ATM", "MBanking"].obs;
+  RxString selectedOption = "ATM".obs;
+  RxString timeStamp = "".obs;
+  RxBool isDeveloper = false.obs;
+  RxMap transactionData = {}.obs;
+  RxMap paymentDetails = {}.obs;
   var selectedTab = "ATM".obs;
 
   @override
   void onInit() {
+    fetchDetailPayment();
+    fetchServerTime();
+    startFetchingDetailPayment();
     super.onInit();
   }
 
@@ -24,6 +32,43 @@ class PaymentCheckoutController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  void startFetchingDetailPayment() {
+    // Hentikan timer lama jika ada
+    _paymentTimer?.cancel();
+
+    // Jalankan timer periodic setiap 5 detik
+    _paymentTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      fetchDetailPayment();
+      fetchServerTime();
+    });
+  }
+
+  void simulatePayment() async {
+    final payload = {"payment_id": paymentDetails['payment_id']};
+    final response = await _restClient.postData(
+      url: baseUrl + apiEnhaSimulateTransaction,
+      payload: payload,
+    );
+
+    print('Data: ${response}');
+    Get.offNamed("/pembayaran-berhasil");
+  }
+
+  void fetchServerTime() async {
+    final response = await _restClient.getData(url: baseUrl + apiGetServerTime);
+
+    int timestampInMilliseconds =
+        response['data']; // timestamp dari server (dalam detik)
+
+    // Konversi ke DateTime
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+      timestampInMilliseconds * 1000,
+    );
+
+    // Simpan hasil ke observable
+    timeStamp.value = dateTime.toString();
   }
 
   final instruksiATM = [
@@ -47,6 +92,50 @@ class PaymentCheckoutController extends GetxController {
 
   void cekStatus() {
     Get.snackbar("Pembayaran", "Cek status pembayaran (dummy)");
+  }
+
+  void fetchDetailPayment() async {
+    // Ambil data transaksi dari controller sebelumnya
+    final response = await _restClient.getData(
+      url: baseUrl + apiGetPaymentDetail + "/" + uuid,
+    );
+
+    // Ambil data dari response, pakai Map aja
+    var data = Map.from(response['data']);
+
+    // Cek level user
+    if (data['user']['level']['id'] == 3) {
+      isDeveloper.value = true;
+    }
+
+    // Assign data ke observable
+    paymentDetails.assignAll(data);
+
+    // Logika pembayaran
+    if (paymentDetails.isNotEmpty) {
+      if (paymentDetails['tanggal_paid'] == null) {
+        print("Belum Dibayar");
+        if (compareTimeStamp(paymentDetails['tanggal_kadaluarsa'])) {
+          Get.offAllNamed("/tryout");
+        }
+      } else {
+        Get.offNamed("/pembayaran-berhasil");
+        print("Sudah Dibayar");
+      }
+    }
+  }
+
+  bool compareTimeStamp(String fixedDateString) {
+    // Convert string ke DateTime
+    DateTime fixedDate = DateTime.parse(fixedDateString);
+
+    // Convert timeStamp.value (string) ke DateTime
+    DateTime currentDate = DateTime.parse(timeStamp.value);
+
+    // Bandingkan
+    print("kadaluarsa: ${fixedDate}");
+    print("timeStamp: ${currentDate}");
+    return currentDate.isAfter(fixedDate); // true jika currentDate > fixedDate
   }
 
   List<String> get instruksiAktif {

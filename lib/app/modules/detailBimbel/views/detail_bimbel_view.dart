@@ -258,7 +258,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                           '${subData['name']}',
                           '${formatRupiah(subData['harga'])}',
                           '${formatRupiah(subData['harga_fix'])}',
-                          subData['id'],
+                          subData['uuid'],
                           controller,
                         ),
                     ],
@@ -333,7 +333,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                     }
                     Get.toNamed(
                       Routes.PAYMENT_DETAIL,
-                      arguments: [data["uuid"], controller.selectedPaket.value],
+                      arguments: controller.selectedPaket.value,
                     );
                   },
                   child: Text(
@@ -386,7 +386,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
     String title,
     String oldPrice,
     String newPrice,
-    int id,
+    String uuid, // ganti tipe ke String
     DetailBimbelController controller,
   ) {
     return Padding(
@@ -399,11 +399,13 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Radio<int>(
-                value: id, // ✅ sekarang valuenya ID, bukan title
+              Radio<String>(
+                value: uuid, // ✅ sekarang valuenya ID, bukan title
                 groupValue: controller.selectedPaket.value,
                 onChanged: (value) {
-                  controller.pilihPaket(value!); // yg kepilih ID
+                  if (value != null) {
+                    controller.pilihPaket(value); // yang kepilih sekarang UUID
+                  }
                 },
                 activeColor: Colors.teal,
               ),
