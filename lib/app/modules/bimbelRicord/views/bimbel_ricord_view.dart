@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/modules/bimbelRicord/controllers/bimbel_ricord_controller.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -61,15 +63,21 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
                         children: [
                           AspectRatio(
                             aspectRatio: 16 / 9,
-                            child: YoutubePlayer(
-                              controller: YoutubePlayerController(
-                                initialVideoId:
-                                    YoutubePlayer.convertUrlToId(
-                                      video['url'] ?? '',
-                                    )!,
-                                flags: YoutubePlayerFlags(autoPlay: true),
+                            child: InAppWebView(
+                              initialUrlRequest: URLRequest(
+                                url: WebUri(
+                                  "https://www.youtube.com/embed/${YoutubePlayer.convertUrlToId(video['url'] ?? '')}?autoplay=1&modestbranding=1&rel=0",
+                                ),
+                                headers: {
+                                  "Referer": refererUrl,
+                                  "User-Agent":
+                                      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+                                },
                               ),
-                              showVideoProgressIndicator: true,
+                              // optional: tambahin listener kalau mau
+                              onLoadError: (controller, url, code, message) {
+                                debugPrint("Gagal load video: $message");
+                              },
                             ),
                           ),
                           Row(

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
@@ -173,18 +174,45 @@ class PaymentUpgradeAkunController extends GetxController {
   }
 
   void applyCode(String code) async {
-    final payload = {"kode_promo": code, "amount": totalHarga.toString()};
-    final response = await restClient.postData(
-      url: baseUrl + apiApplyVoucher,
-      payload: payload,
-    );
+    try {
+      final payload = {"kode_promo": code, "amount": totalHarga.toString()};
+      final response = await restClient.postData(
+        url: baseUrl + apiApplyVoucher,
+        payload: payload,
+      );
 
-    diskon.value = double.parse(response['data']['nominal'].toString());
-    promoCode.value = code;
-    initHarga();
+      if (response['data'] == null) {
+        Get.snackbar(
+          "Gagal",
+          "Kode promo tidak tersedia",
+          backgroundColor: Colors.pink,
+          colorText: Colors.white,
+        );
+      } else {
+        diskon.value = double.parse(response['data']['nominal'].toString());
+        promoCode.value = code;
+        initHarga();
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Gagal",
+        "Kode promo tidak tersedia",
+        backgroundColor: Colors.pink,
+        colorText: Colors.white,
+      );
+    }
   }
 
   void createPayment() async {
+    if (selectedPaymentMethod.isEmpty) {
+      Get.snackbar(
+        "Gagal",
+        "Silahlan pilih metode pembayaran terlebih dahulu",
+        backgroundColor: Colors.pink,
+        colorText: Colors.white,
+      );
+      return;
+    }
     final payload = {
       "type": "upgrade",
       "total_amount": totalHarga.value,
@@ -240,5 +268,11 @@ class PaymentUpgradeAkunController extends GetxController {
 
   void initHarga() {
     totalHarga.value = (biayaAdmin.value + harga.value - diskon.value);
+  }
+
+  void removeCode() {
+    promoCode.value = "";
+    diskon.value = 0;
+    initHarga();
   }
 }

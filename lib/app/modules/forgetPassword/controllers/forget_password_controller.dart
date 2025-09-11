@@ -36,6 +36,7 @@ class ForgetPasswordController extends GetxController {
 
 void showEmailSentBottomSheet(BuildContext context) {
   showModalBottomSheet(
+    useSafeArea: false,
     context: context,
     isDismissible: false,
     backgroundColor: Colors.white,

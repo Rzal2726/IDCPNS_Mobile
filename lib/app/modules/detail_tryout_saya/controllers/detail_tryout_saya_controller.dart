@@ -54,6 +54,7 @@ class DetailTryoutSayaController extends GetxController {
   }
 
   Future<void> initTryoutSaya() async {
+    loading['chart'] = true;
     localStorage = await SharedPreferences.getInstance();
     lateUuid = await Get.arguments as String;
 
@@ -63,6 +64,7 @@ class DetailTryoutSayaController extends GetxController {
     await getInstansi();
     await getJabatan();
     await getStatsNilai();
+    loading['chart'] = false;
   }
 
   Future<void> getDetailTryout() async {
@@ -89,7 +91,6 @@ class DetailTryoutSayaController extends GetxController {
 
   Future<void> getStatsNilai() async {
     try {
-      loading['chart'] = true;
       final response = await restClient.getData(
         url: baseUrl + apiGetNilaiDetail + lateUuid,
       );
@@ -139,10 +140,7 @@ class DetailTryoutSayaController extends GetxController {
         }
       }
     } catch (e) {
-      loading['chart'] = false;
       return;
-    } finally {
-      loading['chart'] = false;
     }
   }
 

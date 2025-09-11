@@ -78,575 +78,611 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
           ],
         ),
       ),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text("Pembahasan"),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications_rounded, color: Colors.teal),
-                onPressed: () {
-                  // ✅ Best practice: use a function for navigation
-                  Get.to(() => NotificationView());
-                },
-              ),
-              Positioned(
-                right: 10,
-                top: 10,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '4',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                ),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(25),
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
-        ],
+          child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            title: Text("Pembahasan"),
+            actions: [
+              Stack(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.notifications_rounded, color: Colors.teal),
+                    onPressed: () {
+                      // ✅ Best practice: use a function for navigation
+                      Get.to(() => NotificationView());
+                    },
+                  ),
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '4',
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Card(
-                color: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 0),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(width: double.infinity),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Obx(
-                            () =>
-                                controller.listPembahasan.isEmpty
-                                    ? Skeletonizer(
-                                      child: Text(
-                                        "Soal No.",
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Card(
+                  color: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(width: 0),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(width: double.infinity),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Obx(
+                              () =>
+                                  controller.listPembahasan.isEmpty
+                                      ? Skeletonizer(
+                                        child: Text(
+                                          "Soal No.",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      )
+                                      : Text(
+                                        "Soal No.${controller.listPembahasan[controller.currentNumber.value]['no_soal'].toString()}",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
                                         ),
                                       ),
-                                    )
-                                    : Text(
-                                      "Soal No.${controller.listPembahasan[controller.currentNumber.value]['no_soal'].toString()}",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                          ),
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.white,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(16),
-                                      ),
-                                    ),
-                                    context: context,
-                                    builder: (context) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          left: 16,
-                                          right: 16,
-                                          top: 16,
-                                          bottom:
-                                              MediaQuery.of(
-                                                context,
-                                              ).viewInsets.bottom +
-                                              16,
+                            ),
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.white,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(16),
                                         ),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              // Header modal
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                      ),
+                                      context: context,
+                                      builder: (context) {
+                                        return SafeArea(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                              left: 16,
+                                              right: 16,
+                                              top: 16,
+                                              bottom:
+                                                  MediaQuery.of(
+                                                    context,
+                                                  ).viewInsets.bottom +
+                                                  16,
+                                            ),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  const Text(
-                                                    "Laporkan Soal",
+                                                  // Header modal
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      const Text(
+                                                        "Laporkan Soal",
+                                                        style: TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      IconButton(
+                                                        icon: const Icon(
+                                                          Icons.close,
+                                                        ),
+                                                        onPressed:
+                                                            () => Navigator.pop(
+                                                              context,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const Divider(height: 1),
+                                                  const SizedBox(height: 12),
+                                                  Text(
+                                                    "Silahkan isi form di bawah untuk melaporkan soal:",
                                                     style: TextStyle(
-                                                      fontSize: 18,
                                                       fontWeight:
                                                           FontWeight.bold,
+                                                      fontSize: 14,
                                                     ),
                                                   ),
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Icons.close,
+                                                  const SizedBox(height: 16),
+                                                  TextField(
+                                                    controller:
+                                                        controller
+                                                            .laporanController,
+                                                    maxLines: 6,
+                                                    decoration: InputDecoration(
+                                                      hintText:
+                                                          "Isi laporan...",
+                                                      border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              8,
+                                                            ),
+                                                      ),
+                                                      contentPadding:
+                                                          const EdgeInsets.all(
+                                                            12,
+                                                          ),
                                                     ),
-                                                    onPressed:
-                                                        () => Navigator.pop(
-                                                          context,
+                                                  ),
+                                                  const SizedBox(height: 20),
+                                                  SizedBox(
+                                                    width: double.infinity,
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.teal,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
                                                         ),
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              vertical: 14,
+                                                            ),
+                                                      ),
+                                                      onPressed: () {
+                                                        if (controller
+                                                                    .laporanController
+                                                                    .text ==
+                                                                "" ||
+                                                            controller
+                                                                .laporanController
+                                                                .text
+                                                                .isEmpty) {
+                                                          Get.snackbar(
+                                                            "Gagal",
+                                                            "Isi laporan terlebih dahulu!",
+                                                            backgroundColor:
+                                                                Colors.pink,
+                                                            colorText:
+                                                                Colors.white,
+                                                          );
+
+                                                          return;
+                                                        }
+                                                        controller.sendLaporSoal(
+                                                          questionId:
+                                                              controller
+                                                                  .listPembahasan[controller
+                                                                  .currentNumber
+                                                                  .value]['id'],
+                                                          laporan:
+                                                              controller
+                                                                  .laporanController
+                                                                  .text,
+                                                          context: context,
+                                                        );
+
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text(
+                                                        "Kirim Laporan",
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
-                                              const Divider(height: 1),
-                                              const SizedBox(height: 12),
-                                              Text(
-                                                "Silahkan isi form di bawah untuk melaporkan soal:",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 16),
-                                              TextField(
-                                                controller:
-                                                    controller
-                                                        .laporanController,
-                                                maxLines: 6,
-                                                decoration: InputDecoration(
-                                                  hintText: "Isi laporan...",
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
-                                                  ),
-                                                  contentPadding:
-                                                      const EdgeInsets.all(12),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 20),
-                                              SizedBox(
-                                                width: double.infinity,
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.teal,
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
-                                                    ),
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          vertical: 14,
-                                                        ),
-                                                  ),
-                                                  onPressed: () {
-                                                    if (controller
-                                                                .laporanController
-                                                                .text ==
-                                                            "" ||
-                                                        controller
-                                                            .laporanController
-                                                            .text
-                                                            .isEmpty) {
-                                                      Get.snackbar(
-                                                        "Gagal",
-                                                        "Isi laporan terlebih dahulu!",
-                                                        backgroundColor:
-                                                            Colors.pink,
-                                                        colorText: Colors.white,
-                                                      );
-
-                                                      return;
-                                                    }
-                                                    controller.sendLaporSoal(
-                                                      questionId:
-                                                          controller
-                                                              .listPembahasan[controller
-                                                              .currentNumber
-                                                              .value]['id'],
-                                                      laporan:
-                                                          controller
-                                                              .laporanController
-                                                              .text,
-                                                      context: context,
-                                                    );
-
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text(
-                                                    "Kirim Laporan",
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
+                                            ),
                                           ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: Icon(Icons.flag, color: Colors.pink),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      backgroundColor: Colors.white,
+                                      isScrollControlled: true, // <-- penting
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(16),
                                         ),
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: Icon(Icons.flag, color: Colors.pink),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    backgroundColor: Colors.white,
-                                    isScrollControlled: true, // <-- penting
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(16),
                                       ),
-                                    ),
-                                    builder: (context) {
-                                      return DraggableScrollableSheet(
-                                        expand: false,
-                                        initialChildSize:
-                                            0.7, // 70% tinggi layar saat muncul
-                                        minChildSize: 0.4,
-                                        maxChildSize: 0.95,
-                                        builder: (context, scrollController) {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(16),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                // drag handle
-                                                Center(
-                                                  child: Container(
-                                                    width: 40,
-                                                    height: 4,
-                                                    margin:
-                                                        const EdgeInsets.all(
-                                                          16,
-                                                        ),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.black26,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            2,
-                                                          ),
-                                                    ),
-                                                  ),
+                                      builder: (context) {
+                                        return SafeArea(
+                                          child: DraggableScrollableSheet(
+                                            expand: false,
+                                            initialChildSize:
+                                                0.7, // 70% tinggi layar saat muncul
+                                            minChildSize: 0.4,
+                                            maxChildSize: 0.95,
+                                            builder: (
+                                              context,
+                                              scrollController,
+                                            ) {
+                                              return Padding(
+                                                padding: const EdgeInsets.all(
+                                                  16,
                                                 ),
-                                                const Text(
-                                                  "List Nomor Soal",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 12),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  spacing: 12,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    Row(
-                                                      spacing: 4,
-                                                      children: [
-                                                        Icon(
-                                                          Icons.circle,
-                                                          color: Colors.teal,
+                                                    // drag handle
+                                                    Center(
+                                                      child: Container(
+                                                        width: 40,
+                                                        height: 4,
+                                                        margin:
+                                                            const EdgeInsets.all(
+                                                              16,
+                                                            ),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.black26,
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                2,
+                                                              ),
                                                         ),
-                                                        Text("Benar"),
+                                                      ),
+                                                    ),
+                                                    const Text(
+                                                      "List Nomor Soal",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 12),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      spacing: 12,
+                                                      children: [
+                                                        Row(
+                                                          spacing: 4,
+                                                          children: [
+                                                            Icon(
+                                                              Icons.circle,
+                                                              color:
+                                                                  Colors.teal,
+                                                            ),
+                                                            Text("Benar"),
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          spacing: 4,
+                                                          children: [
+                                                            Icon(
+                                                              Icons.circle,
+                                                              color:
+                                                                  Colors.pink,
+                                                            ),
+                                                            Text("Salah"),
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          spacing: 4,
+                                                          children: [
+                                                            Icon(
+                                                              Icons.circle,
+                                                              color:
+                                                                  Colors.grey,
+                                                            ),
+                                                            Text("Kosong"),
+                                                          ],
+                                                        ),
                                                       ],
                                                     ),
-                                                    Row(
-                                                      spacing: 4,
-                                                      children: [
-                                                        Icon(
-                                                          Icons.circle,
-                                                          color: Colors.pink,
-                                                        ),
-                                                        Text("Salah"),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      spacing: 4,
-                                                      children: [
-                                                        Icon(
-                                                          Icons.circle,
-                                                          color: Colors.grey,
-                                                        ),
-                                                        Text("Kosong"),
-                                                      ],
+                                                    const SizedBox(height: 12),
+
+                                                    // isi grid scrollable
+                                                    Expanded(
+                                                      child: Obx(() {
+                                                        if (controller
+                                                            .listPembahasan
+                                                            .isEmpty) {
+                                                          return const Center(
+                                                            child:
+                                                                CircularProgressIndicator(),
+                                                          );
+                                                        }
+
+                                                        return GridView.builder(
+                                                          controller:
+                                                              scrollController, // <-- pakai controller dari Draggable
+                                                          gridDelegate:
+                                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                                                crossAxisCount:
+                                                                    5,
+                                                                crossAxisSpacing:
+                                                                    6,
+                                                                mainAxisSpacing:
+                                                                    6,
+                                                                childAspectRatio:
+                                                                    1.8, // sesuaikan biar tombolnya pas
+                                                              ),
+                                                          itemCount:
+                                                              controller
+                                                                  .listPembahasan
+                                                                  .length,
+                                                          itemBuilder: (
+                                                            context,
+                                                            index,
+                                                          ) {
+                                                            final item =
+                                                                controller
+                                                                    .listPembahasan[index];
+                                                            bool
+                                                            hasTransaction =
+                                                                item['options'].any(
+                                                                  (option) =>
+                                                                      option['transaction'] !=
+                                                                      null,
+                                                                );
+                                                            final options =
+                                                                item['options']
+                                                                    as List;
+
+                                                            // Cari jawaban yang dipilih (punya transaction)
+                                                            final selectedOption =
+                                                                options.firstWhere(
+                                                                  (option) =>
+                                                                      option['transaction'] !=
+                                                                      null,
+                                                                  orElse:
+                                                                      () =>
+                                                                          null,
+                                                                );
+                                                            return ElevatedButton(
+                                                              style: ElevatedButton.styleFrom(
+                                                                backgroundColor:
+                                                                    hasTransaction
+                                                                        ? selectedOption['iscorrect'] ==
+                                                                                1
+                                                                            ? Colors.teal.shade100
+                                                                            : Colors.pink.shade100
+                                                                        : Colors
+                                                                            .grey,
+                                                                foregroundColor:
+                                                                    Colors
+                                                                        .black,
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        8,
+                                                                      ),
+                                                                  side: BorderSide(
+                                                                    width:
+                                                                        controller.currentNumber.value ==
+                                                                                index
+                                                                            ? 4
+                                                                            : 1,
+                                                                    color:
+                                                                        controller.currentNumber.value ==
+                                                                                index
+                                                                            ? Colors.amber
+                                                                            : Colors.transparent,
+                                                                  ),
+                                                                ),
+                                                                padding:
+                                                                    const EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          12,
+                                                                      vertical:
+                                                                          10,
+                                                                    ),
+                                                                elevation: 0,
+                                                              ),
+                                                              onPressed: () {
+                                                                controller
+                                                                    .currentNumber
+                                                                    .value = index;
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
+                                                              },
+                                                              child: Text(
+                                                                item['no_soal']
+                                                                    .toString(),
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+                                                      }),
                                                     ),
                                                   ],
                                                 ),
-                                                const SizedBox(height: 12),
-
-                                                // isi grid scrollable
-                                                Expanded(
-                                                  child: Obx(() {
-                                                    if (controller
-                                                        .listPembahasan
-                                                        .isEmpty) {
-                                                      return const Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
-                                                      );
-                                                    }
-
-                                                    return GridView.builder(
-                                                      controller:
-                                                          scrollController, // <-- pakai controller dari Draggable
-                                                      gridDelegate:
-                                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                                            crossAxisCount: 5,
-                                                            crossAxisSpacing: 6,
-                                                            mainAxisSpacing: 6,
-                                                            childAspectRatio:
-                                                                1.8, // sesuaikan biar tombolnya pas
-                                                          ),
-                                                      itemCount:
-                                                          controller
-                                                              .listPembahasan
-                                                              .length,
-                                                      itemBuilder: (
-                                                        context,
-                                                        index,
-                                                      ) {
-                                                        final item =
-                                                            controller
-                                                                .listPembahasan[index];
-                                                        bool hasTransaction =
-                                                            item['options'].any(
-                                                              (option) =>
-                                                                  option['transaction'] !=
-                                                                  null,
-                                                            );
-                                                        final options =
-                                                            item['options']
-                                                                as List;
-
-                                                        // Cari jawaban yang dipilih (punya transaction)
-                                                        final selectedOption =
-                                                            options.firstWhere(
-                                                              (option) =>
-                                                                  option['transaction'] !=
-                                                                  null,
-                                                              orElse:
-                                                                  () => null,
-                                                            );
-                                                        return ElevatedButton(
-                                                          style: ElevatedButton.styleFrom(
-                                                            backgroundColor:
-                                                                hasTransaction
-                                                                    ? selectedOption['iscorrect'] ==
-                                                                            1
-                                                                        ? Colors
-                                                                            .teal
-                                                                            .shade100
-                                                                        : Colors
-                                                                            .pink
-                                                                            .shade100
-                                                                    : Colors
-                                                                        .grey,
-                                                            foregroundColor:
-                                                                Colors.black,
-                                                            shape: RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    8,
-                                                                  ),
-                                                              side: BorderSide(
-                                                                width:
-                                                                    controller.currentNumber.value ==
-                                                                            index
-                                                                        ? 4
-                                                                        : 1,
-                                                                color:
-                                                                    controller.currentNumber.value ==
-                                                                            index
-                                                                        ? Colors
-                                                                            .amber
-                                                                        : Colors
-                                                                            .transparent,
-                                                              ),
-                                                            ),
-                                                            padding:
-                                                                const EdgeInsets.symmetric(
-                                                                  horizontal:
-                                                                      12,
-                                                                  vertical: 10,
-                                                                ),
-                                                            elevation: 0,
-                                                          ),
-                                                          onPressed: () {
-                                                            controller
-                                                                .currentNumber
-                                                                .value = index;
-                                                            Navigator.pop(
-                                                              context,
-                                                            );
-                                                          },
-                                                          child: Text(
-                                                            item['no_soal']
-                                                                .toString(),
-                                                          ),
-                                                        );
-                                                      },
-                                                    );
-                                                  }),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: Icon(
-                                  Icons.list,
-                                  color: Colors.teal, // warna tombol,
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: Icon(
+                                    Icons.list,
+                                    color: Colors.teal, // warna tombol,
+                                  ),
                                 ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        //Soal
+                        Obx(
+                          () =>
+                              controller.listPembahasan.isEmpty
+                                  ? Skeletonizer(
+                                    child: Text(
+                                      "<p>Adelaide adalah nama sebuah tempat, sehingga <i>pronoun</i> yang digunakan dapat menggunakan <i>where</i>.</p>",
+                                    ),
+                                  )
+                                  : Html(
+                                    data:
+                                        controller.listPembahasan[controller
+                                            .currentNumber
+                                            .value]['soal'],
+                                  ),
+                        ),
+
+                        Obx(() {
+                          if (controller.listPembahasan.isEmpty) {
+                            return Skeletonizer(
+                              child: Text(
+                                "<p>Adelaide adalah nama sebuah tempat, sehingga <i>pronoun</i> yang digunakan dapat menggunakan <i>where</i>.</p>",
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      //Soal
-                      Obx(
-                        () =>
-                            controller.listPembahasan.isEmpty
-                                ? Skeletonizer(
-                                  child: Text(
-                                    "<p>Adelaide adalah nama sebuah tempat, sehingga <i>pronoun</i> yang digunakan dapat menggunakan <i>where</i>.</p>",
-                                  ),
-                                )
-                                : Html(
-                                  data:
-                                      controller.listPembahasan[controller
-                                          .currentNumber
-                                          .value]['soal'],
-                                ),
-                      ),
-
-                      Obx(() {
-                        if (controller.listPembahasan.isEmpty) {
-                          return Skeletonizer(
-                            child: Text(
-                              "<p>Adelaide adalah nama sebuah tempat, sehingga <i>pronoun</i> yang digunakan dapat menggunakan <i>where</i>.</p>",
+                            );
+                          }
+                          final data =
+                              controller.listPembahasan[controller
+                                  .currentNumber
+                                  .value];
+                          return SizedBox(
+                            width: double.infinity,
+                            child: ListView.builder(
+                              shrinkWrap:
+                                  true, // <- penting agar ukuran mengikuti konten
+                              physics:
+                                  const NeverScrollableScrollPhysics(), // biar ga bentrok scroll parent
+                              itemCount: data['options'].length,
+                              itemBuilder: (context, index) {
+                                final optionData = data['options'][index];
+                                return _option(
+                                  optionData['inisial'],
+                                  optionData['jawaban'],
+                                  optionData['iscorrect'],
+                                  optionData['transaction'],
+                                );
+                              },
                             ),
                           );
-                        }
-                        final data =
-                            controller.listPembahasan[controller
-                                .currentNumber
-                                .value];
-                        return SizedBox(
-                          width: double.infinity,
-                          child: ListView.builder(
-                            shrinkWrap:
-                                true, // <- penting agar ukuran mengikuti konten
-                            physics:
-                                const NeverScrollableScrollPhysics(), // biar ga bentrok scroll parent
-                            itemCount: data['options'].length,
-                            itemBuilder: (context, index) {
-                              final optionData = data['options'][index];
-                              return _option(
-                                optionData['inisial'],
-                                optionData['jawaban'],
-                                optionData['iscorrect'],
-                                optionData['transaction'],
-                              );
-                            },
+                        }),
+                        SizedBox(height: 16),
+                        Text(
+                          "Pembahasan",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
                           ),
-                        );
-                      }),
-                      SizedBox(height: 16),
-                      Text(
-                        "Pembahasan",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
                         ),
-                      ),
-                      //Pembahasan
-                      Obx(
-                        () =>
-                            controller.listPembahasan.isEmpty
-                                ? Skeletonizer(
-                                  child: Text(
-                                    "<p>Adelaide adalah nama sebuah tempat, sehingga <i>pronoun</i> yang digunakan dapat menggunakan <i>where</i>.</p>",
+                        //Pembahasan
+                        Obx(
+                          () =>
+                              controller.listPembahasan.isEmpty
+                                  ? Skeletonizer(
+                                    child: Text(
+                                      "<p>Adelaide adalah nama sebuah tempat, sehingga <i>pronoun</i> yang digunakan dapat menggunakan <i>where</i>.</p>",
+                                    ),
+                                  )
+                                  : Html(
+                                    data:
+                                        controller.listPembahasan[controller
+                                            .currentNumber
+                                            .value]['pembahasan'],
                                   ),
-                                )
-                                : Html(
-                                  data:
-                                      controller.listPembahasan[controller
-                                          .currentNumber
-                                          .value]['pembahasan'],
-                                ),
-                      ),
-                      Text(
-                        "Bobot Opsi Jawaban",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
                         ),
-                      ),
-                      Obx(() {
-                        if (controller.listPembahasan.isEmpty) {
-                          return Skeletonizer(
-                            child: Text(
-                              "<p>Adelaide adalah nama sebuah tempat, sehingga <i>pronoun</i> yang digunakan dapat menggunakan <i>where</i>.</p>",
+                        Text(
+                          "Bobot Opsi Jawaban",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        Obx(() {
+                          if (controller.listPembahasan.isEmpty) {
+                            return Skeletonizer(
+                              child: Text(
+                                "<p>Adelaide adalah nama sebuah tempat, sehingga <i>pronoun</i> yang digunakan dapat menggunakan <i>where</i>.</p>",
+                              ),
+                            );
+                          }
+                          final data =
+                              controller.listPembahasan[controller
+                                  .currentNumber
+                                  .value];
+                          return SizedBox(
+                            width: double.infinity,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics:
+                                  NeverScrollableScrollPhysics(), // biar ga bentrok scroll parent
+                              itemCount: data['options'].length,
+                              itemBuilder: (context, index) {
+                                final optionData =
+                                    data['options'][index]; // ambil item
+                                return _optionPembahasan(
+                                  optionData['inisial'],
+                                  optionData['nilai'].toString(),
+                                  optionData['iscorrect'],
+                                );
+                              },
                             ),
                           );
-                        }
-                        final data =
-                            controller.listPembahasan[controller
-                                .currentNumber
-                                .value];
-                        return SizedBox(
-                          width: double.infinity,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics:
-                                NeverScrollableScrollPhysics(), // biar ga bentrok scroll parent
-                            itemCount: data['options'].length,
-                            itemBuilder: (context, index) {
-                              final optionData =
-                                  data['options'][index]; // ambil item
-                              return _optionPembahasan(
-                                optionData['inisial'],
-                                optionData['nilai'].toString(),
-                                optionData['iscorrect'],
-                              );
-                            },
-                          ),
-                        );
-                      }),
-                    ],
+                        }),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
