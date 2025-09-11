@@ -75,6 +75,8 @@ class TryoutSayaController extends GetxController {
   }
 
   Future<void> fetchTryoutSaya() async {
+    print("Page: ${currentPage.value.toString()}");
+    print("Total Page: ${totalPage.value.toString()}");
     isLoading['list'] = true;
     final payload = {
       "perpage": "15",
@@ -93,7 +95,11 @@ class TryoutSayaController extends GetxController {
     final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
       response['data']['data'],
     );
-    totalPage.value = data.length - 1;
+    final Map<String, dynamic> pageData = Map<String, dynamic>.from(
+      response['data'],
+    );
+    totalPage.value =
+        ((pageData['total'] as int) / (pageData['per_page'] as int)).ceil();
     listData.assignAll(data);
     isLoading['list'] = false;
   }

@@ -13,310 +13,351 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        backgroundColor: Colors.white,
-        title: const Text('Rincian Pembayaran'),
-        centerTitle: false,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(25),
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: AppBar(
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            backgroundColor: Colors.white,
+            title: const Text('Rincian Pembayaran'),
+            centerTitle: false,
+          ),
+        ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Card(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 16,
-                children: [
-                  const Text(
-                    "Checkout Paket Tryout",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  Row(
-                    spacing: 4,
-                    children: [
-                      Icon(Icons.check_box, color: Colors.teal),
-                      Container(
-                        width: 240,
-                        child: Obx(
-                          () =>
-                              controller.dataTryout['formasi'] != null
-                                  ? Text(controller.dataTryout['formasi'])
-                                  : Skeletonizer(
-                                    enabled: true,
-                                    child: Text("Judul TRyout"),
-                                  ),
-                        ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 16,
+                  children: [
+                    const Text(
+                      "Checkout Paket Tryout",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
-                  const Text(
-                    "Tryout Lainnya",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Obx(() {
-                    Map<String, dynamic> nul = {};
-                    return controller.otherTryout.isEmpty
-                        ? Skeletonizer(
-                          enabled: true,
-                          child: _otherTryoutCard(
-                            "Judul Tryout",
-                            "0000000",
-                            value: nul,
+                    ),
+                    Row(
+                      spacing: 4,
+                      children: [
+                        Icon(Icons.check_box, color: Colors.teal),
+                        Container(
+                          width: 240,
+                          child: Obx(
+                            () =>
+                                controller.dataTryout['formasi'] != null
+                                    ? Text(controller.dataTryout['formasi'])
+                                    : Skeletonizer(
+                                      enabled: true,
+                                      child: Text("Judul TRyout"),
+                                    ),
                           ),
-                        )
-                        : SizedBox(
-                          height: 140,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: controller.otherTryout.length,
-                            itemBuilder: (context, index) {
-                              final data = controller.otherTryout[index];
-                              return _otherTryoutCard(
-                                data['formasi'] ?? "-",
-                                controller.formatCurrency(
-                                  data['final_price']?.toString() ?? "0",
-                                ),
-                                value: data,
-                              );
-                            },
-                          ),
-                        );
-                  }),
+                        ),
+                      ],
+                    ),
+                    const Text(
+                      "Tryout Lainnya",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Obx(() {
+                      Map<String, dynamic> nul = {};
+                      return controller.otherTryout.isEmpty
+                          ? Skeletonizer(
+                            enabled: true,
+                            child: _otherTryoutCard(
+                              "Judul Tryout",
+                              "0000000",
+                              value: nul,
+                            ),
+                          )
+                          : SizedBox(
+                            height: 140,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: controller.otherTryout.length,
+                              itemBuilder: (context, index) {
+                                final data = controller.otherTryout[index];
+                                return _otherTryoutCard(
+                                  data['formasi'] ?? "-",
+                                  controller.formatCurrency(
+                                    data['final_price']?.toString() ?? "0",
+                                  ),
+                                  value: data,
+                                );
+                              },
+                            ),
+                          );
+                    }),
 
-                  const Text(
-                    "Metode Pembayaran",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Obx(
-                    () => InkWell(
-                      onTap:
-                          () => showModalBottomSheet(
-                            barrierLabel: "Metode Pembayaran",
-                            backgroundColor: Colors.white,
-                            context: context,
-                            builder: (context) {
-                              return _metodePembayaran(context);
-                            },
+                    const Text(
+                      "Metode Pembayaran",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Obx(
+                      () => InkWell(
+                        onTap:
+                            () => showModalBottomSheet(
+                              barrierLabel: "Metode Pembayaran",
+                              backgroundColor: Colors.white,
+                              context: context,
+                              builder: (context) {
+                                return _metodePembayaran(context);
+                              },
+                            ),
+                        child:
+                            controller.selectedPaymentMethod.isEmpty
+                                ? _menuTile(
+                                  leading: Icon(
+                                    Icons.payments,
+                                    color: Colors.teal,
+                                  ),
+                                  iconColor: Colors.teal,
+                                  text: "Pilih Pembayaran",
+                                )
+                                : _menuTile(
+                                  leading: SvgPicture.network(
+                                    height: 28,
+                                    controller
+                                        .selectedPaymentMethod['image_url'],
+                                  ),
+                                  iconColor: Colors.teal,
+                                  text:
+                                      controller.ovoNumber.value.length <= 0
+                                          ? controller
+                                              .selectedPaymentMethod['name']
+                                          : "+62 ${controller.ovoNumber.value}",
+                                ),
+                      ),
+                    ),
+                    const Text(
+                      "Kode promo",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Obx(() {
+                      return controller.diskon.value > 0
+                          ? Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap:
+                                    () => showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.white,
+                                      builder:
+                                          (_) => SafeArea(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
+                                              ),
+                                              child: SingleChildScrollView(
+                                                child: _kodePromo(context),
+                                              ),
+                                            ),
+                                          ),
+                                    ),
+                                child: _voucherTile(
+                                  leading: Icon(
+                                    Icons.redeem,
+                                    color: Colors.orange,
+                                  ),
+                                  iconColor: Colors.orange,
+                                  text: controller.promoCode.value,
+                                ),
+                              ),
+                              Row(
+                                spacing: 4,
+                                children: [
+                                  Icon(Icons.check_circle, color: Colors.teal),
+                                  Text(
+                                    "Kode promo berhasil digunakan",
+                                    style: TextStyle(
+                                      color: Colors.teal,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )
+                          : InkWell(
+                            onTap:
+                                () => showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true, // 🚀 penting
+                                  backgroundColor: Colors.white,
+                                  builder: (context) {
+                                    return SafeArea(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          bottom:
+                                              MediaQuery.of(
+                                                context,
+                                              ).viewInsets.bottom,
+                                        ),
+                                        child: SingleChildScrollView(
+                                          child: _kodePromo(context),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+
+                            child: _voucherTile(
+                              leading: Icon(Icons.redeem, color: Colors.orange),
+                              iconColor: Colors.orange,
+                              text: "Gunakan Kode Promo",
+                            ),
+                          );
+                    }),
+
+                    const Text(
+                      "Rincian Pesanan",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Obx(
+                      () => Row(
+                        children: [
+                          Text("Harga"),
+                          Spacer(),
+                          Text(
+                            controller
+                                .formatCurrency(
+                                  controller.harga.value.toString(),
+                                )
+                                .toString(),
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                      child:
-                          controller.selectedPaymentMethod.isEmpty
-                              ? _menuTile(
-                                leading: Icon(
-                                  Icons.payments,
+                        ],
+                      ),
+                    ),
+
+                    Obx(() {
+                      return controller.biayaAdmin.value > 0.0
+                          ? Row(
+                            children: [
+                              Text("Biaya Admin"),
+                              Spacer(),
+                              Text(
+                                controller.formatCurrency(
+                                  controller.biayaAdmin.value.toString(),
+                                ),
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          )
+                          : SizedBox();
+                    }),
+                    Obx(() {
+                      return controller.diskon.value > 0.0
+                          ? Row(
+                            children: [
+                              Text(
+                                "Diskon",
+                                style: TextStyle(
+                                  color: Colors.teal,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Spacer(),
+                              Text(
+                                "-${controller.formatCurrency(controller.diskon.value.toString())}",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
                                   color: Colors.teal,
                                 ),
-                                iconColor: Colors.teal,
-                                text: "Pilih Pembayaran",
-                              )
-                              : _menuTile(
-                                leading: SvgPicture.network(
-                                  height: 30,
-                                  controller.selectedPaymentMethod['image_url'],
-                                ),
-                                iconColor: Colors.teal,
-                                text:
-                                    controller.ovoNumber.value.length <= 0
-                                        ? controller
-                                            .selectedPaymentMethod['name']
-                                        : controller.ovoNumber.value,
                               ),
-                    ),
-                  ),
-                  const Text(
-                    "Kode promo",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Obx(() {
-                    return controller.diskon.value > 0
-                        ? Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InkWell(
-                              onTap:
-                                  () => showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.white,
-                                    builder:
-                                        (_) => Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: SingleChildScrollView(
-                                            child: _kodePromo(context),
-                                          ),
-                                        ),
-                                  ),
-                              child: _voucherTile(
-                                leading: Icon(
-                                  Icons.redeem,
-                                  color: Colors.orange,
-                                ),
-                                iconColor: Colors.orange,
-                                text: controller.promoCode.value,
-                              ),
-                            ),
-                            Row(
-                              spacing: 4,
-                              children: [
-                                Icon(Icons.check_circle, color: Colors.teal),
-                                Text(
-                                  "Kode promo berhasil digunakan",
-                                  style: TextStyle(
-                                    color: Colors.teal,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                        : InkWell(
-                          onTap:
-                              () => showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true, // 🚀 penting
-                                backgroundColor: Colors.white,
-                                builder: (context) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                      bottom:
-                                          MediaQuery.of(
-                                            context,
-                                          ).viewInsets.bottom,
-                                    ),
-                                    child: SingleChildScrollView(
-                                      child: _kodePromo(context),
-                                    ),
-                                  );
-                                },
-                              ),
-
-                          child: _voucherTile(
-                            leading: Icon(Icons.redeem, color: Colors.orange),
-                            iconColor: Colors.orange,
-                            text: "Gunakan Kode Promo",
-                          ),
-                        );
-                  }),
-
-                  const Text(
-                    "Rincian Pesanan",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Obx(
-                    () => Row(
-                      children: [
-                        Text("Harga"),
-                        Spacer(),
-                        Text(
-                          controller
-                              .formatCurrency(controller.harga.value.toString())
-                              .toString(),
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  Obx(() {
-                    return controller.biayaAdmin.value > 0.0
-                        ? Row(
-                          children: [
-                            Text("Biaya Admin"),
-                            Spacer(),
-                            Text(
-                              controller.formatCurrency(
-                                controller.biayaAdmin.value.toString(),
-                              ),
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        )
-                        : SizedBox();
-                  }),
-                  Obx(() {
-                    return controller.diskon.value > 0.0
-                        ? Row(
-                          children: [
-                            Text(
-                              "Diskon",
-                              style: TextStyle(
-                                color: Colors.teal,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Spacer(),
-                            Text(
-                              "-${controller.formatCurrency(controller.diskon.value.toString())}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.teal,
-                              ),
-                            ),
-                          ],
-                        )
-                        : SizedBox();
-                  }),
-                  Obx(
-                    () => Row(
-                      children: [
-                        Text(
-                          "Total Harga",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Spacer(),
-                        Text(
-                          controller.formatCurrency(
-                            controller.totalHarga.value.toString(),
-                          ),
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  Obx(
-                    () => SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.teal.shade300,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            side: BorderSide(
-                              color: Colors.teal.shade300,
-                              width: 1.5,
+                            ],
+                          )
+                          : SizedBox();
+                    }),
+                    Obx(
+                      () => Row(
+                        children: [
+                          Text(
+                            "Total Harga",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        onPressed: () {
-                          controller.createPayment();
-                        },
-                        child:
-                            controller.loading['bayar'] == false
-                                ? Text("Bayar Sekarang")
-                                : Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                ),
+                          Spacer(),
+                          Text(
+                            controller.formatCurrency(
+                              controller.totalHarga.value.toString(),
+                            ),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
+
+                    Obx(
+                      () => SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Colors.teal.shade300,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(
+                                color: Colors.teal.shade300,
+                                width: 1.5,
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          onPressed: () {
+                            controller.createPayment();
+                          },
+                          child:
+                              controller.loading['bayar'] == false
+                                  ? Text("Bayar Sekarang")
+                                  : Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -333,10 +374,10 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
   }) {
     return Card(
       // Use a Card for a polished, elevated look with subtle shadows
-      elevation: 2,
       color: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12), // Adds rounded corners
+        side: BorderSide(color: Color.fromARGB(255, 215, 215, 215), width: 1.5),
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
       ),
       child: Container(
         width: 160,
@@ -499,103 +540,105 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
 
   /// --- Bottomsheet metode pembayaran ---
   Widget _metodePembayaran(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Metode Pembayaran",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-          ),
-          const SizedBox(height: 12),
-
-          // 🔹 Virtual Account
-          Text(
-            "Virtual Account",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 180, // tinggi fix biar nggak overflow
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.virtualAccount.length,
-              itemBuilder: (context, index) {
-                final data = controller.virtualAccount[index];
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: _methodCard(
-                    SvgPicture.network(data['image_url']),
-                    name: data['name'],
-                    title: data['name'],
-                    subtitle: "Biaya Admin: Rp ${data['biaya_admin']}",
-                    value: data,
-                    context: context,
-                  ),
-                );
-              },
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Metode Pembayaran",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
             ),
-          ),
-          const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
-          // 🔹 E-Wallet
-          Text(
-            "E-Wallet",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 180, // tinggi fix biar nggak overflow
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.EWallet.length,
-              itemBuilder: (context, index) {
-                final data = controller.EWallet[index];
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: _methodCard(
-                    SvgPicture.network(data['image_url']),
-                    name: data['name'],
-                    title: data['name'],
-                    value: data,
-                    subtitle: "Biaya Admin: ${data['biaya_admin']}",
-                    context: context,
-                  ),
-                );
-              },
+            // 🔹 Virtual Account
+            Text(
+              "Virtual Account",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-          ),
-          const SizedBox(height: 16),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 180, // tinggi fix biar nggak overflow
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.virtualAccount.length,
+                itemBuilder: (context, index) {
+                  final data = controller.virtualAccount[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: _methodCard(
+                      SvgPicture.network(data['image_url']),
+                      name: data['name'],
+                      title: data['name'],
+                      subtitle: "Biaya Admin: Rp ${data['biaya_admin']}",
+                      value: data,
+                      context: context,
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
 
-          // 🔹 QR Payments
-          Text(
-            "QR Payments",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 180, // tinggi fix biar nggak overflow
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.QR.length,
-              itemBuilder: (context, index) {
-                final data = controller.QR[index];
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: _methodCard(
-                    SvgPicture.network(data['image_url']),
-                    name: data['name'],
-                    title: data['name'],
-                    value: data,
-                    subtitle: "Biaya Admin: ${data['biaya_admin']}",
-                    context: context,
-                  ),
-                );
-              },
+            // 🔹 E-Wallet
+            Text(
+              "E-Wallet",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 180, // tinggi fix biar nggak overflow
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.EWallet.length,
+                itemBuilder: (context, index) {
+                  final data = controller.EWallet[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: _methodCard(
+                      SvgPicture.network(data['image_url']),
+                      name: data['name'],
+                      title: data['name'],
+                      value: data,
+                      subtitle: "Biaya Admin: ${data['biaya_admin']}",
+                      context: context,
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 🔹 QR Payments
+            Text(
+              "QR Payments",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 180, // tinggi fix biar nggak overflow
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.QR.length,
+                itemBuilder: (context, index) {
+                  final data = controller.QR[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: _methodCard(
+                      SvgPicture.network(data['image_url']),
+                      name: data['name'],
+                      title: data['name'],
+                      value: data,
+                      subtitle: "Biaya Admin: ${data['biaya_admin']}",
+                      context: context,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -643,7 +686,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                 ),
-                builder: (context) => _nomorOvo(context),
+                builder: (context) => SafeArea(child: _nomorOvo(context)),
               ).whenComplete(() {
                 if (controller.ovoNumber.value.length <= 0) {
                   controller.biayaAdmin.value = 0;
@@ -777,12 +820,23 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                 decoration: InputDecoration(
                   labelStyle: const TextStyle(color: Colors.grey),
                   labelText: "Masukkan Nomor OVO",
+                  prefixText: '+62 ', // ✅ placeholder tetap
+                  prefixStyle: const TextStyle(
+                    color: Colors.black, // Warna teks +62
+                    fontWeight: FontWeight.bold,
+                  ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.teal, width: 1.5),
+                    borderSide: const BorderSide(
+                      color: Colors.teal,
+                      width: 1.5,
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.teal, width: 2.0),
+                    borderSide: const BorderSide(
+                      color: Colors.teal,
+                      width: 2.0,
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),

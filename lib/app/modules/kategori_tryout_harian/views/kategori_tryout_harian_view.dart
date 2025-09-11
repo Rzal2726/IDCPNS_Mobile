@@ -11,39 +11,61 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text("Kategori"),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications_rounded, color: Colors.teal),
-                onPressed: () {
-                  // ✅ Best practice: use a function for navigation
-                  Get.to(() => NotificationView());
-                },
-              ),
-              Positioned(
-                right: 10,
-                top: 10,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '4',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                ),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(25),
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
-        ],
+          child: AppBar(
+            leading: IconButton(
+              onPressed: () {
+                Get.offAllNamed("/tryout-harian");
+              },
+              icon: Icon(Icons.arrow_back),
+            ),
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.white,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            title: Text("Kategori"),
+            actions: [
+              Stack(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.notifications_rounded, color: Colors.teal),
+                    onPressed: () {
+                      // ✅ Best practice: use a function for navigation
+                      Get.to(() => NotificationView());
+                    },
+                  ),
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '4',
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -64,31 +86,36 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
                     padding: EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        Row(
-                          children: [
-                            Icon(Icons.diamond),
-                            Text(
-                              textAlign: TextAlign.center,
-                              "Untuk melihat peringkat anda silahkan kerjakan tryout terlebih dahulu",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.teal,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                          onPressed: () {},
-                          child: const Text(
-                            "Lihat Peringkat Keseluruhan",
+                        Container(
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            "Untuk melihat peringkat anda silahkan kerjakan tryout terlebih dahulu",
                             style: TextStyle(
-                              fontSize: 16,
                               fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.teal,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.teal),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.all(12),
+                            ),
+                            onPressed: () {},
+                            child: const Text(
+                              "Lihat Peringkat Keseluruhan",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
@@ -125,7 +152,7 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
       color: Colors.white,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.grey),
+        side: BorderSide(color: Colors.grey, width: 0.5),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Container(

@@ -17,685 +17,719 @@ class KategoriView extends GetView<KategoriController> {
     ''';
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Obx(() {
-          if (controller.categoryList.isEmpty) {
-            return Skeletonizer(child: Text("data"));
-          }
-          return Text(
-            "Zona ${controller.categoryData['menu']}",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          );
-        }),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications_rounded, color: Colors.teal),
-                onPressed: () {
-                  Get.to(NotificationView());
-                },
-              ),
-              Positioned(
-                right: 10,
-                top: 10,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '4',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                ),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(25),
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          // 🚀 Hapus Expanded
-          children: [
-            Obx(
-              () =>
-                  controller.categoryList.isEmpty
-                      ? Skeletonizer(
-                        child: Image.asset(
-                          "assets/zona_cpns.png",
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                      : controller.categoryImage[controller
-                          .categoryData['menu']]!,
-            ),
-            SizedBox(height: 32),
-            // Event Tryout Gratis
-            screenWidth > 800
-                ? Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Event Tryout Gratis",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(
-                            "Ikuti tryout akbar gratis bersama ribuan peserta lainnya.",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
+          child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            title: Obx(() {
+              if (controller.categoryList.isEmpty) {
+                return Skeletonizer(child: Text("data"));
+              }
+              return Text(
+                "Zona ${controller.categoryData['menu']}",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              );
+            }),
+            actions: [
+              Stack(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.notifications_rounded, color: Colors.teal),
+                    onPressed: () {
+                      Get.to(NotificationView());
+                    },
+                  ),
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '4',
+                        style: TextStyle(color: Colors.white, fontSize: 10),
                       ),
                     ),
-                  ],
-                )
-                : Container(
-                  padding: EdgeInsets.symmetric(horizontal: 32),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            // 🚀 Hapus Expanded
+            children: [
+              Obx(
+                () =>
+                    controller.categoryList.isEmpty
+                        ? Skeletonizer(
+                          child: Image.asset(
+                            "assets/zona_cpns.png",
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                        : controller.categoryImage[controller
+                            .categoryData['menu']]!,
+              ),
+              SizedBox(height: 32),
+              // Event Tryout Gratis
+              screenWidth > 800
+                  ? Row(
                     children: [
-                      Text(
-                        "Event Tryout Gratis",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Event Tryout Gratis",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              "Ikuti tryout akbar gratis bersama ribuan peserta lainnya.",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        "Ikuti tryout akbar gratis bersama ribuan peserta lainnya.",
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                      SizedBox(height: 8),
-                      TextField(
-                        controller: controller.eventTextController,
-                        onChanged:
-                            (value) => controller.showEventTryout(
-                              name: value,
-                              category: controller.categoryId,
-                            ),
-                        decoration: InputDecoration(
-                          labelStyle: TextStyle(color: Colors.grey),
-                          labelText: "Cari",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.tealAccent.shade100,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(16),
+                    ],
+                  )
+                  : Container(
+                    padding: EdgeInsets.symmetric(horizontal: 32),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Event Tryout Gratis",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.tealAccent.shade100,
-                              width: 2.0,
+                        ),
+                        Text(
+                          "Ikuti tryout akbar gratis bersama ribuan peserta lainnya.",
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        SizedBox(height: 8),
+                        TextField(
+                          controller: controller.eventTextController,
+                          onChanged:
+                              (value) => controller.showEventTryout(
+                                name: value,
+                                category: controller.categoryId,
+                              ),
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(color: Colors.grey),
+                            labelText: "Cari",
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.tealAccent.shade100,
+                                width: 1.5,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
                             ),
-                            borderRadius: BorderRadius.circular(16),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.tealAccent.shade100,
+                                width: 2.0,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+              SizedBox(height: 16),
+
+              SizedBox(height: 8),
+              Obx(() {
+                if (controller.loading['event'] == true) {
+                  return Skeletonizer(
+                    child: _eventTryoutGratis(
+                      "",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                      "Lorem Ipsum Odor",
+                    ),
+                  );
+                }
+
+                if (controller.eventTryout.isEmpty) {
+                  return Column(
+                    children: [
+                      SvgPicture.string(noDataSvg),
+                      const SizedBox(height: 16),
+                      const Text(
+                        "Belum Ada Event Berlangsung",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  );
+                }
+
+                return SizedBox(
+                  height: 224,
+                  child: PageView.builder(
+                    controller: PageController(viewportFraction: 0.85),
+                    itemCount: controller.eventTryout.length,
+                    itemBuilder: (ctx, index) {
+                      final event = controller.eventTryout[index];
+                      return _eventTryoutGratis(
+                        event["uuid"].toString(),
+                        event["label_text"].toString(),
+                        event['name'].toString(),
+                        controller.formatTanggalRange(
+                          "${event["startdate"].toString().substring(0, 10)} - ${event["enddate"].toString().substring(0, 10)}",
+                        ),
+                        event["periode_text"].toString(),
+                      );
+                    },
+                  ),
+                );
+              }),
+
+              SizedBox(height: 8),
+
+              // Paket Tryout section
+              screenWidth > 800
+                  ? Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Paket Tryout",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         ),
                       ),
                     ],
-                  ),
-                ),
+                  )
+                  : Container(
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Paket Tryout",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          "Pilih paket tryout sesuai kebutuhanmu.",
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        SizedBox(height: 12),
 
-            SizedBox(height: 16),
+                        // Search bar
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: controller.paketTextController,
+                                decoration: InputDecoration(
+                                  labelStyle: TextStyle(color: Colors.grey),
+                                  labelText: "Cari",
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 10,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.tealAccent.shade100,
+                                      width: 1.5,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.tealAccent.shade100,
+                                      width: 2.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8),
 
-            SizedBox(height: 8),
-            Obx(() {
-              if (controller.loading['event'] == true) {
-                return Skeletonizer(
-                  child: _eventTryoutGratis(
-                    "",
-                    "Lorem Ipsum Odor",
-                    "Lorem Ipsum Odor",
-                    "Lorem Ipsum Odor",
-                    "Lorem Ipsum Odor",
-                  ),
-                );
-              }
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal, // warna tombol
+                                foregroundColor:
+                                    Colors.white, // warna teks/icon
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 12,
+                                ),
+                              ),
+                              onPressed: () {
+                                controller.fetchPaketTryout(
+                                  page: 1,
 
-              if (controller.eventTryout.isEmpty) {
-                return Column(
-                  children: [
-                    SvgPicture.string(noDataSvg),
-                    const SizedBox(height: 16),
-                    const Text(
-                      "Belum Ada Event Berlangsung",
-                      style: TextStyle(color: Colors.grey),
+                                  search: controller.paketTextController.text,
+                                  menuCategory:
+                                      controller.categoryId.toString(),
+                                );
+                              },
+                              label: Text("Cari"),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                );
-              }
+                  ),
 
-              return SizedBox(
-                height: 224,
-                child: PageView.builder(
-                  controller: PageController(viewportFraction: 0.85),
-                  itemCount: controller.eventTryout.length,
-                  itemBuilder: (ctx, index) {
-                    final event = controller.eventTryout[index];
-                    return _eventTryoutGratis(
-                      event["uuid"].toString(),
-                      event["label_text"].toString(),
-                      event['name'].toString(),
-                      controller.formatTanggalRange(
-                        "${event["startdate"].toString().substring(0, 10)} - ${event["enddate"].toString().substring(0, 10)}",
+              SizedBox(height: 16),
+
+              Obx(() {
+                if (controller.loading['paket'] == true) {
+                  return Skeletonizer(
+                    child: Center(
+                      child: _cardPaketTryout(
+                        "Lorem Ipsum Odor",
+                        "assets/logo.png",
+                        "Lorem Ipsum Odor",
+                        "Lorem Ipsum Odor",
+                        "Lorem Ipsum Odor",
+                        "Lorem Ipsum Odor",
+                        context,
                       ),
-                      event["periode_text"].toString(),
+                    ),
+                  );
+                }
+                if (controller.paketTryout.isEmpty) {
+                  return Column(
+                    children: [
+                      SizedBox(
+                        height: 200,
+                        child: SvgPicture.string(noDataSvg),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        "Belum Ada Tryout Tersedia",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: controller.paketTryout.length,
+                  itemBuilder: (context, index) {
+                    final data = controller.paketTryout[index];
+                    final option = controller.categoryId;
+                    return _cardPaketTryout(
+                      data['uuid'].toString() ?? '',
+                      data['gambar'].toString() ?? '',
+                      data['formasi'].toString() ?? '',
+                      controller.formatCurrency(data['harga'].toString()) ?? '',
+                      controller.formatCurrency(data['harga_fix'].toString()) ??
+                          '',
+                      option,
+                      context,
                     );
                   },
-                ),
-              );
-            }),
+                );
+              }),
 
-            SizedBox(height: 8),
+              Obx(() {
+                final current = controller.currentPage.value;
+                final total = controller.totalPage.value;
 
-            // Paket Tryout section
-            screenWidth > 800
-                ? Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "Paket Tryout",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-                : Container(
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                if (total == 0) {
+                  return const SizedBox.shrink(); // tidak ada halaman
+                }
+
+                // Tentukan window
+                int start = current - 1;
+                int end = current + 1;
+
+                // clamp biar tetap di antara 1 dan total
+                start = start < 1 ? 1 : start;
+                end = end > total ? total : end;
+
+                // Kalau total < 3, pakai semua halaman yg ada
+                if (total <= 3) {
+                  start = 1;
+                  end = total;
+                } else {
+                  // Kalau current di awal → 1,2,3
+                  if (current == 1) {
+                    start = 1;
+                    end = 3;
+                  }
+                  // Kalau current di akhir → total-2, total-1, total
+                  else if (current == total) {
+                    start = total - 2;
+                    end = total;
+                  }
+                }
+
+                // Generate daftar halaman
+                final pages = List.generate(end - start + 1, (i) => start + i);
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Paket Tryout",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      ElevatedButton(
+                        onPressed:
+                            current > 1
+                                ? () => controller.fetchPaketTryout(
+                                  page: current - 1,
+                                  search: controller.paketTextController.text,
+                                  menuCategory:
+                                      controller.categoryId.toString(),
+                                )
+                                : null,
+                        child: const Icon(Icons.arrow_back_ios, size: 16),
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        "Pilih paket tryout sesuai kebutuhanmu.",
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                      SizedBox(height: 12),
+                      const SizedBox(width: 8),
 
-                      // Search bar
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: controller.paketTextController,
-                              decoration: InputDecoration(
-                                labelStyle: TextStyle(color: Colors.grey),
-                                labelText: "Cari",
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 10,
+                      ...pages.map((page) {
+                        final isActive = page == current;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          child: ElevatedButton(
+                            onPressed:
+                                () => controller.fetchPaketTryout(
+                                  page: page,
+                                  search: controller.paketTextController.text,
+                                  menuCategory:
+                                      controller.categoryId.toString(),
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.tealAccent.shade100,
-                                    width: 1.5,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.tealAccent.shade100,
-                                    width: 2.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-
-                          ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.teal, // warna tombol
-                              foregroundColor: Colors.white, // warna teks/icon
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 12,
-                              ),
+                              minimumSize: const Size(36, 36),
+                              backgroundColor:
+                                  isActive ? Colors.teal : Colors.white,
+                              foregroundColor:
+                                  isActive ? Colors.white : Colors.black54,
                             ),
-                            onPressed: () {
-                              controller.fetchPaketTryout(
-                                page: 1,
-
-                                search: controller.paketTextController.text,
-                                menuCategory: controller.categoryId.toString(),
-                              );
-                            },
-                            label: Text("Cari"),
+                            child: Text(
+                              page.toString(),
+                              style: const TextStyle(fontSize: 14),
+                            ),
                           ),
-                        ],
+                        );
+                      }),
+
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed:
+                            current < total
+                                ? () => controller.fetchPaketTryout(
+                                  page: current + 1,
+                                  search: controller.paketTextController.text,
+                                  menuCategory:
+                                      controller.categoryId.toString(),
+                                )
+                                : null,
+                        child: const Icon(Icons.arrow_forward_ios, size: 16),
                       ),
                     ],
                   ),
-                ),
+                );
+              }),
 
-            SizedBox(height: 16),
+              SizedBox(height: 32),
 
-            Obx(() {
-              if (controller.loading['paket'] == true) {
-                return Skeletonizer(
-                  child: Center(
-                    child: _cardPaketTryout(
-                      "Lorem Ipsum Odor",
-                      "assets/logo.png",
-                      "Lorem Ipsum Odor",
-                      "Lorem Ipsum Odor",
-                      "Lorem Ipsum Odor",
-                      "Lorem Ipsum Odor",
-                      context,
+              // Bimbel section
+              screenWidth > 800
+                  ? Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Paket Bimbel",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                  : Container(
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Paket Bimbel",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          "Belajar lebih intensif bersama mentor ahli di bidangnya.",
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        SizedBox(height: 12),
+
+                        // Search bar
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: controller.bimbelTextController,
+                                decoration: InputDecoration(
+                                  labelStyle: TextStyle(color: Colors.grey),
+                                  labelText: "Cari",
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 10,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.tealAccent.shade100,
+                                      width: 1.5,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.tealAccent.shade100,
+                                      width: 2.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8),
+
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal, // warna tombol
+                                foregroundColor:
+                                    Colors.white, // warna teks/icon
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 12,
+                                ),
+                              ),
+                              onPressed: () {
+                                controller.fetchBimbel(
+                                  page: 1,
+
+                                  search: controller.bimbelTextController.text,
+                                  menuCategory:
+                                      controller.categoryId.toString(),
+                                );
+                              },
+                              label: Text("Cari"),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                );
-              }
-              if (controller.paketTryout.isEmpty) {
-                return Column(
-                  children: [
-                    SizedBox(height: 200, child: SvgPicture.string(noDataSvg)),
-                    const SizedBox(height: 16),
-                    const Text(
-                      "Belum Ada Tryout Tersedia",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                );
-              }
 
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: controller.paketTryout.length,
-                itemBuilder: (context, index) {
-                  final data = controller.paketTryout[index];
-                  final option = controller.categoryId;
-                  return _cardPaketTryout(
-                    data['uuid'].toString() ?? '',
-                    data['gambar'].toString() ?? '',
-                    data['formasi'].toString() ?? '',
-                    controller.formatCurrency(data['harga'].toString()) ?? '',
-                    controller.formatCurrency(data['harga_fix'].toString()) ??
-                        '',
-                    option,
-                    context,
+              SizedBox(height: 16),
+
+              //Bimbel
+              Obx(() {
+                if (controller.loading['bimbel'] == true) {
+                  return Skeletonizer(
+                    child: Center(
+                      child: _cardPaketTryout(
+                        "Lorem Ipsum Odor",
+                        "assets/logo.png",
+                        "Lorem Ipsum Odor",
+                        "Lorem Ipsum Odor",
+                        "Lorem Ipsum Odor",
+                        "Lorem Ipsum Odor",
+                        context,
+                      ),
+                    ),
                   );
-                },
-              );
-            }),
-
-            Obx(() {
-              final current = controller.currentPage.value;
-              final total = controller.totalPage.value;
-
-              if (total == 0) {
-                return const SizedBox.shrink(); // tidak ada halaman
-              }
-
-              // Tentukan window
-              int start = current - 1;
-              int end = current + 1;
-
-              // clamp biar tetap di antara 1 dan total
-              start = start < 1 ? 1 : start;
-              end = end > total ? total : end;
-
-              // Kalau total < 3, pakai semua halaman yg ada
-              if (total <= 3) {
-                start = 1;
-                end = total;
-              } else {
-                // Kalau current di awal → 1,2,3
-                if (current == 1) {
-                  start = 1;
-                  end = 3;
                 }
-                // Kalau current di akhir → total-2, total-1, total
-                else if (current == total) {
-                  start = total - 2;
-                  end = total;
-                }
-              }
-
-              // Generate daftar halaman
-              final pages = List.generate(end - start + 1, (i) => start + i);
-
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                height: 40,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed:
-                          current > 1
-                              ? () => controller.fetchPaketTryout(
-                                page: current - 1,
-                                search: controller.paketTextController.text,
-                                menuCategory: controller.categoryId.toString(),
-                              )
-                              : null,
-                      child: const Icon(Icons.arrow_back_ios, size: 16),
-                    ),
-                    const SizedBox(width: 8),
-
-                    ...pages.map((page) {
-                      final isActive = page == current;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        child: ElevatedButton(
-                          onPressed:
-                              () => controller.fetchPaketTryout(
-                                page: page,
-                                search: controller.paketTextController.text,
-                                menuCategory: controller.categoryId.toString(),
-                              ),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(36, 36),
-                            backgroundColor:
-                                isActive ? Colors.teal : Colors.white,
-                            foregroundColor:
-                                isActive ? Colors.white : Colors.black54,
-                          ),
-                          child: Text(
-                            page.toString(),
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ),
-                      );
-                    }),
-
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed:
-                          current < total
-                              ? () => controller.fetchPaketTryout(
-                                page: current + 1,
-                                search: controller.paketTextController.text,
-                                menuCategory: controller.categoryId.toString(),
-                              )
-                              : null,
-                      child: const Icon(Icons.arrow_forward_ios, size: 16),
-                    ),
-                  ],
-                ),
-              );
-            }),
-
-            SizedBox(height: 32),
-
-            // Bimbel section
-            screenWidth > 800
-                ? Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "Paket Bimbel",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-                : Container(
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                if (controller.bimbelList.isEmpty) {
+                  return Column(
                     children: [
-                      Text(
-                        "Paket Bimbel",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      SizedBox(
+                        height: 200,
+                        child: SvgPicture.string(noDataSvg),
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        "Belajar lebih intensif bersama mentor ahli di bidangnya.",
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      const SizedBox(height: 16),
+                      const Text(
+                        "Belum Ada Bimbel Tersedia",
+                        style: TextStyle(color: Colors.grey),
                       ),
-                      SizedBox(height: 12),
+                    ],
+                  );
+                }
 
-                      // Search bar
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: controller.bimbelTextController,
-                              decoration: InputDecoration(
-                                labelStyle: TextStyle(color: Colors.grey),
-                                labelText: "Cari",
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 10,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.tealAccent.shade100,
-                                    width: 1.5,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.tealAccent.shade100,
-                                    width: 2.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: controller.bimbelList.length,
+                  itemBuilder: (context, index) {
+                    final data = controller.bimbelList[index];
+                    final option = controller.categoryId;
+                    return _cardPaketBimbel(
+                      image: data['gambar'] ?? '',
+                      title: data['name'] ?? '',
+                      hargaTertinggi:
+                          data['price_list']?['harga_tertinggi'] ?? 0,
+                      hargaFixTertinggi:
+                          data['price_list']?['harga_fix_tertinggi'] ?? 0,
+                      hargaTerendah: data['price_list']?['harga_terendah'],
+                      hargaFixTerendah:
+                          data['price_list']?['harga_fix_terendah'] ?? 0,
+                      kategori: controller.categoryData['menu'],
+                      color: controller.currentCategoryColor,
+                      onTap: () {
+                        Get.toNamed("/detail-bimbel"); // sesuaikan rute
+                      },
+                    );
+                  },
+                );
+              }),
 
-                          ElevatedButton.icon(
+              Obx(() {
+                final current = controller.currentBimbelPage.value;
+                final total = controller.totalBimbelPage.value;
+
+                if (total == 0) {
+                  return const SizedBox.shrink(); // tidak ada halaman
+                }
+
+                // Tentukan window
+                int start = current - 1;
+                int end = current + 1;
+
+                // clamp biar tetap di antara 1 dan total
+                start = start < 1 ? 1 : start;
+                end = end > total ? total : end;
+
+                // Kalau total < 3, pakai semua halaman yg ada
+                if (total <= 3) {
+                  start = 1;
+                  end = total;
+                } else {
+                  // Kalau current di awal → 1,2,3
+                  if (current == 1) {
+                    start = 1;
+                    end = 3;
+                  }
+                  // Kalau current di akhir → total-2, total-1, total
+                  else if (current == total) {
+                    start = total - 2;
+                    end = total;
+                  }
+                }
+
+                // Generate daftar halaman
+                final pages = List.generate(end - start + 1, (i) => start + i);
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed:
+                            current > 1
+                                ? () => controller.fetchBimbel(
+                                  page: current - 1,
+                                  search: controller.bimbelTextController.text,
+                                  menuCategory:
+                                      controller.categoryId.toString(),
+                                )
+                                : null,
+                        child: const Icon(Icons.arrow_back_ios, size: 16),
+                      ),
+                      const SizedBox(width: 8),
+
+                      ...pages.map((page) {
+                        final isActive = page == current;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          child: ElevatedButton(
+                            onPressed:
+                                () => controller.fetchBimbel(
+                                  page: page,
+                                  search: controller.bimbelTextController.text,
+                                  menuCategory:
+                                      controller.categoryId.toString(),
+                                ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.teal, // warna tombol
-                              foregroundColor: Colors.white, // warna teks/icon
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 12,
-                              ),
+                              minimumSize: const Size(36, 36),
+                              backgroundColor:
+                                  isActive ? Colors.teal : Colors.white,
+                              foregroundColor:
+                                  isActive ? Colors.white : Colors.black54,
                             ),
-                            onPressed: () {
-                              controller.fetchBimbel(
-                                page: 1,
-
-                                search: controller.bimbelTextController.text,
-                                menuCategory: controller.categoryId.toString(),
-                              );
-                            },
-                            label: Text("Cari"),
+                            child: Text(
+                              page.toString(),
+                              style: const TextStyle(fontSize: 14),
+                            ),
                           ),
-                        ],
+                        );
+                      }),
+
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed:
+                            current < total
+                                ? () => controller.fetchPaketTryout(
+                                  page: current + 1,
+                                  search: controller.bimbelTextController.text,
+                                  menuCategory:
+                                      controller.categoryId.toString(),
+                                )
+                                : null,
+                        child: const Icon(Icons.arrow_forward_ios, size: 16),
                       ),
                     ],
                   ),
-                ),
-
-            SizedBox(height: 16),
-
-            //Bimbel
-            Obx(() {
-              if (controller.loading['bimbel'] == true) {
-                return Skeletonizer(
-                  child: Center(
-                    child: _cardPaketTryout(
-                      "Lorem Ipsum Odor",
-                      "assets/logo.png",
-                      "Lorem Ipsum Odor",
-                      "Lorem Ipsum Odor",
-                      "Lorem Ipsum Odor",
-                      "Lorem Ipsum Odor",
-                      context,
-                    ),
-                  ),
                 );
-              }
-              if (controller.bimbelList.isEmpty) {
-                return Column(
-                  children: [
-                    SizedBox(height: 200, child: SvgPicture.string(noDataSvg)),
-                    const SizedBox(height: 16),
-                    const Text(
-                      "Belum Ada Bimbel Tersedia",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                );
-              }
+              }),
 
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: controller.bimbelList.length,
-                itemBuilder: (context, index) {
-                  final data = controller.bimbelList[index];
-                  final option = controller.categoryId;
-                  return _cardPaketBimbel(
-                    image: data['gambar'] ?? '',
-                    title: data['name'] ?? '',
-                    hargaTertinggi: data['price_list']?['harga_tertinggi'] ?? 0,
-                    hargaFixTertinggi:
-                        data['price_list']?['harga_fix_tertinggi'] ?? 0,
-                    hargaTerendah: data['price_list']?['harga_terendah'],
-                    hargaFixTerendah:
-                        data['price_list']?['harga_fix_terendah'] ?? 0,
-                    kategori: controller.categoryData['menu'],
-                    color: controller.currentCategoryColor,
-                    onTap: () {
-                      Get.toNamed("/detail-bimbel"); // sesuaikan rute
-                    },
-                  );
-                },
-              );
-            }),
-
-            Obx(() {
-              final current = controller.currentBimbelPage.value;
-              final total = controller.totalBimbelPage.value;
-
-              if (total == 0) {
-                return const SizedBox.shrink(); // tidak ada halaman
-              }
-
-              // Tentukan window
-              int start = current - 1;
-              int end = current + 1;
-
-              // clamp biar tetap di antara 1 dan total
-              start = start < 1 ? 1 : start;
-              end = end > total ? total : end;
-
-              // Kalau total < 3, pakai semua halaman yg ada
-              if (total <= 3) {
-                start = 1;
-                end = total;
-              } else {
-                // Kalau current di awal → 1,2,3
-                if (current == 1) {
-                  start = 1;
-                  end = 3;
-                }
-                // Kalau current di akhir → total-2, total-1, total
-                else if (current == total) {
-                  start = total - 2;
-                  end = total;
-                }
-              }
-
-              // Generate daftar halaman
-              final pages = List.generate(end - start + 1, (i) => start + i);
-
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                height: 40,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed:
-                          current > 1
-                              ? () => controller.fetchBimbel(
-                                page: current - 1,
-                                search: controller.bimbelTextController.text,
-                                menuCategory: controller.categoryId.toString(),
-                              )
-                              : null,
-                      child: const Icon(Icons.arrow_back_ios, size: 16),
-                    ),
-                    const SizedBox(width: 8),
-
-                    ...pages.map((page) {
-                      final isActive = page == current;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        child: ElevatedButton(
-                          onPressed:
-                              () => controller.fetchBimbel(
-                                page: page,
-                                search: controller.bimbelTextController.text,
-                                menuCategory: controller.categoryId.toString(),
-                              ),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(36, 36),
-                            backgroundColor:
-                                isActive ? Colors.teal : Colors.white,
-                            foregroundColor:
-                                isActive ? Colors.white : Colors.black54,
-                          ),
-                          child: Text(
-                            page.toString(),
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ),
-                      );
-                    }),
-
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed:
-                          current < total
-                              ? () => controller.fetchPaketTryout(
-                                page: current + 1,
-                                search: controller.bimbelTextController.text,
-                                menuCategory: controller.categoryId.toString(),
-                              )
-                              : null,
-                      child: const Icon(Icons.arrow_forward_ios, size: 16),
-                    ),
-                  ],
-                ),
-              );
-            }),
-
-            SizedBox(height: 32),
-          ],
+              SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );

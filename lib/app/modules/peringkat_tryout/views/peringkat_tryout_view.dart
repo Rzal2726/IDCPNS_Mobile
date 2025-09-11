@@ -14,691 +14,789 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text("Peringkat"),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications_rounded, color: Colors.teal),
-                onPressed: () {
-                  // ✅ Best practice: use a function for navigation
-                  Get.to(() => NotificationView());
-                },
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(25),
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(0, 3),
               ),
-              Positioned(
-                right: 10,
-                top: 10,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
+            ],
+          ),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            title: Text("Peringkat"),
+            actions: [
+              Stack(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.notifications_rounded, color: Colors.teal),
+                    onPressed: () {
+                      // ✅ Best practice: use a function for navigation
+                      Get.to(() => NotificationView());
+                    },
                   ),
-                  child: Text(
-                    '4',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '4',
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.all(16),
+                child: Obx(
+                  () =>
+                      controller.tryoutSaya.isEmpty
+                          ? Skeletonizer(child: Text("Title"))
+                          : Text(
+                            controller.tryoutSaya['tryout']['name'].toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                ),
+              ),
+              Card(
+                color: Colors.white,
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Hasil Peringkat Tryout",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: "Filter",
+                            onPressed: () {
+                              if (controller.loading['filter'] == true) {
+                                return;
+                              }
+                              showModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return SafeArea(
+                                    child: SizedBox(
+                                      width: double.infinity,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(32),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text("Lengkapi Form"),
+                                                IconButton(
+                                                  onPressed:
+                                                      () => Navigator.pop(
+                                                        context,
+                                                      ),
+                                                  icon: Icon(Icons.close),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 16),
+                                            Row(children: [Text("Provinsi")]),
+                                            SizedBox(height: 12),
+                                            controller.listProvinsi.isEmpty
+                                                ? Skeletonizer(
+                                                  child: Text("data"),
+                                                )
+                                                : DropdownSearch<String>(
+                                                  popupProps: PopupProps.dialog(
+                                                    showSearchBox: true,
+                                                    searchFieldProps: TextFieldProps(
+                                                      decoration: InputDecoration(
+                                                        labelText:
+                                                            'Cari Provinsi',
+                                                        border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    dialogProps: DialogProps(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              12,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  items:
+                                                      (f, cs) =>
+                                                          controller
+                                                              .listProvinsi
+                                                              .map(
+                                                                (provinsi) =>
+                                                                    provinsi['nama']
+                                                                        .toString(),
+                                                              )
+                                                              .toList(),
+                                                  selectedItem:
+                                                      controller
+                                                                  .selectedProvinsi
+                                                                  .value ==
+                                                              ""
+                                                          ? "Pilih Provinsi"
+                                                          : controller
+                                                              .listProvinsi
+                                                              .firstWhere(
+                                                                (provinsi) =>
+                                                                    provinsi['id']
+                                                                        .toString() ==
+                                                                    controller
+                                                                        .selectedProvinsi
+                                                                        .value,
+                                                                orElse:
+                                                                    () => {},
+                                                              )['nama']
+                                                              .toString(),
+                                                  onChanged: (newValue) {
+                                                    final selected = controller
+                                                        .listProvinsi
+                                                        .firstWhere(
+                                                          (provinsi) =>
+                                                              provinsi['nama'] ==
+                                                              newValue,
+                                                          orElse: () => {},
+                                                        );
+                                                    controller
+                                                        .selectedProvinsi
+                                                        .value = selected['id']
+                                                            .toString();
+                                                    controller.getKota();
+                                                  },
+                                                ),
+                                            SizedBox(height: 12),
+                                            Row(
+                                              children: [
+                                                Text("Kota/Kabupaten"),
+                                              ],
+                                            ),
+                                            SizedBox(height: 12),
+                                            Obx(() {
+                                              return controller.listKota.isEmpty
+                                                  ? Skeletonizer(
+                                                    child: Text("data"),
+                                                  )
+                                                  : DropdownSearch<String>(
+                                                    popupProps: PopupProps.dialog(
+                                                      showSearchBox: true,
+                                                      searchFieldProps: TextFieldProps(
+                                                        decoration: InputDecoration(
+                                                          labelText:
+                                                              'Cari Kota',
+                                                          border: OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  8,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      dialogProps: DialogProps(
+                                                        backgroundColor:
+                                                            Colors.white,
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                12,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    items:
+                                                        (f, cs) =>
+                                                            controller.listKota
+                                                                .map(
+                                                                  (kota) =>
+                                                                      kota['nama']
+                                                                          .toString(),
+                                                                )
+                                                                .toList(),
+                                                    selectedItem:
+                                                        controller
+                                                                    .selectedKota
+                                                                    .value ==
+                                                                ""
+                                                            ? "Pilih Kota/Kabupaten"
+                                                            : controller
+                                                                .listKota
+                                                                .firstWhere(
+                                                                  (kota) =>
+                                                                      kota['id']
+                                                                          .toString() ==
+                                                                      controller
+                                                                          .selectedKota
+                                                                          .value,
+                                                                  orElse:
+                                                                      () => {},
+                                                                )['nama']
+                                                                .toString(),
+                                                    onChanged: (newValue) {
+                                                      final selected = controller
+                                                          .listKota
+                                                          .firstWhere(
+                                                            (kota) =>
+                                                                kota['nama'] ==
+                                                                newValue,
+                                                            orElse: () => {},
+                                                          );
+                                                      controller
+                                                              .selectedKota
+                                                              .value =
+                                                          selected['id']
+                                                              .toString();
+                                                      controller.getInstansi();
+                                                    },
+                                                  );
+                                            }),
+                                            SizedBox(height: 12),
+                                            Row(
+                                              children: [
+                                                Text("Instansi Tujuan"),
+                                              ],
+                                            ),
+                                            SizedBox(height: 12),
+                                            controller.listInstansi.isEmpty
+                                                ? Skeletonizer(
+                                                  child: Text("data"),
+                                                )
+                                                : DropdownSearch<String>(
+                                                  popupProps: PopupProps.dialog(
+                                                    showSearchBox: true,
+                                                    searchFieldProps: TextFieldProps(
+                                                      decoration: InputDecoration(
+                                                        labelText:
+                                                            'Cari Instansi',
+                                                        border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    dialogProps: DialogProps(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              12,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  items:
+                                                      (f, cs) =>
+                                                          controller
+                                                              .listInstansi
+                                                              .map(
+                                                                (instansi) =>
+                                                                    instansi['nama']
+                                                                        .toString(),
+                                                              )
+                                                              .toList(),
+                                                  selectedItem:
+                                                      controller
+                                                                  .selectedInstansi
+                                                                  .value ==
+                                                              ""
+                                                          ? "Pilih Instansi"
+                                                          : controller
+                                                              .listInstansi
+                                                              .firstWhere(
+                                                                (instansi) =>
+                                                                    instansi['id']
+                                                                        .toString() ==
+                                                                    controller
+                                                                        .selectedInstansi
+                                                                        .value,
+                                                                orElse:
+                                                                    () => {},
+                                                              )['nama']
+                                                              .toString(),
+                                                  onChanged: (newValue) {
+                                                    final selected = controller
+                                                        .listInstansi
+                                                        .firstWhere(
+                                                          (instansi) =>
+                                                              instansi['nama'] ==
+                                                              newValue,
+                                                          orElse: () => {},
+                                                        );
+                                                    controller
+                                                        .selectedInstansi
+                                                        .value = selected['id']
+                                                            .toString();
+                                                  },
+                                                ),
+                                            SizedBox(height: 12),
+                                            Row(
+                                              children: [
+                                                Text("Jabatan Tujuan"),
+                                              ],
+                                            ),
+                                            SizedBox(height: 12),
+                                            controller.listJabatan.isEmpty
+                                                ? Skeletonizer(
+                                                  child: Text("data"),
+                                                )
+                                                : DropdownSearch<String>(
+                                                  popupProps: PopupProps.dialog(
+                                                    showSearchBox: true,
+                                                    searchFieldProps: TextFieldProps(
+                                                      decoration: InputDecoration(
+                                                        labelText:
+                                                            'Cari Jabatan',
+                                                        border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    dialogProps: DialogProps(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              12,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  items:
+                                                      (f, cs) =>
+                                                          controller.listJabatan
+                                                              .map(
+                                                                (jabatan) =>
+                                                                    jabatan['nama']
+                                                                        .toString(),
+                                                              )
+                                                              .toList(),
+                                                  selectedItem:
+                                                      controller
+                                                                  .selectedJabatan
+                                                                  .value ==
+                                                              ""
+                                                          ? "Pilih Jabatan"
+                                                          : controller
+                                                              .listJabatan
+                                                              .firstWhere(
+                                                                (jabatan) =>
+                                                                    jabatan['id']
+                                                                        .toString() ==
+                                                                    controller
+                                                                        .selectedJabatan
+                                                                        .value,
+                                                                orElse:
+                                                                    () => {},
+                                                              )['nama']
+                                                              .toString(),
+                                                  onChanged: (newValue) {
+                                                    final selected = controller
+                                                        .listJabatan
+                                                        .firstWhere(
+                                                          (jabatan) =>
+                                                              jabatan['nama'] ==
+                                                              newValue,
+                                                          orElse: () => {},
+                                                        );
+                                                    controller
+                                                        .selectedJabatan
+                                                        .value = selected['id']
+                                                            .toString();
+                                                  },
+                                                ),
+                                            SizedBox(height: 24),
+                                            SizedBox(
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.teal,
+                                                  foregroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                      ),
+                                                ),
+                                                onPressed: () {
+                                                  controller.getRanking();
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("Filter"),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.filter_list,
+                              color: Colors.teal,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Statistik cards
+                      Obx(
+                        () => SizedBox(
+                          width: double.infinity,
+                          child: _cardBorder(
+                            color: Colors.grey,
+                            title: controller.total.value.toString(),
+                            subTitle: "Total Peserta",
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Obx(
+                        () => SizedBox(
+                          width: double.infinity,
+                          child: _cardBorder(
+                            color: Colors.teal,
+                            title: controller.pesertaLulus.value.toString(),
+                            subTitle: "Peserta Lulus",
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Obx(
+                        () => SizedBox(
+                          width: double.infinity,
+                          child: _cardBorder(
+                            color: Colors.red,
+                            title: controller.pesertTidakLulus.value.toString(),
+                            subTitle: "Peserta Tidak Lulus",
+                          ),
+                        ),
+                      ),
+                      Obx(
+                        () => SizedBox(
+                          width: double.infinity,
+                          child: _cardBorder(
+                            bgColor: Colors.yellow.shade100,
+                            color: Colors.yellow.shade300,
+                            title: "Anda berada di peringkat",
+                            subTitle:
+                                "${controller.rank.value.toString()} Dari ${controller.total.value.toString()}",
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Search bar
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: controller.searchController,
+                              decoration: InputDecoration(
+                                labelStyle: const TextStyle(color: Colors.grey),
+                                labelText: "Cari Disini",
+                                prefixIcon: const Icon(
+                                  Icons.search,
+                                  color: Colors.teal,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                    color: Colors.teal,
+                                    width: 1.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                    color: Colors.teal,
+                                    width: 2.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 14,
+                              ),
+                            ),
+                            onPressed: () {
+                              controller.getRanking();
+                            },
+                            child: const Text(
+                              "Cari",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+
+                      Obx(
+                        () =>
+                            controller.listPeringkat.isEmpty
+                                ? Skeletonizer(
+                                  child: _cardData(
+                                    num: "1",
+                                    name: "name",
+                                    provisi: "provisi",
+                                    kota: "kota",
+                                    score: "score",
+                                    status: 1,
+                                  ),
+                                )
+                                : SizedBox(
+                                  width: double.infinity,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: controller.listPeringkat.length,
+                                    itemBuilder: (context, index) {
+                                      final data =
+                                          controller.listPeringkat[index];
+                                      return _cardData(
+                                        num: data['no'].toString(),
+                                        name: data['user_name'],
+                                        provisi: data['provinsi_nama'],
+                                        kota: data['kabupaten_nama'],
+                                        score: data['total'].toString(),
+                                        status: data['islulus'],
+                                      );
+                                    },
+                                  ),
+                                ),
+                      ),
+
+                      Obx(() {
+                        final current = controller.currentPage.value;
+                        final total = controller.totalPage.value;
+
+                        if (total == 0) {
+                          return const SizedBox.shrink(); // tidak ada halaman
+                        }
+
+                        // Tentukan window
+                        int start = current - 1;
+                        int end = current + 1;
+
+                        // clamp biar tetap di antara 1 dan total
+                        start = start < 1 ? 1 : start;
+                        end = end > total ? total : end;
+
+                        // Kalau total < 3, pakai semua halaman yg ada
+                        if (total <= 3) {
+                          start = 1;
+                          end = total;
+                        } else {
+                          // Kalau current di awal → 1,2,3
+                          if (current == 1) {
+                            start = 1;
+                            end = 3;
+                          }
+                          // Kalau current di akhir → total-2, total-1, total
+                          else if (current == total) {
+                            start = total - 2;
+                            end = total;
+                          }
+                        }
+
+                        // Generate daftar halaman
+                        final pages = List.generate(
+                          end - start + 1,
+                          (i) => start + i,
+                        );
+                        return Row(
+                          spacing: 16,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (controller.currentPage.value > 1) {
+                                  controller.currentPage.value = 1;
+                                  controller.getRanking();
+                                }
+                              },
+                              icon: Icon(Icons.first_page),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                if (controller.currentPage.value > 1) {
+                                  controller.currentPage.value--;
+                                  controller.getRanking();
+                                }
+                              },
+                              icon: Icon(Icons.arrow_back_ios),
+                            ),
+                            ...pages.map((page) {
+                              final isActive = page == current;
+                              return Container(
+                                margin: EdgeInsets.symmetric(horizontal: 2),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    controller.currentPage.value = current;
+                                    controller.getRanking();
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: Duration(milliseconds: 200),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: isActive ? 14 : 10,
+                                      vertical: isActive ? 8 : 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          isActive
+                                              ? Colors.teal.shade100
+                                              : Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color:
+                                            isActive
+                                                ? Colors.teal
+                                                : Colors.grey.shade300,
+                                        width: isActive ? 2 : 1,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      '$page',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            isActive
+                                                ? Colors.teal
+                                                : Colors.black,
+                                        fontSize:
+                                            isActive
+                                                ? 16
+                                                : 14, // font lebih besar untuk page aktif
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                            IconButton(
+                              onPressed: () {
+                                if (controller.currentPage.value <
+                                    controller.totalPage.value) {
+                                  controller.currentPage.value++;
+                                  controller.getRanking();
+                                }
+                              },
+                              icon: Icon(Icons.arrow_forward_ios),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                if (controller.currentPage.value <
+                                    controller.totalPage.value) {
+                                  controller.currentPage.value =
+                                      controller.totalPage.value;
+                                  controller.getRanking();
+                                }
+                              },
+                              icon: Icon(Icons.last_page),
+                            ),
+                          ],
+                        );
+                      }),
+                      Text(
+                        "Catatan",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Container(
+                        child: Center(
+                          child: Html(
+                            data:
+                                "<ol><li>Faktor lulus/tidak peserta bukan ditentukan dari total nilai, namun passing grade masing-masing kategori.</li><li>Nilai yang ditampilkan pada ranking adalah nilai pengerjaan pertama kali</li></ol>",
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ],
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.all(16),
-              child: Obx(
-                () =>
-                    controller.tryoutSaya.isEmpty
-                        ? Skeletonizer(child: Text("Title"))
-                        : Text(
-                          controller.tryoutSaya['tryout']['name'].toString(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-              ),
-            ),
-            Card(
-              color: Colors.white,
-              child: Container(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Hasil Peringkat Tryout",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        IconButton(
-                          tooltip: "Filter",
-                          onPressed: () {
-                            if (controller.loading['filter'] == true) {
-                              return;
-                            }
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (context) {
-                                return SizedBox(
-                                  width: double.infinity,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(32),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text("Lengkapi Form"),
-                                            IconButton(
-                                              onPressed:
-                                                  () => Navigator.pop(context),
-                                              icon: Icon(Icons.close),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 16),
-                                        Row(children: [Text("Provinsi")]),
-                                        SizedBox(height: 12),
-                                        controller.listProvinsi.isEmpty
-                                            ? Skeletonizer(child: Text("data"))
-                                            : DropdownSearch<String>(
-                                              popupProps: PopupProps.dialog(
-                                                showSearchBox: true,
-                                                searchFieldProps: TextFieldProps(
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Cari Provinsi',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              items:
-                                                  (f, cs) =>
-                                                      controller.listProvinsi
-                                                          .map(
-                                                            (provinsi) =>
-                                                                provinsi['nama']
-                                                                    .toString(),
-                                                          )
-                                                          .toList(),
-                                              selectedItem:
-                                                  controller
-                                                              .selectedProvinsi
-                                                              .value ==
-                                                          ""
-                                                      ? "Pilih Provinsi"
-                                                      : controller.listProvinsi
-                                                          .firstWhere(
-                                                            (provinsi) =>
-                                                                provinsi['id']
-                                                                    .toString() ==
-                                                                controller
-                                                                    .selectedProvinsi
-                                                                    .value,
-                                                            orElse: () => {},
-                                                          )['nama']
-                                                          .toString(),
-                                              onChanged: (newValue) {
-                                                final selected = controller
-                                                    .listProvinsi
-                                                    .firstWhere(
-                                                      (provinsi) =>
-                                                          provinsi['nama'] ==
-                                                          newValue,
-                                                      orElse: () => {},
-                                                    );
-                                                controller
-                                                        .selectedProvinsi
-                                                        .value =
-                                                    selected['id'].toString();
-                                                controller.getKota();
-                                              },
-                                            ),
-                                        SizedBox(height: 12),
-                                        Row(children: [Text("Kota/Kabupaten")]),
-                                        SizedBox(height: 12),
-                                        Obx(() {
-                                          return controller.listKota.isEmpty
-                                              ? Skeletonizer(
-                                                child: Text("data"),
-                                              )
-                                              : DropdownSearch<String>(
-                                                popupProps: PopupProps.dialog(
-                                                  showSearchBox: true,
-                                                  searchFieldProps: TextFieldProps(
-                                                    decoration: InputDecoration(
-                                                      labelText: 'Cari Kota',
-                                                      border: OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              8,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                items:
-                                                    (f, cs) =>
-                                                        controller.listKota
-                                                            .map(
-                                                              (kota) =>
-                                                                  kota['nama']
-                                                                      .toString(),
-                                                            )
-                                                            .toList(),
-                                                selectedItem:
-                                                    controller
-                                                                .selectedKota
-                                                                .value ==
-                                                            ""
-                                                        ? "Pilih Kota/Kabupaten"
-                                                        : controller.listKota
-                                                            .firstWhere(
-                                                              (kota) =>
-                                                                  kota['id']
-                                                                      .toString() ==
-                                                                  controller
-                                                                      .selectedKota
-                                                                      .value,
-                                                              orElse: () => {},
-                                                            )['nama']
-                                                            .toString(),
-                                                onChanged: (newValue) {
-                                                  final selected = controller
-                                                      .listKota
-                                                      .firstWhere(
-                                                        (kota) =>
-                                                            kota['nama'] ==
-                                                            newValue,
-                                                        orElse: () => {},
-                                                      );
-                                                  controller
-                                                          .selectedKota
-                                                          .value =
-                                                      selected['id'].toString();
-                                                  controller.getInstansi();
-                                                },
-                                              );
-                                        }),
-                                        SizedBox(height: 12),
-                                        Row(
-                                          children: [Text("Instansi Tujuan")],
-                                        ),
-                                        SizedBox(height: 12),
-                                        controller.listInstansi.isEmpty
-                                            ? Skeletonizer(child: Text("data"))
-                                            : DropdownSearch<String>(
-                                              popupProps: PopupProps.dialog(
-                                                showSearchBox: true,
-                                                searchFieldProps: TextFieldProps(
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Cari Instansi',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              items:
-                                                  (f, cs) =>
-                                                      controller.listInstansi
-                                                          .map(
-                                                            (instansi) =>
-                                                                instansi['nama']
-                                                                    .toString(),
-                                                          )
-                                                          .toList(),
-                                              selectedItem:
-                                                  controller
-                                                              .selectedInstansi
-                                                              .value ==
-                                                          ""
-                                                      ? "Pilih Instansi"
-                                                      : controller.listInstansi
-                                                          .firstWhere(
-                                                            (instansi) =>
-                                                                instansi['id']
-                                                                    .toString() ==
-                                                                controller
-                                                                    .selectedInstansi
-                                                                    .value,
-                                                            orElse: () => {},
-                                                          )['nama']
-                                                          .toString(),
-                                              onChanged: (newValue) {
-                                                final selected = controller
-                                                    .listInstansi
-                                                    .firstWhere(
-                                                      (instansi) =>
-                                                          instansi['nama'] ==
-                                                          newValue,
-                                                      orElse: () => {},
-                                                    );
-                                                controller
-                                                        .selectedInstansi
-                                                        .value =
-                                                    selected['id'].toString();
-                                              },
-                                            ),
-                                        SizedBox(height: 12),
-                                        Row(children: [Text("Jabatan Tujuan")]),
-                                        SizedBox(height: 12),
-                                        controller.listJabatan.isEmpty
-                                            ? Skeletonizer(child: Text("data"))
-                                            : DropdownSearch<String>(
-                                              popupProps: PopupProps.dialog(
-                                                showSearchBox: true,
-                                                searchFieldProps: TextFieldProps(
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Cari Jabatan',
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              items:
-                                                  (f, cs) =>
-                                                      controller.listJabatan
-                                                          .map(
-                                                            (jabatan) =>
-                                                                jabatan['nama']
-                                                                    .toString(),
-                                                          )
-                                                          .toList(),
-                                              selectedItem:
-                                                  controller
-                                                              .selectedJabatan
-                                                              .value ==
-                                                          ""
-                                                      ? "Pilih Jabatan"
-                                                      : controller.listJabatan
-                                                          .firstWhere(
-                                                            (jabatan) =>
-                                                                jabatan['id']
-                                                                    .toString() ==
-                                                                controller
-                                                                    .selectedJabatan
-                                                                    .value,
-                                                            orElse: () => {},
-                                                          )['nama']
-                                                          .toString(),
-                                              onChanged: (newValue) {
-                                                final selected = controller
-                                                    .listJabatan
-                                                    .firstWhere(
-                                                      (jabatan) =>
-                                                          jabatan['nama'] ==
-                                                          newValue,
-                                                      orElse: () => {},
-                                                    );
-                                                controller
-                                                        .selectedJabatan
-                                                        .value =
-                                                    selected['id'].toString();
-                                              },
-                                            ),
-                                        SizedBox(height: 24),
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.teal,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 12,
-                                                  ),
-                                            ),
-                                            onPressed: () {
-                                              controller.getRanking();
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text("Filter"),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.filter_list,
-                            color: Colors.teal,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // Statistik cards
-                    Obx(
-                      () => SizedBox(
-                        width: double.infinity,
-                        child: _cardBorder(
-                          color: Colors.grey,
-                          title: controller.total.value.toString(),
-                          subTitle: "Total Peserta",
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Obx(
-                      () => SizedBox(
-                        width: double.infinity,
-                        child: _cardBorder(
-                          color: Colors.teal,
-                          title: controller.pesertaLulus.value.toString(),
-                          subTitle: "Peserta Lulus",
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Obx(
-                      () => SizedBox(
-                        width: double.infinity,
-                        child: _cardBorder(
-                          color: Colors.red,
-                          title: controller.pesertTidakLulus.value.toString(),
-                          subTitle: "Peserta Tidak Lulus",
-                        ),
-                      ),
-                    ),
-                    Obx(
-                      () => SizedBox(
-                        width: double.infinity,
-                        child: _cardBorder(
-                          bgColor: Colors.yellow.shade100,
-                          color: Colors.yellow.shade300,
-                          title: "Anda berada di peringkat",
-                          subTitle:
-                              "${controller.rank.value.toString()} Dari ${controller.total.value.toString()}",
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Search bar
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: controller.searchController,
-                            decoration: InputDecoration(
-                              labelStyle: const TextStyle(color: Colors.grey),
-                              labelText: "Cari Disini",
-                              prefixIcon: const Icon(
-                                Icons.search,
-                                color: Colors.teal,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  color: Colors.teal,
-                                  width: 1.5,
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  color: Colors.teal,
-                                  width: 2.0,
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 14,
-                            ),
-                          ),
-                          onPressed: () {
-                            controller.getRanking();
-                          },
-                          child: const Text(
-                            "Cari",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-
-                    Obx(
-                      () =>
-                          controller.listPeringkat.isEmpty
-                              ? Skeletonizer(
-                                child: _cardData(
-                                  num: "1",
-                                  name: "name",
-                                  provisi: "provisi",
-                                  kota: "kota",
-                                  score: "score",
-                                  status: 1,
-                                ),
-                              )
-                              : SizedBox(
-                                width: double.infinity,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: controller.listPeringkat.length,
-                                  itemBuilder: (context, index) {
-                                    final data =
-                                        controller.listPeringkat[index];
-                                    return _cardData(
-                                      num: data['no'].toString(),
-                                      name: data['user_name'],
-                                      provisi: data['provinsi_nama'],
-                                      kota: data['kabupaten_nama'],
-                                      score: data['total'].toString(),
-                                      status: data['islulus'],
-                                    );
-                                  },
-                                ),
-                              ),
-                    ),
-
-                    Obx(() {
-                      final current = controller.currentPage.value;
-                      final total = controller.totalPage.value;
-
-                      if (total == 0) {
-                        return const SizedBox.shrink(); // tidak ada halaman
-                      }
-
-                      // Tentukan window
-                      int start = current - 1;
-                      int end = current + 1;
-
-                      // clamp biar tetap di antara 1 dan total
-                      start = start < 1 ? 1 : start;
-                      end = end > total ? total : end;
-
-                      // Kalau total < 3, pakai semua halaman yg ada
-                      if (total <= 3) {
-                        start = 1;
-                        end = total;
-                      } else {
-                        // Kalau current di awal → 1,2,3
-                        if (current == 1) {
-                          start = 1;
-                          end = 3;
-                        }
-                        // Kalau current di akhir → total-2, total-1, total
-                        else if (current == total) {
-                          start = total - 2;
-                          end = total;
-                        }
-                      }
-
-                      // Generate daftar halaman
-                      final pages = List.generate(
-                        end - start + 1,
-                        (i) => start + i,
-                      );
-                      return Row(
-                        spacing: 16,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              if (controller.currentPage.value > 1) {
-                                controller.currentPage.value = 1;
-                                controller.getRanking();
-                              }
-                            },
-                            icon: Icon(Icons.first_page),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              if (controller.currentPage.value > 1) {
-                                controller.currentPage.value--;
-                                controller.getRanking();
-                              }
-                            },
-                            icon: Icon(Icons.arrow_back_ios),
-                          ),
-                          ...pages.map((page) {
-                            final isActive = page == current;
-                            return Container(
-                              margin: EdgeInsets.symmetric(horizontal: 2),
-                              child: GestureDetector(
-                                onTap: () {
-                                  controller.currentPage.value = current;
-                                  controller.getRanking();
-                                },
-                                child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 200),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isActive ? 14 : 10,
-                                    vertical: isActive ? 8 : 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        isActive
-                                            ? Colors.teal.shade100
-                                            : Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color:
-                                          isActive
-                                              ? Colors.teal
-                                              : Colors.grey.shade300,
-                                      width: isActive ? 2 : 1,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    '$page',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          isActive ? Colors.teal : Colors.black,
-                                      fontSize:
-                                          isActive
-                                              ? 16
-                                              : 14, // font lebih besar untuk page aktif
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                          IconButton(
-                            onPressed: () {
-                              if (controller.currentPage.value <
-                                  controller.totalPage.value) {
-                                controller.currentPage.value++;
-                                controller.getRanking();
-                              }
-                            },
-                            icon: Icon(Icons.arrow_forward_ios),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              if (controller.currentPage.value <
-                                  controller.totalPage.value) {
-                                controller.currentPage.value =
-                                    controller.totalPage.value;
-                                controller.getRanking();
-                              }
-                            },
-                            icon: Icon(Icons.last_page),
-                          ),
-                        ],
-                      );
-                    }),
-                    Text(
-                      "Catatan",
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Container(
-                      child: Center(
-                        child: Html(
-                          data:
-                              "<ol><li>Faktor lulus/tidak peserta bukan ditentukan dari total nilai, namun passing grade masing-masing kategori.</li><li>Nilai yang ditampilkan pada ranking adalah nilai pengerjaan pertama kali</li></ol>",
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );

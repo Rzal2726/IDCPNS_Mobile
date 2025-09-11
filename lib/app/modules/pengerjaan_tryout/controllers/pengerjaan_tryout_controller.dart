@@ -42,6 +42,7 @@ class PengerjaanTryoutController extends GetxController {
       <Map<String, dynamic>>[].obs;
   RxString uuid = "".obs;
   RxInt totalSoal = 0.obs;
+  DateTime initialTimer = DateTime.now();
   final count = 0.obs;
 
   @override
@@ -180,26 +181,31 @@ class PengerjaanTryoutController extends GetxController {
     required int optionId,
     required int waktuPengerjaan,
   }) {
-    final newAnswer = {
-      "tryout_question_id": questionId,
-      "tryout_question_option_id": optionId,
-      "waktu_pengerjaan": waktuPengerjaan,
-    };
-
-    // Cek apakah jawaban untuk soal ini sudah ada
     final index = selectedAnswersList.indexWhere(
       (answer) => answer['tryout_question_id'] == questionId,
     );
 
+    final diff = DateTime.now().difference(initialTimer).inSeconds;
     if (index >= 0) {
-      // Jika sudah ada → replace data lama
-      selectedAnswersList[index] = newAnswer;
+      // Ambil waktu lama lalu tambahkan waktu baru
+      final previousTime = selectedAnswersList[index]['waktu_pengerjaan'] ?? 0;
+      selectedAnswersList[index] = {
+        "tryout_question_id": questionId,
+        "tryout_question_option_id": optionId,
+        "waktu_pengerjaan": previousTime + diff,
+      };
     } else {
-      // Jika belum ada → tambah data baru
-      selectedAnswersList.add(newAnswer);
+      // Jika belum ada → tambahkan data baru
+      selectedAnswersList.add({
+        "tryout_question_id": questionId,
+        "tryout_question_option_id": optionId,
+        "waktu_pengerjaan": waktuPengerjaan,
+      });
     }
+    initialTimer = DateTime.now();
 
     print("Jawaban terbaru: $selectedAnswersList");
+    print("durasi: ${diff}");
   }
 
   /// Mulai soal baru, simpan waktu lama terlebih dahulu

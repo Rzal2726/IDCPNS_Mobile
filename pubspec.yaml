@@ -57,6 +57,9 @@ dependencies:
   pretty_qr_code: ^3.5.0
   dropdown_search: ^6.0.2
   file_selector: ^1.0.3
+  flick_video_player: ^0.9.0
+  video_player: ^2.10.0
+  youtube_player_flutter: ^9.1.2
 
 
 dev_dependencies:

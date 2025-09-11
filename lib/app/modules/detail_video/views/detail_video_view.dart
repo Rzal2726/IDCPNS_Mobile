@@ -1,8 +1,11 @@
+import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../controllers/detail_video_controller.dart';
 
@@ -12,39 +15,54 @@ class DetailVideoView extends GetView<DetailVideoController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text("Detail Video"),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications_rounded, color: Colors.teal),
-                onPressed: () {
-                  // ✅ Best practice: use a function for navigation
-                  Get.to(() => NotificationView());
-                },
-              ),
-              Positioned(
-                right: 10,
-                top: 10,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '4',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                ),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(25),
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
-        ],
+          child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            title: Text("Detail Video"),
+            actions: [
+              Stack(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.notifications_rounded, color: Colors.teal),
+                    onPressed: () {
+                      // ✅ Best practice: use a function for navigation
+                      Get.to(() => NotificationView());
+                    },
+                  ),
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '4',
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -61,11 +79,57 @@ class DetailVideoView extends GetView<DetailVideoController> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          width: double.infinity,
-                          height: 240,
-                          child: Center(child: Text("Placeholder Video")),
-                        ),
+                        Obx(() {
+                          if (!controller.isReady.value) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            if (controller.videoData['isyoutube'] == 1) {
+                              return YoutubePlayerBuilder(
+                                player: YoutubePlayer(
+                                  controller: controller.ytController,
+                                  showVideoProgressIndicator: true,
+                                  progressIndicatorColor: Colors.amber,
+                                  progressColors: const ProgressBarColors(
+                                    playedColor: Colors.amber,
+                                    handleColor: Colors.amberAccent,
+                                  ),
+                                  onReady: () {
+                                    debugPrint('Player is ready.');
+                                  },
+                                ),
+                                builder: (context, player) {
+                                  return Column(
+                                    children: [
+                                      // ✅ Player otomatis fullscreen jika user klik tombol fullscreen
+                                      player,
+
+                                      const SizedBox(height: 12),
+
+                                      Text(
+                                        "Pengantar (Kisi - Kisi dan Passing Grade)",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              return SizedBox(
+                                width: double.infinity,
+                                height: 240,
+                                child: WebViewWidget(
+                                  controller: controller.webViewController,
+                                ),
+                              );
+                            }
+                          }
+                        }),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -91,21 +155,36 @@ class DetailVideoView extends GetView<DetailVideoController> {
                           ],
                         ),
 
-                        SizedBox(
-                          width: 100,
-                          child: _badge(
-                            title: "CPNS",
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.teal,
-                          ),
-                        ),
-                        Text(
-                          "Pengantar (Kisi - Kisi dan Passing Grade)",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
+                        Obx(() {
+                          if (!controller.isReady.value) {
+                            return Skeletonizer(child: Text("data"));
+                          }
+                          return SizedBox(
+                            width: 100,
+                            child: _badge(
+                              title:
+                                  controller
+                                      .videoData['video_series']['menu_category']?['menu'] ??
+                                  "",
+                              foregroundColor: Colors.white,
+                              backgroundColor:
+                                  controller.categoryColor[controller
+                                      .videoData['video_series']['menu_category']?['menu']]!,
+                            ),
+                          );
+                        }),
+                        Obx(() {
+                          if (!controller.isReady.value) {
+                            return Skeletonizer(child: Text("data"));
+                          }
+                          return Text(
+                            controller.videoData['nama'],
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -183,6 +262,9 @@ class DetailVideoView extends GetView<DetailVideoController> {
                         SizedBox(height: 12),
 
                         Obx(() {
+                          if (controller.isReady.value == false) {
+                            return Skeletonizer(child: Text("data"));
+                          }
                           switch (controller.selectedOption.value) {
                             case "QnA":
                               return Column(
@@ -224,20 +306,46 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                       ),
                                     ),
                                   ),
+                                  SizedBox(height: 24),
+                                  ListView.builder(
+                                    shrinkWrap:
+                                        true, // ✅ Agar tinggi otomatis menyesuaikan
+                                    physics:
+                                        const NeverScrollableScrollPhysics(), // ✅ Scroll dihandle parent
+                                    itemCount: controller.commentList.length,
+                                    itemBuilder: (context, index) {
+                                      final data =
+                                          controller.commentList[index];
+                                      return _commentData(
+                                        data: data,
+                                        isReply:
+                                            (data['comment_reply'] as List?)
+                                                ?.isNotEmpty ??
+                                            false,
+                                      );
+                                    },
+                                  ),
                                 ],
                               );
                             default:
                               return Column(
                                 children: [
-                                  TextField(
-                                    controller: controller.questionController,
-                                    maxLines: 1,
-                                    decoration: InputDecoration(
-                                      hintText: "Buat Catatan",
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                  Obx(
+                                    () => TextField(
+                                      controller: controller.questionController,
+                                      maxLines: 1,
+                                      decoration: InputDecoration(
+                                        hintText:
+                                            "Buat Catatan pada durasi ${controller.duration.value}",
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        contentPadding: const EdgeInsets.all(
+                                          12,
+                                        ),
                                       ),
-                                      contentPadding: const EdgeInsets.all(12),
                                     ),
                                   ),
                                   SizedBox(height: 12),
@@ -295,6 +403,109 @@ class DetailVideoView extends GetView<DetailVideoController> {
         child: Center(
           child: Text(title, style: TextStyle(color: foregroundColor)),
         ),
+      ),
+    );
+  }
+
+  Widget _commentData({
+    required Map<String, dynamic> data,
+    bool isReply = false,
+  }) {
+    return Container(
+      margin: EdgeInsets.only(
+        left: isReply ? 32 : 0,
+        bottom: 16,
+      ), // indent untuk balasan
+      padding: const EdgeInsets.only(bottom: 8),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Foto & Nama User
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundImage: NetworkImage(data['user']?['foto'] ?? ''),
+                onBackgroundImageError: (_, __) {},
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data['user']?['name'] ?? "User",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      controller.timeAgo(data['tanggal']),
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+
+          // Isi komentar
+          Text(data['comment'] ?? '', style: const TextStyle(fontSize: 14)),
+          const SizedBox(height: 8),
+
+          // Aksi Balas dan Lihat Balasan
+          Row(
+            spacing: 16,
+            children: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: () {
+                  // TODO: implementasi fitur balas komentar
+                },
+                child: const Text(
+                  "Balas",
+                  style: TextStyle(color: Colors.teal),
+                ),
+              ),
+              if ((data['comment_reply'] as List?)?.isNotEmpty ?? false)
+                TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () {
+                    // TODO: Toggle expand reply
+                  },
+                  child: const Text(
+                    "Lihat Balasan",
+                    style: TextStyle(color: Colors.teal),
+                  ),
+                ),
+            ],
+          ),
+
+          // List balasan komentar
+          if ((data['comment_reply'] as List?)?.isNotEmpty ?? false)
+            Column(
+              children:
+                  (data['comment_reply'] as List)
+                      .map(
+                        (reply) => _commentData(
+                          data: reply as Map<String, dynamic>,
+                          isReply: true,
+                        ),
+                      )
+                      .toList(),
+            ),
+        ],
       ),
     );
   }

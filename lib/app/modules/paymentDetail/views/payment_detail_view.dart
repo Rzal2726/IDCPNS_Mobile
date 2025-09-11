@@ -511,75 +511,77 @@ void showPaymentBottomSheet(BuildContext context) {
         child: Obx(() {
           return controller.paymantListData.isEmpty
               ? CircularProgressIndicator()
-              : SingleChildScrollView(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header dengan judul + tombol close
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Metode Pembayaran",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+              : SafeArea(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header dengan judul + tombol close
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Metode Pembayaran",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.close, color: Colors.black54),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-
-                    // Loop kategori payment
-                    for (var data in controller.paymantListData) ...[
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "${data['name']}",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
+                          IconButton(
+                            icon: Icon(Icons.close, color: Colors.black54),
+                            onPressed: () => Navigator.of(context).pop(),
                           ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      SizedBox(
-                        height: 110,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            for (var method in data['xendit_payment_method'])
-                              Container(
-                                width: 140,
-                                margin: EdgeInsets.only(right: 12),
-                                child: paymentItem(
-                                  svgPath: method['image_url'],
-                                  title: method['name'],
-                                  subtitle:
-                                      "Biaya Admin: ${method['biaya_admin']}",
-                                  onTap: () {
-                                    Get.back();
-                                    method['code'] == "OVO"
-                                        ? showPhoneNumberBottomSheet(context)
-                                        : controller.paymentSelected(
-                                          id: method['id'],
-                                          methode: method['code'],
-                                          type: data['code'],
-                                        );
-                                  },
-                                ),
-                              ),
-                          ],
-                        ),
+                        ],
                       ),
                       SizedBox(height: 20),
+
+                      // Loop kategori payment
+                      for (var data in controller.paymantListData) ...[
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "${data['name']}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          height: 110,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              for (var method in data['xendit_payment_method'])
+                                Container(
+                                  width: 140,
+                                  margin: EdgeInsets.only(right: 12),
+                                  child: paymentItem(
+                                    svgPath: method['image_url'],
+                                    title: method['name'],
+                                    subtitle:
+                                        "Biaya Admin: ${method['biaya_admin']}",
+                                    onTap: () {
+                                      Get.back();
+                                      method['code'] == "OVO"
+                                          ? showPhoneNumberBottomSheet(context)
+                                          : controller.paymentSelected(
+                                            id: method['id'],
+                                            methode: method['code'],
+                                            type: data['code'],
+                                          );
+                                    },
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               );
         }),

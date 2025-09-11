@@ -6,6 +6,8 @@ import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/tryout_payment/controllers/tryout_payment_controller.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TryoutCheckoutController extends GetxController {
   //TODO: Implement TryoutCheckoutController
@@ -19,6 +21,7 @@ class TryoutCheckoutController extends GetxController {
   RxString selectedOption = "ATM".obs;
   RxString timeStamp = "".obs;
   RxBool isDeveloper = false.obs;
+  RxBool isRedirected = false.obs;
   final count = 0.obs;
   @override
   void onInit() {
@@ -53,6 +56,8 @@ class TryoutCheckoutController extends GetxController {
       fetchDetailPayment();
       fetchServerTime();
     });
+    print("Data PaymentDetails: ${paymentDetails}");
+    print("Data transactionData: ${transactionData}");
   }
 
   void stopFetchingDetailPayment() {
@@ -83,11 +88,30 @@ class TryoutCheckoutController extends GetxController {
         if (compareTimeStamp(paymentDetails['tanggal_kadaluarsa'])) {
           Get.offAllNamed("/tryout");
         }
+        if (isRedirected.value == false) {
+          if (data['invoice_url'] != null) {
+            final Uri url = Uri.parse(data['invoice_url']);
+            if (await canLaunchUrl(url)) {
+              await launchUrl(
+                url,
+                mode: LaunchMode.externalApplication, // Buka di browser
+              );
+            } else {
+              print("Tidak bisa membuka URL: $url");
+            }
+            isRedirected.value = true;
+          } else {
+            print("No Url");
+          }
+        }
       } else {
         Get.offNamed("/pembayaran-berhasil");
         print("Sudah Dibayar");
       }
     }
+
+    print("Data PaymentDetails: ${paymentDetails}");
+    print("Data transactionData: ${transactionData}");
   }
 
   void fetchServerTime() async {
