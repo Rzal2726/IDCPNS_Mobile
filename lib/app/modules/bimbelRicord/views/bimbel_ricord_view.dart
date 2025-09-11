@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/bimbelRicord/controllers/bimbel_ricord_controller.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class BimbelRecordView extends GetView<BimbelRecordController> {
   const BimbelRecordView({super.key});
@@ -20,9 +21,8 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
         child: Padding(
           padding: AppStyle.screenPadding,
           child: Obx(() {
-            if (controller.isLoading.value) {
-              return Center(child: CircularProgressIndicator());
-            }
+            final video = controller.selectedVideo;
+            final list = controller.rekamanList;
 
             return Container(
               padding: AppStyle.contentPadding,
@@ -31,10 +31,10 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.2), // warna bayangan
-                    blurRadius: 6, // seberapa blur bayangannya
-                    spreadRadius: 2, // seberapa melebar bayangan
-                    offset: Offset(0, 3), // posisi bayangan (x, y)
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 6,
+                    spreadRadius: 2,
+                    offset: Offset(0, 3),
                   ),
                 ],
               ),
@@ -46,11 +46,60 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 16),
+
+                  // Player hanya muncul kalau ada video terpilih
+                  if (video.isNotEmpty)
+                    Container(
+                      margin: EdgeInsets.only(bottom: 16),
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: YoutubePlayer(
+                              controller: YoutubePlayerController(
+                                initialVideoId:
+                                    YoutubePlayer.convertUrlToId(
+                                      video['url'] ?? '',
+                                    )!,
+                                flags: YoutubePlayerFlags(autoPlay: true),
+                              ),
+                              showVideoProgressIndicator: true,
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  video['judul'] ?? '',
+                                  style: TextStyle(color: Colors.white),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.close, color: Colors.white),
+                                onPressed: controller.closeVideo,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  // List Video
                   Expanded(
                     child: ListView.builder(
-                      itemCount: controller.rekamanList.length,
+                      itemCount: list.length,
                       itemBuilder: (context, index) {
-                        final item = controller.rekamanList[index];
+                        final item = list[index];
+                        final jadwal = item['jadwal_tanggal'] ?? {};
+
                         return Container(
                           margin: EdgeInsets.only(bottom: 12),
                           padding: EdgeInsets.all(16),
@@ -63,7 +112,7 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                item['judul'],
+                                item['judul'] ?? '-',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -80,7 +129,7 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
                                         "Hari",
                                         style: TextStyle(color: Colors.grey),
                                       ),
-                                      Text(item['hari']),
+                                      Text(jadwal['hari'] ?? '-'),
                                     ],
                                   ),
                                   Column(
@@ -89,7 +138,7 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
                                         "Tanggal",
                                         style: TextStyle(color: Colors.grey),
                                       ),
-                                      Text(item['tanggal']),
+                                      Text(jadwal['tanggal'] ?? '-'),
                                     ],
                                   ),
                                   Column(
@@ -98,7 +147,7 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
                                         "Jam",
                                         style: TextStyle(color: Colors.grey),
                                       ),
-                                      Text(item['jam']),
+                                      Text(jadwal['jam'] ?? '-'),
                                     ],
                                   ),
                                 ],
@@ -112,7 +161,10 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                onPressed: () => controller.tontonVideo(item),
+                                onPressed:
+                                    item['url'] != null
+                                        ? () => controller.tontonVideo(item)
+                                        : null,
                                 icon: Icon(
                                   Icons.play_circle_fill,
                                   color: Colors.white,

@@ -34,7 +34,8 @@ class DetailMyBimbelController extends GetxController {
 
   Future<void> getData() async {
     try {
-      final url = await baseUrl + apiGetDetailBimbelSaya + "/" + uuid;
+      final url =
+          await baseUrl + apiGetDetailBimbelSaya + "/" + uuid.toString();
 
       final result = await _restClient.getData(url: url);
       if (result["status"] == "success") {

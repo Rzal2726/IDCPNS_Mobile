@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../controllers/detail_my_bimbel_controller.dart';
@@ -61,57 +62,73 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ================== INFO PAKET ==================
-                Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        data['bimbel']['bimbel_parent']['name'],
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                Skeletonizer(
+                  enabled:
+                      data.isEmpty, // aktifin skeleton kalau data belum ada
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Skeleton.replace(
+                              child: Text(
+                                data['bimbel']?['bimbel_parent']?['name'] ??
+                                    '██████████',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Skeleton.replace(
+                              child: Text(
+                                data['bimbel']?['name'] ?? '███████',
+                                style: TextStyle(color: Colors.grey),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        data['bimbel']['name'],
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      SizedBox(height: 8),
-                      Text('Masa Aktif'),
-                      SizedBox(height: 8),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          minimumSize: Size.fromHeight(35),
-                        ),
-                        onPressed: () {},
-                        child: Text(
-                          '${data['bimbel']['reamining_day']} Hari Lagi',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: Size.fromHeight(40),
-                          backgroundColor: Colors.teal, // warna background
-                          foregroundColor: Colors.white, // warna teks & icon
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              8,
-                            ), // border radius 8
+                        SizedBox(height: 8),
+                        Text('Masa Aktif'),
+                        SizedBox(height: 8),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            minimumSize: Size.fromHeight(35),
+                          ),
+                          onPressed: () {},
+                          child: Text(
+                            '${data['bimbel']?['reamining_day'] ?? '0'} Hari Lagi',
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
-                        child: Text('Ganti Paket'),
-                      ),
-                    ],
+                        SizedBox(height: 8),
+                        OutlinedButton(
+                          onPressed: () {},
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: Size.fromHeight(40),
+                            backgroundColor: Colors.teal,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text('Ganti Paket'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -158,7 +175,10 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(Routes.BIMBEL_RECORD);
+                        Get.toNamed(
+                          Routes.BIMBEL_RECORD,
+                          arguments: data['bimbel']['events'],
+                        );
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(
@@ -297,29 +317,48 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
-                        child: RichText(
-                          text: TextSpan(
+                        child: Skeleton.replace(
+                          replace:
+                              controller
+                                  .rankBimbel
+                                  .isEmpty, // skeleton aktif saat data kosong
+                          replacement: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              TextSpan(
-                                text:
-                                    controller.userRank
-                                        .toString(), // ranking kamu
-                                style: TextStyle(
-                                  color: Colors.black, // highlight hitam
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 23,
-                                ),
+                              Container(
+                                width: 40,
+                                height: 24,
+                                color: Colors.grey.shade300,
                               ),
-                              TextSpan(
-                                text:
-                                    // ${controller.rankBimbel['data'].length}
-                                    "/${controller.rankBimbel['data'].length}", // total peserta
-                                style: TextStyle(
-                                  color: Colors.grey[700],
-                                  fontSize: 23,
-                                ),
+                              SizedBox(width: 4),
+                              Container(
+                                width: 40,
+                                height: 24,
+                                color: Colors.grey.shade300,
                               ),
                             ],
+                          ),
+                          child: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: controller.userRank.toString(),
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 23,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text:
+                                      "/${controller.rankBimbel['data']?.length ?? 0}",
+                                  style: TextStyle(
+                                    color: Colors.grey[700],
+                                    fontSize: 23,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -433,7 +472,15 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                                       ? () {
                                                         Get.toNamed(
                                                           Routes.PRETEST_DETAIL,
-                                                          arguments: item,
+                                                          arguments: {
+                                                            "item": item,
+                                                            "uuidParent":
+                                                                controller
+                                                                    .bimbelData['uuid'],
+                                                          },
+                                                        );
+                                                        print(
+                                                          "xxx ${item.toString()}",
                                                         );
                                                       }
                                                       : null, // null = tombol disabled

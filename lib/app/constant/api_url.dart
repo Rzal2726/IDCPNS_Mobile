@@ -109,3 +109,7 @@ const String apiGetDetailBimbelSaya = "v1/bimbel/me/detail";
 const String apiGetRankingBimbel = "v1/bimbel/pretest/ranking";
 
 const String apiGetBimbelOther = "v1/bimbel/other-bimbel";
+
+const String apiGetPretestQuestions = "v1/bimbel/pretest/soal";
+const String apiLaporPretestSoal = "v1/bimbel/pretest/lapor/soal";
+const String apiPretestResult = "v1/bimbel/pretest/result";

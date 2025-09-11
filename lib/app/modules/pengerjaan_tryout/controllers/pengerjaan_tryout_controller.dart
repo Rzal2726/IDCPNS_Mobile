@@ -9,8 +9,6 @@ import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PengerjaanTryoutController extends GetxController {
-  //TODO: Implement PengerjaanTryoutController
-
   late final String tryoutUuid;
   late dynamic localStorage;
   final laporanController = TextEditingController();

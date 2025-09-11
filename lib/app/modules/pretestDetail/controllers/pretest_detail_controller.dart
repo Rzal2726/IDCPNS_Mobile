@@ -9,7 +9,8 @@ class PretestDetailController extends GetxController {
   var judul = "".obs;
   var jumlahSoal = 0.obs;
   var waktuMenit = 0.obs;
-  final Map item = Get.arguments;
+  final Map item = Get.arguments['item'];
+  var uuid = Get.arguments['uuidParent'];
   var peraturan =
       <String>[
         "Browser yang bisa digunakan hanya Google Chrome / Mozilla Firefox versi terbaru.",
@@ -72,8 +73,12 @@ class PretestDetailController extends GetxController {
   // }
 
   void mulaiPretest() {
-    Get.snackbar("Pretest", "Mulai pretest ${judul.value} (dummy)");
-    Get.toNamed(Routes.PRETEST);
+    // print("xxx ${item.toString()}");
+    Get.toNamed(
+      Routes.PRETEST,
+      arguments: {"uuidParent": uuid, "uuid": item['uuid']},
+    );
+    print("xxx ${item['uuid']}");
   }
 
   void lihatPanduan() {

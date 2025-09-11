@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/pretest_result_controller.dart';
 
@@ -84,62 +86,72 @@ class PretestResultView extends GetView<PretestResultController> {
                     ),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Pretest',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                child: Skeletonizer(
+                  enabled: controller.nilaiData.isEmpty,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Pretest',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Jawaban Benar', style: TextStyle(fontSize: 15)),
-                        Text(
-                          '${controller.jawabanBenar.value}',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                      SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Jawaban Benar', style: TextStyle(fontSize: 15)),
+                          Text(
+                            controller.nilaiData['total_benar']?.toString() ??
+                                '',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Tambahan Point', style: TextStyle(fontSize: 15)),
-                        Text(
-                          '${controller.tambahanPoint.value}',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                        ],
+                      ),
+                      SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Tambahan Point',
+                            style: TextStyle(fontSize: 15),
                           ),
-                        ),
-                      ],
-                    ),
-                    Divider(height: 40),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Total Point',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                          Text(
+                            controller.nilaiData['total_point']?.toString() ??
+                                '',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        Text(
-                          '${controller.totalPoint}',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                      Divider(height: 40),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Total Point',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                          Text(
+                            controller.nilaiData['total_user_point']
+                                    ?.toString() ??
+                                '',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
               SizedBox(height: 24),
@@ -155,7 +167,12 @@ class PretestResultView extends GetView<PretestResultController> {
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
-                  onPressed: () => Get.back(),
+                  onPressed:
+                      () => Get.offNamed(
+                        Routes.DETAIL_MY_BIMBEL,
+                        arguments: controller.uuid,
+                      ),
+
                   child: Text(
                     'Kembali',
                     style: TextStyle(

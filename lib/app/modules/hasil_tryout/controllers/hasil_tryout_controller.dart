@@ -4,8 +4,6 @@ import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class HasilTryoutController extends GetxController {
-  //TODO: Implement HasilTryoutController
-
   final count = 0.obs;
   late String uuid;
   final restClient = RestClient();
