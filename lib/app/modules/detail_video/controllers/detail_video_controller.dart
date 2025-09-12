@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:rich_editor/rich_editor.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -13,9 +14,13 @@ class DetailVideoController extends GetxController {
 
   late final WebViewController webViewController;
   late YoutubePlayerController ytController;
-  late RxMap<String, dynamic> videoData = <String, dynamic>{}.obs;
   final questionController = TextEditingController();
+  final questionReplyController = TextEditingController();
+  final GlobalKey<RichEditorState> keyEditor = GlobalKey<RichEditorState>();
+
+  RxMap<String, dynamic> videoData = <String, dynamic>{}.obs;
   RxList<Map<String, dynamic>> commentList = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> noteList = <Map<String, dynamic>>[].obs;
   RxMap<String, dynamic> commentPageData = <String, dynamic>{}.obs;
   RxList<String> option = ["QnA", "Notes"].obs;
   RxMap<String, Color> categoryColor =
@@ -26,12 +31,16 @@ class DetailVideoController extends GetxController {
         "PPPK": Colors.redAccent,
       }.obs;
   RxString selectedOption = "QnA".obs;
+  RxString nextTopic = "".obs;
+  RxString prevTopic = "".obs;
 
   // A variable for the total video duration.
   RxString duration = "00:00".obs;
   // A new variable for the current video time.
   RxString currentTime = "00:00".obs;
   RxBool isReady = false.obs;
+  RxBool isInit = false.obs;
+  RxInt detik = 0.obs;
 
   @override
   void onInit() async {
@@ -54,20 +63,23 @@ class DetailVideoController extends GetxController {
 
   Future<void> initDetailVideo() async {
     isReady.value = false;
-    videoData.value = await Get.arguments as Map<String, dynamic>;
-    if (videoData['isyoutube'] == 1) {
-      await initYoutube(videoData['video_url']);
-    } else {
-      await initWebController(videoData['video_url']);
-    }
-    await getTopic(videoData['uuid']);
-    await getComments(videoData['uuid']);
-    print("videoData: ${videoData}");
-    isReady.value = true;
+    final uuid = Get.arguments;
+
+    await loadTopic(uuid ?? videoData['uuid']);
+
+    isInit.value = true;
   }
 
   Future<void> initWebController(String uri) async {
     final String refererUrl = baseUrl; // Assuming this is defined correctly.
+    // Jika sudah pernah diinisialisasi, cukup ganti URL saja
+    if (isInit.value && webViewController != null) {
+      await webViewController.loadRequest(
+        Uri.parse(uri),
+        headers: {"Referer": refererUrl},
+      );
+      return;
+    }
     webViewController =
         WebViewController()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -83,6 +95,7 @@ class DetailVideoController extends GetxController {
                 final timeValue = message.message.split(':')[1];
                 currentTime.value = timeValue; // posisi sekarang
                 print('Current Time: ${currentTime.value} seconds');
+                detik.value = int.parse(currentTime.value);
                 duration.value = formatDuration(int.parse(currentTime.value));
               }
             },
@@ -142,6 +155,32 @@ class DetailVideoController extends GetxController {
       initialVideoId: videoId!,
       flags: const YoutubePlayerFlags(autoPlay: true, mute: false),
     );
+    // Listener untuk cek durasi video
+    ytController.addListener(() {
+      if (ytController.value.isReady) {
+        final totalDuration = ytController.value.position;
+        duration.value = formatytDuration(totalDuration);
+        detik.value = int.parse(totalDuration.toString());
+        print("Total Video Duration: ${duration.value}");
+      }
+    });
+  }
+
+  Future<void> loadTopic(String uuid) async {
+    isReady.value = false;
+
+    // Fetch data terbaru
+    await getTopic(uuid);
+    await getComments(uuid);
+    await getNotes(uuid);
+
+    if (videoData['isyoutube'] == 1) {
+      await initYoutube(videoData['video_url']);
+    } else {
+      await initWebController(videoData['video_url']);
+    }
+
+    isReady.value = true;
   }
 
   Future<void> getTopic(uuid) async {
@@ -150,6 +189,8 @@ class DetailVideoController extends GetxController {
     );
     Map<String, dynamic> data = Map<String, dynamic>.from(response['data']);
     videoData.assignAll(data);
+    nextTopic.value = data['next_topic']?['uuid'] ?? "";
+    prevTopic.value = data['previous_topic']?['uuid'] ?? "";
   }
 
   Future<void> getComments(uuid) async {
@@ -166,11 +207,90 @@ class DetailVideoController extends GetxController {
     commentPageData.assignAll(pageData);
   }
 
+  Future<void> getNotes(uuid) async {
+    final response = await restClient.getData(
+      url: baseUrl + apiVideoTopicGetNotes + uuid,
+    );
+    List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    noteList.assignAll(data);
+  }
+
+  Future<void> addComments({required Map<String, dynamic> payload}) async {
+    /* {
+          comment: string; 
+          video_topic_id: number; 
+          parent_id: number; 
+          parameter: string 
+        }
+    */
+    final response = await restClient.postData(
+      url: baseUrl + apiVideoTopicAddComments,
+      payload: payload,
+    );
+    if (response['status'] == "success") {
+      Get.snackbar(
+        "Berhasil",
+        "Berhasil membuat komentar",
+        backgroundColor: Colors.teal,
+        colorText: Colors.white,
+      );
+      getComments(videoData['uuid']);
+      questionReplyController.text = "";
+      questionController.text = "";
+    } else {
+      Get.snackbar(
+        "Gagal",
+        "Gagal membuat komentar",
+        backgroundColor: Colors.pink,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Future<void> addNote({required Map<String, dynamic> payload}) async {
+    /* { 
+          durasi: number; 
+          text: string; 
+          topicUuid: string 
+        }
+    */
+    try {
+      final response = await restClient.postData(
+        url: baseUrl + apiVideoTopicAddNotes,
+        payload: payload,
+      );
+      print(payload);
+      getNotes(videoData['uuid']);
+      keyEditor.currentState?.clear();
+      Get.snackbar(
+        "Berhasil",
+        "Berhasil membuat notes",
+        backgroundColor: Colors.teal,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Gagal",
+        "Gagal membuat notes",
+        backgroundColor: Colors.pink,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   void increment() => count.value++;
   String formatDuration(int seconds) {
     final int minutes = seconds ~/ 60;
     final int remainingSeconds = seconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  String formatytDuration(Duration duration) {
+    final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return "$minutes:$seconds";
   }
 
   String timeAgo(String dateTimeString) {
@@ -190,6 +310,27 @@ class DetailVideoController extends GetxController {
       }
     } catch (e) {
       return dateTimeString; // fallback jika format datetime error
+    }
+  }
+
+  void printNextAndPrevTopic() {
+    print("Prev: ${prevTopic.value}");
+    print("Next: ${nextTopic.value}");
+  }
+
+  void goToNextTopic() {
+    if (isReady.value == true) {
+      if (nextTopic.value.isNotEmpty) {
+        loadTopic(nextTopic.value);
+      }
+    }
+  }
+
+  void goToPrevTopic() {
+    if (isReady.value == true) {
+      if (prevTopic.value.isNotEmpty) {
+        loadTopic(prevTopic.value);
+      }
     }
   }
 }
