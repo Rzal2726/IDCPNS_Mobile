@@ -188,7 +188,7 @@ class WatchVideoView extends GetView<WatchVideoController> {
                                       // Aksi play video
                                       Get.toNamed(
                                         "/detail-video",
-                                        arguments: video,
+                                        arguments: video['uuid'],
                                       );
                                     },
                                   ),

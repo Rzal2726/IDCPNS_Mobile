@@ -232,41 +232,50 @@ class TryoutPaymentController extends GetxController {
   }
 
   void createPayment() async {
-    if (selectedPaymentMethod.isEmpty) {
+    try {
+      if (selectedPaymentMethod.isEmpty) {
+        Get.snackbar(
+          "Gagal",
+          "Silahlan pilih metode pembayaran terlebih dahulu",
+          backgroundColor: Colors.pink,
+          colorText: Colors.white,
+        );
+        return;
+      }
+      final payload = {
+        "type": "tryout",
+        "total_amount": totalHarga.value,
+        "amount_diskon": diskon.value,
+        "description": dataTryout['formasi'],
+        "bundling": true,
+        "tryout_formasi_id": dataTryout['id'],
+        "kode_promo": promoCode.value,
+        "items": itemsId,
+        "source": "",
+        "useBalance": false,
+        "payment_method_id": selectedPaymentMethod['id'],
+        "payment_method": selectedPaymentMethod['code'],
+        "payment_type": selectedPaymentType.value,
+        "mobile_number": "+62${ovoNumber.value}",
+      };
+      final response = await restClient.postData(
+        url: baseUrl + apiCreatePayment,
+        payload: payload,
+      );
+
+      final Map<String, dynamic> data = Map<String, dynamic>.from(
+        response['data'],
+      );
+      transactionData.assignAll(data);
+      Get.offNamed("/tryout-checkout");
+    } catch (e) {
       Get.snackbar(
         "Gagal",
-        "Silahlan pilih metode pembayaran terlebih dahulu",
+        "Mohon periksa kembali produk yang akan dibeli dan metode pembayaran yang dipilih",
         backgroundColor: Colors.pink,
         colorText: Colors.white,
       );
-      return;
     }
-    final payload = {
-      "type": "tryout",
-      "total_amount": totalHarga.value,
-      "amount_diskon": diskon.value,
-      "description": dataTryout['formasi'],
-      "bundling": true,
-      "tryout_formasi_id": dataTryout['id'],
-      "kode_promo": promoCode.value,
-      "items": itemsId,
-      "source": "",
-      "useBalance": false,
-      "payment_method_id": selectedPaymentMethod['id'],
-      "payment_method": selectedPaymentMethod['code'],
-      "payment_type": selectedPaymentType.value,
-      "mobile_number": "+62${ovoNumber.value}",
-    };
-    final response = await restClient.postData(
-      url: baseUrl + apiCreatePayment,
-      payload: payload,
-    );
-
-    final Map<String, dynamic> data = Map<String, dynamic>.from(
-      response['data'],
-    );
-    transactionData.assignAll(data);
-    Get.offNamed("/tryout-checkout");
   }
 
   void countAdmin() {

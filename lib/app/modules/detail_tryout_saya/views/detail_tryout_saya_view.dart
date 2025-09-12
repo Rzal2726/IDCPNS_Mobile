@@ -876,7 +876,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "${(controller.totalValue.value / 60).floor().toString()} Menit",
+                          "${(controller.totalValue.value / 60).toStringAsFixed(2)} Menit",
                         ),
                       ],
                     ),
@@ -892,7 +892,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "${((controller.totalValue.value / controller.tryOutSaya['tryout']['jumlah_soal'])).toString()} Detik",
+                          "${((controller.totalValue.value / controller.tryOutSaya['tryout']['jumlah_soal'])).toStringAsFixed(2)} Detik",
                         ),
                       ],
                     ),
