@@ -173,8 +173,7 @@ class MyAccountController extends GetxController {
 
   Future<void> getProvince({String? id}) async {
     try {
-      final url = await baseUrl + apiGetProvince;
-
+      final url = baseUrl + apiGetProvince;
       final result = await _restClient.getData(url: url);
       print("Result Province: ${result.toString()}");
 
@@ -182,7 +181,9 @@ class MyAccountController extends GetxController {
         var data = result['data'];
         provinceData.value = data;
 
-        // Kalau ada id, cari data yg sesuai
+        // Reset provinsi.value dulu
+        provinsi.value = "";
+
         if (id != null) {
           final found = data.firstWhere(
             (item) => item['id'].toString() == id,
@@ -192,6 +193,7 @@ class MyAccountController extends GetxController {
           if (found != null) {
             provinsi.value = found['nama'] ?? "";
           }
+          // kalau id user tidak ditemukan, provinsi.value tetap "", tapi data lengkap tetap tampil
         }
       }
     } catch (e) {

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 import '../controllers/lengkapi_biodata_controller.dart';
 
@@ -76,12 +78,18 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                           onPressed: () => controller.pickFile(),
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(color: Colors.teal),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                5,
+                              ), // radius 5
+                            ),
                           ),
                           child: Text(
                             "Pilih Foto",
                             style: TextStyle(color: Colors.teal),
                           ),
                         ),
+                        SizedBox(height: 10),
                       ],
                     ),
                     // Nama Lengkap
@@ -300,29 +308,6 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
 
                     SizedBox(height: 30),
 
-                    // Darimana Mengetahui
-                    // Obx(
-                    //   () => DropdownButtonFormField<String>(
-                    //     value:
-                    //         controller.sumberInfo.value.isEmpty
-                    //             ? null
-                    //             : controller.sumberInfo.value,
-                    //     decoration: InputDecoration(
-                    //       labelText: "Darimana Anda Mengetahui IDCPNS",
-                    //       border: OutlineInputBorder(),
-                    //       isDense: true,
-                    //     ),
-                    //     items: [
-                    //       DropdownMenuItem(
-                    //         value: "Instagram",
-                    //         child: Text("Instagram"),
-                    //       ),
-                    //       DropdownMenuItem(value: "Teman", child: Text("Teman")),
-                    //     ],
-                    //     onChanged:
-                    //         (value) => controller.sumberInfo.value = value ?? '',
-                    //   ),
-                    // ),
                     Obx(
                       () => DropdownButtonFormField<int>(
                         value:
@@ -383,22 +368,125 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                     SizedBox(height: 20),
 
                     // Tombol Simpan
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: controller.simpanData,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed:
+                                controller.isLoading.value
+                                    ? null // tombol disable kalau loading
+                                    : () {
+                                      Get.defaultDialog(
+                                        title: "Konfirmasi",
+                                        middleText: "Apakah Anda ingin keluar?",
+                                        backgroundColor: Colors.white,
+                                        titleStyle: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        middleTextStyle: TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 16,
+                                        ),
+                                        radius: 12,
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Get.back();
+                                            },
+                                            child: Text(
+                                              "Batal",
+                                              style: TextStyle(
+                                                color: Colors.grey[700],
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              final box = GetStorage();
+                                              box.erase();
+                                              Get.offAllNamed(Routes.LOGIN);
+                                              Get.back();
+                                            },
+                                            child: Text(
+                                              "Keluar",
+                                              style: TextStyle(
+                                                color: Colors.redAccent,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  controller.isLoading.value
+                                      ? Colors.grey
+                                      : Colors.red,
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child:
+                                controller.isLoading.value
+                                    ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                    : Text(
+                                      "Keluar",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                           ),
                         ),
-                        child: Text(
-                          "Simpan",
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed:
+                                controller.isLoading.value
+                                    ? null
+                                    : controller.simpanData,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  controller.isLoading.value
+                                      ? Colors.grey
+                                      : Colors.teal,
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child:
+                                controller.isLoading.value
+                                    ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                    : Text(
+                                      "Simpan",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),

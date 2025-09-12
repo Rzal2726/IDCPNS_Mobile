@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
-import 'package:idcpns_mobile/app/modules/login/controllers/login_controller.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
@@ -50,9 +49,8 @@ class SplashController extends GetxController {
 
     final url = baseUrl + apiLogin;
     final payload = {"email": email, "password": password};
-
-    try {
-      final result = await _restClient.postData(url: url, payload: payload);
+    final result = await _restClient.postData(url: url, payload: payload);
+    if (result['error'] == false) {
       final data = result["data"];
       final user = data["user"];
 
@@ -63,12 +61,18 @@ class SplashController extends GetxController {
       box.write("email", user["email"]);
       box.write("password", password); // simpan password kembali
       box.write("photoProfile", user['profile_image_url']);
-      print("masuk3 ${email} dan ${password}");
-      Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
+      if (user["is_email_verified"] == true) {
+        if (user['user_status_id'] == 2) {
+          Get.offNamed(Routes.LENGKAPI_BIODATA);
+        } else {
+          Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
+        }
+      } else {
+        Get.offNamed(Routes.EMAIL_VERIFICATION);
+      }
       return true;
-    } catch (e) {
+    } else {
       Get.snackbar("Error", "Email atau Password invalid.");
-      debugPrint("Unexpected error: $e");
       return false;
     }
   }

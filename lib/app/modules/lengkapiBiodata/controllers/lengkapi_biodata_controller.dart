@@ -1,15 +1,18 @@
 import 'package:dio/dio.dart' as dio;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
 import 'package:file_selector/file_selector.dart';
 
 class LengkapiBiodataController extends GetxController {
   final _restClient = RestClient();
-
+  var box = GetStorage();
   // TextEditingController untuk inputan text
   final namaLengkapController = TextEditingController();
   final emailController = TextEditingController();
@@ -36,13 +39,12 @@ class LengkapiBiodataController extends GetxController {
   RxList referensiData = [].obs;
   RxList kabupatenData = [].obs;
   RxList sosmedData = [].obs;
-
+  RxBool isLoading = false.obs;
   @override
   void onInit() {
     getUser();
-    getPendidikan();
-    getRreferensi();
     getSosmed();
+    getProvince();
     super.onInit();
   }
 
@@ -77,40 +79,62 @@ class LengkapiBiodataController extends GetxController {
   }
 
   Future<void> getUser() async {
-    try {
-      final url = await baseUrl + apiGetUser;
+    final url = await baseUrl + apiGetUser;
+    print("emailnnyaa ${box.read('token')}");
+    final result = await _restClient.getData(url: url);
 
-      final result = await _restClient.getData(url: url);
-      print("emailnnyaa ${result.toString()}");
-      if (result["status"] == "success") {
-        var data = result['data'];
-        namaLengkapController.text = data['name'];
-        emailController.text = data['email'];
-        hpController.text = data["no_hp"];
-        waController.text = data["no_wa"];
-        kabupatenController.text = "Bandung";
-        referensiId.value = data['menu_category']['id'];
-        pendidikanId.value = data['pendidikan_id'];
-        sosmedId.value = data['referensi_id'];
-        await getPendidikan(id: data['pendidikan_id'].toString());
-        await getRreferensi(id: data['referensi_id'].toString());
-        await getProvince(id: data['provinsi_id'].toString());
-        await getKabupaten(
-          id: data['provinsi_id'].toString(),
-          selectedId: int.parse(data['kotakab_id'].toString()),
-        );
-        fotoProfile.value = data['profile_image_url'];
-        provinsiId.value = data['provinsi_id'];
-        kabupatenId.value = data['kotakab_id'];
-        tanggalLahir.value = data["tanggal_lahir"];
-        jenisKelamin.value = data["jenis_kelamin"];
-      }
-    } catch (e) {
-      print("Error polling email verification: $e");
+    if (result["status"] == "success") {
+      var data = result['data'];
+      namaLengkapController.text = data['name'];
+      emailController.text = data['email'];
+      await getPendidikan(id: data['pendidikan_id'].toString());
+      await getRreferensi(id: data['referensi_id'].toString());
+    } else {
+      print("Error polling email verificationx: $result");
     }
   }
 
   Future<void> postProfile() async {
+    String? errorMessage;
+    isLoading.value = true;
+    // urut sesuai form di gambar
+    if (newProfile.isEmpty) {
+      errorMessage = "Foto profil harus diisi.";
+    } else if (namaLengkapController.text.isEmpty) {
+      errorMessage = "Nama lengkap harus diisi.";
+    } else if (emailController.text.isEmpty) {
+      errorMessage = "Email harus diisi.";
+    } else if (!isValidEmail(emailController.text)) {
+      errorMessage = "Format email tidak valid.";
+    } else if (hpController.text.isEmpty) {
+      errorMessage = "Nomor HP harus diisi.";
+    } else if (!isValidPhone(hpController.text, minLength: 10)) {
+      errorMessage = "Nomor HP minimal 10 digit.";
+    } else if (waController.text.isEmpty) {
+      errorMessage = "Nomor WhatsApp harus diisi.";
+    } else if (!isValidPhone(waController.text, minLength: 10)) {
+      errorMessage = "Nomor WhatsApp minimal 10 digit.";
+    } else if (tanggalLahir.value.isEmpty) {
+      errorMessage = "Tanggal lahir harus diisi.";
+    } else if (jenisKelamin.value.isEmpty) {
+      errorMessage = "Jenis kelamin harus dipilih.";
+    } else if (provinsiId.value == 0) {
+      errorMessage = "Silakan pilih provinsi.";
+    } else if (kabupatenId.value == 0) {
+      errorMessage = "Silakan pilih kabupaten/kota.";
+    } else if (pendidikanId.value == 0) {
+      errorMessage = "Silakan pilih pendidikan.";
+    } else if (sosmedId.value == 0) {
+      errorMessage = "Silakan pilih sumber informasi IDCPNS.";
+    } else if (referensiId.value == 0) {
+      errorMessage = "Silakan pilih referensi.";
+    }
+
+    if (errorMessage != null) {
+      showSnackbar("Gagal", errorMessage);
+      return;
+    }
+
     try {
       final url = baseUrl + apiGetUser;
 
@@ -139,10 +163,23 @@ class LengkapiBiodataController extends GetxController {
       print("response ${result.toString()}");
 
       if (result["status"] == "success") {
-        getUser();
+        Get.snackbar(
+          "Berhasil",
+          "Biodata berhasil disimpan.",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: Duration(seconds: 2),
+        );
+
+        // kasih delay sedikit biar snackbar sempat tampil
+        await Future.delayed(Duration(milliseconds: 500));
+        Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
       }
     } catch (e) {
       print("Error post profile: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -169,34 +206,6 @@ class LengkapiBiodataController extends GetxController {
         }
       }
     } catch (e) {}
-  }
-
-  Future<void> getProvince({String? id}) async {
-    try {
-      final url = await baseUrl + apiGetProvince;
-
-      final result = await _restClient.getData(url: url);
-      print("Result Province: ${result.toString()}");
-
-      if (result["status"] == "success") {
-        var data = result['data'];
-        provinceData.value = data;
-
-        // Kalau ada id, cari data yg sesuai
-        if (id != null) {
-          final found = data.firstWhere(
-            (item) => item['id'].toString() == id,
-            orElse: () => null,
-          );
-
-          if (found != null) {
-            provinsi.value = found['nama'] ?? "";
-          }
-        }
-      }
-    } catch (e) {
-      print("Error getProvince: $e");
-    }
   }
 
   Future<void> getSosmed({String? id}) async {
@@ -256,6 +265,36 @@ class LengkapiBiodataController extends GetxController {
     }
   }
 
+  Future<void> getProvince() async {
+    try {
+      final url = baseUrl + apiGetProvince;
+      final result = await _restClient.getData(url: url);
+      print("Result Province: ${result.toString()}");
+
+      if (result["status"] == "success") {
+        var data = result['data'];
+        provinceData.value = data;
+
+        // Reset provinsi.value dulu
+        // provinsi.value = "";
+        //
+        // if (id != null) {
+        //   final found = data.firstWhere(
+        //     (item) => item['id'].toString() == id,
+        //     orElse: () => null,
+        //   );
+        //
+        //   if (found != null) {
+        //     provinsi.value = found['nama'] ?? "";
+        //   }
+        //   // kalau id user tidak ditemukan, provinsi.value tetap "", tapi data lengkap tetap tampil
+        // }
+      }
+    } catch (e) {
+      print("Error getProvince: $e");
+    }
+  }
+
   Future<void> getKabupaten({required id, int? selectedId}) async {
     try {
       final url = baseUrl + apiGetKabup + "/" + id.toString();
@@ -276,4 +315,25 @@ class LengkapiBiodataController extends GetxController {
   }
 
   Map<String, String> jenisKelaminMap = {"L": "Laki-laki", "P": "Perempuan"};
+}
+
+void showSnackbar(String title, String message, {bool success = false}) {
+  Get.snackbar(
+    title,
+    message,
+    backgroundColor: success ? Colors.green : Colors.red,
+    colorText: Colors.white,
+    snackPosition: SnackPosition.TOP,
+  );
+}
+
+// 🔧 Regex email validator sederhana
+bool isValidEmail(String email) {
+  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  return emailRegex.hasMatch(email);
+}
+
+// 🔧 Minimal digit nomor telepon (misal 10)
+bool isValidPhone(String phone, {int minLength = 10}) {
+  return phone.isNotEmpty && phone.length >= minLength;
 }

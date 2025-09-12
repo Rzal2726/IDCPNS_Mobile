@@ -102,12 +102,16 @@ class MyAccountView extends GetView<MyAccountController> {
                         onPressed: () => controller.pickFile(),
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(color: Colors.teal),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5), // radius 5
+                          ),
                         ),
                         child: Text(
                           "Pilih Foto",
                           style: TextStyle(color: Colors.teal),
                         ),
                       ),
+                      SizedBox(height: 10),
                     ],
                   ),
                   // Nama Lengkap

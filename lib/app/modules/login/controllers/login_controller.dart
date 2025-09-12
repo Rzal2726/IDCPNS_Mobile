@@ -74,7 +74,7 @@ class LoginController extends GetxController {
     if (result['error'] == false) {
       final user = result['data']["user"];
 
-      box.write("token", result["access_token"]);
+      box.write("token", result['data']["access_token"]);
       box.write("name", user["name"]);
       box.write("afiCode", user["kode_afiliasi"]);
       box.write("idUser", user["id"]);
