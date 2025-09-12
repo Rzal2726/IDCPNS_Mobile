@@ -7,7 +7,7 @@ import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
 import 'package:file_selector/file_selector.dart';
 
-class MyAccountController extends GetxController {
+class LengkapiBiodataController extends GetxController {
   final _restClient = RestClient();
 
   // TextEditingController untuk inputan text

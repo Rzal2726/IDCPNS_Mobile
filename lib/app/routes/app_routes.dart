@@ -73,6 +73,7 @@ abstract class Routes {
   static const PDF_VIEWER = _Paths.PDF_VIEWER;
   static const INVOICE = _Paths.INVOICE;
   static const PAYMENT_WHISLIST = _Paths.PAYMENT_WHISLIST;
+  static const LENGKAPI_BIODATA = _Paths.LENGKAPI_BIODATA;
 }
 
 abstract class _Paths {
@@ -148,4 +149,5 @@ abstract class _Paths {
   static const PDF_VIEWER = '/pdf-viewer';
   static const INVOICE = '/invoice';
   static const PAYMENT_WHISLIST = '/payment-whislist';
+  static const LENGKAPI_BIODATA = '/lengkapi-biodata';
 }

@@ -41,12 +41,12 @@ class RegisterView extends GetView<RegisterController> {
                   controller: controller.nameController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   decoration: _inputDecoration("Masukkan nama lengkap"),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Nama tidak boleh kosong.';
-                    }
-                    return null;
-                  },
+                  // validator: (value) {
+                  //   if (value == null || value.trim().isEmpty) {
+                  //     return 'Nama tidak boleh kosong.';
+                  //   }
+                  //   return null;
+                  // },
                 ),
                 SizedBox(height: 16),
 
@@ -58,18 +58,18 @@ class RegisterView extends GetView<RegisterController> {
                   keyboardType: TextInputType.emailAddress,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   decoration: _inputDecoration("Masukkan alamat email"),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Email tidak boleh kosong.';
-                    }
-                    if (!GetUtils.isEmail(value.trim())) {
-                      return 'Email tidak valid.';
-                    }
-                    if (controller.emailError.value.isNotEmpty) {
-                      return controller.emailError.value; // munculin error API
-                    }
-                    return null;
-                  },
+                  // validator: (value) {
+                  //   if (value == null || value.trim().isEmpty) {
+                  //     return 'Email tidak boleh kosong.';
+                  //   }
+                  //   if (!GetUtils.isEmail(value.trim())) {
+                  //     return 'Email tidak valid.';
+                  //   }
+                  //   if (controller.emailError.value.isNotEmpty) {
+                  //     return controller.emailError.value; // munculin error API
+                  //   }
+                  //   return null;
+                  // },
                 ),
                 SizedBox(height: 16),
 
@@ -97,12 +97,12 @@ class RegisterView extends GetView<RegisterController> {
                         onPressed: controller.togglePasswordVisibility,
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.length < 8) {
-                        return 'Password minimal 8 karakter.';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.length < 8) {
+                    //     return 'Password minimal 8 karakter.';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                 ),
                 SizedBox(height: 16),
@@ -131,12 +131,12 @@ class RegisterView extends GetView<RegisterController> {
                         onPressed: controller.toggleConfirmPasswordVisibility,
                       ),
                     ),
-                    validator: (value) {
-                      if (value != controller.regPasswordController.text) {
-                        return 'Konfirmasi password tidak cocok.';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value != controller.regPasswordController.text) {
+                    //     return 'Konfirmasi password tidak cocok.';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                 ),
                 SizedBox(height: 16),
@@ -207,8 +207,15 @@ class RegisterView extends GetView<RegisterController> {
                                   Get.snackbar(
                                     "Peringatan",
                                     "Anda harus menyetujui Syarat & Ketentuan",
-                                    snackPosition: SnackPosition.BOTTOM,
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                    snackPosition: SnackPosition.TOP,
+                                    icon: Icon(
+                                      Icons.warning,
+                                      color: Colors.white,
+                                    ),
                                   );
+
                                   return;
                                 }
                                 controller.onRegister();

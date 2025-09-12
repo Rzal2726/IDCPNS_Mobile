@@ -93,21 +93,6 @@ class LoginView extends GetView<LoginController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Obx(
-                  //   () => Row(
-                  //     children: [
-                  //       Checkbox(
-                  //         value: controller.isAgreed.value,
-                  //         onChanged:
-                  //             (value) => controller.toggleTermsAndConditions(
-                  //               value ?? false,
-                  //             ),
-                  //         activeColor: Colors.teal,
-                  //       ),
-                  //       Text('Ingat Saya'),
-                  //     ],
-                  //   ),
-                  // ),
                   TextButton(
                     onPressed: () => Get.toNamed(Routes.FORGET_PASSWORD),
                     child: Text(
@@ -156,12 +141,11 @@ class LoginView extends GetView<LoginController> {
 
               // Google Login
               OutlinedButton.icon(
-                onPressed:
-                    controller.isLoading.value
-                        ? null
-                        : () {
-                          // controller.loginWithGoogle();
-                        },
+                onPressed: () async {
+                  controller.isLoading.value
+                      ? null
+                      : await controller.handleSignIn();
+                },
                 icon: Image.asset('assets/goggleIcon.png', height: 28),
                 label:
                     controller.isLoading.value

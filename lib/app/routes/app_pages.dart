@@ -52,6 +52,8 @@ import '../modules/kategori/bindings/kategori_binding.dart';
 import '../modules/kategori/views/kategori_view.dart';
 import '../modules/kategori_tryout_harian/bindings/kategori_tryout_harian_binding.dart';
 import '../modules/kategori_tryout_harian/views/kategori_tryout_harian_view.dart';
+import '../modules/lengkapiBiodata/bindings/lengkapi_biodata_binding.dart';
+import '../modules/lengkapiBiodata/views/lengkapi_biodata_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/maintenance/bindings/maintenance_binding.dart';
@@ -69,12 +71,12 @@ import '../modules/panduan_tryout/views/panduan_tryout_view.dart';
 import '../modules/panduan_tryout_harian/bindings/panduan_tryout_harian_binding.dart';
 import '../modules/panduan_tryout_harian/views/panduan_tryout_harian_view.dart';
 import '../modules/paymentCheckout/bindings/payment_checkout_binding.dart';
-import '../modules/paymentCheckout/views/payment_checkout_view.dart';
-import '../modules/paymentDetail/bindings/payment_detail_binding.dart';
-import '../modules/paymentDetail/views/payment_detail_view.dart';
 import '../modules/paymentCheckout/bindings/payment_checkout_binding.dart';
 import '../modules/paymentCheckout/views/payment_checkout_view.dart';
+import '../modules/paymentCheckout/views/payment_checkout_view.dart';
 import '../modules/paymentDetail/bindings/payment_detail_binding.dart';
+import '../modules/paymentDetail/bindings/payment_detail_binding.dart';
+import '../modules/paymentDetail/views/payment_detail_view.dart';
 import '../modules/paymentDetail/views/payment_detail_view.dart';
 import '../modules/paymentWhislist/bindings/payment_whislist_binding.dart';
 import '../modules/paymentWhislist/views/payment_whislist_view.dart';
@@ -502,6 +504,11 @@ class AppPages {
       name: _Paths.PAYMENT_WHISLIST,
       page: () => const PaymentWhislistView(),
       binding: PaymentWhislistBinding(),
+    ),
+    GetPage(
+      name: _Paths.LENGKAPI_BIODATA,
+      page: () => const LengkapiBiodataView(),
+      binding: LengkapiBiodataBinding(),
     ),
   ];
 }

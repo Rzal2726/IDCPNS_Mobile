@@ -37,59 +37,129 @@ class RegisterController extends GetxController {
   }
 
   Future<void> onRegister() async {
-    if (!isAgreed.value) {
-      Get.snackbar("Error", "Anda harus menyetujui syarat & ketentuan");
+    final name = nameController.text.trim();
+    final email = regEmailController.text.trim();
+    final password = regPasswordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
+
+    // Validasi nama
+    if (name.isEmpty) {
+      Get.snackbar(
+        "Peringatan",
+        "Nama tidak boleh kosong!",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        icon: Icon(Icons.warning, color: Colors.white),
+      );
       return;
     }
 
-    if (regPasswordController.text != confirmPasswordController.text) {
-      Get.snackbar("Error", "Password dan konfirmasi tidak cocok");
+    // Validasi email
+    if (email.isEmpty) {
+      Get.snackbar(
+        "Peringatan",
+        "Email tidak boleh kosong!",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        icon: Icon(Icons.warning, color: Colors.white),
+      );
+      return;
+    }
+
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(email)) {
+      Get.snackbar(
+        "Peringatan",
+        "Format email tidak valid!",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        icon: Icon(Icons.warning, color: Colors.white),
+      );
+      return;
+    }
+
+    // Validasi password
+    if (password.isEmpty) {
+      Get.snackbar(
+        "Peringatan",
+        "Password tidak boleh kosong!",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        icon: Icon(Icons.warning, color: Colors.white),
+      );
+      return;
+    }
+
+    // Konfirmasi password
+    if (password != confirmPassword) {
+      Get.snackbar(
+        "Peringatan",
+        "Password dan konfirmasi tidak cocok!",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        icon: Icon(Icons.warning, color: Colors.white),
+      );
+      return;
+    }
+
+    // Syarat & Ketentuan
+    if (!isAgreed.value) {
+      Get.snackbar(
+        "Peringatan",
+        "Anda harus menyetujui syarat & ketentuan",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        icon: Icon(Icons.warning, color: Colors.white),
+      );
       return;
     }
 
     isLoading.value = true;
+
     try {
       final url = baseUrl + apiRegister;
       final payload = {
-        "name": nameController.text,
-        "email": regEmailController.text,
-        "password": regPasswordController.text,
-        "password_confirmation": confirmPasswordController.text,
+        "name": name,
+        "email": email,
+        "password": password,
+        "password_confirmation": confirmPassword,
         "user_afiliator": affiliatorController.text ?? "",
       };
 
       final result = await _restClient.postData(url: url, payload: payload);
 
       if (result["status"] == "success") {
-        // Ambil data dari response
         final data = result["data"];
         final user = data["user"];
 
-        // Simpan ke GetStorage
         final box = GetStorage();
         box.write("token", data["access_token"]);
         box.write("name", user["name"]);
         box.write("afiCode", user["kode_afiliasi"]);
         box.write("idUser", user["id"]);
         box.write("email", user["email"]);
-        box.write("password", regPasswordController.text);
+        box.write("password", password);
         box.write("isEmailVerified", user["is_email_verified"] ?? false);
-        print("tokknne ${data['access_token']}");
+
         Get.offNamed(Routes.EMAIL_VERIFICATION);
       } else {
-        if (result["message"] is Map && result["message"]["email"] != null) {
-          emailError.value = result["message"]["email"][0];
-          formKey.currentState?.validate();
-        } else {
-          Get.snackbar("Gagal", result["message"] ?? "Terjadi kesalahan");
-        }
+        Get.snackbar(
+          "Gagal",
+          result["message"]['email'][0] ?? "Terjadi kesalahan",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          icon: Icon(Icons.warning, color: Colors.white),
+        );
       }
-      //   57308|asfqPicPZjzkm2SnwUoe4qh2YfNhT2KleeHC8qoo01ec55cb
-      //   57308|asfqPicPZjzkm2SnwUoe4qh2YfNhT2KleeHC8qoo01ec55cb
     } catch (e) {
-      // langsung munculin error email saat catch
-      emailError.value = "email sudah ada sebelumnya.";
-      formKey.currentState?.validate();
+      print("xxx2 ${e.toString()}");
     } finally {
       isLoading.value = false;
     }
