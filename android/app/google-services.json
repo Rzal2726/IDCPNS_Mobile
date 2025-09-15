@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "527690241621",
+    "project_id": "idcpns-mobile",
+    "storage_bucket": "idcpns-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527690241621:android:1af85f82e4dc054b9126dc",
+        "android_client_info": {
+          "package_name": "com.example.idcpns_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527690241621-cpjnscubn4muoalolga8jm73b0lfhrof.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.idcpns_mobile",
+            "certificate_hash": "2e9057fd55b83c5784806233a39f89e155feab7e"
+          }
+        },
+        {
+          "client_id": "527690241621-km81rt5evhugobi6il2k5tmvfvufiqpa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.idcpns_mobile",
+            "certificate_hash": "704bd4de72e202a93d36b56027bce681301677d5"
+          }
+        },
+        {
+          "client_id": "527690241621-jlglnfatrpjcqav43q2vdet5om1llj2a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSgFpwKp063PS1dKzJitCC9hKr54QWst8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "527690241621-jlglnfatrpjcqav43q2vdet5om1llj2a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "527690241621-ufh9p080tsto07ngsfpfouhis3l1im1q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.idcpnsMobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

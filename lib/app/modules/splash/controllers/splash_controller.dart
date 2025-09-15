@@ -50,6 +50,7 @@ class SplashController extends GetxController {
     final url = baseUrl + apiLogin;
     final payload = {"email": email, "password": password};
     final result = await _restClient.postData(url: url, payload: payload);
+
     if (result['error'] == false) {
       final data = result["data"];
       final user = data["user"];
@@ -61,6 +62,7 @@ class SplashController extends GetxController {
       box.write("email", user["email"]);
       box.write("password", password); // simpan password kembali
       box.write("photoProfile", user['profile_image_url']);
+
       if (user["is_email_verified"] == true) {
         if (user['user_status_id'] == 2) {
           Get.offNamed(Routes.LENGKAPI_BIODATA);
@@ -70,9 +72,13 @@ class SplashController extends GetxController {
       } else {
         Get.offNamed(Routes.EMAIL_VERIFICATION);
       }
+
       return true;
     } else {
-      Get.snackbar("Error", "Email atau Password invalid.");
+      // Ambil pesan dari response
+      print("asda ${result.toString()}");
+      String errorMessage = result['message'] ?? "Email atau Password invalid.";
+      Get.snackbar("Error", errorMessage);
       return false;
     }
   }

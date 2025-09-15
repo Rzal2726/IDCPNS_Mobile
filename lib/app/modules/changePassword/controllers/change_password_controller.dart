@@ -55,15 +55,38 @@ class ChangePasswordController extends GetxController {
       "password_confirmation": conPassword,
     };
     print("cekk ${payload.toString()}");
+
     isLoading.value = true;
-    try {
-      final result = await _restClient.postData(url: url, payload: payload);
+
+    final result = await _restClient.postData(url: url, payload: payload);
+
+    if (result['status'] == "success") {
       Get.snackbar("Berhasil", "Password berhasil diubah");
-    } catch (e) {
-      Get.snackbar("Gagal", "Password gagal diubah");
-      debugPrint("Unexpected error: $e");
-    } finally {
-      isLoading.value = false;
+    } else {
+      // Ambil messages
+      var messages = result['messages'] ?? {};
+
+      // Cek password error
+      if (messages['password'] != null && messages['password'].isNotEmpty) {
+        String passwordError = messages['password'][0];
+        Get.snackbar("Gagal", passwordError, snackPosition: SnackPosition.TOP);
+      }
+      // Cek password_confirmation error hanya jika password error tidak ada
+      else if (messages['password_confirmation'] != null &&
+          messages['password_confirmation'].isNotEmpty) {
+        String confirmError = messages['password_confirmation'][0];
+        Get.snackbar("Gagal", confirmError, snackPosition: SnackPosition.TOP);
+      }
+      // Fallback error umum
+      else {
+        Get.snackbar(
+          "Gagal",
+          "Password gagal diubah",
+          snackPosition: SnackPosition.TOP,
+        );
+      }
     }
+
+    isLoading.value = false;
   }
 }

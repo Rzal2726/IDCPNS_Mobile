@@ -20,7 +20,7 @@ class LoginController extends GetxController {
   GoogleSignInAccount? currentUser;
   // ✅ Tambahkan ini untuk toggle password
   final isPasswordVisible = false.obs;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: <String>['email']);
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
@@ -35,8 +35,6 @@ class LoginController extends GetxController {
       Get.snackbar(
         "Peringatan",
         "Email tidak boleh kosong!",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
       return;
@@ -46,8 +44,6 @@ class LoginController extends GetxController {
       Get.snackbar(
         "Peringatan",
         "Password tidak boleh kosong!",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
       return;
@@ -59,8 +55,7 @@ class LoginController extends GetxController {
       Get.snackbar(
         "Peringatan",
         "Format email tidak valid!",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+
         snackPosition: SnackPosition.TOP,
       );
       return;
@@ -71,6 +66,7 @@ class LoginController extends GetxController {
     isLoading.value = true;
     print("xxx2 $payload");
     final result = await _restClient.postData(url: url, payload: payload);
+
     if (result['error'] == false) {
       final user = result['data']["user"];
 
@@ -97,26 +93,24 @@ class LoginController extends GetxController {
         Get.offNamed(Routes.EMAIL_VERIFICATION);
       }
     } else {
-      Get.snackbar(
-        "Error",
-        "Email atau Password invalid.",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      // Ambil pesan error dari API
+      String errorMessage = result['message'] ?? "Email atau Password invalid.";
+      Get.snackbar("Error", errorMessage, snackPosition: SnackPosition.TOP);
     }
 
     isLoading.value = false;
   }
 
   Future<void> handleSignIn() async {
+    currentUser = await _googleSignIn.signIn();
     try {
-      currentUser = await _googleSignIn.signIn();
       print("xxxc ${currentUser!.email.toString()}");
       if (currentUser != null) {
         box.write('name', currentUser!.displayName);
-
-        loginSocmed(email: currentUser!.email, provider: 1);
+        box.write('email', currentUser!.email);
+        box.write('id', currentUser!.id);
+        box.write('photo', currentUser!.photoUrl);
+        loginSocmed(currentUser: currentUser!, provider: 1);
       } else {
         print("xxx keluar");
         handleSignOut();
@@ -128,11 +122,19 @@ class LoginController extends GetxController {
   }
 
   Future<void> loginSocmed({
-    required String email,
+    required GoogleSignInAccount currentUser,
     required int provider,
   }) async {
     final url = baseUrl + apiLogin;
-    final payload = {"email": email};
+    final payload = {
+      "username": currentUser.displayName,
+      "email": currentUser.email,
+      "password": currentUser.id, // id Google bisa jadi unique password
+      "password_confirmation": currentUser.id,
+      "foto": currentUser.photoUrl,
+      "no_hp": "", // default kosong, GoogleSignIn tidak kasih phone number
+      "type": "google",
+    };
     print("xxx ${payload.toString()}");
 
     isLoading.value = true;

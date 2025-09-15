@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../../routes/app_pages.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
@@ -16,6 +17,8 @@ class RegisterController extends GetxController {
   final regPasswordController = TextEditingController();
   final affiliatorController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  GoogleSignInAccount? currentUser;
   RxString emailError = ''.obs;
   // State
   RxBool isAgreed = false.obs;
@@ -34,6 +37,89 @@ class RegisterController extends GetxController {
 
   void toggleConfirmPasswordVisibility() {
     isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
+  }
+
+  Future<void> handleSignIn() async {
+    currentUser = await _googleSignIn.signIn();
+    try {
+      print("xxxc ${currentUser!.email.toString()}");
+      if (currentUser != null) {
+        box.write('name', currentUser!.displayName);
+        box.write('email', currentUser!.email);
+        box.write('id', currentUser!.id);
+        box.write('photo', currentUser!.photoUrl);
+        registerSocmed(currentUser: currentUser!, provider: 1);
+      } else {
+        print("xxx keluar");
+        handleSignOut();
+        Get.offAllNamed(Routes.LOGIN);
+      }
+    } catch (error) {
+      print("xxx gagal ${error}");
+    }
+  }
+
+  Future<void> registerSocmed({
+    required GoogleSignInAccount currentUser,
+    required int provider,
+  }) async {
+    final url = baseUrl + apiRegister;
+    final payload = {
+      "name": currentUser.displayName,
+      "email": currentUser.email,
+      "password": currentUser.id, // id Google bisa jadi unique password
+      "password_confirmation": currentUser.id,
+      "foto": currentUser.photoUrl,
+      "no_hp": null, // default kosong, GoogleSignIn tidak kasih phone number
+      "type": "google",
+    };
+    print("xxx ${payload.toString()}");
+
+    isLoading.value = true;
+    final result = await _restClient.postData(url: url, payload: payload);
+
+    if (result['status'] == "success") {
+      var data = result["data"];
+      var user = data["user"];
+      // Simpan data user di box, mirip login biasa
+      box.write("token", data["access_token"]);
+      box.write("name", user["name"]);
+      box.write("afiCode", user["kode_afiliasi"] ?? "");
+      box.write("idUser", user["id"]);
+      box.write("email", user["email"]);
+      box.write("photoProfile", user['profile_image_url'] ?? "");
+      isLoading.value = false;
+      // Navigasi ke HOME
+      Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
+    } else {
+      // Kalau status bukan success, cek apakah ada message error
+      if (result['message'] != null) {
+        var message = result['message'];
+
+        // Cek error email
+        if (message['email'] != null && message['email'].isNotEmpty) {
+          String emailError = message['email'][0];
+          Get.snackbar("Error", emailError);
+          isLoading.value = false;
+        } else {
+          Get.snackbar("Error", "Register sosial media gagal");
+          debugPrint("Unexpected error: $message");
+          isLoading.value = false;
+        }
+      } else {
+        Get.snackbar("Error", "Register sosial media gagal");
+        debugPrint("Unexpected error: $result");
+        isLoading.value = false;
+      }
+    }
+    isLoading.value = false;
+    print("isloading ${isLoading.toString()}");
+  }
+
+  Future<void> handleSignOut() async {
+    isLoading(true);
+    _googleSignIn.disconnect();
+    isLoading(false);
   }
 
   Future<void> onRegister() async {

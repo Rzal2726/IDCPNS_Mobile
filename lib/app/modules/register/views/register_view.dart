@@ -250,7 +250,7 @@ class RegisterView extends GetView<RegisterController> {
                       controller.isLoading.value
                           ? null
                           : () {
-                            // controller.loginWithGoogle();
+                            controller.handleSignIn();
                           },
                   icon: Image.asset('assets/goggleIcon.png', height: 28),
                   label:
