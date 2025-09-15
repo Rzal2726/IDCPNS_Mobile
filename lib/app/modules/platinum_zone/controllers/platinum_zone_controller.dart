@@ -7,6 +7,8 @@ class PlatinumZoneController extends GetxController {
 
   final restClient = RestClient();
   RxMap<String, dynamic> data = <String, dynamic>{}.obs;
+  RxBool isActive = false.obs;
+  RxBool loading = true.obs;
   @override
   void onInit() {
     cekPlatinum();
@@ -31,5 +33,6 @@ class PlatinumZoneController extends GetxController {
       response['data'],
     );
     data.assignAll(responseData);
+    loading.value = false;
   }
 }

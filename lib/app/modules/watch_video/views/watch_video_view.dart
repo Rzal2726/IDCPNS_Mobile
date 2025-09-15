@@ -86,7 +86,9 @@ class WatchVideoView extends GetView<WatchVideoController> {
                     return _cardVidio(
                       imgUrl: controller.prevData['gambar'],
                       kategori: controller.prevData['menu_category']['menu'],
-                      kategoriColor: Colors.grey,
+                      kategoriColor:
+                          controller.categoryColor[controller
+                              .prevData['menu_category']['menu']]!,
                       title: controller.prevData['nama'],
                       duration: controller.prevData['total_durasi'].toString(),
                       totalVid:
@@ -153,44 +155,52 @@ class WatchVideoView extends GetView<WatchVideoController> {
                               itemCount: videos.length,
                               itemBuilder: (context, vidIndex) {
                                 final video = videos[vidIndex];
-                                return ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 0,
-                                  ),
-                                  leading: Checkbox(
-                                    value:
-                                        video['video_completed'].isEmpty
-                                            ? false
-                                            : true, // nanti bisa diubah ke RxBool
-                                    onChanged: (val) {},
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4),
+                                return InkWell(
+                                  onTap: () {
+                                    Get.toNamed(
+                                      "/detail-video",
+                                      arguments: video['uuid'],
+                                    );
+                                  },
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 0,
                                     ),
-                                  ),
-                                  title: Text(
-                                    video['nama'],
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                  subtitle: Text(
-                                    "${video['durasi'].toString()} Menit",
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
+                                    leading: Checkbox(
+                                      value:
+                                          video['video_completed'].isEmpty
+                                              ? false
+                                              : true, // nanti bisa diubah ke RxBool
+                                      onChanged: (val) {},
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
                                     ),
-                                  ),
-                                  trailing: IconButton(
-                                    icon: const Icon(
-                                      Icons.play_circle_fill,
-                                      color: Colors.teal,
+                                    title: Text(
+                                      video['nama'],
+                                      style: const TextStyle(fontSize: 14),
                                     ),
-                                    onPressed: () {
-                                      // Aksi play video
-                                      Get.toNamed(
-                                        "/detail-video",
-                                        arguments: video['uuid'],
-                                      );
-                                    },
+                                    subtitle: Text(
+                                      "${video['durasi'].toString()} Menit",
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    trailing: IconButton(
+                                      icon: const Icon(
+                                        Icons.play_circle_fill,
+                                        color: Colors.teal,
+                                      ),
+                                      onPressed: () {
+                                        // Aksi play video
+                                        Get.toNamed(
+                                          "/detail-video",
+                                          arguments: video['uuid'],
+                                        );
+                                      },
+                                    ),
                                   ),
                                 );
                               },
@@ -227,19 +237,23 @@ class WatchVideoView extends GetView<WatchVideoController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              child: Image.network(
-                imgUrl, // ganti dengan gambar kamu
-                // width: 140,
-                // height: 128,
-                fit: BoxFit.fill,
-                errorBuilder: (
-                  BuildContext context,
-                  Object exception,
-                  StackTrace? stackTrace,
-                ) {
-                  return Image.asset("assets/logo.png");
-                },
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              child: AspectRatio(
+                aspectRatio: 16 / 9, // ✅ Rasio 16:9
+                child: Image.network(
+                  imgUrl,
+                  fit: BoxFit.cover, // cover agar proporsional
+                  errorBuilder: (
+                    BuildContext context,
+                    Object exception,
+                    StackTrace? stackTrace,
+                  ) {
+                    return Image.asset(
+                      "assets/logo.png",
+                      fit: BoxFit.cover, // jaga rasio juga
+                    );
+                  },
+                ),
               ),
             ),
             SizedBox(height: 16),

@@ -74,6 +74,7 @@ class KategoriController extends GetxController {
     await fetchEventsTryout();
     await fetchPaketTryout();
     await fetchBimbel();
+    showEventTryout();
   }
 
   Future<void> fetchEventsTryout() async {
@@ -84,11 +85,11 @@ class KategoriController extends GetxController {
       response['data'],
     );
     eventBaseTryout.assignAll(paket);
-    showEventTryout();
+
     loading['event'] = false;
   }
 
-  void showEventTryout({String name = "", String category = "Semua"}) {
+  void showEventTryout({String name = ""}) {
     eventTryout.assignAll(
       eventBaseTryout.where((f) {
         final matchName =
@@ -96,13 +97,10 @@ class KategoriController extends GetxController {
             (f['name']?.toString().toUpperCase().contains(name.toUpperCase()) ??
                 false);
 
-        final matchCategory = f['menu_category_id'] == categoryId;
+        final matchCategory =
+            f['menu_category_id'].toString() == categoryId.toString();
 
-        if (category == "Semua") {
-          return matchName;
-        } else {
-          return matchName && matchCategory;
-        }
+        return matchName && matchCategory;
       }),
     );
   }

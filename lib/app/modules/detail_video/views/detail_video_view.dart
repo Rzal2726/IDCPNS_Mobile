@@ -219,6 +219,94 @@ class DetailVideoView extends GetView<DetailVideoController> {
                             ),
                           );
                         }),
+                        Obx(() {
+                          if (!controller.isReady.value) {
+                            return Skeletonizer(child: Text("data"));
+                          } else {
+                            if (controller.videoData['attachment'].length > 0) {
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "${controller.videoData['attachment'].length.toString()} Lampiran",
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return SafeArea(
+                                            child: SingleChildScrollView(
+                                              padding: EdgeInsets.all(16),
+                                              child: Column(
+                                                spacing: 8,
+                                                children: [
+                                                  Obx(() {
+                                                    return ListView.builder(
+                                                      shrinkWrap: true,
+                                                      physics:
+                                                          NeverScrollableScrollPhysics(),
+                                                      itemCount:
+                                                          controller
+                                                              .videoData['attachment']
+                                                              .length,
+                                                      itemBuilder: (
+                                                        context,
+                                                        i,
+                                                      ) {
+                                                        final attachment =
+                                                            controller
+                                                                .videoData['attachment'][i];
+                                                        return Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                              attachment['judul'],
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                controller.download2(
+                                                                  controller
+                                                                      .dio,
+                                                                  attachment['attachment'],
+                                                                  "${attachment['judul']}.pdf",
+                                                                );
+                                                              },
+                                                              child: Text(
+                                                                "Unduh Lampiran",
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  }),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Text(
+                                      "Unduh Lampiran",
+                                      style: TextStyle(
+                                        color: Colors.teal,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return SizedBox();
+                            }
+                          }
+                        }),
                       ],
                     ),
                   ),
@@ -241,10 +329,20 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                   final isSelected =
                                       controller.selectedOption.value == option;
                                   return GestureDetector(
-                                    onTap:
-                                        () =>
-                                            controller.selectedOption.value =
-                                                option,
+                                    onTap: () {
+                                      controller.selectedOption.value = option;
+
+                                      Future.delayed(
+                                        const Duration(seconds: 1),
+                                        () {
+                                          controller.keyEditor.currentState
+                                              ?.clear();
+                                          print(
+                                            "RichEditor sudah di-clear setelah 5 detik",
+                                          );
+                                        },
+                                      );
+                                    },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 16,
@@ -415,7 +513,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                       child: RichEditor(
                                         key: controller.keyEditor,
                                         editorOptions: RichEditorOptions(
-                                          backgroundColor: Colors.grey,
+                                          enableVideo: false,
                                           placeholder: 'Buat Catatan',
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 5.0,
@@ -463,14 +561,15 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                         ),
                                       ),
                                       onPressed: () async {
+                                        // Ambil HTML dari RichEditor
                                         final String? html =
                                             await controller
                                                 .keyEditor
                                                 .currentState
                                                 ?.getHtml();
 
-                                        if (html == null ||
-                                            html.trim().isEmpty) {
+                                        // Pastikan tidak null
+                                        if (html == null) {
                                           Get.snackbar(
                                             "Gagal",
                                             "Catatan tidak boleh kosong",
@@ -480,10 +579,36 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                           return;
                                         }
 
+                                        // Bersihkan HTML dari tag kosong, whitespace, dan karakter yang tidak penting
+                                        final cleanedHtml =
+                                            html
+                                                .replaceAll(
+                                                  RegExp(r'<[^>]*>'),
+                                                  '',
+                                                ) // Hapus semua tag HTML
+                                                .replaceAll(
+                                                  RegExp(r'&nbsp;'),
+                                                  '',
+                                                ) // Hapus non-breaking space
+                                                .trim();
+
+                                        // Validasi setelah dibersihkan
+                                        if (cleanedHtml.isEmpty) {
+                                          Get.snackbar(
+                                            "Gagal",
+                                            "Catatan tidak boleh kosong",
+                                            backgroundColor: Colors.pink,
+                                            colorText: Colors.white,
+                                          );
+                                          return;
+                                        }
+
+                                        // Jika lolos validasi, kirim ke server
                                         controller.addNote(
                                           payload: {
                                             "durasi": controller.detik.value,
-                                            "text": html,
+                                            "text":
+                                                html, // Tetap kirim HTML aslinya
                                             "topicUuid":
                                                 controller.videoData['uuid'],
                                           },
@@ -519,6 +644,8 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                         data['text'] ??
                                             '', // fallback kalau text null
                                         controller.formatDuration(durasi),
+                                        data['durasi'],
+                                        context,
                                       );
                                     },
                                   ),
@@ -584,12 +711,23 @@ class DetailVideoView extends GetView<DetailVideoController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      data['user']?['name'] ?? "User",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          data['user']?['name'] ?? "User",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        data['user']['is_admin'] == 1
+                            ? _badge(
+                              title: "Admin",
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.teal,
+                            )
+                            : SizedBox(),
+                      ],
                     ),
                     Text(
                       controller.timeAgo(data['tanggal']),
@@ -607,8 +745,9 @@ class DetailVideoView extends GetView<DetailVideoController> {
           const SizedBox(height: 8),
 
           // Aksi Balas dan Lihat Balasan
-          Row(
-            spacing: 16,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 8,
             children: [
               TextButton(
                 style: TextButton.styleFrom(
@@ -618,94 +757,116 @@ class DetailVideoView extends GetView<DetailVideoController> {
                 ),
                 onPressed: () {
                   showModalBottomSheet(
-                    isScrollControlled: false,
                     context: context,
-                    builder: (builder) {
-                      return SafeArea(
-                        child: Container(
-                          padding: EdgeInsets.all(32),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    "Balas Komentar",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                    backgroundColor: Colors.white,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom,
+                        ),
+                        child: SingleChildScrollView(
+                          child: Container(
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // === HEADER ===
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      "Balas Pertanyaan",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
                                     ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      controller.questionReplyController.text =
-                                          "";
-                                      Navigator.pop(context);
-                                    },
-                                    icon: Icon(Icons.close),
-                                  ),
-                                ],
-                              ),
-                              TextField(
-                                controller: controller.questionReplyController,
-                                maxLines: 3,
-                                decoration: InputDecoration(
-                                  hintText: "Tulis pertanyaanmu disini",
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  contentPadding: const EdgeInsets.all(12),
+                                    IconButton(
+                                      onPressed: () {
+                                        controller.questionReplyController
+                                            .clear();
+                                        Navigator.pop(context);
+                                      },
+                                      icon: const Icon(Icons.close),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              SizedBox(height: 12),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.teal,
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
+
+                                const SizedBox(height: 12),
+
+                                // === TEXT FIELD ===
+                                TextField(
+                                  controller:
+                                      controller.questionReplyController,
+                                  maxLines: 3,
+                                  decoration: InputDecoration(
+                                    hintText: "Tulis pertanyaanmu disini",
+                                    border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                    ),
+                                    contentPadding: const EdgeInsets.all(12),
                                   ),
-                                  onPressed: () {
-                                    if (controller
-                                            .questionReplyController
-                                            .text ==
-                                        "") {
-                                      Get.snackbar(
-                                        "Gagal",
-                                        "Mohon isi kolom komentar",
-                                        backgroundColor: Colors.pink,
-                                        colorText: Colors.white,
+                                ),
+
+                                const SizedBox(height: 12),
+
+                                // === BUTTON ===
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.teal,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      final replyText =
+                                          controller
+                                              .questionReplyController
+                                              .text
+                                              .trim();
+
+                                      if (replyText.isEmpty) {
+                                        Get.snackbar(
+                                          "Gagal",
+                                          "Kolom pertanyaan tidak boleh kosong",
+                                          backgroundColor: Colors.pink,
+                                          colorText: Colors.white,
+                                        );
+                                        return;
+                                      }
+
+                                      controller.addComments(
+                                        payload: {
+                                          "comment": replyText,
+                                          "video_topic_id":
+                                              controller.videoData['id'],
+                                          "parameter":
+                                              controller.videoData['uuid'],
+                                          "parent_id": data['id'],
+                                        },
                                       );
-                                      return;
-                                    }
-                                    controller.addComments(
-                                      payload: {
-                                        "comment":
-                                            controller
-                                                .questionReplyController
-                                                .text,
-                                        "video_topic_id":
-                                            controller.videoData['id'],
-                                        "parameter":
-                                            controller.videoData['uuid'],
-                                        "parent_id": data['id'],
-                                      },
-                                    );
-                                  },
-                                  child: const Text(
-                                    "Kirim",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text(
+                                      "Kirim",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -717,27 +878,39 @@ class DetailVideoView extends GetView<DetailVideoController> {
                   style: TextStyle(color: Colors.teal),
                 ),
               ),
+
+              // === Tombol Lihat/Sembunyikan Balasan ===
               if ((data['comment_reply'] as List?)?.isNotEmpty ?? false)
-                TextButton(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  onPressed: () {
-                    // TODO: Toggle expand reply
-                  },
-                  child: const Text(
-                    "Lihat Balasan",
-                    style: TextStyle(color: Colors.teal),
-                  ),
-                ),
+                Obx(() {
+                  final isExpanded = controller.expandedReplies.contains(
+                    data['id'],
+                  );
+                  return TextButton(
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed:
+                        () => controller.toggleReplyVisibility(data['id']),
+                    child: Text(
+                      isExpanded
+                          ? "Sembunyikan Balasan"
+                          : "Lihat Balasan (${(data['comment_reply'] as List).length.toString()})",
+                      style: const TextStyle(color: Colors.teal),
+                    ),
+                  );
+                }),
             ],
           ),
 
-          // List balasan komentar
-          if ((data['comment_reply'] as List?)?.isNotEmpty ?? false)
-            Column(
+          // === List balasan komentar ===
+          Obx(() {
+            final isExpanded = controller.expandedReplies.contains(data['id']);
+            if (!isExpanded)
+              return const SizedBox.shrink(); // tidak tampil jika tidak di-expand
+
+            return Column(
               children:
                   (data['comment_reply'] as List)
                       .map(
@@ -748,19 +921,32 @@ class DetailVideoView extends GetView<DetailVideoController> {
                         ),
                       )
                       .toList(),
+            );
+          }),
+          SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(width: 0.5, color: Colors.grey.shade400),
+              ),
             ),
+          ),
         ],
       ),
     );
   }
 
   Widget _commentReplyData({
+    bool needPadding = true,
     required Map<String, dynamic> data,
     bool isReply = false,
     required BuildContext context,
   }) {
     return Container(
-      margin: EdgeInsets.only(left: 32, bottom: 16), // indent untuk balasan
+      margin: EdgeInsets.only(
+        left: needPadding ? 32 : 0,
+      ), // indent untuk balasan
       padding: const EdgeInsets.only(bottom: 8),
       width: double.infinity,
       child: Column(
@@ -912,21 +1098,6 @@ class DetailVideoView extends GetView<DetailVideoController> {
                   style: TextStyle(color: Colors.teal),
                 ),
               ),
-              if ((data['comment_reply'] as List?)?.isNotEmpty ?? false)
-                TextButton(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  onPressed: () {
-                    // TODO: Toggle expand reply
-                  },
-                  child: const Text(
-                    "Lihat Balasan",
-                    style: TextStyle(color: Colors.teal),
-                  ),
-                ),
             ],
           ),
 
@@ -936,7 +1107,8 @@ class DetailVideoView extends GetView<DetailVideoController> {
               children:
                   (data['comment_reply'] as List)
                       .map(
-                        (reply) => _commentData(
+                        (reply) => _commentReplyData(
+                          needPadding: false,
                           data: reply as Map<String, dynamic>,
                           isReply: true,
                           context: context,
@@ -949,12 +1121,22 @@ class DetailVideoView extends GetView<DetailVideoController> {
     );
   }
 
-  Widget _noteCard(String uuid, String notes, String duration) {
+  Widget _noteCard(
+    String uuid,
+    String notes,
+    String duration,
+    num time,
+    BuildContext context,
+  ) {
     return Container(
-      margin: EdgeInsets.all(16),
-      decoration: BoxDecoration(border: Border.all()),
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Column(
         children: [
+          /// Header -> Badge + Action Button
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -966,27 +1148,183 @@ class DetailVideoView extends GetView<DetailVideoController> {
               ),
               Row(
                 children: [
+                  /// Edit button
                   IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.edit, color: Colors.teal),
+                    onPressed: () async {
+                      await controller.keyEditEditor.currentState?.clear();
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled:
+                            true, // agar naik saat keyboard muncul
+                        backgroundColor: Colors.white,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                        ),
+                        builder: (context) {
+                          return SafeArea(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Header Edit
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          "Edit Catatan",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.close),
+                                          onPressed:
+                                              () => Navigator.pop(context),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // Editor
+                                  Container(
+                                    height: 300,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: RichEditor(
+                                      key: controller.keyEditEditor,
+                                      value: notes, // Set initial value di sini
+                                      editorOptions: RichEditorOptions(
+                                        enableVideo: false,
+                                        placeholder: 'Edit Catatan',
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 5.0,
+                                        ),
+                                        baseFontFamily: 'sans-serif',
+                                        barPosition: BarPosition.TOP,
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 16),
+
+                                  // Tombol Simpan
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.teal,
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 12,
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          final String? updatedHtml =
+                                              await controller
+                                                  .keyEditEditor
+                                                  .currentState
+                                                  ?.getHtml();
+
+                                          if (updatedHtml == null ||
+                                              updatedHtml.trim().isEmpty) {
+                                            Get.snackbar(
+                                              "Gagal",
+                                              "Catatan tidak boleh kosong",
+                                              backgroundColor: Colors.pink,
+                                              colorText: Colors.white,
+                                            );
+                                            return;
+                                          }
+
+                                          controller.addNote(
+                                            payload: {
+                                              "durasi": time,
+                                              "topicUuid":
+                                                  controller.videoData['uuid'],
+                                              "text": updatedHtml,
+                                            },
+                                          );
+
+                                          Navigator.pop(context); // Tutup modal
+                                        },
+                                        child: const Text(
+                                          "Simpan",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 16),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.edit, color: Colors.teal),
                   ),
+
+                  /// Delete button
                   IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.delete, color: Colors.pink),
+                    onPressed: () {
+                      controller.deleteNotes(
+                        payload: {
+                          "durasi": time,
+                          "topicUuid": controller.videoData['uuid'],
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.delete, color: Colors.pink),
                   ),
                 ],
               ),
             ],
           ),
+
+          /// Konten catatan
           Card(
             color: Colors.grey.shade200,
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.grey.shade200),
-              borderRadius: BorderRadius.circular(0),
+              borderRadius: BorderRadius.circular(4),
             ),
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Container(
-              padding: EdgeInsets.all(16),
-              child: Column(children: [Html(data: notes)]),
+              padding: const EdgeInsets.all(16),
+              width: double.infinity,
+              child: Html(
+                data: notes,
+                style: {
+                  "img": Style(width: Width(240), display: Display.block),
+                },
+              ),
             ),
           ),
         ],

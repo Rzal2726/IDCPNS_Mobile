@@ -211,107 +211,108 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
                                           ),
                                           builder: (context) {
                                             return SafeArea(
-                                              child: Container(
-                                                padding: const EdgeInsets.all(
-                                                  16,
-                                                ),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: const [
-                                                            Text(
-                                                              "Bonus",
-                                                              style: TextStyle(
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
+                                              child: SingleChildScrollView(
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(
+                                                    16,
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: const [
+                                                              Text(
+                                                                "Bonus",
+                                                                style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
                                                               ),
-                                                            ),
-                                                            Text(
-                                                              "Silahkan Pilih Bonus",
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        IconButton(
-                                                          onPressed:
-                                                              () =>
-                                                                  Navigator.pop(
-                                                                    context,
-                                                                  ),
-                                                          icon: Icon(
-                                                            Icons.close,
+                                                              Text(
+                                                                "Silahkan Pilih Bonus",
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 8),
-                                                    Column(
-                                                      children:
-                                                          controller.listBonus.map((
-                                                            element,
-                                                          ) {
-                                                            return _bonusCard(
-                                                              badgeText:
-                                                                  element['menu_category']?['menu'] ??
-                                                                  "CPNS",
-                                                              badgeColor:
-                                                                  Colors.teal,
-                                                              title:
-                                                                  element['formasi'] ??
-                                                                  "Bonus CPNS",
-                                                              uuid:
-                                                                  element['uuid']
-                                                                      .toString(),
-                                                            );
-                                                          }).toList(),
-                                                    ),
-                                                    SizedBox(height: 14),
-                                                    SizedBox(
-                                                      width: double.infinity,
-                                                      child: ElevatedButton(
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor:
-                                                              Colors
-                                                                  .teal, // warna tombol
-                                                          foregroundColor:
-                                                              Colors
-                                                                  .white, // warna teks/icon
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  8,
+                                                          IconButton(
+                                                            onPressed:
+                                                                () =>
+                                                                    Navigator.pop(
+                                                                      context,
+                                                                    ),
+                                                            icon: Icon(
+                                                              Icons.close,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Column(
+                                                        children:
+                                                            controller.listBonus.map((
+                                                              element,
+                                                            ) {
+                                                              return _bonusCard(
+                                                                badgeText:
+                                                                    element['menu_category']?['menu'] ??
+                                                                    "CPNS",
+                                                                badgeColor:
+                                                                    Colors.teal,
+                                                                title:
+                                                                    element['formasi'] ??
+                                                                    "Bonus CPNS",
+                                                                uuid:
+                                                                    element['uuid']
+                                                                        .toString(),
+                                                              );
+                                                            }).toList(),
+                                                      ),
+                                                      SizedBox(
+                                                        width: double.infinity,
+                                                        child: ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .teal, // warna tombol
+                                                            foregroundColor:
+                                                                Colors
+                                                                    .white, // warna teks/icon
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8,
+                                                                  ),
+                                                            ),
+                                                            padding:
+                                                                const EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      12,
+                                                                  vertical: 12,
                                                                 ),
                                                           ),
-                                                          padding:
-                                                              const EdgeInsets.symmetric(
-                                                                horizontal: 12,
-                                                                vertical: 12,
-                                                              ),
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                            context,
-                                                          );
-                                                          controller
-                                                              .upgradeSekarang();
-                                                        },
-                                                        child: Text(
-                                                          "Lanjutkan Pembayaran",
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                              context,
+                                                            );
+                                                            controller
+                                                                .upgradeSekarang();
+                                                          },
+                                                          child: Text(
+                                                            "Lanjutkan Pembayaran",
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             );

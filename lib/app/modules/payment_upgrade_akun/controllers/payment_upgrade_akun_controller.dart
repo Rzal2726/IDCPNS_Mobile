@@ -227,7 +227,7 @@ class PaymentUpgradeAkunController extends GetxController {
       "payment_method_id": selectedPaymentMethod['id'],
       "payment_method": selectedPaymentMethod['code'],
       "payment_type": selectedPaymentType.value,
-      "mobile_number": ovoNumber.value,
+      "mobile_number": "+62${ovoNumber.value}",
     };
     print("Data Payload: ${payload}");
     final response = await restClient.postData(

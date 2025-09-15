@@ -327,7 +327,10 @@ class DashboardView extends GetView<DashboardController> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          Get.offNamed(Routes.PLATINUM_ZONE);
+                          Get.offNamed(
+                            Routes.HOME,
+                            arguments: {'initialIndex': 3},
+                          );
                         },
                         child: _buildServiceCard(
                           'assets/platinumHomeIcon.svg',

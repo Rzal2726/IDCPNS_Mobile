@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -10,6 +8,7 @@ import '../controllers/platinum_zone_controller.dart';
 class PlatinumZoneView extends GetView<PlatinumZoneController> {
   PlatinumZoneView({super.key});
   final controller = Get.put(PlatinumZoneController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +38,10 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
               Stack(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.notifications_none, color: Colors.teal),
+                    icon: const Icon(
+                      Icons.notifications_none,
+                      color: Colors.teal,
+                    ),
                     onPressed: () {
                       Get.to(NotificationView());
                     },
@@ -48,12 +50,12 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
                     right: 10,
                     top: 10,
                     child: Container(
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
                         color: Colors.red,
                         shape: BoxShape.circle,
                       ),
-                      child: Text(
+                      child: const Text(
                         '4',
                         style: TextStyle(color: Colors.white, fontSize: 10),
                       ),
@@ -66,55 +68,136 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.all(32),
-          child: Column(
-            spacing: 8,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(width: double.infinity, child: _expireCard()),
-              SizedBox(
-                width: double.infinity,
-                child: _menuCard(
-                  imageurl: "assets/video_series.png",
-                  title: "Video Series",
-                  routeName: "/video-series",
-                  bgColor: Color.fromARGB(255, 255, 222, 211),
+      body: Obx(() {
+        if (controller.loading.value) {
+          // SKELETON LOADING
+          return Skeletonizer(
+            child: Container(
+              margin: const EdgeInsets.all(32),
+              child: Column(
+                spacing: 8,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(width: double.infinity, child: _expireCard()),
+                  const SizedBox(height: 16),
+                  _menuCard(
+                    imageurl: "assets/video_series.png",
+                    title: "Video Series",
+                    routeName: "/video-series",
+                    bgColor: const Color.fromARGB(255, 255, 222, 211),
+                  ),
+                  const SizedBox(height: 16),
+                  _menuCard(
+                    imageurl: "assets/ebook.png",
+                    title: "E-Book",
+                    routeName: "/e-book",
+                    bgColor: const Color.fromARGB(255, 255, 182, 246),
+                  ),
+                  const SizedBox(height: 16),
+                  _menuCard(
+                    imageurl: "assets/tryout_harian.png",
+                    title: "Tryout Harian",
+                    routeName: "/tryout-harian",
+                    bgColor: const Color.fromARGB(255, 177, 220, 255),
+                  ),
+                  const SizedBox(height: 16),
+                  _menuCard(
+                    imageurl: "assets/webinar.png",
+                    title: "Webinar",
+                    routeName: "/webinar",
+                    bgColor: const Color.fromARGB(255, 205, 255, 236),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return Stack(
+          children: [
+            // Konten utama
+            SingleChildScrollView(
+              child: Container(
+                margin: const EdgeInsets.all(32),
+                child: Column(
+                  spacing: 8,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(width: double.infinity, child: _expireCard()),
+                    _menuCard(
+                      imageurl: "assets/video_series.png",
+                      title: "Video Series",
+                      routeName: "/video-series",
+                      bgColor: const Color.fromARGB(255, 255, 222, 211),
+                    ),
+                    _menuCard(
+                      imageurl: "assets/ebook.png",
+                      title: "E-Book",
+                      routeName: "/e-book",
+                      bgColor: const Color.fromARGB(255, 255, 182, 246),
+                    ),
+                    _menuCard(
+                      imageurl: "assets/tryout_harian.png",
+                      title: "Tryout Harian",
+                      routeName: "/tryout-harian",
+                      bgColor: const Color.fromARGB(255, 177, 220, 255),
+                    ),
+                    _menuCard(
+                      imageurl: "assets/webinar.png",
+                      title: "Webinar",
+                      routeName: "/webinar",
+                      bgColor: const Color.fromARGB(255, 205, 255, 236),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(
-                width: double.infinity,
-                child: _menuCard(
-                  imageurl: "assets/ebook.png",
-                  title: "E-Book",
-                  routeName: "/e-book",
-                  bgColor: Color.fromARGB(255, 255, 182, 246),
+            ),
+
+            // Overlay jika data kosong
+            if (controller.data['level_expired_at'] == null)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.5), // ✅ Full opacity
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Upgrade akun untuk mengakses platinum zone",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                          ),
+                          onPressed: () {
+                            Get.toNamed('/upgrade-akun');
+                          },
+                          child: const Text(
+                            "Upgrade Akun",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              SizedBox(
-                width: double.infinity,
-                child: _menuCard(
-                  imageurl: "assets/tryout_harian.png",
-                  title: "Tryout Harian",
-                  routeName: "/tryout-harian",
-                  bgColor: Color.fromARGB(255, 177, 220, 255),
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: _menuCard(
-                  imageurl: "assets/webinar.png",
-                  title: "Webinar",
-                  routeName: "/webinar",
-                  bgColor: Color.fromARGB(255, 205, 255, 236),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+          ],
+        );
+      }),
     );
   }
 
@@ -123,19 +206,19 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
       child: Card(
         color: Colors.yellow.shade100,
         shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.orange),
+          side: const BorderSide(color: Colors.orange),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("Member Platinum Sampai Dengan"),
+              const Text("Member Platinum Sampai Dengan"),
               Obx(() {
                 if (controller.data.isEmpty) {
-                  return Skeletonizer(
+                  return const Skeletonizer(
                     child: Text("Member Platinum Sampai Dengan"),
                   );
                 }
@@ -143,7 +226,7 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
                   controller.data['level_expired_at'] == null
                       ? "Invalid Date"
                       : controller.data['level_expired_at'].toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 );
               }),
             ],
@@ -171,9 +254,8 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
             children: [
-              /// Bagian Kiri -> Title dan Tombol
+              // Bagian Kiri -> Title dan Tombol
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -213,7 +295,7 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
                 ],
               ),
 
-              /// Bagian Kanan -> Gambar ilustrasi
+              // Bagian Kanan -> Gambar ilustrasi
               Image.asset(imageurl, height: 120, fit: BoxFit.cover),
             ],
           ),

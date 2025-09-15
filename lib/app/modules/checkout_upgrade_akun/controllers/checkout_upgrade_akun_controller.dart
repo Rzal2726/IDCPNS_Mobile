@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CheckoutUpgradeAkunController extends GetxController {
   //TODO: Implement TryoutCheckoutController
@@ -16,6 +17,7 @@ class CheckoutUpgradeAkunController extends GetxController {
   RxString selectedOption = "ATM".obs;
   RxString timeStamp = "".obs;
   RxBool isDeveloper = false.obs;
+  RxBool isRedirected = false.obs;
   final count = 0.obs;
   @override
   void onInit() {
@@ -73,6 +75,22 @@ class CheckoutUpgradeAkunController extends GetxController {
     if (paymentDetails.isNotEmpty) {
       if (paymentDetails['tanggal_paid'] == null) {
         print("Belum Dibayar");
+        if (isRedirected.value == false) {
+          if (data['invoice_url'] != null) {
+            final Uri url = Uri.parse(data['invoice_url']);
+            if (await canLaunchUrl(url)) {
+              await launchUrl(
+                url,
+                mode: LaunchMode.externalApplication, // Buka di browser
+              );
+            } else {
+              print("Tidak bisa membuka URL: $url");
+            }
+            isRedirected.value = true;
+          } else {
+            print("No Url");
+          }
+        }
         if (compareTimeStamp(paymentDetails['tanggal_kadaluarsa'])) {
           Get.offAllNamed("/tryout");
         }

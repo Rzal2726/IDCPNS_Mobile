@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../controllers/tryout_harian_controller.dart';
@@ -117,49 +118,74 @@ class TryoutHarianView extends GetView<TryoutHarianController> {
               const SizedBox(height: 16),
 
               // Daftar kategori
-              Expanded(
-                child: ListView.builder(
-                  itemCount: controller.categories.length,
-                  itemBuilder: (context, index) {
-                    final item = controller.categories[index];
-                    return Card(
-                      color: Colors.white,
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: Colors.grey.shade300),
+              Obx(() {
+                if (controller.loading.value == true) {
+                  return Skeletonizer(
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 4,
                       ),
-                      margin: const EdgeInsets.only(bottom: 12),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 4,
+                      title: Text(
+                        "Kategori",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
                         ),
-                        leading:
-                            item['showDot']
-                                ? const Icon(
-                                  Icons.circle,
-                                  size: 12,
-                                  color: Colors.red,
-                                )
-                                : const SizedBox(width: 12),
-                        title: Text(
-                          item['title'],
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+                      onTap: () {
+                        // Aksi ketika kategori ditekan
+                      },
+                    ),
+                  );
+                }
+                if (controller.categories.isEmpty) {
+                  return Text("No Data");
+                } else {
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: controller.categories.length,
+                      itemBuilder: (context, index) {
+                        final item = controller.categories[index];
+                        return Card(
+                          color: Colors.white,
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(color: Colors.grey.shade300),
                           ),
-                        ),
-                        trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-                        onTap: () {
-                          Get.toNamed("/kategori-tryout-harian");
-                          // Aksi ketika kategori ditekan
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
+                            ),
+                            title: Text(
+                              item['menu'],
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 18,
+                            ),
+                            onTap: () {
+                              Get.toNamed(
+                                "/kategori-tryout-harian",
+                                arguments: item['uuid'],
+                              );
+                              // Aksi ketika kategori ditekan
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }
+              }),
             ],
           ),
         ),

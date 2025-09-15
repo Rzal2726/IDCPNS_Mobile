@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
@@ -7,7 +9,13 @@ class WatchVideoController extends GetxController {
 
   final restClient = RestClient();
   late Map<String, dynamic> prevData;
-
+  RxMap<String, Color> categoryColor =
+      <String, Color>{
+        "CPNS": Colors.teal,
+        "BUMN": Colors.blueAccent,
+        "Kedinasan": Colors.orangeAccent,
+        "PPPK": Colors.redAccent,
+      }.obs;
   List<Map<String, dynamic>> listVideo = <Map<String, dynamic>>[].obs;
   Map<String, dynamic> dataDetail = <String, dynamic>{}.obs;
   Map<String, dynamic> loading = <String, dynamic>{}.obs;

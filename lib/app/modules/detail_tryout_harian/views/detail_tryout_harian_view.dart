@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/detail_tryout_harian_controller.dart';
 
@@ -76,44 +77,71 @@ class DetailTryoutHarianView extends GetView<DetailTryoutHarianController> {
                       spacing: 12,
                       children: [
                         Text(
-                          "Pengerjaan Tryout",
+                          "Informasi Tryout",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        Text(
-                          "Judul Tryout",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
+                        Obx(() {
+                          if (controller.loading == true) {
+                            return Skeletonizer(child: Text("data"));
+                          }
+                          if (controller.dataTryout.isEmpty) {
+                            return Text("No Data");
+                          } else {
+                            return Text(
+                              controller.dataTryout['nama'],
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            );
+                          }
+                        }),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Jumlah Soal"),
-                            Text(
-                              "10 Soal",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
+                            Obx(() {
+                              if (controller.loading == true) {
+                                return Skeletonizer(child: Text("data"));
+                              }
+                              if (controller.dataTryout.isEmpty) {
+                                return Text("No Data");
+                              } else {
+                                return Text(
+                                  "${controller.dataTryout['jumlah_soal'].toString()} Soal",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                );
+                              }
+                            }),
                           ],
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Durasi tryout"),
-                            Text(
-                              "10 Menit",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
+                            Obx(() {
+                              if (controller.loading == true) {
+                                return Skeletonizer(child: Text("data"));
+                              }
+                              if (controller.dataTryout.isEmpty) {
+                                return Text("No Data");
+                              } else {
+                                return Text(
+                                  "${controller.dataTryout['waktu_pengerjaan'].toString()} Menit",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                );
+                              }
+                            }),
                           ],
                         ),
                         SizedBox(
@@ -128,7 +156,10 @@ class DetailTryoutHarianView extends GetView<DetailTryoutHarianController> {
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                             onPressed: () {
-                              Get.offNamed("/pengerjaan-tryout-harian");
+                              Get.offNamed(
+                                "/pengerjaan-tryout-harian",
+                                arguments: controller.dataTryout['uuid'],
+                              );
                             },
                             child: Text("Mulai Tryout"),
                           ),
@@ -140,6 +171,7 @@ class DetailTryoutHarianView extends GetView<DetailTryoutHarianController> {
                               foregroundColor: Colors.teal,
                               backgroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.teal, width: 2),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 12),

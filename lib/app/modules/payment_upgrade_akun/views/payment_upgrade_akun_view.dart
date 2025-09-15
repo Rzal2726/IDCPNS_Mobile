@@ -130,7 +130,7 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
                                       controller.ovoNumber.value.length <= 0
                                           ? controller
                                               .selectedPaymentMethod['name']
-                                          : controller.ovoNumber.value,
+                                          : "+62 ${controller.ovoNumber.value.toString()}",
                                 ),
                       ),
                     ),
@@ -674,6 +674,7 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
                   decoration: InputDecoration(
                     labelStyle: const TextStyle(color: Colors.grey),
                     labelText: "Masukkan Nomor OVO",
+                    prefixText: '+62 ',
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.teal, width: 1.5),
                       borderRadius: BorderRadius.circular(12),
