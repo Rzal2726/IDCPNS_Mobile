@@ -87,7 +87,12 @@ class CheckoutUpgradeAkunView extends GetView<CheckoutUpgradeAkunController> {
                             fontSize: 20,
                           ),
                         ),
-                        buildCountdown(86400),
+                        Obx(
+                          () =>
+                              controller.paymentDetails.isEmpty
+                                  ? Skeletonizer(child: Text("00:00:00"))
+                                  : buildCountdown(86400),
+                        ),
                       ],
                     ),
                   ),
@@ -601,26 +606,58 @@ class CheckoutUpgradeAkunView extends GetView<CheckoutUpgradeAkunController> {
   }
 
   Widget buildCountdown(int seconds) {
-    return TweenAnimationBuilder<Duration>(
-      duration: Duration(seconds: seconds),
-      tween: Tween(begin: Duration(seconds: seconds), end: Duration.zero),
-      onEnd: () {
-        debugPrint("Countdown selesai!");
-      },
-      builder: (context, value, child) {
-        // Ambil jam, menit, detik
-        String hours = value.inHours.toString().padLeft(2, '0');
-        String minutes = value.inMinutes
-            .remainder(60)
-            .toString()
-            .padLeft(2, '0');
-        String secs = value.inSeconds.remainder(60).toString().padLeft(2, '0');
+    if (controller
+            .paymentDetails['payment_details'][0]['xendit_payment_method_id'] ==
+        10) {
+      return TweenAnimationBuilder<Duration>(
+        duration: Duration(seconds: 60),
+        tween: Tween(begin: Duration(seconds: 60), end: Duration.zero),
+        onEnd: () {
+          debugPrint("Countdown selesai!");
+        },
+        builder: (context, value, child) {
+          // Ambil jam, menit, detik
+          String hours = value.inHours.toString().padLeft(2, '0');
+          String minutes = value.inMinutes
+              .remainder(60)
+              .toString()
+              .padLeft(2, '0');
+          String secs = value.inSeconds
+              .remainder(60)
+              .toString()
+              .padLeft(2, '0');
 
-        return Text(
-          "$hours:$minutes:$secs",
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        );
-      },
-    );
+          return Text(
+            "$hours:$minutes:$secs",
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          );
+        },
+      );
+    } else {
+      return TweenAnimationBuilder<Duration>(
+        duration: Duration(seconds: seconds),
+        tween: Tween(begin: Duration(seconds: seconds), end: Duration.zero),
+        onEnd: () {
+          debugPrint("Countdown selesai!");
+        },
+        builder: (context, value, child) {
+          // Ambil jam, menit, detik
+          String hours = value.inHours.toString().padLeft(2, '0');
+          String minutes = value.inMinutes
+              .remainder(60)
+              .toString()
+              .padLeft(2, '0');
+          String secs = value.inSeconds
+              .remainder(60)
+              .toString()
+              .padLeft(2, '0');
+
+          return Text(
+            "$hours:$minutes:$secs",
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          );
+        },
+      );
+    }
   }
 }

@@ -135,23 +135,21 @@ class KategoriView extends GetView<KategoriController> {
                         TextField(
                           controller: controller.eventTextController,
                           onChanged:
-                              (value) => controller.showEventTryout(
-                                name: value,
-                                category: controller.categoryId,
-                              ),
+                              (value) =>
+                                  controller.showEventTryout(name: value),
                           decoration: InputDecoration(
                             labelStyle: TextStyle(color: Colors.grey),
                             labelText: "Cari",
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.tealAccent.shade100,
+                                color: Colors.teal,
                                 width: 1.5,
                               ),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.tealAccent.shade100,
+                                color: Colors.teal,
                                 width: 2.0,
                               ),
                               borderRadius: BorderRadius.circular(16),
@@ -263,14 +261,14 @@ class KategoriView extends GetView<KategoriController> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Colors.tealAccent.shade100,
+                                      color: Colors.teal,
                                       width: 1.5,
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Colors.tealAccent.shade100,
+                                      color: Colors.teal,
                                       width: 2.0,
                                     ),
                                     borderRadius: BorderRadius.circular(12),
@@ -402,66 +400,102 @@ class KategoriView extends GetView<KategoriController> {
                 final pages = List.generate(end - start + 1, (i) => start + i);
 
                 return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed:
-                            current > 1
-                                ? () => controller.fetchPaketTryout(
-                                  page: current - 1,
-                                  search: controller.paketTextController.text,
-                                  menuCategory:
-                                      controller.categoryId.toString(),
-                                )
-                                : null,
-                        child: const Icon(Icons.arrow_back_ios, size: 16),
-                      ),
-                      const SizedBox(width: 8),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton.icon(
+                          onPressed:
+                              current > 1
+                                  ? () => controller.fetchPaketTryout(
+                                    page: 1,
+                                    search: controller.paketTextController.text,
+                                  )
+                                  : null,
+                          label: const Icon(Icons.first_page, size: 16),
+                        ),
+                        TextButton.icon(
+                          onPressed:
+                              current > 1
+                                  ? () => controller.fetchPaketTryout(
+                                    page: current - 1,
+                                    search: controller.paketTextController.text,
+                                  )
+                                  : null,
+                          label: const Icon(Icons.arrow_back_ios, size: 16),
+                        ),
 
-                      ...pages.map((page) {
-                        final isActive = page == current;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          child: ElevatedButton(
-                            onPressed:
-                                () => controller.fetchPaketTryout(
-                                  page: page,
-                                  search: controller.paketTextController.text,
-                                  menuCategory:
-                                      controller.categoryId.toString(),
+                        ...pages.map((page) {
+                          final isActive = page == current;
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 2),
+                            child: GestureDetector(
+                              onTap:
+                                  () => controller.fetchPaketTryout(
+                                    page: page,
+                                    search: controller.paketTextController.text,
+                                  ),
+                              child: AnimatedContainer(
+                                duration: Duration(milliseconds: 200),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isActive ? 14 : 10,
+                                  vertical: isActive ? 8 : 6,
                                 ),
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(36, 36),
-                              backgroundColor:
-                                  isActive ? Colors.teal : Colors.white,
-                              foregroundColor:
-                                  isActive ? Colors.white : Colors.black54,
+                                decoration: BoxDecoration(
+                                  color:
+                                      isActive
+                                          ? Colors.teal.shade100
+                                          : Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color:
+                                        isActive
+                                            ? Colors.teal
+                                            : Colors.grey.shade300,
+                                    width: isActive ? 2 : 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  '$page',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        isActive ? Colors.teal : Colors.black,
+                                    fontSize:
+                                        isActive
+                                            ? 16
+                                            : 14, // font lebih besar untuk page aktif
+                                  ),
+                                ),
+                              ),
                             ),
-                            child: Text(
-                              page.toString(),
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        );
-                      }),
+                          );
+                        }),
 
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed:
-                            current < total
-                                ? () => controller.fetchPaketTryout(
-                                  page: current + 1,
-                                  search: controller.paketTextController.text,
-                                  menuCategory:
-                                      controller.categoryId.toString(),
-                                )
-                                : null,
-                        child: const Icon(Icons.arrow_forward_ios, size: 16),
-                      ),
-                    ],
+                        TextButton.icon(
+                          onPressed:
+                              current < total
+                                  ? () => controller.fetchPaketTryout(
+                                    page: current + 1,
+                                    search: controller.paketTextController.text,
+                                  )
+                                  : null,
+                          label: const Icon(Icons.arrow_forward_ios, size: 16),
+                        ),
+                        TextButton.icon(
+                          onPressed:
+                              current < total
+                                  ? () => controller.fetchPaketTryout(
+                                    page: controller.totalPage.value,
+                                    search: controller.paketTextController.text,
+                                  )
+                                  : null,
+                          label: const Icon(Icons.last_page, size: 16),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }),
@@ -748,11 +782,21 @@ class KategoriView extends GetView<KategoriController> {
       onTap: () {
         Get.toNamed("/detail-tryout", arguments: uuid);
       },
-      child: Card(
-        color: Colors.white,
-        margin: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 4,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.transparent, width: 0),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.2),
+              offset: const Offset(0, 0), // negatif = shadow muncul di atas
+              blurRadius: 6,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
         child: SizedBox(
           height: 128,
           child: Row(
@@ -761,8 +805,8 @@ class KategoriView extends GetView<KategoriController> {
               // Bagian kiri: gambar
               ClipRRect(
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  bottomLeft: Radius.circular(8),
+                  topLeft: Radius.circular(16),
+                  bottomLeft: Radius.circular(16),
                 ),
                 child: Image.network(
                   image, // ganti dengan gambar kamu
@@ -783,7 +827,7 @@ class KategoriView extends GetView<KategoriController> {
               // Bagian kanan: teks
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.all(8),
+                  margin: EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -798,7 +842,6 @@ class KategoriView extends GetView<KategoriController> {
                               fontSize: 14,
                             ),
                           ),
-                          const SizedBox(height: 4),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -824,7 +867,6 @@ class KategoriView extends GetView<KategoriController> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
 
                       // Label CPNS
                       Align(
@@ -980,45 +1022,104 @@ class KategoriView extends GetView<KategoriController> {
     String periode,
   ) {
     return InkWell(
+      borderRadius: BorderRadius.circular(16),
       onTap: () {
         Get.toNamed("/detail-event", arguments: uuid);
       },
       child: Container(
-        margin: EdgeInsets.all(32),
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 242, 255, 251),
-          border: Border.all(
-            color: Colors.transparent, // bisa atur warna border
-            width: 2,
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Card(
+          elevation: 3,
+          shadowColor: Colors.teal.withOpacity(0.2),
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.teal.shade100, width: 1),
           ),
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.amber, // pindahkan color ke sini
-                border: Border.all(
-                  color: Colors.transparent, // bisa atur warna border
-                  width: 2,
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Badge status
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.teal.shade400,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  child: Text(
+                    status,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-              ),
-              padding: EdgeInsets.all(2),
-              child: Text(
-                status,
-                style: TextStyle(color: Colors.white, fontSize: 12),
-              ),
+
+                // Judul Tryout
+                Text(
+                  judul,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: Colors.black87,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  maxLines: 2,
+                ),
+
+                // Tanggal
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_today,
+                      size: 14,
+                      color: Colors.black45,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      tanggal,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Periode
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.access_time,
+                      size: 14,
+                      color: Colors.black45,
+                    ),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        "Periode: $periode",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            SizedBox(height: 8),
-            Text(judul, style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text(tanggal),
-            Row(children: [Text("Periode :"), Text(" ${periode}")]),
-          ],
+          ),
         ),
       ),
     );

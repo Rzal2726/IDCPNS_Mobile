@@ -1,27 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/constant/api_url.dart';
+import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class TryoutHarianController extends GetxController {
   //TODO: Implement TryoutHarianController
 
   final count = 0.obs;
+  final restClient = RestClient();
   DateTime today = DateTime.now();
+  RxBool loading = true.obs;
 
-  RxList<Map<String, dynamic>> categories =
-      [
-        {"title": "CPNS", "iconColor": Colors.red, "showDot": true},
-        {"title": "BUMN", "iconColor": Colors.transparent, "showDot": false},
-        {
-          "title": "Kedinasan",
-          "iconColor": Colors.transparent,
-          "showDot": false,
-        },
-        {"title": "PPPK", "iconColor": Colors.transparent, "showDot": false},
-      ].obs;
+  RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
+
   @override
   void onInit() {
     super.onInit();
+    initKategori();
   }
 
   @override
@@ -36,5 +32,19 @@ class TryoutHarianController extends GetxController {
 
   void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     today = selectedDay;
+  }
+
+  Future<void> initKategori() async {
+    loading.value = true;
+    await getKategori();
+    loading.value = false;
+  }
+
+  Future<void> getKategori() async {
+    final response = await restClient.getData(url: baseUrl + apiGetKategori);
+    List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    categories.assignAll(data);
   }
 }

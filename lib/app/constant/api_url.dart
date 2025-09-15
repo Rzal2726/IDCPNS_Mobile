@@ -112,3 +112,11 @@ const String apiGetBimbelOther = "v1/bimbel/other-bimbel";
 const String apiPretestResult = "v1/bimbel/pretest/result";
 const String apiLaporPretestSoal = "v1/bimbel/pretest/lapor/soal";
 const String apiGetPretestQuestions = "/v1/bimbel/pretest/soal";
+
+const String apiGetTryoutHarianList = "v1/tryout-harian/list/";
+const String apiGetTryoutHarianDetail = "v1/tryout-harian/detail/";
+const String apiGetTryoutHarianSoal = "v1/tryout-harian/soal/";
+const String apiGetTryoutHarianLaporSoal = "v1/tryout-harian/quiz/lapor/soal";
+const String apiGetTryoutHarianSubmit = "v1/tryout-harian/quiz/submit/soal";
+const String apiGetTryoutHarianHasil = "v1/tryout-harian/result/";
+const String apiGetTryoutHarianPembahasan = "v1/tryout-harian/soal/done/";

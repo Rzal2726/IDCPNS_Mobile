@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
@@ -220,7 +221,19 @@ class EBookView extends GetView<EBookController> {
                     );
                   }
                   if (controller.eBook.isEmpty) {
-                    return Center(child: Text("Tidak ada data"));
+                    return Center(
+                      child: Column(
+                        spacing: 16,
+                        children: [
+                          SizedBox(height: 64),
+                          SvgPicture.asset(
+                            "assets/learningEmpty.svg",
+                            width: 240,
+                          ),
+                          Text("Tidak Ada E-Book"),
+                        ],
+                      ),
+                    );
                   }
                   return ListView.builder(
                     shrinkWrap: true,
@@ -301,7 +314,7 @@ class EBookView extends GetView<EBookController> {
                   showModalBottomSheet(
                     useSafeArea: false,
                     backgroundColor: Colors.white,
-                    isScrollControlled: true,
+                    isScrollControlled: false,
                     context: context,
                     builder: (context) {
                       return Obx(() {
@@ -309,7 +322,19 @@ class EBookView extends GetView<EBookController> {
                           return CircularProgressIndicator();
                         }
                         if (controller.eBookList.isEmpty) {
-                          return Center(child: Text("Tidak Ada Data"));
+                          return Center(
+                            child: Column(
+                              spacing: 16,
+                              children: [
+                                SizedBox(height: 64),
+                                SvgPicture.asset(
+                                  "assets/learningEmpty.svg",
+                                  width: 240,
+                                ),
+                                Text("Tidak Ada E-Book"),
+                              ],
+                            ),
+                          );
                         }
                         return SafeArea(
                           child: SingleChildScrollView(

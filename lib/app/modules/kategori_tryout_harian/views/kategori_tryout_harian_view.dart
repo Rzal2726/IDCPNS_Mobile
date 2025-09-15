@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/kategori_tryout_harian_controller.dart';
 
@@ -130,11 +132,49 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 SizedBox(height: 16),
-                _dataCard(
-                  category: "CPNS",
-                  judul: "Teks Materi Lengkap CPNS",
-                  categoryColor: Colors.teal,
-                ),
+                Obx(() {
+                  if (controller.loading.value == true) {
+                    return Skeletonizer(
+                      child: _dataCard(
+                        category: "Kategori",
+                        judul: "Jusul",
+                        categoryColor: Colors.teal,
+                      ),
+                    );
+                  } else {
+                    if (controller.tryoutList.isEmpty) {
+                      return Center(
+                        child: Column(
+                          spacing: 16,
+                          children: [
+                            SizedBox(height: 64),
+                            SvgPicture.asset(
+                              "assets/learningEmpty.svg",
+                              width: 240,
+                            ),
+                            Text("Tidak Ada Tryout"),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: controller.tryoutList.length,
+                        itemBuilder: (context, index) {
+                          final data = controller.tryoutList[index];
+                          return _dataCard(
+                            category: data['menu_category']['menu'],
+                            judul: data['nama'],
+                            categoryColor: Colors.teal,
+                            uuid: data['uuid'],
+                            isDone: data['sudah_mengerjakan_soal'] == 1,
+                          );
+                        },
+                      );
+                    }
+                  }
+                }),
               ],
             ),
           ),
@@ -147,6 +187,8 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
     required String category,
     required String judul,
     required Color categoryColor,
+    uuid = "",
+    isDone = false,
   }) {
     return Card(
       color: Colors.white,
@@ -181,14 +223,21 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
+                      backgroundColor: isDone ? Colors.teal : Colors.grey,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      if (isDone) {
+                        Get.toNamed(
+                          '/pembahasan-tryout-harian',
+                          arguments: uuid,
+                        );
+                      }
+                    },
                     child: const Text(
                       "Pembahasan",
                       style: TextStyle(
@@ -209,7 +258,7 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () {
-                      Get.toNamed("/detail-tryout-harian");
+                      Get.toNamed("/detail-tryout-harian", arguments: uuid);
                     },
                     child: const Text(
                       "Kerjakan",

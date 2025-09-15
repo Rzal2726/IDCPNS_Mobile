@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,16 +10,19 @@ import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:rich_editor/rich_editor.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 class DetailVideoController extends GetxController {
   final count = 0.obs;
   final restClient = RestClient();
 
-  late final WebViewController webViewController;
+  late WebViewController webViewController;
   late YoutubePlayerController ytController;
   final questionController = TextEditingController();
+  final dio = Dio();
   final questionReplyController = TextEditingController();
   final GlobalKey<RichEditorState> keyEditor = GlobalKey<RichEditorState>();
+  final GlobalKey<RichEditorState> keyEditEditor = GlobalKey<RichEditorState>();
 
   RxMap<String, dynamic> videoData = <String, dynamic>{}.obs;
   RxList<Map<String, dynamic>> commentList = <Map<String, dynamic>>[].obs;
@@ -42,6 +48,8 @@ class DetailVideoController extends GetxController {
   RxBool isInit = false.obs;
   RxInt detik = 0.obs;
 
+  var expandedReplies = <int>{}.obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -66,20 +74,19 @@ class DetailVideoController extends GetxController {
     final uuid = Get.arguments;
 
     await loadTopic(uuid ?? videoData['uuid']);
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Editor sudah selesai dirender di layar
+      keyEditor.currentState?.clear();
+      print("RichEditor siap digunakan!");
+    });
     isInit.value = true;
   }
 
   Future<void> initWebController(String uri) async {
-    final String refererUrl = baseUrl; // Assuming this is defined correctly.
-    // Jika sudah pernah diinisialisasi, cukup ganti URL saja
-    if (isInit.value && webViewController != null) {
-      await webViewController.loadRequest(
-        Uri.parse(uri),
-        headers: {"Referer": refererUrl},
-      );
-      return;
-    }
+    final String refererUrl = baseUrl;
+
+    // Jangan gunakan pengecekan `if (isInit.value && webViewController != null)`
+    // karena akan skip re-init yang menyebabkan error.
     webViewController =
         WebViewController()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -90,63 +97,48 @@ class DetailVideoController extends GetxController {
 
               if (message.message.startsWith('duration:')) {
                 final durationValue = message.message.split(':')[1];
-                print('Video Duration: ${duration.value} seconds');
+                print('Video Duration: $durationValue seconds');
               } else if (message.message.startsWith('time:')) {
                 final timeValue = message.message.split(':')[1];
-                currentTime.value = timeValue; // posisi sekarang
-                print('Current Time: ${currentTime.value} seconds');
-                detik.value = int.parse(currentTime.value);
-                duration.value = formatDuration(int.parse(currentTime.value));
+                currentTime.value = timeValue;
+                detik.value = int.parse(timeValue);
+                duration.value = formatDuration(detik.value);
               }
             },
           )
           ..setNavigationDelegate(
             NavigationDelegate(
-              onProgress: (int progress) {},
-              onPageStarted: (String url) {},
               onPageFinished: (String url) async {
-                final String javascript = """
-    try {
-      BunnyPlayerChannel.postMessage('JavaScript script started.');
+                const String javascript = """
+            try {
+              BunnyPlayerChannel.postMessage('JavaScript script started.');
 
-      var checkInterval = setInterval(function() {
-        var videoElement = document.querySelector('video');
-        if (!videoElement) {
-          return;
-        }
-        
-        clearInterval(checkInterval);
-        BunnyPlayerChannel.postMessage('Video element found. Starting listeners.');
-
-        // Kirim durasi total setelah video siap
-        videoElement.addEventListener('loadedmetadata', function() {
-          BunnyPlayerChannel.postMessage('duration:' + videoElement.duration.toFixed(0));
-        });
-
-        // Kirim current time secara realtime
-        videoElement.addEventListener('timeupdate', function() {
-          BunnyPlayerChannel.postMessage('time:' + videoElement.currentTime.toFixed(0));
-        });
-      }, 500);
-    } catch(e) {
-      BunnyPlayerChannel.postMessage('JavaScript execution error: ' + e.message);
-    }
-  """;
-
-                webViewController.runJavaScript(javascript);
-              },
-
-              onHttpError: (HttpResponseError error) {},
-              onWebResourceError: (WebResourceError error) {},
-              onNavigationRequest: (NavigationRequest request) {
-                if (request.url.startsWith('https://www.youtube.com/')) {
-                  return NavigationDecision.prevent;
+              var checkInterval = setInterval(function() {
+                var videoElement = document.querySelector('video');
+                if (!videoElement) {
+                  return;
                 }
-                return NavigationDecision.navigate;
+                
+                clearInterval(checkInterval);
+                BunnyPlayerChannel.postMessage('Video element found. Starting listeners.');
+
+                videoElement.addEventListener('loadedmetadata', function() {
+                  BunnyPlayerChannel.postMessage('duration:' + videoElement.duration.toFixed(0));
+                });
+
+                videoElement.addEventListener('timeupdate', function() {
+                  BunnyPlayerChannel.postMessage('time:' + videoElement.currentTime.toFixed(0));
+                });
+              }, 500);
+            } catch(e) {
+              BunnyPlayerChannel.postMessage('JavaScript execution error: ' + e.message);
+            }
+          """;
+                webViewController.runJavaScript(javascript);
               },
             ),
           )
-          ..loadRequest(headers: {"Referer": refererUrl}, Uri.parse(uri));
+          ..loadRequest(Uri.parse(uri), headers: {"Referer": refererUrl});
   }
 
   Future<void> initYoutube(String uri) async {
@@ -160,20 +152,33 @@ class DetailVideoController extends GetxController {
       if (ytController.value.isReady) {
         final totalDuration = ytController.value.position;
         duration.value = formatytDuration(totalDuration);
-        detik.value = int.parse(totalDuration.toString());
+        detik.value = totalDuration.inSeconds;
         print("Total Video Duration: ${duration.value}");
       }
     });
   }
 
   Future<void> loadTopic(String uuid) async {
+    detik.value = 0;
     isReady.value = false;
+
+    // 🔹 Bersihkan controller sebelumnya
+    if (videoData['isyoutube'] == 1 && ytController.value.isPlaying) {
+      ytController.pause();
+      ytController.dispose();
+    }
+
+    // Reset webViewController jika sebelumnya WebView
+    if (videoData['isyoutube'] == 0 && webViewController != null) {
+      webViewController.clearCache();
+    }
 
     // Fetch data terbaru
     await getTopic(uuid);
     await getComments(uuid);
     await getNotes(uuid);
 
+    // 🔹 Inisialisasi sesuai tipe video
     if (videoData['isyoutube'] == 1) {
       await initYoutube(videoData['video_url']);
     } else {
@@ -280,6 +285,35 @@ class DetailVideoController extends GetxController {
     }
   }
 
+  Future<void> deleteNotes({required Map<String, dynamic> payload}) async {
+    /* { 
+          durasi: number; 
+          topicUuid: string 
+        }
+    */
+    try {
+      final response = await restClient.postData(
+        url: baseUrl + apiVideoTopicDeleteNotes,
+        payload: payload,
+      );
+      print(payload);
+      getNotes(videoData['uuid']);
+      Get.snackbar(
+        "Berhasil",
+        "Berhasil menghapus notes",
+        backgroundColor: Colors.teal,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Gagal",
+        "Gagal menghapus notes",
+        backgroundColor: Colors.pink,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   void increment() => count.value++;
   String formatDuration(int seconds) {
     final int minutes = seconds ~/ 60;
@@ -331,6 +365,70 @@ class DetailVideoController extends GetxController {
       if (prevTopic.value.isNotEmpty) {
         loadTopic(prevTopic.value);
       }
+    }
+  }
+
+  Future<void> download2(Dio dio, String url, String fileName) async {
+    try {
+      Get.snackbar(
+        "Mendownload File",
+        " ",
+        colorText: Colors.white,
+        backgroundColor: Colors.teal,
+      );
+      // Ambil folder writable dari device
+      final dir = await getDownloadsDirectory();
+      final savePath = '${dir!.path}/$fileName';
+
+      print("Menyimpan file di: $savePath");
+
+      // Mulai download
+      final response = await dio.get(
+        url,
+        onReceiveProgress: showDownloadProgress, // Progress download
+        options: Options(
+          responseType: ResponseType.bytes, // Data diterima sebagai bytes
+          followRedirects: false,
+          validateStatus: (status) => status! < 500,
+        ),
+      );
+
+      // Simpan hasil download ke file
+      File file = File(savePath);
+      var raf = file.openSync(mode: FileMode.write);
+      raf.writeFromSync(response.data);
+      await raf.close();
+      Get.snackbar(
+        "Berhasil",
+        "File Bisa dilihat di: $savePath ",
+        colorText: Colors.white,
+        backgroundColor: Colors.teal,
+      );
+
+      print("Download selesai: $savePath");
+    } catch (e) {
+      Get.snackbar(
+        "Gagal",
+        "Gagal mendownload file",
+        colorText: Colors.pink,
+        backgroundColor: Colors.teal,
+      );
+      print("Terjadi error saat download: $e");
+    }
+  }
+
+  void showDownloadProgress(received, total) {
+    if (total != -1) {
+      print((received / total * 100).toStringAsFixed(0) + "%");
+    }
+  }
+
+  // Fungsi toggle
+  void toggleReplyVisibility(int commentId) {
+    if (expandedReplies.contains(commentId)) {
+      expandedReplies.remove(commentId);
+    } else {
+      expandedReplies.add(commentId);
     }
   }
 }
