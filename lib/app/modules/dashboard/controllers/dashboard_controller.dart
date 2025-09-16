@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
@@ -9,11 +10,17 @@ class DashboardController extends GetxController {
   RxMap recomenData = {}.obs;
   RxList bannerData = [].obs;
   RxList bimbelRemainder = [].obs;
+  RxList tryoutEventData = [].obs;
+  RxMap tryoutRecomHomeData = {}.obs;
   RxInt menuCategoryId = 0.obs;
   RxInt bimbelParentId = 0.obs;
   RxInt tryoutFormasiId = 0.obs;
   RxInt upgradeId = 0.obs;
-
+  RxList tryoutEventFilterData = [].obs;
+  final TextEditingController tryoutSearch = TextEditingController();
+  RxString selectedEventKategori = "Semua".obs;
+  final options = <Map<String, dynamic>>[].obs;
+  RxInt selectedKategoriId = 0.obs; // RxnInt karena bisa null
   final count = 0.obs;
   @override
   void onInit() {
@@ -22,6 +29,8 @@ class DashboardController extends GetxController {
     getKategori();
     getRecomendation();
     getBimbelRemainder();
+    getTryoutEvent();
+    getRecomenTryout();
     super.onInit();
   }
 
@@ -35,6 +44,33 @@ class DashboardController extends GetxController {
     super.onClose();
   }
 
+  void filterTryout({String? query, int? categoryId}) {
+    final search = query?.toLowerCase() ?? '';
+
+    if (query != null && query.isNotEmpty) {
+      // Filter berdasarkan query saja
+      final filtered =
+          tryoutEventData.where((event) {
+            return event['name'].toString().toLowerCase().contains(search);
+          }).toList();
+
+      tryoutEventFilterData.value = filtered;
+    } else if (categoryId != null && categoryId != 0) {
+      // Filter berdasarkan categoryId saja
+      final filtered =
+          tryoutEventData.where((event) {
+            return event['menu_category_id'].toString() ==
+                categoryId.toString();
+          }).toList();
+
+      tryoutEventFilterData.value = filtered;
+      print("xx  ${categoryId.toString()} dan ${filtered.toString()}");
+    } else {
+      // Kalau tidak ada filter, tampilkan semua
+      tryoutEventFilterData.value = List.from(tryoutEventData);
+    }
+  }
+
   Future<void> getKategori() async {
     try {
       final url = await baseUrl + apiGetKategori;
@@ -42,7 +78,15 @@ class DashboardController extends GetxController {
       final result = await _restClient.getData(url: url);
       if (result["status"] == "success") {
         var listData = result['data'];
+        final data =
+            (result['data'] as List)
+                .map((e) => {"id": e['id'], "menu": e['menu']})
+                .toList();
         kategoriData.value = listData;
+        options.assignAll([
+          {"id": 0, "menu": "Semua"},
+          ...data,
+        ]);
       }
     } catch (e) {
       print("Error polling email verification: $e");
@@ -75,6 +119,35 @@ class DashboardController extends GetxController {
       }
     } catch (e) {
       print("Error polling email verification: $e");
+    }
+  }
+
+  Future<void> getTryoutEvent() async {
+    try {
+      final url = await baseUrl + apiGetTryoutEvent;
+
+      final result = await _restClient.getData(url: url);
+      if (result["status"] == "success") {
+        var data = result['data'];
+        tryoutEventData.value = data;
+        tryoutEventFilterData.value = data;
+      }
+    } catch (e) {
+      print("Error tryout event: $e");
+    }
+  }
+
+  Future<void> getRecomenTryout() async {
+    try {
+      final url = await baseUrl + apiGetRekomendasiTryoutHome;
+
+      final result = await _restClient.getData(url: url);
+      if (result["status"] == "success") {
+        var data = result['data'];
+        tryoutRecomHomeData.value = data;
+      }
+    } catch (e) {
+      print("Error tryout event: $e");
     }
   }
 

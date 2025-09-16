@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/pretest_ranking_controller.dart';
@@ -212,8 +213,17 @@ class PretestRankingView extends GetView<PretestRankingController> {
                     );
                   }),
 
-                  SizedBox(height: 12),
-
+                  SizedBox(height: 20),
+                  Visibility(
+                    visible: controller.rankData.isNotEmpty,
+                    child: ReusablePagination(
+                      nextPage: controller.nextPage,
+                      prevPage: controller.prevPage,
+                      currentPage: controller.currentPage,
+                      totalPage: controller.totalPage,
+                      goToPage: controller.goToPage,
+                    ),
+                  ),
                   // Paginat
                 ],
               ),
@@ -221,111 +231,6 @@ class PretestRankingView extends GetView<PretestRankingController> {
           );
         }),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          color: Colors.white,
-          padding: EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [_buildPagination()],
-          ),
-        ),
-      ),
     );
-  }
-
-  Widget _buildPagination() {
-    return Obx(() {
-      List<int> pagesToShow = [];
-      int current = controller.currentPage.value;
-      int total = controller.totalPages.value;
-
-      pagesToShow.add(1);
-
-      if (current > 2) {
-        pagesToShow.add(current - 1);
-      }
-
-      if (current != 1 && current != total) {
-        pagesToShow.add(current);
-      }
-
-      if (current < total - 1) {
-        pagesToShow.add(current + 1);
-      }
-
-      if (total > 1) {
-        pagesToShow.add(total);
-      }
-
-      pagesToShow = pagesToShow.toSet().toList()..sort();
-
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: controller.prevPage,
-            child: Icon(
-              Icons.chevron_left,
-              color:
-                  controller.currentPage.value > 1 ? Colors.teal : Colors.grey,
-            ),
-          ),
-          SizedBox(width: 8),
-          ...List.generate(pagesToShow.length, (index) {
-            final page = pagesToShow[index];
-            final isActive = page == controller.currentPage.value;
-            bool addEllipsis = false;
-            if (index < pagesToShow.length - 1) {
-              if (pagesToShow[index + 1] - page > 1) {
-                addEllipsis = true;
-              }
-            }
-            return Row(
-              children: [
-                GestureDetector(
-                  onTap: () => controller.goToPage(page),
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 4),
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: isActive ? Colors.teal.shade50 : Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: isActive ? Colors.teal : Colors.grey.shade300,
-                        width: isActive ? 2 : 1,
-                      ),
-                    ),
-                    child: Text(
-                      '$page',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isActive ? Colors.teal : Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-                if (addEllipsis)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Text("..."),
-                  ),
-              ],
-            );
-          }),
-          SizedBox(width: 8),
-          GestureDetector(
-            onTap: controller.nextPage,
-            child: Icon(
-              Icons.chevron_right,
-              color:
-                  controller.currentPage.value < controller.totalPages.value
-                      ? Colors.teal
-                      : Colors.grey,
-            ),
-          ),
-        ],
-      );
-    });
   }
 }
