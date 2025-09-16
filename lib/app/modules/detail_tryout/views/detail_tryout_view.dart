@@ -318,7 +318,15 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                             onPressed: () {
                                               controller.selectedUUid.value =
                                                   controller.detailData['uuid'];
-                                              Get.toNamed("/tryout-payment");
+                                              Get.toNamed(
+                                                "/tryout-payment",
+                                                arguments: {
+                                                  "uuid":
+                                                      controller
+                                                          .detailData['uuid'],
+                                                  "type": "tryout",
+                                                },
+                                              );
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor:

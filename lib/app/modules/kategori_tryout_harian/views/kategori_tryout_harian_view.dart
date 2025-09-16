@@ -111,7 +111,12 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
                               ),
                               padding: const EdgeInsets.all(12),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Get.toNamed(
+                                "/peringkat-tryout-harian",
+                                arguments: controller.CategoryUuid,
+                              );
+                            },
                             child: const Text(
                               "Lihat Peringkat Keseluruhan",
                               style: TextStyle(
@@ -250,7 +255,7 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
+                      backgroundColor: isDone ? Colors.grey : Colors.teal,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -258,7 +263,9 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () {
-                      Get.toNamed("/detail-tryout-harian", arguments: uuid);
+                      if (!isDone) {
+                        Get.toNamed("/detail-tryout-harian", arguments: uuid);
+                      }
                     },
                     child: const Text(
                       "Kerjakan",

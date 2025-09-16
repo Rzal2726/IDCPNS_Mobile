@@ -5,6 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../controllers/pembahasan_tryout_harian_controller.dart';
 
@@ -472,71 +473,44 @@ class PembahasanTryoutHarianView
                                                             final item =
                                                                 controller
                                                                     .listPembahasan[index];
-
-                                                            final List<dynamic>
-                                                            options =
-                                                                item['options'] ??
-                                                                [];
-                                                            final List<dynamic>
-                                                            quizDone =
-                                                                item['quiz_done'] ??
-                                                                [];
-
-                                                            // Cari jawaban benar
-                                                            final correctOption =
-                                                                options.firstWhere(
-                                                                  (opt) =>
-                                                                      opt['iscorrect'] ==
-                                                                      1,
-                                                                  orElse:
-                                                                      () =>
-                                                                          null,
-                                                                );
-
-                                                            // Cari jawaban user terakhir (ambil id yang paling akhir)
-                                                            int? userAnswerId;
-                                                            if (quizDone
-                                                                .isNotEmpty) {
-                                                              // urutkan berdasarkan created_at terbaru
-                                                              quizDone.sort(
-                                                                (
-                                                                  a,
-                                                                  b,
-                                                                ) => b['created_at']
-                                                                    .compareTo(
-                                                                      a['created_at'],
-                                                                    ),
-                                                              );
-                                                              userAnswerId =
-                                                                  quizDone
-                                                                      .first['lathar_soal_option_id'];
-                                                            }
-
-                                                            // Tentukan warna
-                                                            Color
-                                                            backgroundColor;
-                                                            if (userAnswerId ==
-                                                                    null ||
-                                                                userAnswerId ==
-                                                                    0) {
-                                                              backgroundColor =
-                                                                  Colors
-                                                                      .grey; // Kosong
-                                                            } else if (userAnswerId ==
-                                                                correctOption?['id']) {
-                                                              backgroundColor =
-                                                                  Colors
-                                                                      .teal; // Benar
+                                                            Map<
+                                                              dynamic,
+                                                              dynamic
+                                                            >
+                                                            quizDone;
+                                                            if (item['quiz_done']
+                                                                    .length >
+                                                                1) {
+                                                              quizDone =
+                                                                  item['quiz_done']?[1];
                                                             } else {
-                                                              backgroundColor =
-                                                                  Colors
-                                                                      .pink; // Salah
+                                                              quizDone =
+                                                                  item['quiz_done']?[0];
                                                             }
+                                                            final option =
+                                                                item['options']
+                                                                    .firstWhere(
+                                                                      (opt) =>
+                                                                          opt['id'] ==
+                                                                          quizDone['lathar_soal_option_id'],
+                                                                      orElse:
+                                                                          () =>
+                                                                              {},
+                                                                    );
+                                                            final isCorrect =
+                                                                option['iscorrect'] ==
+                                                                1;
 
                                                             return ElevatedButton(
                                                               style: ElevatedButton.styleFrom(
                                                                 backgroundColor:
-                                                                    backgroundColor,
+                                                                    item['quiz_done'].length >
+                                                                            1
+                                                                        ? isCorrect
+                                                                            ? Colors.teal.shade100
+                                                                            : Colors.pink.shade100
+                                                                        : Colors
+                                                                            .grey,
                                                                 foregroundColor:
                                                                     Colors
                                                                         .black,
@@ -642,10 +616,12 @@ class PembahasanTryoutHarianView
                               itemBuilder: (context, index) {
                                 final optionData = data['options'][index];
                                 return _option(
+                                  optionData['id'],
                                   optionData['inisial'],
                                   optionData['jawaban'],
                                   optionData['iscorrect'],
                                   optionData['transaction'],
+                                  data['quiz_done'],
                                 );
                               },
                             ),
@@ -726,18 +702,20 @@ class PembahasanTryoutHarianView
   }
 
   Widget _option(
+    int id,
     String initial,
     String body,
     int isCorrect,
     dynamic transaction,
+    List<dynamic> quizDone,
   ) {
     return Card(
       color:
-          transaction != null
-              ? isCorrect != 1
-                  ? Colors.pink.shade100
-                  : isCorrect == 1
-                  ? Colors.teal.shade100
+          quizDone.length > 1
+              ? id == quizDone[1]['lathar_soal_option_id']
+                  ? isCorrect == 1
+                      ? Colors.teal.shade100
+                      : Colors.pink.shade100
                   : Colors.white
               : Colors.white,
       shape: RoundedRectangleBorder(

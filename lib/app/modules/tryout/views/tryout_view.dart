@@ -1284,7 +1284,7 @@ class TryoutView extends GetView<TryoutController> {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () {
-        Get.toNamed("/detail-event", arguments: uuid);
+        Get.toNamed("/maintenance", arguments: uuid);
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16),

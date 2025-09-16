@@ -13,6 +13,7 @@ class TryoutHarianController extends GetxController {
   RxBool loading = true.obs;
 
   RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> doneList = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {
@@ -37,6 +38,7 @@ class TryoutHarianController extends GetxController {
   Future<void> initKategori() async {
     loading.value = true;
     await getKategori();
+    await getDoneList();
     loading.value = false;
   }
 
@@ -46,5 +48,15 @@ class TryoutHarianController extends GetxController {
       response['data'],
     );
     categories.assignAll(data);
+  }
+
+  Future<void> getDoneList() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiGetTryoutHarianDoneList,
+    );
+    List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    doneList.assignAll(data);
   }
 }
