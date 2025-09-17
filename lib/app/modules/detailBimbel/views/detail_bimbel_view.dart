@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/Card/jadwalPertemuanCard.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -428,31 +429,47 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
 
                     // Konten Tab
                     Obx(() {
-                      switch (controller.currentIndex.value) {
-                        case 0:
-                          return Html(data: data['deskripsi_pc']);
-                        case 1:
-                          return ListView.builder(
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              final item = data[index];
-                              return pertemuanCardBuilder(
-                                hari: item.hari,
-                                tanggal: item.tanggal,
-                                jam: item.jam,
-                                pertemuanTitle: item.pertemuanTitle,
-                                pertemuanDesc: item.pertemuanDesc,
-                                extended: item.extended,
-                                extendedPlatinum: item.extendedPlatinum,
-                              );
-                            },
-                          );
+                      final grouped = controller.groupJadwalByTanggal(
+                        controller.jadwalFilter,
+                      );
+                      final dataJadwal = grouped.values.toList();
 
-                        case 2:
-                          return Html(data: data['faq_pc']);
-                        default:
-                          return SizedBox.shrink();
-                      }
+                      return IndexedStack(
+                        index: controller.currentIndex.value,
+                        children: [
+                          // Case 0
+                          Html(data: data['deskripsi_pc']),
+
+                          // Case 1
+                          Expanded(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: controller.getPaginatedData().length,
+                              itemBuilder: (context, index) {
+                                final item =
+                                    controller.getPaginatedData()[index];
+                                return pertemuanCardBuilder(
+                                  hari: item["hari"] ?? "",
+                                  tanggal: item["tanggal"] ?? "",
+                                  jam: item["jam"] ?? "",
+                                  regulerTitle: item["regulerTitle"],
+                                  regulerDesc: item["regulerDesc"],
+                                  extendedTitle: item["extendedTitle"],
+                                  extendedDesc: item["extendedDesc"],
+                                  extendedPlatinumTitle:
+                                      item["extendedPlatinumTitle"],
+                                  extendedPlatinumDesc:
+                                      item["extendedPlatinumDesc"],
+                                );
+                              },
+                            ),
+                          ),
+
+                          // Case 2
+                          Html(data: data['faq_pc']),
+                        ],
+                      );
                     }),
                   ],
                 ),
