@@ -6,14 +6,16 @@ import 'package:idcpns_mobile/app/providers/rest_client.dart';
 class BimbelController extends GetxController {
   final _restClient = RestClient();
   RxList bimbelData = [].obs;
-  final options = <Map<String, dynamic>>[].obs;
+
   final TextEditingController searchController = TextEditingController();
-  RxInt selectedKategoriId = 0.obs; // RxnInt karena bisa null
+
   var selectedUuid = ''.obs;
   var searchQuery = ''.obs;
   final count = 0.obs;
-  RxString selectedEventKategori = "Semua".obs;
 
+  RxString selectedEventKategori = "Semua".obs;
+  final options = <Map<String, dynamic>>[].obs;
+  RxInt selectedKategoriId = 0.obs; // RxnInt karena bisa null
   // page
   RxInt currentPage = 1.obs;
   RxInt totalPages = 0.obs;

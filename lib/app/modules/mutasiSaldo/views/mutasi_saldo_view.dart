@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/mutasi_saldo_controller.dart';
@@ -140,35 +141,53 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
                                     )
                                     : Column(
                                       children: [
-                                        for (
-                                          var i = 0;
-                                          i <
-                                              controller
-                                                  .mutasiSaldoData['data']
-                                                  .length;
-                                          i++
-                                        )
-                                          buildbalanceTransfer(
-                                            number: i + 1,
-                                            date:
-                                                controller
-                                                    .mutasiSaldoData['data'][i]['tanggal'] ??
-                                                '',
-                                            price:
-                                                formatRupiah(
+                                        Column(
+                                          children: [
+                                            for (
+                                              var i = 0;
+                                              i <
                                                   controller
-                                                      .mutasiSaldoData['data'][i]['nominal'],
-                                                ) ??
-                                                'Rp0',
-                                            status: _getStatus(
+                                                      .mutasiSaldoData['data']
+                                                      .length;
+                                              i++
+                                            )
+                                              buildbalanceTransfer(
+                                                number: i + 1,
+                                                date:
+                                                    controller
+                                                        .mutasiSaldoData['data'][i]['tanggal'] ??
+                                                    '',
+                                                price:
+                                                    formatRupiah(
+                                                      controller
+                                                          .mutasiSaldoData['data'][i]['nominal'],
+                                                    ) ??
+                                                    'Rp0',
+                                                status: _getStatus(
+                                                  controller
+                                                      .mutasiSaldoData['data'][i]['status'],
+                                                ),
+                                                statusColor: _getStatusColor(
+                                                  controller
+                                                      .mutasiSaldoData['data'][i]['status'],
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 20),
+                                        Visibility(
+                                          visible:
                                               controller
-                                                  .mutasiSaldoData['data'][i]['status'],
-                                            ),
-                                            statusColor: _getStatusColor(
-                                              controller
-                                                  .mutasiSaldoData['data'][i]['status'],
-                                            ),
+                                                  .mutasiSaldoData
+                                                  .isNotEmpty,
+                                          child: ReusablePagination(
+                                            nextPage: controller.nextPage,
+                                            prevPage: controller.prevPage,
+                                            currentPage: controller.currentPage,
+                                            totalPage: controller.totalPage,
+                                            goToPage: controller.goToPage,
                                           ),
+                                        ),
                                       ],
                                     ),
                           ),
@@ -181,16 +200,6 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
             ),
           );
         }),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          color: Colors.white,
-          padding: EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [_buildPagination()],
-          ),
-        ),
       ),
     );
   }
@@ -247,100 +256,6 @@ Widget buildbalanceTransfer({
       ],
     ),
   );
-}
-
-Widget _buildPagination() {
-  final controller = Get.put(MutasiSaldoController());
-
-  return Obx(() {
-    int current = controller.currentPage.value;
-    int total = controller.totalPage.value;
-
-    List<int> pagesToShow = [];
-    pagesToShow.add(1);
-    if (current - 1 > 1) pagesToShow.add(current - 1);
-    if (current != 1 && current != total) pagesToShow.add(current);
-    if (current + 1 < total) pagesToShow.add(current + 1);
-    if (total > 1) pagesToShow.add(total);
-    pagesToShow = pagesToShow.toSet().toList()..sort();
-
-    return SafeArea(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              onPressed: current > 1 ? () => controller.goToPage(1) : null,
-              icon: Icon(Icons.first_page),
-              color: current > 1 ? Colors.teal : Colors.grey,
-              iconSize: 28,
-              padding: EdgeInsets.symmetric(horizontal: 4),
-            ),
-            IconButton(
-              onPressed: current > 1 ? controller.prevPage : null,
-              icon: Icon(Icons.chevron_left),
-              color: current > 1 ? Colors.teal : Colors.grey,
-              iconSize: 28,
-              padding: EdgeInsets.symmetric(horizontal: 4),
-            ),
-
-            ...pagesToShow.map((page) {
-              bool isActive = page == current;
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 2),
-                child: GestureDetector(
-                  onTap: () => controller.goToPage(page),
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isActive ? 14 : 10,
-                      vertical: isActive ? 8 : 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isActive ? Colors.teal.shade100 : Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: isActive ? Colors.teal : Colors.grey.shade300,
-                        width: isActive ? 2 : 1,
-                      ),
-                    ),
-                    child: Text(
-                      '$page',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isActive ? Colors.teal : Colors.black,
-                        fontSize:
-                            isActive
-                                ? 16
-                                : 14, // font lebih besar untuk page aktif
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-
-            IconButton(
-              onPressed: current < total ? controller.nextPage : null,
-              icon: Icon(Icons.chevron_right),
-              color: current < total ? Colors.teal : Colors.grey,
-              iconSize: 28,
-              padding: EdgeInsets.symmetric(horizontal: 4),
-            ),
-            IconButton(
-              onPressed:
-                  current < total ? () => controller.goToPage(total) : null,
-              icon: Icon(Icons.last_page),
-              color: current < total ? Colors.teal : Colors.grey,
-              iconSize: 28,
-              padding: EdgeInsets.symmetric(horizontal: 4),
-            ),
-          ],
-        ),
-      ),
-    );
-  });
 }
 
 Color _getStatusColor(String? status) {

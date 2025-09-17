@@ -124,3 +124,4 @@ const String apiGetTryoutHarianDoneList = "v1/tryout-harian/done-list";
 const String apiGetTryoutHarianUserPoint = "v1/tryout-harian/user-point";
 const String apiGetWebinarList = "v1/webinar/list";
 const String apiGetWebinarDetail = "v1/webinar/detail/";
+const String apiGetRekomendasiTryoutHome = "v1/home/event";

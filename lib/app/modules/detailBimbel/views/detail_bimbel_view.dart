@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/Card/jadwalPertemuanCard.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
@@ -123,7 +124,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                   Column(
                     children: List.generate(3, (index) {
                       return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        padding: EdgeInsets.symmetric(vertical: 6),
                         child: Skeletonizer(
                           child: Container(
                             height: 50,
@@ -250,20 +251,53 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                   'Jenis Paket',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                Obx(
-                  () => Column(
-                    children: [
-                      for (var subData in data['bimbel'])
-                        _buildRadioOption(
-                          '${subData['name']}',
-                          '${formatRupiah(subData['harga'])}',
-                          '${formatRupiah(subData['harga_fix'])}',
-                          subData['uuid'],
-                          controller,
-                        ),
-                    ],
-                  ),
+                Column(
+                  children: [
+                    for (int i = 0; i < data['bimbel'].length; i++)
+                      Obx(() {
+                        final subData = data['bimbel'][i];
+
+                        // filter paket yang sedang ditampilkan
+                        if (!(subData['is_showing'] ?? false)) {
+                          return SizedBox.shrink();
+                        }
+
+                        // index paket pertama yang sudah dibeli
+                        final firstPurchasedIndex = data['bimbel'].indexWhere(
+                          (e) => e['is_purchase'] == true,
+                        );
+
+                        // skip paket yang lebih murah dari paket yang sudah dibeli
+                        if (firstPurchasedIndex != -1 &&
+                            i < firstPurchasedIndex) {
+                          return SizedBox.shrink();
+                        }
+
+                        // harga yang ditampilkan dikurangi harga paket yang sudah dibeli
+                        final hargaTampil =
+                            (firstPurchasedIndex != -1 &&
+                                    i > firstPurchasedIndex)
+                                ? subData['harga_fix'] -
+                                    data['bimbel'][firstPurchasedIndex]['harga_fix']
+                                : subData['harga_fix'];
+
+                        // disable jika paket sudah dibeli
+                        final isDisabled =
+                            (firstPurchasedIndex != -1 &&
+                                i == firstPurchasedIndex);
+
+                        return _buildRadioOption(
+                          subData['name'], // title
+                          formatRupiah(subData['harga']), // harga lama
+                          formatRupiah(hargaTampil), // harga baru
+                          subData['uuid'], // value radio
+                          controller, // controller
+                          isDisabled: isDisabled, // disable jika sudah dibeli
+                        );
+                      }),
+                  ],
                 ),
+
                 SizedBox(height: 16),
 
                 // Tombol Wishlist
@@ -296,7 +330,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                             ? Colors.teal
                             : Colors.white,
                     side: BorderSide(color: Colors.teal, width: 2),
-                    minimumSize: const Size.fromHeight(50),
+                    minimumSize: Size.fromHeight(50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5),
                     ),
@@ -321,7 +355,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                     ),
                   ),
                   onPressed: () {
-                    if (controller.selectedPaket.value == 0) {
+                    if (controller.selectedPaket.value == "") {
                       Get.snackbar(
                         "Peringatan",
                         "Silakan pilih paket terlebih dahulu.",
@@ -348,32 +382,80 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                 SizedBox(height: 20),
 
                 // TabBar
-                TabBar(
-                  controller: controller.tabController,
-                  labelColor: Colors.teal,
-                  unselectedLabelColor: Colors.grey,
-                  indicatorColor: Colors.teal,
-                  tabs: [
-                    Tab(text: 'Detail'),
-                    Tab(text: 'Jadwal'),
-                    Tab(text: 'FAQ'),
+                Column(
+                  children: [
+                    // Custom Tab
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: List.generate(controller.tabs.length, (index) {
+                        final title = controller.tabs[index];
+                        return GestureDetector(
+                          onTap: () => controller.currentIndex.value = index,
+                          child: Obx(() {
+                            final isSelected =
+                                controller.currentIndex.value == index;
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  title,
+                                  style: TextStyle(
+                                    color:
+                                        isSelected
+                                            ? Colors.teal
+                                            : Colors.black54,
+                                    fontWeight:
+                                        isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                AnimatedContainer(
+                                  duration: Duration(milliseconds: 200),
+                                  height: 2,
+                                  width: isSelected ? 40 : 0,
+                                  color: Colors.teal,
+                                ),
+                              ],
+                            );
+                          }),
+                        );
+                      }),
+                    ),
+
+                    SizedBox(height: 12),
+
+                    // Konten Tab
+                    Obx(() {
+                      switch (controller.currentIndex.value) {
+                        case 0:
+                          return Html(data: data['deskripsi_pc']);
+                        case 1:
+                          return ListView.builder(
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              final item = data[index];
+                              return pertemuanCardBuilder(
+                                hari: item.hari,
+                                tanggal: item.tanggal,
+                                jam: item.jam,
+                                pertemuanTitle: item.pertemuanTitle,
+                                pertemuanDesc: item.pertemuanDesc,
+                                extended: item.extended,
+                                extendedPlatinum: item.extendedPlatinum,
+                              );
+                            },
+                          );
+
+                        case 2:
+                          return Html(data: data['faq_pc']);
+                        default:
+                          return SizedBox.shrink();
+                      }
+                    }),
                   ],
                 ),
-                SizedBox(height: 12),
-
-                // Konten tab
-                Obx(() {
-                  switch (controller.currentIndex.value) {
-                    case 0:
-                      return Html(data: data['deskripsi_pc']);
-                    case 1:
-                      return Text('Konten Jadwal');
-                    case 2:
-                      return Html(data: data['faq_pc']);
-                    default:
-                      return SizedBox.shrink();
-                  }
-                }),
               ],
             ),
           );
@@ -386,9 +468,10 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
     String title,
     String oldPrice,
     String newPrice,
-    String uuid, // ganti tipe ke String
-    DetailBimbelController controller,
-  ) {
+    String uuid,
+    DetailBimbelController controller, {
+    bool isDisabled = false, // disable radio kalau paket sudah dibeli
+  }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -399,28 +482,30 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Radio<String>(
-                value: uuid, // ✅ sekarang valuenya ID, bukan title
-                groupValue: controller.selectedPaket.value,
-                onChanged: (value) {
-                  if (value != null) {
-                    controller.pilihPaket(value); // yang kepilih sekarang UUID
-                  }
-                },
-                activeColor: Colors.teal,
+              Obx(
+                () => Radio<String>(
+                  value: uuid,
+                  groupValue: controller.selectedPaket.value,
+                  onChanged:
+                      isDisabled
+                          ? null
+                          : (value) {
+                            if (value != null) {
+                              controller.pilihPaket(value);
+                              print("xxx selected: ${value.toString()}");
+                            }
+                          },
+                  activeColor: Colors.teal,
+                ),
               ),
-              Text(
-                title, // 👈 yang dilihat user tetap title
-                style: TextStyle(fontSize: 14), // opsional, biar rapi
-              ),
+              Text(title, style: TextStyle(fontSize: 14)),
             ],
           ),
 
           // Kanan: Harga lama + baru
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // tetap rata kiri
-            mainAxisAlignment:
-                MainAxisAlignment.center, // biar posisinya vertikal center
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 oldPrice,
@@ -429,9 +514,9 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                   color: Colors.grey,
                 ),
               ),
-              SizedBox(height: 4), // pakai height biar rapi, jangan width
+              SizedBox(height: 4),
               Text(
-                newPrice,
+                isDisabled ? '' : newPrice, // kalau disabled, harga baru hilang
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ],
