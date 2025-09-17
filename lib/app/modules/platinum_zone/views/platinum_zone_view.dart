@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/platinum_zone_controller.dart';
@@ -70,7 +71,6 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
       backgroundColor: Colors.white,
       body: Obx(() {
         if (controller.loading.value) {
-          // SKELETON LOADING
           return Skeletonizer(
             child: Container(
               margin: const EdgeInsets.all(32),
@@ -95,10 +95,10 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
 
         return Stack(
           children: [
-            // Konten utama
-            SingleChildScrollView(
-              child: Container(
-                margin: const EdgeInsets.all(32),
+            // ✅ Bungkus konten utama dengan IgnorePointer
+            IgnorePointer(
+              ignoring: false,
+              child: SingleChildScrollView(
                 child: Column(
                   spacing: 8,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -134,11 +134,11 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
               ),
             ),
 
-            // Overlay jika data kosong
+            // ✅ Overlay muncul saat akun belum upgrade
             if (controller.data['level_expired_at'] == null)
               Positioned.fill(
                 child: Container(
-                  color: Colors.black.withOpacity(0.5), // ✅ Full opacity
+                  color: Colors.black.withOpacity(0.5),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -183,6 +183,7 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
   Widget _expireCard() {
     return InkWell(
       child: Card(
+        margin: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
         color: Colors.yellow.shade100,
         shape: RoundedRectangleBorder(
           side: const BorderSide(color: Colors.orange),
@@ -204,7 +205,11 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
                 return Text(
                   controller.data['level_expired_at'] == null
                       ? "Invalid Date"
-                      : controller.data['level_expired_at'].toString(),
+                      : DateFormat("d/m/y")
+                          .format(
+                            DateTime.parse(controller.data['level_expired_at']),
+                          )
+                          .toString(),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 );
               }),
@@ -226,6 +231,7 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
         Get.toNamed(routeName);
       },
       child: Card(
+        margin: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
         color: bgColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         clipBehavior: Clip.antiAlias, // biar rounded mengikuti shape

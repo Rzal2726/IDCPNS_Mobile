@@ -113,10 +113,7 @@ class DetailTryoutHarianView extends GetView<DetailTryoutHarianController> {
                               } else {
                                 return Text(
                                   "${controller.dataTryout['jumlah_soal'].toString()} Soal",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 );
                               }
                             }),
@@ -135,10 +132,7 @@ class DetailTryoutHarianView extends GetView<DetailTryoutHarianController> {
                               } else {
                                 return Text(
                                   "${controller.dataTryout['waktu_pengerjaan'].toString()} Menit",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 );
                               }
                             }),

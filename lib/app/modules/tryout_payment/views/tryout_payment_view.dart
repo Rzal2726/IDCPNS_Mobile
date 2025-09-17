@@ -66,7 +66,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                     ? Text(controller.dataTryout['formasi'])
                                     : Skeletonizer(
                                       enabled: true,
-                                      child: Text("Judul TRyout"),
+                                      child: Text("Judul Tryout"),
                                     ),
                           ),
                         ),
@@ -522,12 +522,12 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                   Icons.arrow_forward_ios,
                   color: Color.fromARGB(255, 42, 42, 42),
                 )
-                : IconButton(
-                  onPressed: () {
+                : InkWell(
+                  onTap: () {
                     voucherController.text = "";
                     controller.removeCode();
                   },
-                  icon: Icon(
+                  child: Icon(
                     Icons.close,
                     color: Color.fromARGB(255, 42, 42, 42),
                   ),
@@ -746,6 +746,12 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             TextField(
+              onChanged: (value) {
+                voucherController.value = voucherController.value.copyWith(
+                  text: value.toUpperCase(),
+                  selection: TextSelection.collapsed(offset: value.length),
+                );
+              },
               controller: voucherController,
               decoration: InputDecoration(
                 labelStyle: const TextStyle(color: Colors.grey),

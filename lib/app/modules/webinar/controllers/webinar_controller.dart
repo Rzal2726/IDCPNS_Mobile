@@ -16,9 +16,15 @@ class WebinarController extends GetxController {
         "Kedinasan": Colors.orangeAccent,
         "PPPK": Colors.redAccent,
       }.obs;
-  RxList<Map<String, dynamic>> categoryList = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> categoryList =
+      <Map<String, dynamic>>[
+        {"menu": "Semua", "id": ""},
+      ].obs;
   RxList<Map<String, dynamic>> webinarList = <Map<String, dynamic>>[].obs;
   RxString selectedKategori = "".obs;
+  RxInt currentPage = 1.obs;
+  RxInt totalPage = 1.obs;
+  RxInt perPage = 5.obs;
   @override
   void onInit() {
     super.onInit();
@@ -42,26 +48,35 @@ class WebinarController extends GetxController {
 
   Future<void> getWebinar() async {
     loading['webinar'] = true;
-    final payload = {"perpage": 10, "menu_category_id": selectedKategori.value};
+    final payload = {
+      "perpage": perPage.value,
+      "menu_category_id": selectedKategori.value,
+    };
     final response = await restClient.postData(
-      url: baseUrl + apiGetWebinarList,
+      url:
+          baseUrl + apiGetWebinarList + "?page=" + currentPage.value.toString(),
       payload: payload,
     );
 
     List<Map<String, dynamic>> dataList = List<Map<String, dynamic>>.from(
       response['data']['data'],
     );
+    Map<String, dynamic> dataPage = Map<String, dynamic>.from(response['data']);
+    totalPage.value = (dataPage['total'] / perPage.value as double).ceil();
     webinarList.assignAll(dataList);
     loading['webinar'] = false;
   }
 
   Future<void> getCategoryList() async {
+    print("categoryList: $categoryList");
     final response = await restClient.getData(url: baseUrl + apiGetCategory);
 
     List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
       response['data'],
     );
-    categoryList.assignAll(data);
+    categoryList.addAll(data);
     print(data);
+    print("categoryList: $categoryList");
+    print("categoryList: $data");
   }
 }

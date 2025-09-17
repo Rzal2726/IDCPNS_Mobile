@@ -130,6 +130,8 @@ import '../modules/tryout/bindings/tryout_binding.dart';
 import '../modules/tryout/views/tryout_view.dart';
 import '../modules/tryout_checkout/bindings/tryout_checkout_binding.dart';
 import '../modules/tryout_checkout/views/tryout_checkout_view.dart';
+import '../modules/tryout_event_payment/bindings/tryout_event_payment_binding.dart';
+import '../modules/tryout_event_payment/views/tryout_event_payment_view.dart';
 import '../modules/tryout_harian/bindings/tryout_harian_binding.dart';
 import '../modules/tryout_harian/views/tryout_harian_view.dart';
 import '../modules/tryout_payment/bindings/tryout_payment_binding.dart';
@@ -509,6 +511,11 @@ class AppPages {
       name: _Paths.LENGKAPI_BIODATA,
       page: () => const LengkapiBiodataView(),
       binding: LengkapiBiodataBinding(),
+    ),
+    GetPage(
+      name: _Paths.TRYOUT_EVENT_PAYMENT,
+      page: () => const TryoutEventPaymentView(),
+      binding: TryoutEventPaymentBinding(),
     ),
   ];
 }

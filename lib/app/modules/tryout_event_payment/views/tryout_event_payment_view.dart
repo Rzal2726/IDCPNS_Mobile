@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../controllers/payment_upgrade_akun_controller.dart';
+import '../controllers/tryout_event_payment_controller.dart';
 
-class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
-  const PaymentUpgradeAkunView({super.key});
+class TryoutEventPaymentView extends GetView<TryoutEventPaymentController> {
+  const TryoutEventPaymentView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +38,7 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+            padding: const EdgeInsets.all(12),
             child: Card(
               color: Colors.white,
               child: Padding(
@@ -47,7 +48,7 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
                   spacing: 16,
                   children: [
                     const Text(
-                      "Checkout Upgrade",
+                      "Checkout Paket Tryout",
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -61,36 +62,17 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
                           width: 240,
                           child: Obx(
                             () =>
-                                controller.detailDurasi['name'] != null
-                                    ? Text(controller.detailDurasi['name'])
+                                controller.dataTryout['name'] != null
+                                    ? Text(controller.dataTryout['name'])
                                     : Skeletonizer(
                                       enabled: true,
-                                      child: Text("Judul TRyout"),
-                                    ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      spacing: 4,
-                      children: [
-                        Icon(Icons.check_box, color: Colors.teal),
-                        Container(
-                          width: 240,
-                          child: Obx(
-                            () =>
-                                controller.detailBonus['formasi'] != null
-                                    ? Text(controller.detailBonus['formasi'])
-                                    : Skeletonizer(
-                                      enabled: true,
-                                      child: Text("Judul TRyout"),
+                                      child: Text("Judul Tryout"),
                                     ),
                           ),
                         ),
                       ],
                     ),
 
-                    const Divider(color: Color.fromARGB(250, 230, 230, 230)),
                     const Text(
                       "Metode Pembayaran",
                       style: TextStyle(
@@ -130,7 +112,7 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
                                       controller.ovoNumber.value.length <= 0
                                           ? controller
                                               .selectedPaymentMethod['name']
-                                          : "+62 ${controller.ovoNumber.value.toString()}",
+                                          : "+62 ${controller.ovoNumber.value}",
                                 ),
                       ),
                     ),
@@ -212,7 +194,7 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
                                   },
                                 ),
 
-                            child: _menuTile(
+                            child: _voucherTile(
                               leading: Icon(Icons.redeem, color: Colors.orange),
                               iconColor: Colors.orange,
                               text: "Gunakan Kode Promo",
@@ -348,6 +330,94 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
     );
   }
 
+  /// --- Card Tryout lainnya ---
+  Widget _otherTryoutCard(
+    String judul,
+    String harga, {
+    required Map<String, dynamic> value,
+  }) {
+    return Card(
+      // Use a Card for a polished, elevated look with subtle shadows
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: Color.fromARGB(255, 215, 215, 215), width: 1.5),
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
+      ),
+      child: Container(
+        width: 160,
+        padding: const EdgeInsets.all(12), // Consistent padding on all sides
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Judul Tryout
+            Text(
+              judul,
+              textAlign: TextAlign.start,
+              softWrap: true,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis, // Use ellipsis for overflow
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold, // Make the title bold for emphasis
+              ),
+            ),
+
+            const SizedBox(
+              height: 12,
+            ), // Increased spacing for visual separation
+            // Harga and action button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  harga,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.teal, // Use a brand color for the price
+                  ),
+                ),
+
+                // Use IconButton for a cleaner, more direct action
+                IconButton(
+                  padding: EdgeInsets.zero, // Remove default padding
+                  constraints:
+                      const BoxConstraints(), // Removes size constraints
+                  icon: Icon(
+                    value['is_purchase'] != true
+                        ? Icons.add_circle
+                        : Icons.remove_circle,
+                    color:
+                        value['is_purchase'] != true
+                            ? Colors.teal
+                            : Colors.pink,
+                    size: 30, // Slightly smaller icon for better balance
+                  ),
+                  onPressed: () {
+                    final idx = controller.otherTryout.indexOf(value);
+                    if (value['is_purchase'] == false) {
+                      value['is_purchase'] = true;
+                      controller.addTryout(value);
+                    } else {
+                      controller.removeTryout(value);
+                      value['is_purchase'] = false;
+                    }
+                    // Force rebuild using a new Map
+                    controller.otherTryout[idx] = Map<String, dynamic>.from(
+                      value,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// --- Tile umum untuk menu ---
   static Widget _menuTile({
     required Widget leading, // bisa Icon, Image, atau SvgPicture
@@ -380,6 +450,54 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
             color: Color.fromARGB(255, 42, 42, 42),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _voucherTile({
+    required Widget leading, // bisa Icon, Image, atau SvgPicture
+    required String text,
+    Color? iconColor,
+  }) {
+    return Obx(
+      () => Container(
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Color.fromARGB(255, 215, 215, 215),
+            width: 1.5,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          color: Colors.white,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                leading, // 👈 langsung pakai widget
+                const SizedBox(width: 16),
+                Text(text),
+              ],
+            ),
+            controller.promoCode.isEmpty
+                ? Icon(
+                  Icons.arrow_forward_ios,
+                  color: Color.fromARGB(255, 42, 42, 42),
+                )
+                : InkWell(
+                  onTap: () {
+                    controller.voucherController.text = "";
+                    controller.removeCode();
+                  },
+                  child: Icon(
+                    Icons.close,
+                    color: Color.fromARGB(255, 42, 42, 42),
+                  ),
+                ),
+          ],
+        ),
       ),
     );
   }
@@ -437,9 +555,9 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
               height: 180, // tinggi fix biar nggak overflow
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: controller.eWallet.length,
+                itemCount: controller.EWallet.length,
                 itemBuilder: (context, index) {
-                  final data = controller.eWallet[index];
+                  final data = controller.EWallet[index];
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: _methodCard(
@@ -511,31 +629,20 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
         child: InkWell(
           borderRadius: BorderRadius.circular(8),
           onTap: () {
-            // Simpan metode pembayaran yang dipilih
+            controller.ovoNumber.value = "";
             controller.selectedPaymentMethod.value = value;
-
-            // Hitung biaya admin
             controller.countAdmin();
-
-            // Tutup bottom sheet/popup sebelumnya
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-
-            // Inisialisasi harga setelah memilih metode
+            Navigator.pop(context);
             controller.initHarga();
-
-            // Cari payment type berdasarkan code
-            final paymentType = controller.getPaymentCategoryByCode(
-              controller.paymentMethods,
-              controller.selectedPaymentMethod['code'],
-            );
-
             controller.selectedPaymentType.value =
-                paymentType?.toString() ?? "";
-
+                controller
+                    .getPaymentCategoryByCode(
+                      controller.paymentMethods,
+                      controller.selectedPaymentMethod['code'],
+                    )
+                    .toString();
             // Jika OVO dipilih, munculkan modal input nomor
-            if (controller.selectedPaymentMethod['id'] == 10) {
+            if (controller.selectedPaymentMethod['code'] == "OVO") {
               showModalBottomSheet(
                 context: context,
                 backgroundColor: Colors.white,
@@ -551,11 +658,9 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
                   controller.initHarga();
                 }
               });
-            } else {
-              controller.ovoNumber.value = "";
+              ;
             }
           },
-
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
             child: Column(
@@ -614,6 +719,7 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
                       selection: TextSelection.collapsed(offset: value.length),
                     );
               },
+
               textCapitalization: TextCapitalization.characters,
               controller: controller.voucherController,
               decoration: InputDecoration(
@@ -689,13 +795,23 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
                 decoration: InputDecoration(
                   labelStyle: const TextStyle(color: Colors.grey),
                   labelText: "Masukkan Nomor OVO",
-                  prefixText: '+62 ',
+                  prefixText: '+62 ', // ✅ placeholder tetap
+                  prefixStyle: const TextStyle(
+                    color: Colors.black, // Warna teks +62
+                    fontWeight: FontWeight.bold,
+                  ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.teal, width: 1.5),
+                    borderSide: const BorderSide(
+                      color: Colors.teal,
+                      width: 1.5,
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.teal, width: 2.0),
+                    borderSide: const BorderSide(
+                      color: Colors.teal,
+                      width: 2.0,
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -733,54 +849,6 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _voucherTile({
-    required Widget leading, // bisa Icon, Image, atau SvgPicture
-    required String text,
-    Color? iconColor,
-  }) {
-    return Obx(
-      () => Container(
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Color.fromARGB(255, 215, 215, 215),
-            width: 1.5,
-          ),
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
-          color: Colors.white,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                leading, // 👈 langsung pakai widget
-                const SizedBox(width: 16),
-                Text(text),
-              ],
-            ),
-            controller.promoCode.isEmpty
-                ? Icon(
-                  Icons.arrow_forward_ios,
-                  color: Color.fromARGB(255, 42, 42, 42),
-                )
-                : InkWell(
-                  onTap: () {
-                    controller.voucherController.text = "";
-                    controller.removeCode();
-                  },
-                  child: Icon(
-                    Icons.close,
-                    color: Color.fromARGB(255, 42, 42, 42),
-                  ),
-                ),
-          ],
         ),
       ),
     );

@@ -551,14 +551,14 @@ class KategoriView extends GetView<KategoriController> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Colors.tealAccent.shade100,
+                                      color: Colors.teal,
                                       width: 1.5,
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Colors.tealAccent.shade100,
+                                      color: Colors.teal,
                                       width: 2.0,
                                     ),
                                     borderRadius: BorderRadius.circular(12),

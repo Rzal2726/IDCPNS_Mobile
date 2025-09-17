@@ -71,7 +71,7 @@ class TryoutSayaController extends GetxController {
   Future<void> initAll() async {
     currentPage.value = 1;
     await fetchTryoutSaya();
-    fetchKategori();
+    await fetchKategori();
   }
 
   Future<void> fetchTryoutSaya() async {
@@ -104,19 +104,28 @@ class TryoutSayaController extends GetxController {
     isLoading['list'] = false;
   }
 
-  void fetchKategori() async {
-    final client = Get.find<RestClientProvider>();
-
+  Future<void> fetchKategori() async {
     final response = await restClient.getData(url: baseUrl + apiGetCategory);
 
     final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
       response['data'],
     );
+    print(data);
     for (var item in data) {
       final exists = listCategory.any((e) => e['id'] == item['id']);
       if (!exists) {
         listCategory.add(item);
       }
     }
+  }
+
+  void aturUlang() {
+    print("Kategori: ${listCategory}");
+    selectedPaketKategori.value = "Semua";
+    selectedPengerjaan.value = "Semua";
+    selectedHasil.value = "Semua";
+    kategoriId.value = "";
+    isDone.value = "";
+    isLulus.value = "";
   }
 }

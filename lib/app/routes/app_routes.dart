@@ -74,6 +74,7 @@ abstract class Routes {
   static const INVOICE = _Paths.INVOICE;
   static const PAYMENT_WHISLIST = _Paths.PAYMENT_WHISLIST;
   static const LENGKAPI_BIODATA = _Paths.LENGKAPI_BIODATA;
+  static const TRYOUT_EVENT_PAYMENT = _Paths.TRYOUT_EVENT_PAYMENT;
 }
 
 abstract class _Paths {
@@ -150,4 +151,5 @@ abstract class _Paths {
   static const INVOICE = '/invoice';
   static const PAYMENT_WHISLIST = '/payment-whislist';
   static const LENGKAPI_BIODATA = '/lengkapi-biodata';
+  static const TRYOUT_EVENT_PAYMENT = '/tryout-event-payment';
 }

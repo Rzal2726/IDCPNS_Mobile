@@ -203,7 +203,7 @@ class DetailWebinarView extends GetView<DetailWebinarController> {
                               ? Expanded(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.pink,
+                                    backgroundColor: Colors.blue,
                                     foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -212,23 +212,36 @@ class DetailWebinarView extends GetView<DetailWebinarController> {
                                       vertical: 12,
                                     ),
                                   ),
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    final available = await canLaunchUrl(
+                                      Uri.parse(
+                                        controller.dataWebinar['link_zoom'],
+                                      ),
+                                    );
                                     if (controller.dataWebinar.isNotEmpty) {
-                                      launchUrl(
-                                        Uri.parse(
-                                          controller
-                                              .dataWebinar['link_youtube'],
-                                        ),
-                                      );
+                                      if (available) {
+                                        launchUrl(
+                                          Uri.parse(
+                                            controller.dataWebinar['link_zoom'],
+                                          ),
+                                        );
+                                      } else {
+                                        Get.snackbar(
+                                          "Gagal",
+                                          "Webinar tidak tersedia",
+                                          colorText: Colors.white,
+                                          backgroundColor: Colors.pink,
+                                        );
+                                      }
                                     }
                                   },
-                                  child: Text("Youtube"),
+                                  child: Text("Zoom"),
                                 ),
                               )
                               : Skeletonizer(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
+                                    backgroundColor: Colors.blue,
                                     foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -248,7 +261,7 @@ class DetailWebinarView extends GetView<DetailWebinarController> {
                               ? Expanded(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
+                                    backgroundColor: Colors.pink,
                                     foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -257,22 +270,37 @@ class DetailWebinarView extends GetView<DetailWebinarController> {
                                       vertical: 12,
                                     ),
                                   ),
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    final available = await canLaunchUrl(
+                                      Uri.parse(
+                                        controller.dataWebinar['link_youtube'],
+                                      ),
+                                    );
                                     if (controller.dataWebinar.isNotEmpty) {
-                                      launchUrl(
-                                        Uri.parse(
-                                          controller.dataWebinar['link_zoom'],
-                                        ),
-                                      );
+                                      if (available) {
+                                        launchUrl(
+                                          Uri.parse(
+                                            controller
+                                                .dataWebinar['link_youtube'],
+                                          ),
+                                        );
+                                      } else {
+                                        Get.snackbar(
+                                          "Gagal",
+                                          "Webinar tidak tersedia",
+                                          colorText: Colors.white,
+                                          backgroundColor: Colors.pink,
+                                        );
+                                      }
                                     }
                                   },
-                                  child: Text("Zoom"),
+                                  child: Text("Youtube"),
                                 ),
                               )
                               : Skeletonizer(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
+                                    backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),

@@ -219,6 +219,7 @@ class WebinarView extends GetView<WebinarController> {
                         tanggal: "17 Agustus",
                         jam: "20:00",
                         img: Image.asset("assets/webinar.png"),
+                        unformattedDate: "2025-11-15 20:00:00",
                       ),
                     );
                   } else {
@@ -232,7 +233,7 @@ class WebinarView extends GetView<WebinarController> {
                               "assets/learningEmpty.svg",
                               width: 240,
                             ),
-                            Text("Tidak Ada E-Book"),
+                            Text("Tidak Ada Webinar"),
                           ],
                         ),
                       );
@@ -267,12 +268,151 @@ class WebinarView extends GetView<WebinarController> {
                                     .categoryColor[data['menu_category']['menu']]!,
                             tanggal: formattedDate,
                             jam: formattedTime,
+                            unformattedDate: data['tanggal'],
                             img: Image.network(data['gambar']),
                           );
                         },
                       );
                     }
                   }
+                }),
+                SizedBox(height: 16),
+                Obx(() {
+                  final current = controller.currentPage.value;
+                  final total = controller.totalPage.value;
+
+                  if (total == 0) {
+                    return const SizedBox.shrink(); // tidak ada halaman
+                  }
+
+                  // Tentukan window
+                  int start = current - 1;
+                  int end = current + 1;
+
+                  // clamp biar tetap di antara 1 dan total
+                  start = start < 1 ? 1 : start;
+                  end = end > total ? total : end;
+
+                  // Kalau total < 3, pakai semua halaman yg ada
+                  if (total <= 3) {
+                    start = 1;
+                    end = total;
+                  } else {
+                    // Kalau current di awal → 1,2,3
+                    if (current == 1) {
+                      start = 1;
+                      end = 3;
+                    }
+                    // Kalau current di akhir → total-2, total-1, total
+                    else if (current == total) {
+                      start = total - 2;
+                      end = total;
+                    }
+                  }
+
+                  // Generate daftar halaman
+                  final pages = List.generate(
+                    end - start + 1,
+                    (i) => start + i,
+                  );
+
+                  return Container(
+                    height: 40,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton.icon(
+                            onPressed: () {
+                              if (current > 1) {
+                                controller.currentPage.value = 1;
+                                controller.getWebinar();
+                              }
+                            },
+                            label: const Icon(Icons.first_page, size: 16),
+                          ),
+                          TextButton.icon(
+                            onPressed: () {
+                              if (current > 1) {
+                                controller.currentPage.value--;
+                                controller.getWebinar();
+                              }
+                            },
+                            label: const Icon(Icons.arrow_back_ios, size: 16),
+                          ),
+
+                          ...pages.map((page) {
+                            final isActive = page == current;
+                            return Container(
+                              margin: EdgeInsets.symmetric(horizontal: 2),
+                              child: GestureDetector(
+                                onTap: () {
+                                  controller.currentPage.value = page;
+                                  controller.getWebinar();
+                                },
+                                child: AnimatedContainer(
+                                  duration: Duration(milliseconds: 200),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isActive ? 14 : 10,
+                                    vertical: isActive ? 8 : 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        isActive
+                                            ? Colors.teal.shade100
+                                            : Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color:
+                                          isActive
+                                              ? Colors.teal
+                                              : Colors.grey.shade300,
+                                      width: isActive ? 2 : 1,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    '$page',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          isActive ? Colors.teal : Colors.black,
+                                      fontSize:
+                                          isActive
+                                              ? 16
+                                              : 14, // font lebih besar untuk page aktif
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+
+                          TextButton.icon(
+                            onPressed: () {
+                              if (current < total) {
+                                controller.currentPage.value++;
+                                controller.getWebinar();
+                              }
+                            },
+                            label: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                            ),
+                          ),
+                          TextButton.icon(
+                            onPressed: () {
+                              if (current < total) {
+                                controller.currentPage.value = total;
+                                controller.getWebinar();
+                              }
+                            },
+                            label: const Icon(Icons.last_page, size: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 }),
               ],
             ),
@@ -291,7 +431,14 @@ class WebinarView extends GetView<WebinarController> {
     required String tanggal,
     required String jam,
     required Image img,
+    required String unformattedDate,
   }) {
+    final tgl = DateTime.parse(unformattedDate);
+    final now = DateTime.now();
+
+    bool canAccess =
+        now.isAfter(tgl) && now.isBefore(tgl.add(const Duration(days: 1)));
+
     return Card(
       color: Colors.white,
       elevation: 0,
@@ -336,7 +483,7 @@ class WebinarView extends GetView<WebinarController> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
+                  backgroundColor: canAccess ? Colors.teal : Colors.grey,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -344,7 +491,16 @@ class WebinarView extends GetView<WebinarController> {
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 onPressed: () {
-                  Get.toNamed("/detail-webinar", arguments: uuid);
+                  if (canAccess) {
+                    Get.toNamed("/detail-webinar", arguments: uuid);
+                  } else {
+                    Get.snackbar(
+                      "Gagal",
+                      "Webinar belum dimulai atau sudah selesai",
+                      colorText: Colors.white,
+                      backgroundColor: Colors.pink,
+                    );
+                  }
                 },
                 child: const Text(
                   "Ikuti Webinar",
@@ -364,10 +520,14 @@ class WebinarView extends GetView<WebinarController> {
     required Color backgroundColor,
   }) {
     return Card(
+      shape: RoundedRectangleBorder(
+        // side: BorderSide(),
+        borderRadius: BorderRadius.circular(16),
+      ),
       color: backgroundColor,
       elevation: 0,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Center(
           child: Text(title, style: TextStyle(color: foregroundColor)),
         ),

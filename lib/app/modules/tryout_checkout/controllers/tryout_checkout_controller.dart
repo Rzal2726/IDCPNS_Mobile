@@ -11,9 +11,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class TryoutCheckoutController extends GetxController {
   //TODO: Implement TryoutCheckoutController
-  final prevController = Get.find<TryoutPaymentController>();
   final client = Get.find<RestClientProvider>();
   final restClient = RestClient();
+  late String paymentId;
   Timer? _paymentTimer;
   RxMap<String, dynamic> transactionData = <String, dynamic>{}.obs;
   RxMap<String, dynamic> paymentDetails = <String, dynamic>{}.obs;
@@ -44,6 +44,7 @@ class TryoutCheckoutController extends GetxController {
   }
 
   Future<void> initPayment() async {
+    paymentId = await Get.arguments;
     fetchDetailPayment();
   }
 
@@ -66,13 +67,8 @@ class TryoutCheckoutController extends GetxController {
   }
 
   void fetchDetailPayment() async {
-    // transactionData.assignAll(prevController.transactionData);
     final response = await restClient.getData(
-      url:
-          baseUrl +
-          apiGetPaymentDetail +
-          "/" +
-          prevController.transactionData['payment_id'],
+      url: baseUrl + apiGetPaymentDetail + "/" + paymentId,
     );
 
     final Map<String, dynamic> data = Map<String, dynamic>.from(

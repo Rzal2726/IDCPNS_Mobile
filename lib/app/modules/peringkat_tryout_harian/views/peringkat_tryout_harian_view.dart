@@ -42,7 +42,7 @@ class PeringkatTryoutHarianView
             backgroundColor: Colors.white,
             elevation: 0,
             scrolledUnderElevation: 0,
-            title: Text("Kategori"),
+            title: Text("Peringkat"),
             actions: [
               Stack(
                 children: [
@@ -423,6 +423,9 @@ class PeringkatTryoutHarianView
                   final total = controller.totalPage.value;
 
                   if (total == 0) {
+                    return const SizedBox.shrink(); // tidak ada halaman
+                  }
+                  if (controller.dataPoint.isEmpty) {
                     return const SizedBox.shrink(); // tidak ada halaman
                   }
 

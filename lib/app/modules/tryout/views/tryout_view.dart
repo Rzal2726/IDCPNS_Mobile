@@ -192,7 +192,12 @@ class TryoutView extends GetView<TryoutController> {
                                   category:
                                       controller.selectedEventKategori.value,
                                 ),
+
                             decoration: InputDecoration(
+                              suffixIcon: Icon(
+                                Icons.search,
+                                color: Colors.black,
+                              ),
                               labelStyle: TextStyle(color: Colors.grey),
                               labelText: "Cari",
                               enabledBorder: OutlineInputBorder(
@@ -242,6 +247,27 @@ class TryoutView extends GetView<TryoutController> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
+                                          // Row(
+                                          //   mainAxisAlignment:
+                                          //       MainAxisAlignment.end,
+                                          //   children: [
+                                          //     TextButton(
+                                          //       onPressed: () {
+                                          //         controller
+                                          //             .selectedEventKategori
+                                          //             .value = "Semua";
+                                          //       },
+                                          //       child: Text(
+                                          //         "Atur Ulang",
+                                          //         style: TextStyle(
+                                          //           fontSize: 16,
+                                          //           fontWeight: FontWeight.bold,
+                                          //           color: Colors.pink,
+                                          //         ),
+                                          //       ),
+                                          //     ),
+                                          //   ],
+                                          // ),
                                           const Text(
                                             "Jenis Tryout",
                                             style: TextStyle(
@@ -424,7 +450,25 @@ class TryoutView extends GetView<TryoutController> {
                     ),
                   );
                 }),
-
+                SizedBox(height: 16),
+                Visibility(
+                  visible: (controller.eventTryout.length ?? 0) > 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.swipe, size: 16, color: Colors.black38),
+                      SizedBox(width: 4),
+                      Text(
+                        "Geser untuk lihat lainnya",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black38,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 16),
 
                 Obx(() {
@@ -645,6 +689,27 @@ class TryoutView extends GetView<TryoutController> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
+                                          // Row(
+                                          //   mainAxisAlignment:
+                                          //       MainAxisAlignment.end,
+                                          //   children: [
+                                          //     TextButton(
+                                          //       onPressed: () {
+                                          //         controller
+                                          //             .selectedPaketKategori
+                                          //             .value = "Semua";
+                                          //       },
+                                          //       child: Text(
+                                          //         "Atur Ulang",
+                                          //         style: TextStyle(
+                                          //           fontSize: 16,
+                                          //           fontWeight: FontWeight.bold,
+                                          //           color: Colors.pink,
+                                          //         ),
+                                          //       ),
+                                          //     ),
+                                          //   ],
+                                          // ),
                                           const Text(
                                             "Jenis Tryout",
                                             style: TextStyle(
@@ -1284,17 +1349,19 @@ class TryoutView extends GetView<TryoutController> {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () {
-        Get.toNamed("/maintenance", arguments: uuid);
+        Get.toNamed("/detail-event", arguments: uuid);
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16),
         child: Card(
-          elevation: 3,
-          shadowColor: Colors.teal.withOpacity(0.2),
-          color: Colors.white,
+          elevation: 0,
+          color: Color.fromARGB(255, 231, 246, 243),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Colors.teal.shade100, width: 1),
+            side: BorderSide(
+              color: Color.fromARGB(255, 183, 228, 219),
+              width: 1,
+            ),
           ),
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: Padding(
@@ -1307,8 +1374,8 @@ class TryoutView extends GetView<TryoutController> {
                 // Badge status
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.teal.shade400,
-                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.amber,
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -1366,10 +1433,21 @@ class TryoutView extends GetView<TryoutController> {
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
-                        "Periode: $periode",
+                        "Periode: ",
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.black87,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        "$periode",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.teal,
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,

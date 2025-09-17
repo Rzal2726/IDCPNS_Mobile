@@ -19,7 +19,10 @@ class EBookController extends GetxController {
       }.obs;
   RxList<Map<String, dynamic>> eBook = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> eBookList = <Map<String, dynamic>>[].obs;
-  RxList<Map<String, dynamic>> categoryList = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> categoryList =
+      <Map<String, dynamic>>[
+        {"menu": "Semua", "id": ""},
+      ].obs;
   RxString selectedKategori = "".obs;
   @override
   void onInit() {
@@ -80,7 +83,7 @@ class EBookController extends GetxController {
     List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
       response['data'],
     );
-    categoryList.assignAll(data);
+    categoryList.addAll(data);
     print(data);
   }
 }
