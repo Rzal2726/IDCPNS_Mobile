@@ -146,7 +146,7 @@ class DetailBimbelController extends GetxController
         type = 3;
       }
 
-      final events = bimbel['event'];
+      final events = bimbel['events'];
       if (events is! List) continue;
 
       for (var event in events) {

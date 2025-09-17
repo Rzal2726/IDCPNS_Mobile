@@ -148,6 +148,13 @@ class TryoutHarianView extends GetView<TryoutHarianController> {
                       itemCount: controller.categories.length,
                       itemBuilder: (context, index) {
                         final item = controller.categories[index];
+                        final filteredData =
+                            controller.doneList.where((data) {
+                              return data['menu_category_id'] == item['id'];
+                            }).toList();
+                        final hasMengerjakan = filteredData.any(
+                          (item) => item['sudah_mengerjakan_soal'] == 0,
+                        );
                         return Card(
                           color: Colors.white,
                           elevation: 2,
@@ -160,6 +167,14 @@ class TryoutHarianView extends GetView<TryoutHarianController> {
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 4,
+                            ),
+                            leading: Icon(
+                              Icons.circle,
+                              color:
+                                  hasMengerjakan
+                                      ? Colors.pink
+                                      : Colors.transparent,
+                              size: 16,
                             ),
                             title: Text(
                               item['menu'],

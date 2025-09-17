@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../controllers/detail_webinar_controller.dart';
 
@@ -9,14 +13,301 @@ class DetailWebinarView extends GetView<DetailWebinarController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('DetailWebinarView'),
-        centerTitle: true,
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(25),
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            title: Text("Detail Webinar"),
+            actions: [
+              Stack(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.notifications_rounded, color: Colors.teal),
+                    onPressed: () {
+                      // ✅ Best practice: use a function for navigation
+                      Get.to(() => NotificationView());
+                    },
+                  ),
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '4',
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
-      body: const Center(
-        child: Text(
-          'DetailWebinarView is working',
-          style: TextStyle(fontSize: 20),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 16,
+              children: [
+                Obx(() {
+                  if (controller.loading.value == true) {
+                    return Skeletonizer(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.asset("assets/logo.png"),
+                      ),
+                    );
+                  } else {
+                    if (controller.dataWebinar.isEmpty) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.asset("assets/logo.png"),
+                      );
+                    } else {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.network(controller.dataWebinar['gambar']),
+                      );
+                    }
+                  }
+                }),
+
+                Obx(() {
+                  if (controller.loading.value == true) {
+                    return Skeletonizer(
+                      child: Text(
+                        "Judul Webinar",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    );
+                  } else {
+                    if (controller.dataWebinar.isEmpty) {
+                      return Text(
+                        "Judul Webinar",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      );
+                    } else {
+                      return Text(
+                        controller.dataWebinar['nama'],
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      );
+                    }
+                  }
+                }),
+                Obx(() {
+                  if (controller.loading.value == true) {
+                    return Skeletonizer(
+                      child: Text(
+                        "Judul Webinar",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    );
+                  } else {
+                    if (controller.dataWebinar.isEmpty) {
+                      return Text(
+                        "Tanggal Webinar",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      );
+                    } else {
+                      return Text(
+                        controller.tanggal[0],
+                        style: TextStyle(fontSize: 16),
+                      );
+                    }
+                  }
+                }),
+                Obx(() {
+                  if (controller.loading.value == true) {
+                    return Skeletonizer(
+                      child: Text(
+                        "Judul Webinar",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    );
+                  } else {
+                    if (controller.dataWebinar.isEmpty) {
+                      return Text(
+                        "Jam Webinar",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      );
+                    } else {
+                      return Row(
+                        mainAxisSize:
+                            MainAxisSize.min, // <-- biar pas konten aja
+                        children: [
+                          Icon(
+                            Icons.hourglass_empty,
+                            color: Colors.amber,
+                            size: 20, // pastikan ukurannya sesuai
+                          ),
+                          const SizedBox(width: 4), // atur jarak manual
+                          Text(
+                            controller.tanggal[1],
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      );
+                    }
+                  }
+                }),
+
+                Row(
+                  spacing: 16,
+                  children: [
+                    Obx(
+                      () =>
+                          controller.dataWebinar.isNotEmpty
+                              ? Expanded(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.pink,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    if (controller.dataWebinar.isNotEmpty) {
+                                      launchUrl(
+                                        Uri.parse(
+                                          controller
+                                              .dataWebinar['link_youtube'],
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Text("Youtube"),
+                                ),
+                              )
+                              : Skeletonizer(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  onPressed: () {},
+                                  child: Text("data"),
+                                ),
+                              ),
+                    ),
+                    Obx(
+                      () =>
+                          controller.dataWebinar.isNotEmpty
+                              ? Expanded(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    if (controller.dataWebinar.isNotEmpty) {
+                                      launchUrl(
+                                        Uri.parse(
+                                          controller.dataWebinar['link_zoom'],
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Text("Zoom"),
+                                ),
+                              )
+                              : Skeletonizer(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  onPressed: () {},
+                                  child: Text("data"),
+                                ),
+                              ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: Container(
+                    decoration: BoxDecoration(border: Border.all()),
+                  ),
+                ),
+                Obx(() {
+                  if (controller.loading.value == true) {
+                    return Skeletonizer(child: Text("data"));
+                  } else {
+                    return Container(
+                      child: Html(
+                        data: controller.dataWebinar['deskripsi_mobile'],
+                      ),
+                    );
+                  }
+                }),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/webinar_controller.dart';
 
@@ -76,124 +79,126 @@ class WebinarView extends GetView<WebinarController> {
                       ),
                       iconAlignment: IconAlignment.end,
                       onPressed: () {
-                        // showModalBottomSheet(
-                        //   context: context,
-                        //   builder: (ctx) {
-                        //     return StatefulBuilder(
-                        //       builder: (context, setState) {
-                        //         return Container(
-                        //           color: Colors.white,
-                        //           padding: EdgeInsets.all(16),
-                        //           child: Column(
-                        //             mainAxisSize:
-                        //                 MainAxisSize
-                        //                     .min, // biar bottomsheet menyesuaikan isi
-                        //             crossAxisAlignment:
-                        //                 CrossAxisAlignment.start,
-                        //             children: [
-                        //               const Text(
-                        //                 "Jenis Tryout",
-                        //                 style: TextStyle(
-                        //                   fontSize: 16,
-                        //                   fontWeight: FontWeight.bold,
-                        //                 ),
-                        //               ),
-                        //               const SizedBox(height: 8),
+                        showModalBottomSheet(
+                          useSafeArea: false,
+                          context: context,
+                          builder: (ctx) {
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return SafeArea(
+                                  child: Container(
+                                    color: Colors.white,
+                                    padding: EdgeInsets.all(16),
+                                    child: Column(
+                                      mainAxisSize:
+                                          MainAxisSize
+                                              .min, // biar bottomsheet menyesuaikan isi
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          "Kategori",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
 
-                        //               Obx(
-                        //                 () => Wrap(
-                        //                   spacing: 8,
-                        //                   children:
-                        //                       controller.options.value.map((
-                        //                         option,
-                        //                       ) {
-                        //                         final isSelected =
-                        //                             controller
-                        //                                 .selectedEventKategori
-                        //                                 .value ==
-                        //                             option;
-                        //                         return ChoiceChip(
-                        //                           label: Text(
-                        //                             option,
-                        //                             style: TextStyle(
-                        //                               color:
-                        //                                   isSelected
-                        //                                       ? Colors.teal
-                        //                                       : Colors
-                        //                                           .grey[700],
-                        //                               fontWeight:
-                        //                                   isSelected
-                        //                                       ? FontWeight.bold
-                        //                                       : FontWeight
-                        //                                           .normal,
-                        //                             ),
-                        //                           ),
-                        //                           selected: isSelected,
-                        //                           selectedColor: Colors.teal
-                        //                               .withOpacity(0.1),
-                        //                           backgroundColor: Colors.white,
-                        //                           shape: RoundedRectangleBorder(
-                        //                             side: BorderSide(
-                        //                               color:
-                        //                                   isSelected
-                        //                                       ? Colors.teal
-                        //                                       : Colors
-                        //                                           .grey
-                        //                                           .shade400,
-                        //                             ),
-                        //                             borderRadius:
-                        //                                 BorderRadius.circular(
-                        //                                   6,
-                        //                                 ),
-                        //                           ),
-                        //                           onSelected: (value) {
-                        //                             controller
-                        //                                 .selectedEventKategori
-                        //                                 .value = option;
-                        //                           },
-                        //                         );
-                        //                       }).toList(),
-                        //                 ),
-                        //               ),
+                                        Obx(
+                                          () => Wrap(
+                                            spacing: 8,
+                                            children:
+                                                controller.categoryList.map((
+                                                  option,
+                                                ) {
+                                                  final isSelected =
+                                                      controller
+                                                          .selectedKategori
+                                                          .value ==
+                                                      option['id'].toString();
+                                                  return ChoiceChip(
+                                                    label: Text(
+                                                      option['menu'],
+                                                      style: TextStyle(
+                                                        color:
+                                                            isSelected
+                                                                ? Colors.teal
+                                                                : Colors
+                                                                    .grey[700],
+                                                        fontWeight:
+                                                            isSelected
+                                                                ? FontWeight
+                                                                    .bold
+                                                                : FontWeight
+                                                                    .normal,
+                                                      ),
+                                                    ),
+                                                    selected: isSelected,
+                                                    selectedColor: Colors.teal
+                                                        .withOpacity(0.1),
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    shape: RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                        color:
+                                                            isSelected
+                                                                ? Colors.teal
+                                                                : Colors
+                                                                    .grey
+                                                                    .shade400,
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            6,
+                                                          ),
+                                                    ),
+                                                    onSelected: (value) {
+                                                      controller
+                                                          .selectedKategori
+                                                          .value = option['id']
+                                                              .toString();
+                                                    },
+                                                  );
+                                                }).toList(),
+                                          ),
+                                        ),
 
-                        //               const SizedBox(height: 12),
-                        //               SizedBox(
-                        //                 width: double.infinity,
-                        //                 child: ElevatedButton(
-                        //                   style: ElevatedButton.styleFrom(
-                        //                     backgroundColor:
-                        //                         Colors.teal, // warna tombol
-                        //                     foregroundColor:
-                        //                         Colors.white, // warna teks/icon
-                        //                     shape: RoundedRectangleBorder(
-                        //                       borderRadius:
-                        //                           BorderRadius.circular(8),
-                        //                     ),
-                        //                     padding: const EdgeInsets.symmetric(
-                        //                       horizontal: 24,
-                        //                       vertical: 12,
-                        //                     ),
-                        //                   ),
-                        //                   onPressed: () {
-                        //                     Navigator.pop(context);
-                        //                     controller.showEventTryout(
-                        //                       name: eventTextController.text,
-                        //                       category:
-                        //                           controller
-                        //                               .selectedEventKategori
-                        //                               .value,
-                        //                     );
-                        //                   },
-                        //                   child: const Text("Cari"),
-                        //                 ),
-                        //               ),
-                        //             ],
-                        //           ),
-                        //         );
-                        //       },
-                        //     );
-                        //   },
-                        // );
+                                        const SizedBox(height: 12),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.teal, // warna tombol
+                                              foregroundColor:
+                                                  Colors
+                                                      .white, // warna teks/icon
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 24,
+                                                    vertical: 12,
+                                                  ),
+                                            ),
+                                            onPressed: () {
+                                              controller.getWebinar();
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text("Cari"),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
                       },
                       label: Text(
                         "Filter",
@@ -203,15 +208,72 @@ class WebinarView extends GetView<WebinarController> {
                     ),
                   ],
                 ),
-                _dataCard(
-                  status: 0,
-                  category: "CPNS",
-                  judul: "Teks Materi Lengkap CPNS",
-                  categoryColor: Colors.teal,
-                  tanggal: "17 Agustus",
-                  jam: "20:00",
-                  img: Image.asset("assets/webinar.png"),
-                ),
+                Obx(() {
+                  if (controller.loading['webinar'] == true) {
+                    return Skeletonizer(
+                      child: _dataCard(
+                        status: 0,
+                        category: "CPNS",
+                        judul: "Teks Materi Lengkap CPNS",
+                        categoryColor: Colors.teal,
+                        tanggal: "17 Agustus",
+                        jam: "20:00",
+                        img: Image.asset("assets/webinar.png"),
+                      ),
+                    );
+                  } else {
+                    if (controller.webinarList.isEmpty) {
+                      return Center(
+                        child: Column(
+                          spacing: 16,
+                          children: [
+                            SizedBox(height: 64),
+                            SvgPicture.asset(
+                              "assets/learningEmpty.svg",
+                              width: 240,
+                            ),
+                            Text("Tidak Ada E-Book"),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: controller.webinarList.length,
+                        itemBuilder: (context, index) {
+                          final data = controller.webinarList[index];
+                          // 1. Pisahkan tanggal dan waktu
+                          List<String> parts = data['tanggal'].split(" ");
+                          String datePart = parts[0]; // "2025-11-15"
+                          String timePart = parts[1]; // "20:00:00"
+
+                          // 2. Format tanggal ke dalam bentuk "27 Desember"
+                          DateTime parsedDate = DateTime.parse(datePart);
+                          String formattedDate = DateFormat(
+                            "d MMMM y",
+                          ).format(parsedDate);
+                          String formattedTime = DateFormat(
+                            "HH:mm",
+                          ).format(DateTime.parse("$datePart $timePart"));
+
+                          return _dataCard(
+                            uuid: data['uuid'],
+                            status: data['status'],
+                            category: data['menu_category']['menu'],
+                            judul: data['nama'],
+                            categoryColor:
+                                controller
+                                    .categoryColor[data['menu_category']['menu']]!,
+                            tanggal: formattedDate,
+                            jam: formattedTime,
+                            img: Image.network(data['gambar']),
+                          );
+                        },
+                      );
+                    }
+                  }
+                }),
               ],
             ),
           ),
@@ -221,6 +283,7 @@ class WebinarView extends GetView<WebinarController> {
   }
 
   Widget _dataCard({
+    String uuid = "",
     required String category,
     required int status,
     required String judul,
@@ -280,7 +343,9 @@ class WebinarView extends GetView<WebinarController> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Get.toNamed("/detail-webinar", arguments: uuid);
+                },
                 child: const Text(
                   "Ikuti Webinar",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

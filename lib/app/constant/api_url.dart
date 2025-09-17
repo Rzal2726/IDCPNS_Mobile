@@ -120,4 +120,3 @@ const String apiGetTryoutHarianLaporSoal = "v1/tryout-harian/quiz/lapor/soal";
 const String apiGetTryoutHarianSubmit = "v1/tryout-harian/quiz/submit/soal";
 const String apiGetTryoutHarianHasil = "v1/tryout-harian/result/";
 const String apiGetTryoutHarianPembahasan = "v1/tryout-harian/soal/done/";
-const String apiGetRekomendasiTryoutHome = "v1/home/event";
