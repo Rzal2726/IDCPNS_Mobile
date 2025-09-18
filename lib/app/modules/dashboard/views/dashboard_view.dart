@@ -8,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/programTryoutGratisCard.dart';
 import 'package:idcpns_mobile/app/Components/widgets/wdigetTryoutEventCard.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
@@ -335,7 +336,7 @@ class DashboardView extends GetView<DashboardController> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          Get.toNamed(Routes.TRYOUT); // ganti dengan route kamu
+                          (Get.find<HomeController>()).changeBottomBar(1);// Get.toNamed(Routes.TRYOUT); // ganti dengan route kamu
                         },
                         child: _buildServiceCard(
                           'assets/tryoutHomeIcon.svg',
@@ -349,7 +350,7 @@ class DashboardView extends GetView<DashboardController> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          Get.toNamed(Routes.BIMBEL);
+                          (Get.find<HomeController>()).changeBottomBar(2);
                         },
                         child: _buildServiceCard(
                           'assets/bimbelHomeIcon.svg',
@@ -362,10 +363,7 @@ class DashboardView extends GetView<DashboardController> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          Get.offNamed(
-                            Routes.HOME,
-                            arguments: {'initialIndex': 3},
-                          );
+                          (Get.find<HomeController>()).changeBottomBar(3);
                         },
                         child: _buildServiceCard(
                           'assets/platinumHomeIcon.svg',
