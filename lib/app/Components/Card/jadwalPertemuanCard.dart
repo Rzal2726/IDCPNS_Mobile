@@ -4,10 +4,12 @@ Widget pertemuanCardBuilder({
   required String hari,
   required String tanggal,
   required String jam,
-  required String pertemuanTitle,
-  required String pertemuanDesc,
-  required String extended,
-  required String extendedPlatinum,
+  String? regulerTitle,
+  String? regulerDesc,
+  String? extendedTitle,
+  String? extendedDesc,
+  String? extendedPlatinumTitle,
+  String? extendedPlatinumDesc,
 }) {
   Widget infoColumn(String title, String value) {
     return Column(
@@ -16,9 +18,29 @@ Widget pertemuanCardBuilder({
         Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
         SizedBox(height: 4),
         Text(
-          value,
+          "${value} WIB",
           style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
         ),
+      ],
+    );
+  }
+
+  Widget section(String title, String? subtitle, String? desc) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        SizedBox(height: 6),
+        if ((subtitle ?? "").isNotEmpty || (desc ?? "").isNotEmpty) ...[
+          Text(subtitle ?? "", style: TextStyle(fontSize: 14)),
+          if (desc != null && desc.isNotEmpty)
+            Text(desc, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+        ] else
+          Text("-", style: TextStyle(fontSize: 13)),
+        SizedBox(height: 16),
       ],
     );
   }
@@ -55,35 +77,14 @@ Widget pertemuanCardBuilder({
           ],
         ),
         SizedBox(height: 20),
-        Text(
-          "Reguler",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        ),
-        SizedBox(height: 6),
-        Text(pertemuanTitle, style: TextStyle(fontSize: 14)),
-        Text(
-          pertemuanDesc,
-          style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-        ),
-        SizedBox(height: 16),
-        Text(
-          "Extended",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        ),
-        SizedBox(height: 6),
-        Text(
-          extended.isNotEmpty ? extended : "-",
-          style: TextStyle(fontSize: 13),
-        ),
-        SizedBox(height: 16),
-        Text(
+
+        // Bagian untuk tiap tipe
+        section("Reguler", regulerTitle, regulerDesc),
+        section("Extended", extendedTitle, extendedDesc),
+        section(
           "Extended + Platinum Zone",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        ),
-        SizedBox(height: 6),
-        Text(
-          extendedPlatinum.isNotEmpty ? extendedPlatinum : "-",
-          style: TextStyle(fontSize: 13),
+          extendedPlatinumTitle,
+          extendedPlatinumDesc,
         ),
       ],
     ),

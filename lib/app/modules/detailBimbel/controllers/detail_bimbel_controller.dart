@@ -3,11 +3,15 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class DetailBimbelController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final _restClient = RestClient();
   final tabs = ['Detail', 'Jadwal', 'FAQ'];
+  var currentPage = 1.obs;
+  var totalPage = 1.obs;
+  final int pageSize = 5;
   RxMap datalBimbelData = {}.obs;
   RxMap datalCheckList = {}.obs;
   RxString wishlistUuid = "".obs;
@@ -18,7 +22,8 @@ class DetailBimbelController extends GetxController
   List<JadwalFilter> jadwalFilter = [];
 
   @override
-  void onInit() {
+  void onInit() async {
+    await initializeDateFormatting('id_ID', null);
     super.onInit();
     getDetailBimbel(id: idBimbel);
     tabController = TabController(length: 3, vsync: this);
@@ -28,6 +33,20 @@ class DetailBimbelController extends GetxController
   void onClose() {
     tabController.dispose();
     super.onClose();
+  }
+
+  List<Map<String, dynamic>> getPaginatedData() {
+    final grouped = groupJadwalByTanggal(jadwalFilter);
+    final dataJadwal = grouped.values.toList();
+
+    totalPage.value = (dataJadwal.length / pageSize).ceil();
+    if (totalPage.value == 0) totalPage.value = 1;
+
+    int startIndex = (currentPage.value - 1) * pageSize;
+    int endIndex = startIndex + pageSize;
+    if (endIndex > dataJadwal.length) endIndex = dataJadwal.length;
+
+    return dataJadwal.sublist(startIndex, endIndex);
   }
 
   Future<void> getDetailBimbel({required String id}) async {
@@ -40,7 +59,7 @@ class DetailBimbelController extends GetxController
       if (result["status"] == "success") {
         var data = result['data'];
         parseJadwalEvent(data);
-        print("Jumlah jadwal: ${jadwalFilter.length}");
+        print("xx ${jadwalFilter.length}");
         datalBimbelData.value = data;
 
         // ambil id pertama dari list result['data']['bimbel']
@@ -129,7 +148,6 @@ class DetailBimbelController extends GetxController
 
     if (data == null) return;
 
-    // ambil langsung dari data['bimbel']
     final bimbelList = data['bimbel'];
     if (bimbelList is! List) return;
 
@@ -146,68 +164,99 @@ class DetailBimbelController extends GetxController
         type = 3;
       }
 
-      final events = bimbel['event'];
+      final events = bimbel['events'];
       if (events is! List) continue;
 
       for (var event in events) {
         if (event == null) continue;
 
         final tanggalStr = event['tanggal'];
-        String hari = '';
-        String tglFormatted = '';
-        String jam = '';
+        if (tanggalStr == null) continue;
 
-        if (tanggalStr != null && tanggalStr.toString().isNotEmpty) {
-          final tgl = DateTime.parse(tanggalStr);
-          hari = DateFormat.EEEE('id_ID').format(tgl);
-          tglFormatted = DateFormat("dd MMMM yyyy", "id_ID").format(tgl);
-          jam = DateFormat.Hm("id_ID").format(tgl);
-        }
+        final tgl = DateTime.parse(tanggalStr);
 
         jadwalFilter.add(
           JadwalFilter(
             judul: event['judul'] ?? '',
             deskripsi: event['deskripsi'] ?? '',
-            tanggal: "$hari, $tglFormatted $jam",
+            tanggal: tgl, // simpan DateTime langsung
             tipe: type,
           ),
         );
       }
     }
 
-    // sort by date
-    jadwalFilter.sort((a, b) {
-      final dateA = DateTime.parse(
-        (a.tanggal
-            .split(", ")
-            .last
-            .split(" ")
-            .reversed
-            .take(3)
-            .toList()
-            .reversed
-            .join(" ")),
-      );
-      final dateB = DateTime.parse(
-        (b.tanggal
-            .split(", ")
-            .last
-            .split(" ")
-            .reversed
-            .take(3)
-            .toList()
-            .reversed
-            .join(" ")),
-      );
-      return dateA.compareTo(dateB);
-    });
+    // sort berdasarkan DateTime asli
+    jadwalFilter.sort((a, b) => a.tanggal.compareTo(b.tanggal));
+  }
+
+  Map<String, Map<String, String>> groupJadwalByTanggal(
+    List<JadwalFilter> list,
+  ) {
+    final Map<String, Map<String, String>> result = {};
+
+    for (var item in list) {
+      // key pakai tanggal + jam + menit biar unik
+      final keyTanggal =
+          "${item.tanggal.year}-${item.tanggal.month}-${item.tanggal.day} "
+          "${item.tanggal.hour}:${item.tanggal.minute}";
+
+      if (!result.containsKey(keyTanggal)) {
+        result[keyTanggal] = {
+          "hari": DateFormat.EEEE('id_ID').format(item.tanggal),
+          "tanggal": DateFormat("dd MMMM yyyy", "id_ID").format(item.tanggal),
+          "jam": DateFormat.Hm().format(item.tanggal),
+          "regulerTitle": "",
+          "regulerDesc": "",
+          "extendedTitle": "",
+          "extendedDesc": "",
+          "extendedPlatinumTitle": "",
+          "extendedPlatinumDesc": "",
+        };
+      }
+
+      switch (item.tipe) {
+        case 1: // reguler
+          result[keyTanggal]!["regulerTitle"] = item.judul;
+          result[keyTanggal]!["regulerDesc"] = item.deskripsi;
+          break;
+        case 2: // extended
+          result[keyTanggal]!["extendedTitle"] = item.judul;
+          result[keyTanggal]!["extendedDesc"] = item.deskripsi;
+          break;
+        case 3: // platinum
+          result[keyTanggal]!["extendedPlatinumTitle"] = item.judul;
+          result[keyTanggal]!["extendedPlatinumDesc"] = item.deskripsi;
+          break;
+      }
+    }
+
+    return result;
+  }
+
+  void goToPage(int page) {
+    if (page >= 1 && page <= totalPage.value) {
+      currentPage.value = page;
+    }
+  }
+
+  void nextPage() {
+    if (currentPage.value < totalPage.value) {
+      currentPage.value++;
+    }
+  }
+
+  void prevPage() {
+    if (currentPage.value > 1) {
+      currentPage.value--;
+    }
   }
 }
 
 class JadwalFilter {
   final String judul;
   final String deskripsi;
-  final String tanggal;
+  final DateTime tanggal; // simpan DateTime asli
   final int tipe;
 
   JadwalFilter({
@@ -216,4 +265,9 @@ class JadwalFilter {
     required this.tanggal,
     required this.tipe,
   });
+
+  String get hari => DateFormat.EEEE('id_ID').format(tanggal);
+  String get tanggalFormatted =>
+      DateFormat("dd MMMM yyyy", "id_ID").format(tanggal);
+  String get jam => DateFormat.Hm("id_ID").format(tanggal);
 }

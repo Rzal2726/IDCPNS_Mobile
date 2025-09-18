@@ -107,14 +107,22 @@ class AccountView extends GetView<AccountController> {
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[300],
+                                    color:
+                                        controller.levelName.toLowerCase() ==
+                                                "developer"
+                                            ? Colors.teal
+                                            : Colors.grey[300],
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
-                                    "Basic",
+                                    "${controller.levelName}",
                                     style: TextStyle(
                                       fontSize: 15,
-                                      color: Colors.black87,
+                                      color:
+                                          controller.levelName.toLowerCase() ==
+                                                  "developer"
+                                              ? Colors.white
+                                              : Colors.black87,
                                     ),
                                   ),
                                 ),
@@ -247,7 +255,6 @@ class AccountView extends GetView<AccountController> {
                           Get.toNamed(Routes.UPGRADE_AKUN);
                         },
                         child: Container(
-                          height: 150,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             // Kalau mau efek shadow atau overlay, bisa ditambah di sini

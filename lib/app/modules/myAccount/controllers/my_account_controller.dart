@@ -3,6 +3,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
+import 'package:idcpns_mobile/app/modules/lengkapiBiodata/controllers/lengkapi_biodata_controller.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
 import 'package:file_selector/file_selector.dart';
@@ -111,38 +112,88 @@ class MyAccountController extends GetxController {
   }
 
   Future<void> postProfile() async {
-    try {
-      final url = baseUrl + apiGetUser;
+    String? errorMessage;
+    if (newProfile.isEmpty) {
+      errorMessage = "Foto profil harus diisi.";
+    } else if (namaLengkapController.text.isEmpty) {
+      errorMessage = "Nama lengkap harus diisi.";
+    } else if (emailController.text.isEmpty) {
+      errorMessage = "Email harus diisi.";
+    } else if (!isValidEmail(emailController.text)) {
+      errorMessage = "Format email tidak valid.";
+    } else if (hpController.text.isEmpty) {
+      errorMessage = "Nomor HP harus diisi.";
+    } else if (!isValidPhone(hpController.text, minLength: 10)) {
+      errorMessage = "Nomor HP minimal 10 digit.";
+    } else if (waController.text.isEmpty) {
+      errorMessage = "Nomor WhatsApp harus diisi.";
+    } else if (!isValidPhone(waController.text, minLength: 10)) {
+      errorMessage = "Nomor WhatsApp minimal 10 digit.";
+    } else if (tanggalLahir.value.isEmpty) {
+      errorMessage = "Tanggal lahir harus diisi.";
+    } else if (jenisKelamin.value.isEmpty) {
+      errorMessage = "Jenis kelamin harus dipilih.";
+    } else if (provinsiId.value == 0) {
+      errorMessage = "Silakan pilih provinsi.";
+    } else if (kabupatenId.value == 0) {
+      errorMessage = "Silakan pilih kabupaten/kota.";
+    } else if (pendidikanId.value == 0) {
+      errorMessage = "Silakan pilih pendidikan.";
+    } else if (sosmedId.value == 0) {
+      errorMessage = "Silakan pilih sumber informasi IDCPNS.";
+    } else if (referensiId.value == 0) {
+      errorMessage = "Silakan pilih referensi.";
+    }
+    if (errorMessage != null) {
+      showSnackbar("Gagal", errorMessage);
+      return;
+    }
+    final url = baseUrl + apiGetUser;
 
-      final formData = dio.FormData.fromMap({
-        "foto": await dio.MultipartFile.fromFile(
-          newProfile.value,
-          filename: "profile.jpg",
-        ),
-        "name": namaLengkapController.text,
-        "email": emailController.text,
-        "no_hp": hpController.text,
-        "no_wa": waController.text,
-        "provinsi_id": provinsiId.value,
-        "kotakab_id": kabupatenId.value,
-        "menu_category_id": referensiId.value,
-        "pendidikan_id": pendidikanId.value,
-        "referensi_id": sosmedId.value,
-        "tanggal_lahir": DateFormat(
-          "yyyy-MM-dd",
-        ).format(DateTime.parse(tanggalLahir.value)),
-        "jenis_kelamin": jenisKelamin.value,
-      });
+    // Cek apakah ada foto baru
+    final foto =
+        (newProfile.value.isNotEmpty)
+            ? await dio.MultipartFile.fromFile(
+              newProfile.value,
+              filename: "profile.jpg",
+            )
+            : null;
 
-      print("xxx $formData");
-      final result = await _restClient.postData(url: url, payload: formData);
-      print("response ${result.toString()}");
+    final formData = dio.FormData.fromMap({
+      if (foto != null)
+        "foto": foto
+      else
+        "foto": fotoProfile.value, // pakai foto lama
+      "name": namaLengkapController.text,
+      "email": emailController.text,
+      "no_hp": hpController.text,
+      "no_wa": waController.text,
+      "provinsi_id": provinsiId.value,
+      "kotakab_id": kabupatenId.value,
+      "menu_category_id": referensiId.value,
+      "pendidikan_id": pendidikanId.value,
+      "referensi_id": sosmedId.value,
+      "tanggal_lahir": DateFormat(
+        "yyyy-MM-dd",
+      ).format(DateTime.parse(tanggalLahir.value)),
+      "jenis_kelamin": jenisKelamin.value,
+    });
 
-      if (result["status"] == "success") {
-        getUser();
-      }
-    } catch (e) {
-      print("Error post profile: $e");
+    final result = await _restClient.postData(url: url, payload: formData);
+
+    if (result["status"] == "success") {
+      getUser();
+      Get.snackbar(
+        "Sukses",
+        "Profil berhasil diperbarui",
+        snackPosition: SnackPosition.TOP,
+      );
+    } else {
+      Get.snackbar(
+        "Gagal",
+        result["message"] ?? "Terjadi kesalahan",
+        snackPosition: SnackPosition.TOP,
+      );
     }
   }
 
@@ -278,4 +329,14 @@ class MyAccountController extends GetxController {
   }
 
   Map<String, String> jenisKelaminMap = {"L": "Laki-laki", "P": "Perempuan"};
+}
+
+bool isValidEmail(String email) {
+  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  return emailRegex.hasMatch(email);
+}
+
+// 🔧 Minimal digit nomor telepon (misal 10)
+bool isValidPhone(String phone, {int minLength = 10}) {
+  return phone.isNotEmpty && phone.length >= minLength;
 }

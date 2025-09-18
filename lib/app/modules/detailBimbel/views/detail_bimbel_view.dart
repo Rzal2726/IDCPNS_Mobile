@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/Card/jadwalPertemuanCard.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -386,40 +387,57 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                   children: [
                     // Custom Tab
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: List.generate(controller.tabs.length, (index) {
                         final title = controller.tabs[index];
-                        return GestureDetector(
-                          onTap: () => controller.currentIndex.value = index,
-                          child: Obx(() {
-                            final isSelected =
-                                controller.currentIndex.value == index;
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  title,
-                                  style: TextStyle(
-                                    color:
-                                        isSelected
-                                            ? Colors.teal
-                                            : Colors.black54,
-                                    fontWeight:
-                                        isSelected
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                AnimatedContainer(
-                                  duration: Duration(milliseconds: 200),
-                                  height: 2,
-                                  width: isSelected ? 40 : 0,
-                                  color: Colors.teal,
-                                ),
-                              ],
-                            );
-                          }),
+                        return Expanded(
+                          // <-- ini bikin tiap tab sama lebar
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap:
+                                  () => controller.currentIndex.value = index,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ), // cukup vertikal
+                                child: Obx(() {
+                                  final isSelected =
+                                      controller.currentIndex.value == index;
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        title,
+                                        textAlign:
+                                            TextAlign
+                                                .center, // teks di tengah tab
+                                        style: TextStyle(
+                                          color:
+                                              isSelected
+                                                  ? Colors.teal
+                                                  : Colors.black54,
+                                          fontWeight:
+                                              isSelected
+                                                  ? FontWeight.bold
+                                                  : FontWeight.normal,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      AnimatedContainer(
+                                        duration: Duration(milliseconds: 200),
+                                        height: 2,
+                                        width:
+                                            isSelected
+                                                ? 40
+                                                : 0, // indikator tetap kecil
+                                        color: Colors.teal,
+                                      ),
+                                    ],
+                                  );
+                                }),
+                              ),
+                            ),
+                          ),
                         );
                       }),
                     ),
@@ -427,33 +445,80 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                     SizedBox(height: 12),
 
                     // Konten Tab
-                    Obx(() {
-                      switch (controller.currentIndex.value) {
-                        case 0:
-                          return Html(data: data['deskripsi_pc']);
-                        case 1:
-                          return ListView.builder(
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              final item = data[index];
-                              return pertemuanCardBuilder(
-                                hari: item.hari,
-                                tanggal: item.tanggal,
-                                jam: item.jam,
-                                pertemuanTitle: item.pertemuanTitle,
-                                pertemuanDesc: item.pertemuanDesc,
-                                extended: item.extended,
-                                extendedPlatinum: item.extendedPlatinum,
-                              );
-                            },
-                          );
+                    IndexedStack(
+                      index: controller.currentIndex.value,
+                      children: [
+                        // Case 0
+                        SizedBox(
+                          height:
+                              MediaQuery.of(
+                                context,
+                              ).size.height, // batas tinggi = layar penuh
+                          child: SingleChildScrollView(
+                            child: Html(data: data['deskripsi_pc']),
+                          ),
+                        ),
 
-                        case 2:
-                          return Html(data: data['faq_pc']);
-                        default:
-                          return SizedBox.shrink();
-                      }
-                    }),
+                        // Case 1
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height,
+                          child: Column(
+                            children: [
+                              // List + pagination jadi satu scroll
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount:
+                                      controller.getPaginatedData().length +
+                                      1, // +1 buat pagination
+                                  itemBuilder: (context, index) {
+                                    if (index <
+                                        controller.getPaginatedData().length) {
+                                      final item =
+                                          controller.getPaginatedData()[index];
+                                      return pertemuanCardBuilder(
+                                        hari: item["hari"] ?? "",
+                                        tanggal: item["tanggal"] ?? "",
+                                        jam: item["jam"] ?? "",
+                                        regulerTitle: item["regulerTitle"],
+                                        regulerDesc: item["regulerDesc"],
+                                        extendedTitle: item["extendedTitle"],
+                                        extendedDesc: item["extendedDesc"],
+                                        extendedPlatinumTitle:
+                                            item["extendedPlatinumTitle"],
+                                        extendedPlatinumDesc:
+                                            item["extendedPlatinumDesc"],
+                                      );
+                                    } else {
+                                      // item terakhir = pagination
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 16,
+                                        ),
+                                        child: ReusablePagination(
+                                          currentPage: controller.currentPage,
+                                          totalPage: controller.totalPage,
+                                          goToPage: controller.goToPage,
+                                          prevPage: controller.prevPage,
+                                          nextPage: controller.nextPage,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Case 2
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height,
+                          child: SingleChildScrollView(
+                            child: Html(data: data['faq_pc']),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ],

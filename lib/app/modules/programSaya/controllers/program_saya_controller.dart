@@ -10,16 +10,19 @@ class ProgramSayaController extends GetxController {
   RxInt selectedTab = 0.obs;
   RxString searchQuery = ''.obs;
   final TextEditingController searchController = TextEditingController();
-
+  RxInt selectedKategoriId = 0.obs;
+  final options = <Map<String, dynamic>>[].obs;
   RxInt currentPage = 1.obs;
   RxInt totalPages = 0.obs;
   RxInt totalPage = 0.obs;
+  RxString selectedEventKategori = "Semua".obs;
 
   // 🔹 daftar program (sementara hardcode, nanti bisa diisi dari API)
 
   @override
   void onInit() {
     getTryout();
+    getKategori();
     super.onInit();
   }
 
@@ -41,6 +44,29 @@ class ProgramSayaController extends GetxController {
   // update pencarian
   void updateSearch(String value) {
     searchQuery.value = value;
+  }
+
+  Future<void> getKategori() async {
+    try {
+      final url = baseUrl + apiGetKategori;
+      final result = await _restClient.getData(url: url);
+
+      if (result["status"] == "success") {
+        final data =
+            (result['data'] as List)
+                .map((e) => {"id": e['id'], "menu": e['menu']})
+                .toList();
+
+        // Tambahin opsi "Semua" di paling atas, id = "0"
+        options.assignAll([
+          {"id": 0, "menu": "Semua"},
+          ...data,
+        ]);
+        print("XXX ${options.toString()}");
+      }
+    } catch (e) {
+      print("Error getKategori: $e");
+    }
   }
 
   void getData({int page = 1, String search = ""}) {
@@ -87,10 +113,19 @@ class ProgramSayaController extends GetxController {
     }
   }
 
-  Future<void> getBimbel({int? page, String? search}) async {
+  Future<void> getBimbel({
+    int? page,
+    String? search,
+    String? submenuCategoryId,
+  }) async {
     try {
       final url = await baseUrl + apiGetMyBimbel;
-      var payload = {"page": page ?? 0, "perpage": 10, "search": search ?? " "};
+      var payload = {
+        "page": page ?? 0,
+        "perpage": 10,
+        "search": search ?? " ",
+        "menu_category_id": submenuCategoryId ?? "",
+      };
       final result = await _restClient.postData(url: url, payload: payload);
       if (result["status"] == "success") {
         bimbelData.value = result['data']['data'];
@@ -101,10 +136,19 @@ class ProgramSayaController extends GetxController {
     }
   }
 
-  Future<void> getTryout({int? page, String? search}) async {
+  Future<void> getTryout({
+    int? page,
+    String? search,
+    String? submenuCategoryId,
+  }) async {
     try {
       final url = await baseUrl + apiGetTryoutSaya;
-      var payload = {"page": page ?? 0, "perpage": 10, "search": search ?? " "};
+      var payload = {
+        "page": page ?? 0,
+        "perpage": 10,
+        "search": search ?? " ",
+        "menu_category_id": submenuCategoryId ?? "",
+      };
       print('xxx $payload');
       final result = await _restClient.postData(url: url, payload: payload);
       if (result["status"] == "success") {

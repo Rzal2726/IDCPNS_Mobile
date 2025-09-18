@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/menuCategoryFilter.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import '../controllers/program_saya_controller.dart';
@@ -102,24 +103,52 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                       contentPadding: EdgeInsets.all(10),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 15),
 
                   // Title
                   Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Program Saya',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                    alignment: Alignment.centerRight,
+                    child: InkWell(
+                      onTap: () {
+                        showChoiceBottomSheet(
+                          context: context,
+                          title: "Jenis Tryout",
+                          options: controller.options,
+                          selectedValue: controller.selectedKategoriId,
+                          onSelected: (id) {
+                            final selectedOption = controller.options
+                                .firstWhere((o) => o['id'] == id);
+                            controller.selectedEventKategori.value =
+                                selectedOption['name'];
+                          },
+                          onSubmit: () {
+                            controller.selectedTab.value == 0
+                                ? controller.getTryout(
+                                  submenuCategoryId:
+                                      controller.selectedKategoriId.value
+                                          ?.toString(),
+                                )
+                                : controller.getBimbel(
+                                  submenuCategoryId:
+                                      controller.selectedKategoriId.value
+                                          ?.toString(),
+                                );
+                          },
+                        );
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Filter', style: TextStyle(color: Colors.teal)),
+                          Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                        ],
                       ),
                     ),
                   ),
-                  SizedBox(height: 12),
+                  SizedBox(height: 30),
 
                   // Program List
                   Container(
-                    padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
@@ -227,35 +256,28 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
   }
 
   Widget _buildProgramCard(String title, VoidCallback onTap) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 6,
-            spreadRadius: 2,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              title.toUpperCase(),
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 12),
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.teal),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                title.toUpperCase(),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-          GestureDetector(
-            onTap: onTap, // langsung pakai callback
-            child: Container(
+            Container(
               padding: EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: Colors.teal,
@@ -267,8 +289,8 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                 size: 16,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

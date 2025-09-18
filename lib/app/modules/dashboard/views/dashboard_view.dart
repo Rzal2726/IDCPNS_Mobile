@@ -74,73 +74,75 @@ class DashboardView extends GetView<DashboardController> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
-                CarouselSlider(
-                  options: CarouselOptions(
-                    autoPlay: true,
-                    autoPlayInterval: Duration(seconds: 5),
-                    autoPlayAnimationDuration: Duration(milliseconds: 1000),
-                    enlargeCenterPage: true,
-                    viewportFraction: 1,
-                  ),
-                  items: [
-                    for (var banner in controller.bannerData)
-                      GestureDetector(
-                        onTap: () async {
-                          final url = banner['link']!;
-                          final uri = Uri.parse(url);
-                          if (await canLaunchUrl(uri)) {
-                            await launchUrl(
-                              uri,
-                              mode: LaunchMode.externalApplication,
-                            );
-                          }
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8), // sudut 8px
-                          child: Skeletonizer(
-                            enabled:
-                                banner['gambar'] == null ||
-                                banner['gambar']!.isEmpty,
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                return Image.network(
-                                  banner['gambar']!,
-                                  fit:
-                                      BoxFit
-                                          .contain, // menjaga aspect ratio asli
-                                  width: constraints.maxWidth,
-                                  loadingBuilder: (
-                                    context,
-                                    child,
-                                    loadingProgress,
-                                  ) {
-                                    if (loadingProgress == null) return child;
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        value:
-                                            loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                      ),
-                                    );
-                                  },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Center(
-                                      child: Icon(Icons.broken_image),
-                                    );
-                                  },
-                                );
-                              },
+                SizedBox(
+                  height: 150, // tinggi carousel
+                  width: double.infinity,
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      autoPlay: true,
+                      autoPlayInterval: Duration(seconds: 5),
+                      autoPlayAnimationDuration: Duration(milliseconds: 1000),
+                      enlargeCenterPage: true,
+                      viewportFraction: 1,
+                    ),
+                    items: [
+                      for (var banner in controller.bannerData)
+                        GestureDetector(
+                          onTap: () async {
+                            final url = banner['link']!;
+                            final uri = Uri.parse(url);
+                            if (await canLaunchUrl(uri)) {
+                              await launchUrl(
+                                uri,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            }
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Skeletonizer(
+                              enabled:
+                                  banner['gambar'] == null ||
+                                  banner['gambar']!.isEmpty,
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return Image.network(
+                                    banner['gambar']!,
+                                    // opsional, agar image sesuai height
+                                    fit: BoxFit.cover, // biar menutupi area
+                                    loadingBuilder: (
+                                      context,
+                                      child,
+                                      loadingProgress,
+                                    ) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value:
+                                              loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                  : null,
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Center(
+                                        child: Icon(Icons.broken_image),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
                 SizedBox(height: 50),
                 controller.bimbelRemainder.isNotEmpty
@@ -938,9 +940,11 @@ class DashboardView extends GetView<DashboardController> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 30),
+
                 GestureDetector(
                   onTap: () => Get.toNamed(Routes.AFFILIATE),
                   child: Container(
+                    height: 150,
                     decoration: BoxDecoration(
                       color: Colors.blue.shade200,
                       borderRadius: BorderRadius.circular(12),
@@ -948,9 +952,7 @@ class DashboardView extends GetView<DashboardController> {
                     clipBehavior: Clip.hardEdge,
                     child: Image.asset(
                       'assets/afiliasiBanner.jpg',
-                      fit:
-                          BoxFit
-                              .contain, // menjaga aspect ratio, tidak kepotong
+                      fit: BoxFit.fill,
                     ),
                   ),
                 ),
