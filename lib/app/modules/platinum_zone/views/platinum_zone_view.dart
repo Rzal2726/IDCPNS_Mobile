@@ -98,7 +98,7 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
             // ✅ Bungkus konten utama dengan IgnorePointer
             IgnorePointer(
               ignoring: false,
-              child: SingleChildScrollView(
+              child: Container(
                 child: Column(
                   spacing: 8,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -205,7 +205,7 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
                 return Text(
                   controller.data['level_expired_at'] == null
                       ? "Invalid Date"
-                      : DateFormat("d/m/y")
+                      : DateFormat("d/M/y")
                           .format(
                             DateTime.parse(controller.data['level_expired_at']),
                           )
@@ -236,7 +236,7 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         clipBehavior: Clip.antiAlias, // biar rounded mengikuti shape
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
