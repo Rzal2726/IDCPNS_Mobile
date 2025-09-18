@@ -426,7 +426,7 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
           ),
           SizedBox(height: 16),
           SizedBox(
-            width: 120,
+            width: 100,
             child: _badge(isi: kategori, backgroundColor: kategoriColor),
           ),
           SizedBox(height: 16),
@@ -466,17 +466,17 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
     Color backgroundColor = Colors.grey,
     Color foregroundColor = Colors.white,
   }) {
-    return Card(
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 4),
       margin: EdgeInsets.zero,
-      color: backgroundColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Center(
-          child: Text(
-            isi ?? '',
-            style: TextStyle(color: foregroundColor, fontSize: 12),
-          ),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Center(
+        child: Text(
+          isi ?? '',
+          style: TextStyle(color: foregroundColor, fontSize: 12),
         ),
       ),
     );
