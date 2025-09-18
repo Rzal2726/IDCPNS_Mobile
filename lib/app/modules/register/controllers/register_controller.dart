@@ -74,7 +74,17 @@ class RegisterController extends GetxController {
       "type": "google",
     };
     print("xxx ${payload.toString()}");
-
+    if (!isAgreed.value) {
+      Get.snackbar(
+        "Peringatan",
+        "Anda harus menyetujui syarat & ketentuan",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        icon: Icon(Icons.warning, color: Colors.white),
+      );
+      return;
+    }
     isLoading.value = true;
     final result = await _restClient.postData(url: url, payload: payload);
 
@@ -90,7 +100,8 @@ class RegisterController extends GetxController {
       box.write("photoProfile", user['profile_image_url'] ?? "");
       isLoading.value = false;
       // Navigasi ke HOME
-      Get.offNamed(Routes.EMAIL_VERIFICATION);
+      Get.snackbar("Success", "Register berhasil");
+      Get.toNamed(Routes.LOGIN);
       // Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
     } else {
       // Kalau status bukan success, cek apakah ada message error
@@ -114,6 +125,8 @@ class RegisterController extends GetxController {
       }
     }
     isLoading.value = false;
+    _googleSignIn.disconnect();
+    _googleSignIn.signOut();
     print("isloading ${isLoading.toString()}");
   }
 
@@ -234,7 +247,7 @@ class RegisterController extends GetxController {
         box.write("password", password);
         box.write("isEmailVerified", user["is_email_verified"] ?? false);
 
-        Get.offNamed(Routes.EMAIL_VERIFICATION);
+        Get.toNamed(Routes.EMAIL_VERIFICATION);
       } else {
         Get.snackbar(
           "Gagal",

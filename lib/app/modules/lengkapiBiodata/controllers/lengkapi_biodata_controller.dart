@@ -174,7 +174,7 @@ class LengkapiBiodataController extends GetxController {
 
         // kasih delay sedikit biar snackbar sempat tampil
         await Future.delayed(Duration(milliseconds: 500));
-        Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
+        Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
       }
     } catch (e) {
       print("Error post profile: $e");

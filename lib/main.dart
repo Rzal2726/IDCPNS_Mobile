@@ -11,13 +11,11 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   await GetStorage.init();
 
-  WebViewPlatform.instance = WebKitWebViewPlatform(); // iOS / MacOS
-  WebViewPlatform.instance = AndroidWebViewPlatform(); // Android
+  final box = GetStorage();
+  box.remove("last_route");
 
   runApp(
     GetMaterialApp(
@@ -25,6 +23,11 @@ void main() async {
       title: "Application",
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
+      routingCallback: (routing) {
+        if (routing?.current != null) {
+          box.write("last_route", routing!.current);
+        }
+      },
     ),
   );
 }

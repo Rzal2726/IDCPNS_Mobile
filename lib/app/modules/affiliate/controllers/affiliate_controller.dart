@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/syaratKetentuanDialog.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
@@ -14,6 +15,9 @@ class AffiliateController extends GetxController {
   TextEditingController kodeController = TextEditingController();
   @override
   void onInit() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showSyaratKetentuanDialog();
+    });
     getCheckAffiliate();
     getFinance();
     super.onInit();

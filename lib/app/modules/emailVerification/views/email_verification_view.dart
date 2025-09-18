@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 import '../controllers/email_verification_controller.dart';
 
@@ -11,7 +12,13 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvokedWithResult: (didPop, result) {},
+      canPop: false, // biar gak pop default
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          Get.offAllNamed(Routes.LOGIN);
+          // pakai offAll biar gak bisa balik ke verify lagi
+        }
+      },
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(

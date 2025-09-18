@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 import '../controllers/lengkapi_biodata_controller.dart';
@@ -406,6 +407,14 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                                           TextButton(
                                             onPressed: () {
                                               final box = GetStorage();
+                                              final GoogleSignIn googleSignIn =
+                                                  GoogleSignIn(
+                                                    scopes: ['email'],
+                                                  );
+                                              googleSignIn
+                                                  .disconnect(); // reset session supaya akun tidak otomatis dipilih
+                                              googleSignIn
+                                                  .signOut(); // logout dari akun
                                               box.erase();
                                               Get.offAllNamed(Routes.LOGIN);
                                               Get.back();

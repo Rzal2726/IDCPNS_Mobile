@@ -268,9 +268,9 @@ class MyBimbelView extends GetView<MyBimbelController> {
 
                 SizedBox(height: 20), // jarak sebelum pagination
                 // Pagination
-                Visibility(
-                  visible: controller.listBimbel.isNotEmpty,
-                  child: Center(
+                if (controller.listBimbel['data'] != null &&
+                    controller.listBimbel['data'].isNotEmpty)
+                  Center(
                     child: ReusablePagination(
                       currentPage: controller.currentPage,
                       totalPage: controller.totalPage,
@@ -279,7 +279,6 @@ class MyBimbelView extends GetView<MyBimbelController> {
                       prevPage: controller.prevPage,
                     ),
                   ),
-                ),
               ],
             ),
           );

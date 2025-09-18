@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
@@ -18,43 +19,7 @@ class BimbelView extends GetView<BimbelController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Image.asset(
-          'assets/logo.png', // Dummy logo
-          height: 55,
-        ),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications_none, color: Colors.teal),
-                onPressed: () {
-                  Get.to(NotificationView());
-                },
-              ),
-              Positioned(
-                right: 10,
-                top: 10,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '4',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+      appBar: basicAppBar(),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
@@ -63,9 +28,9 @@ class BimbelView extends GetView<BimbelController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Bimbel Saya card (outline teal + light fill)
-              InkWell(
+              GestureDetector(
                 onTap: () {
-                  Get.offNamed(Routes.MY_BIMBEL);
+                  Get.toNamed(Routes.MY_BIMBEL);
                 },
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 10),
@@ -181,7 +146,7 @@ class BimbelView extends GetView<BimbelController> {
               // Filter (right)
               Align(
                 alignment: Alignment.centerRight,
-                child: InkWell(
+                child: GestureDetector(
                   onTap: () {
                     showBimbelBottomSheet(context);
                   },
@@ -217,27 +182,31 @@ class BimbelView extends GetView<BimbelController> {
                   itemCount: controller.bimbelData.length,
                   itemBuilder: (context, index) {
                     final paket = controller.bimbelData[index];
-                    // sesuaikan keys ('image','title','hargaFull','hargaDiskon','kategori') dengan datamu
-                    return _cardPaketBimbel(
-                      image: paket['gambar'] ?? '',
-                      title: paket['name'] ?? '',
-                      hargaFixTertinggi:
-                          paket['price_list']['harga_fix_tertinggi'] ?? '',
-                      hargaTertinggi:
-                          paket['price_list']['harga_tertinggi'] ?? '',
-                      hargaTerendah:
-                          paket['price_list']['harga_terendah'] ?? '',
-                      hargaFixTerendah:
-                          paket['price_list']['harga_fix_terendah'] ?? '',
-                      kategori: paket['menu_category']['menu'] ?? '',
-                      color: Colors.teal,
-                      onTap: () {
-                        // controller.selectedUuid.value = paket['uuid'] ?? '';
-                        Get.toNamed(
-                          Routes.DETAIL_BIMBEL,
-                          arguments: paket['uuid'],
-                        ); // sesuaikan rute
-                      },
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 16.0,
+                      ), // jarak antar card
+                      child: _cardPaketBimbel(
+                        image: paket['gambar'] ?? '',
+                        title: paket['name'] ?? '',
+                        hargaFixTertinggi:
+                            paket['price_list']['harga_fix_tertinggi'] ?? '',
+                        hargaTertinggi:
+                            paket['price_list']['harga_tertinggi'] ?? '',
+                        hargaTerendah:
+                            paket['price_list']['harga_terendah'] ?? '',
+                        hargaFixTerendah:
+                            paket['price_list']['harga_fix_terendah'] ?? '',
+                        kategori: paket['menu_category']['menu'] ?? '',
+                        color: Colors.teal,
+                        onTap: () {
+                          Get.toNamed(
+                            Routes.DETAIL_BIMBEL,
+                            arguments: paket['uuid'],
+                          );
+                        },
+                      ),
                     );
                   },
                 );
@@ -246,18 +215,15 @@ class BimbelView extends GetView<BimbelController> {
                 visible: controller.bimbelData.isNotEmpty,
                 child: Container(
                   color: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ReusablePagination(
-                        nextPage: controller.nextPage,
-                        prevPage: controller.prevPage,
-                        currentPage: controller.currentPage,
-                        totalPage: controller.totalPage,
-                        goToPage: controller.goToPage,
-                      ),
-                    ],
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Center(
+                    child: ReusablePagination(
+                      currentPage: controller.currentPage,
+                      totalPage: controller.totalPage,
+                      goToPage: controller.goToPage,
+                      nextPage: controller.nextPage,
+                      prevPage: controller.prevPage,
+                    ),
                   ),
                 ),
               ),
@@ -280,11 +246,11 @@ class BimbelView extends GetView<BimbelController> {
     required Color color,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 140, // FIXED HEIGHT
-        margin: EdgeInsets.only(bottom: 16),
+
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: Colors.white,

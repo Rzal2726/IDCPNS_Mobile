@@ -85,12 +85,12 @@ class LoginController extends GetxController {
 
       if (user["is_email_verified"] == true) {
         if (user['user_status_id'] == 2) {
-          Get.offNamed(Routes.LENGKAPI_BIODATA);
+          Get.toNamed(Routes.LENGKAPI_BIODATA);
         } else {
-          Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
+          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
         }
       } else {
-        Get.offNamed(Routes.EMAIL_VERIFICATION);
+        Get.toNamed(Routes.EMAIL_VERIFICATION);
       }
     } else {
       // Ambil pesan error dari API
@@ -129,21 +129,24 @@ class LoginController extends GetxController {
     final payload = {
       "username": currentUser.displayName,
       "email": currentUser.email,
-      "password": currentUser.id, // id Google bisa jadi unique password
+      "password": currentUser.id,
       "password_confirmation": currentUser.id,
       "foto": currentUser.photoUrl,
-      "no_hp": "", // default kosong, GoogleSignIn tidak kasih phone number
+      "no_hp": "",
       "type": "google",
     };
+
     print("xxx ${payload.toString()}");
 
     isLoading.value = true;
-    try {
-      final result = await _restClient.postData(url: url, payload: payload);
+    final result = await _restClient.postData(url: url, payload: payload);
+
+    if (result["error"] == false) {
+      // Login berhasil
       final data = result["data"];
       final user = data["user"];
 
-      // Simpan data user di box, mirip login biasa
+      // Simpan data user di box
       box.write("token", data["access_token"]);
       box.write("name", user["name"]);
       box.write("afiCode", user["kode_afiliasi"] ?? "");
@@ -153,19 +156,24 @@ class LoginController extends GetxController {
 
       print("ppss ${user['profile_image_url'].toString()}");
 
-      // Reset TextField (opsional, kalau pakai controller input)
-      // emailController.clear();
-      // passwordController.clear();
-
       // Navigasi ke HOME
-      Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
-    } catch (e) {
-      print("xxx error");
-      Get.snackbar("Error", "Login sosial media gagal.");
-      debugPrint("Unexpected error: $e");
-    } finally {
-      isLoading.value = false;
+      if (user["is_email_verified"] == true) {
+        if (user['user_status_id'] == 2) {
+          Get.toNamed(Routes.LENGKAPI_BIODATA);
+        } else {
+          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
+        }
+      } else {
+        Get.toNamed(Routes.EMAIL_VERIFICATION);
+      }
+    } else {
+      // Login gagal, munculin pesan dari API
+      final message = result["message"] ?? "Login sosial media gagal.";
+      Get.snackbar("Error", message, snackPosition: SnackPosition.TOP);
+      _googleSignIn.disconnect();
+      _googleSignIn.signOut();
     }
+    isLoading.value = false;
   }
 
   Future<void> handleSignOut() async {

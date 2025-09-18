@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 
@@ -12,16 +13,11 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text('Afiliasi'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          IconButton(icon: Icon(Icons.notifications_none), onPressed: () {}),
-        ],
+      appBar: secondaryAppBar(
+        "Afiliasi",
+        onBack: () {
+          Get.back();
+        },
       ),
       body: SafeArea(
         child: Obx(() {

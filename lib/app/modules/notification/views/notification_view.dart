@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../controllers/notification_controller.dart';
 
 class NotificationView extends GetView<NotificationController> {
@@ -11,45 +13,9 @@ class NotificationView extends GetView<NotificationController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Get.back(),
-        ),
-        title: Text('Notifikasi', style: TextStyle(color: Colors.black)),
-        centerTitle: false,
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: Stack(
-              children: [
-                Icon(Icons.notifications_none, color: Colors.teal),
-                Positioned(
-                  right: 0,
-                  child: Container(
-                    padding: EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    constraints: BoxConstraints(minWidth: 14, minHeight: 14),
-                    child: Text(
-                      '4',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+      appBar: CustomAppBar(
+        leftType: AppBarLeftType.backWithTitle,
+        title: "Notifikasi",
       ),
       body: SafeArea(
         child: Obx(() {
@@ -201,16 +167,36 @@ class NotificationView extends GetView<NotificationController> {
                   ),
 
                   SizedBox(height: 8),
-                  for (var data in controller.notifData)
-                    if (data['read'] == 0)
-                      _buildNotificationItem(
-                        '${data['title']}',
-                        '${data['created_at']}',
-                        0,
-                        data['id'],
-                        data['description'],
-                        data['orderId']?.toString() ?? "",
-                      ),
+                  Skeletonizer(
+                    enabled: controller.notifData.isEmpty,
+                    child: Column(
+                      children: [
+                        if (controller.notifData.isNotEmpty)
+                          for (var data in controller.notifData)
+                            if (data['read'] == 0)
+                              _buildNotificationItem(
+                                '${data['title']}',
+                                '${data['created_at']}',
+                                0,
+                                data['id'],
+                                data['description'],
+                                data['orderId']?.toString() ?? "",
+                              ),
+
+                        // placeholder dummy kalau kosong
+                        if (controller.notifData.isEmpty)
+                          for (int i = 0; i < 5; i++)
+                            _buildNotificationItem(
+                              '••••••••••••',
+                              '••••••',
+                              0,
+                              0,
+                              '••••••••••••••••••',
+                              '',
+                            ),
+                      ],
+                    ),
+                  ),
                   SizedBox(height: 16),
                   Divider(color: Colors.grey),
                   SizedBox(height: 16),

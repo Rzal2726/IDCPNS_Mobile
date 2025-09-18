@@ -150,7 +150,7 @@ class DetailTryoutHarianView extends GetView<DetailTryoutHarianController> {
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                             onPressed: () {
-                              Get.offNamed(
+                              Get.toNamed(
                                 "/pengerjaan-tryout-harian",
                                 arguments: controller.dataTryout['uuid'],
                               );

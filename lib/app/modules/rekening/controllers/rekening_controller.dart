@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
@@ -50,22 +51,70 @@ class RekeningController extends GetxController {
         },
       ].obs;
   void saveAccount() async {
+    // Validasi Pilihan Bank
+    if (selectedBank.value.isEmpty || bankId.value == 0) {
+      Get.snackbar(
+        "Gagal",
+        "Silakan pilih bank",
+        snackPosition: SnackPosition.TOP,
+      );
+      return;
+    }
+    // Validasi Nomor Rekening
+    if (accountNumberController.text.isEmpty) {
+      Get.snackbar(
+        "Gagal",
+        "Nomor rekening harus diisi",
+        snackPosition: SnackPosition.TOP,
+      );
+      return;
+    }
+    // Validasi Nama Pemilik
+    if (ownerNameController.text.isEmpty) {
+      Get.snackbar(
+        "Gagal",
+        "Nama pemilik harus diisi",
+        snackPosition: SnackPosition.TOP,
+      );
+      return;
+    }
+
     try {
       final url = await baseUrl + apiAddRekening;
 
       var payload = {
-        "bank": bankId.value, // ambil dari RxInt bankId
+        "bank": bankId.value,
         "nama_pemilik": ownerNameController.text,
         "no_rekening": int.parse(accountNumberController.text),
       };
-      print("payy ${payload}");
+      print("Payload: $payload");
+
       final result = await _restClient.postData(url: url, payload: payload);
+
       if (result["status"] == "success") {
-        Get.snackbar("berhasil", "data berhasil");
-        getRekeningUser();
+        Get.snackbar(
+          "Berhasil",
+          "Data berhasil disimpan",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.teal,
+          colorText: Colors.white,
+          margin: EdgeInsets.all(10),
+        );
+        getRekeningUser(); // refresh data rekening
+      } else {
+        Get.snackbar(
+          "Gagal",
+          result["message"] ?? "Terjadi kesalahan",
+          snackPosition: SnackPosition.TOP,
+        );
       }
     } catch (e) {
-      print("Error polling email verification: $e");
+      print("Error save account: $e");
+      Get.snackbar(
+        "Gagal",
+        "Terjadi kesalahan saat menyimpan data",
+        snackPosition: SnackPosition.TOP,
+      );
     }
 
     // Reset semua field

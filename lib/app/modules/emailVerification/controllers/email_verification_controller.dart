@@ -111,7 +111,8 @@ class EmailVerificationController extends GetxController {
           final isVerified = result["data"]["is_email_verified"] ?? false;
           if (isVerified) {
             timer.cancel();
-            Get.offNamed(Routes.LOGIN);
+            Get.snackbar("Success", "Register berhasil");
+            Get.toNamed(Routes.LOGIN);
           }
         }
       } catch (e) {

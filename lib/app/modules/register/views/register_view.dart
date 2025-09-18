@@ -207,13 +207,7 @@ class RegisterView extends GetView<RegisterController> {
                                   Get.snackbar(
                                     "Peringatan",
                                     "Anda harus menyetujui Syarat & Ketentuan",
-                                    backgroundColor: Colors.red,
-                                    colorText: Colors.white,
                                     snackPosition: SnackPosition.TOP,
-                                    icon: Icon(
-                                      Icons.warning,
-                                      color: Colors.white,
-                                    ),
                                   );
 
                                   return;

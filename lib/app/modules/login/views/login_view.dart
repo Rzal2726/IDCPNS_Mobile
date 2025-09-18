@@ -126,7 +126,14 @@ class LoginView extends GetView<LoginController> {
                   ),
                   child:
                       controller.isLoading.value
-                          ? CircularProgressIndicator(color: Colors.white)
+                          ? SizedBox(
+                            width: 20, // lebar indikator
+                            height: 20, // tinggi indikator
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2, // bikin garis lebih tipis
+                            ),
+                          )
                           : Text(
                             'Masuk',
                             style: TextStyle(
