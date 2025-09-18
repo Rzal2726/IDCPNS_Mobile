@@ -1,41 +1,46 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:get_cli/common/utils/json_serialize/json_ast/parse.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
+import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
 
-class PaymentUpgradeAkunController extends GetxController {
-  //TODO: Implement PaymentUpgradeAkunController
+class TryoutEventPaymentController extends GetxController {
+  //TODO: Implement TryoutPaymentController
 
-  final count = 0.obs;
   final restClient = RestClient();
-  late String durasiUuid;
-  late String bonusUuid;
+
+  late String uuid;
+
   final voucherController = TextEditingController();
   final ovoNumController = TextEditingController();
   RxMap<String, dynamic> selectedPaymentMethod = <String, dynamic>{}.obs;
   RxMap<String, dynamic> transactionData = <String, dynamic>{}.obs;
+  RxList<int> itemsId = <int>[].obs;
   RxMap<String, bool> loading =
       <String, bool>{"other": false, "main": false, "bayar": false}.obs;
-  Map<String, dynamic> detailBonus = <String, dynamic>{}.obs;
-  Map<String, dynamic> detailDurasi = <String, dynamic>{}.obs;
-  List<Map<String, dynamic>> paymentMethods = <Map<String, dynamic>>[].obs;
-  List<Map<String, dynamic>> virtualAccount = <Map<String, dynamic>>[].obs;
-  List<Map<String, dynamic>> eWallet = <Map<String, dynamic>>[].obs;
-  List<Map<String, dynamic>> QR = <Map<String, dynamic>>[].obs;
-  RxList<int> itemsId = <int>[].obs;
-  RxDouble totalHarga = 0.0.obs;
+
+  RxString selectedPaymentType = "VIRTUAL_ACCOUNT".obs;
+  RxList<Map<String, dynamic>> paymentMethods = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> selectedItems = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> otherTryout = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> virtualAccount = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> EWallet = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> QR = <Map<String, dynamic>>[].obs;
+  RxMap<String, dynamic> dataTryout = <String, dynamic>{}.obs;
+  RxString ovoNumber = "".obs;
   RxDouble diskon = 0.0.obs;
   RxString promoCode = "".obs;
-  RxString selectedPaymentType = "VIRTUAL_ACCOUNT".obs;
-  RxString ovoNumber = "".obs;
+  RxDouble totalHarga = 0.0.obs;
   RxDouble harga = 0.0.obs;
   RxDouble biayaAdmin = 0.0.obs;
+  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
-    initPayment();
+    startInit();
   }
 
   @override
@@ -48,14 +53,14 @@ class PaymentUpgradeAkunController extends GetxController {
     super.onClose();
   }
 
-  Future<void> initPayment() async {
-    durasiUuid = await Get.arguments['durasi_uuid'];
-    bonusUuid = await Get.arguments['bonus_uuid'];
-    await fetchBonus();
-    await fetchDurasi();
-    harga.value += double.parse(detailDurasi['final_price'].toString());
+  Future<void> startInit() async {
+    loading['bayar'] = true;
+    uuid = await Get.arguments;
+    await fetchDetailTryout();
+    // await fetchDetailTryoutEvent();
+    await fetchDetailTryoutOther();
     await fetchListPayment();
-    initHarga();
+    loading['bayar'] = false;
   }
 
   String formatCurrency(dynamic number) {
@@ -76,32 +81,41 @@ class PaymentUpgradeAkunController extends GetxController {
     return customFormatter.format(parsed);
   }
 
-  Future<void> fetchBonus() async {
+  Future<void> fetchDetailTryout() async {
     try {
+      restClient.getData(url: baseUrl + apiGetDetailTryoutPaket + uuid);
       final response = await restClient.getData(
-        url: baseUrl + apiBonusDetail + bonusUuid,
+        url: baseUrl + apiGetDetailTryoutEvent + uuid,
       );
+
+      print("uuid : ${uuid}");
       final Map<String, dynamic> paket = Map<String, dynamic>.from(
         response['data'],
       );
-      detailBonus.assignAll(paket);
+      dataTryout.assignAll(paket);
+      selectedItems.add(paket);
+      harga.value += paket['harga_fix'];
       initHarga();
     } catch (e) {
     } finally {}
   }
 
-  Future<void> fetchDurasi() async {
-    try {
-      final response = await restClient.getData(
-        url: baseUrl + apiUpgradeDetail + durasiUuid,
-      );
-      final Map<String, dynamic> paket = Map<String, dynamic>.from(
+  Future<void> fetchDetailTryoutEvent() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiGetDetailTryoutEvent + uuid,
+    );
+  }
+
+  Future<void> fetchDetailTryoutOther() async {
+    final response = await restClient.postData(
+      url: baseUrl + apiGetOtherTryout,
+    );
+
+    otherTryout.assignAll(
+      List<Map<String, dynamic>>.from(
         response['data'],
-      );
-      detailDurasi.assignAll(paket);
-      initHarga();
-    } catch (e) {
-    } finally {}
+      ).where((test) => test['is_purchase'] == false && test['uuid'] != uuid),
+    );
   }
 
   Future<void> fetchListPayment() async {
@@ -143,7 +157,7 @@ class PaymentUpgradeAkunController extends GetxController {
       final List vaList = eData['xendit_payment_method'];
 
       // assign ke RxList<Map>
-      eWallet.assignAll(
+      EWallet.assignAll(
         vaList.map<Map<String, dynamic>>((e) => Map<String, dynamic>.from(e)),
       );
     }
@@ -177,10 +191,9 @@ class PaymentUpgradeAkunController extends GetxController {
     try {
       final payload = {"kode_promo": code, "amount": totalHarga.toString()};
       final response = await restClient.postData(
-        url: baseUrl + apiApplyVoucherAkun,
+        url: baseUrl + apiApplyVoucher,
         payload: payload,
       );
-      print(payload);
 
       if (response['data'] == null) {
         Get.snackbar(
@@ -204,43 +217,60 @@ class PaymentUpgradeAkunController extends GetxController {
     }
   }
 
+  void removeCode() {
+    promoCode.value = "";
+    diskon.value = 0;
+    initHarga();
+  }
+
   void createPayment() async {
-    if (selectedPaymentMethod.isEmpty) {
+    try {
+      if (selectedPaymentMethod.isEmpty) {
+        Get.snackbar(
+          "Gagal",
+          "Silahlan pilih metode pembayaran terlebih dahulu",
+          backgroundColor: Colors.pink,
+          colorText: Colors.white,
+        );
+        return;
+      }
+      final payload = {
+        "type": "tryout",
+        "total_amount": totalHarga.value,
+        "amount_diskon": diskon.value,
+        "description": dataTryout['formasi'],
+        "bundling": false,
+        "tryout_id": dataTryout['id'],
+        "kode_promo": promoCode.value,
+        "items": itemsId,
+        "source": "",
+        "useBalance": false,
+        "payment_method_id": selectedPaymentMethod['id'],
+        "payment_method": selectedPaymentMethod['code'],
+        "payment_type": selectedPaymentType.value,
+      };
+      if (ovoNumber.value.isNotEmpty) {
+        payload['mobile_number'] = "+62${ovoNumber.value}";
+      }
+      final response = await restClient.postData(
+        url: baseUrl + apiCreatePayment,
+        payload: payload,
+      );
+      print(payload);
+
+      final Map<String, dynamic> data = Map<String, dynamic>.from(
+        response['data'],
+      );
+      transactionData.assignAll(data);
+      Get.offNamed("/tryout-checkout", arguments: data['payment_id']);
+    } catch (e) {
       Get.snackbar(
         "Gagal",
-        "Silahlan pilih metode pembayaran terlebih dahulu",
+        "Mohon periksa kembali produk yang akan dibeli dan metode pembayaran yang dipilih",
         backgroundColor: Colors.pink,
         colorText: Colors.white,
       );
-      return;
     }
-    final payload = {
-      "type": "upgrade",
-      "total_amount": totalHarga.value,
-      "amount_diskon": diskon.value,
-      "description": detailDurasi['name'],
-      "bundling": true,
-      "duration_id": detailDurasi['id'],
-      "kode_promo": promoCode.value,
-      "items": [detailBonus['id']],
-      "source": "",
-      "useBalance": false,
-      "payment_method_id": selectedPaymentMethod['id'],
-      "payment_method": selectedPaymentMethod['code'],
-      "payment_type": selectedPaymentType.value,
-      "mobile_number": "+62${ovoNumber.value}",
-    };
-    print("Data Payload: ${payload}");
-    final response = await restClient.postData(
-      url: baseUrl + apiCreatePayment,
-      payload: payload,
-    );
-
-    final Map<String, dynamic> data = Map<String, dynamic>.from(
-      response['data'],
-    );
-    transactionData.assignAll(data);
-    Get.offNamed("/checkout-upgrade-akun", arguments: data);
   }
 
   void countAdmin() {
@@ -267,13 +297,21 @@ class PaymentUpgradeAkunController extends GetxController {
     }
   }
 
-  void initHarga() {
-    totalHarga.value = (biayaAdmin.value + harga.value - diskon.value);
+  void addTryout(Map<String, dynamic> data) {
+    selectedItems.add(data);
+    harga.value += data['harga_fix'];
+    itemsId.add(data['id']);
+    initHarga();
   }
 
-  void removeCode() {
-    promoCode.value = "";
-    diskon.value = 0;
+  void removeTryout(Map<String, dynamic> data) {
+    selectedItems.removeWhere((item) => item['id'] == data['id']);
+    harga.value -= data['harga_fix'];
+    itemsId.remove(data['id']);
     initHarga();
+  }
+
+  void initHarga() {
+    totalHarga.value = (biayaAdmin.value + harga.value - diskon.value);
   }
 }

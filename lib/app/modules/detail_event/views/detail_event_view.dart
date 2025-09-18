@@ -157,14 +157,22 @@ class DetailEventView extends GetView<DetailEventController> {
                     );
                   }
                 }),
-                SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
+                      if (controller.selectedPaket.value == "") {
+                        Get.snackbar(
+                          "Gagal",
+                          "Mohon pilih paket terlebih dahulu",
+                          colorText: Colors.white,
+                          backgroundColor: Colors.pink,
+                        );
+                        return;
+                      }
                       Get.toNamed(
-                        "/tryout-payment",
-                        arguments: {"uuid": controller.uuid, "type": "event"},
+                        "/tryout-event-payment",
+                        arguments: controller.uuid,
                       );
                     },
                     style: ElevatedButton.styleFrom(

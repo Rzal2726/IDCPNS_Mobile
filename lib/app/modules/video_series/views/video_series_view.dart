@@ -312,10 +312,8 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
                               margin: EdgeInsets.symmetric(horizontal: 2),
                               child: GestureDetector(
                                 onTap: () {
-                                  if (current > 1) {
-                                    controller.currentPage.value = page;
-                                    controller.fetchVideoData();
-                                  }
+                                  controller.currentPage.value = page;
+                                  controller.fetchVideoData();
                                 },
                                 child: AnimatedContainer(
                                   duration: Duration(milliseconds: 200),
@@ -398,64 +396,67 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
     required Map<String, dynamic> data,
     required bool isActive,
   }) {
-    return Card(
-      color: Colors.white,
-      child: Container(
-        padding: EdgeInsets.all(8),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              child: Image.network(
-                imgUrl, // ganti dengan gambar kamu
-                // width: 140,
-                // height: 128,
-                fit: BoxFit.fill,
-                errorBuilder: (
-                  BuildContext context,
-                  Object exception,
-                  StackTrace? stackTrace,
-                ) {
-                  return Image.asset("assets/logo.png");
-                },
-              ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      padding: EdgeInsets.all(8),
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            child: Image.network(
+              imgUrl, // ganti dengan gambar kamu
+              // width: 140,
+              // height: 128,
+              fit: BoxFit.fill,
+              errorBuilder: (
+                BuildContext context,
+                Object exception,
+                StackTrace? stackTrace,
+              ) {
+                return Image.asset("assets/logo.png");
+              },
             ),
-            SizedBox(height: 16),
-            SizedBox(
-              width: 120,
-              child: _badge(isi: kategori, backgroundColor: kategoriColor),
-            ),
-            SizedBox(height: 16),
-            Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text("${totalVid} Video"), Text("${duration} Menit")],
-            ),
-            SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isActive ? Colors.teal : Colors.grey,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+          ),
+          SizedBox(height: 16),
+          SizedBox(
+            width: 120,
+            child: _badge(isi: kategori, backgroundColor: kategoriColor),
+          ),
+          SizedBox(height: 16),
+          Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+          SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [Text("${totalVid} Video"), Text("${duration} Menit")],
+          ),
+          SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isActive ? Colors.teal : Colors.grey,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                onPressed: () {
-                  if (isActive == true) {
-                    Get.toNamed("/watch-video", arguments: data);
-                  }
-                },
-                child: Text("Tonton Sekarang"),
+                padding: const EdgeInsets.symmetric(vertical: 12),
               ),
+              onPressed: () {
+                if (isActive == true) {
+                  Get.toNamed("/watch-video", arguments: data);
+                }
+              },
+              child: Text("Tonton Sekarang"),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

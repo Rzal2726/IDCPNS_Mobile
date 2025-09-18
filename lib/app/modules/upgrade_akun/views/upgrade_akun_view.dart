@@ -183,7 +183,30 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
                       Obx(
                         () =>
                             controller.listBonus.isEmpty
-                                ? CircularProgressIndicator()
+                                ? Skeletonizer(
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            Colors.teal, // warna tombol
+                                        foregroundColor:
+                                            Colors.white, // warna teks/icon
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 12,
+                                        ),
+                                      ),
+                                      child: Text("Loading"),
+                                    ),
+                                  ),
+                                )
                                 : SizedBox(
                                   width: double.infinity,
                                   child: ElevatedButton(
@@ -205,7 +228,7 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
                                           "") {
                                         Get.snackbar(
                                           "Gagal",
-                                          "Silahkan pilih durasi terlebih dahulu",
+                                          "Silahkan pilih paket terlebih dahulu",
                                           backgroundColor: Colors.pink,
                                           colorText: Colors.white,
                                         );
@@ -276,7 +299,8 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
                                                                   element['menu_category']?['menu'] ??
                                                                   "CPNS",
                                                               badgeColor:
-                                                                  Colors.teal,
+                                                                  controller
+                                                                      .categoryColor[element['menu_category']?['menu']]!,
                                                               title:
                                                                   element['formasi'] ??
                                                                   "Bonus CPNS",
@@ -529,55 +553,52 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
     required String title,
     required String uuid,
   }) {
-    return InkWell(
-      onTap: () {
-        controller.selectedBonusUuid.value = uuid;
-      },
-      child: Card(
-        color: Colors.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-          side: BorderSide(color: Colors.grey, width: 0.5),
-        ),
-        child: Container(
-          padding: EdgeInsets.all(12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: Colors.grey, width: 0.5),
+      ),
+      child: Obx(
+        () => RadioListTile<String>(
+          value: uuid,
+          groupValue: controller.selectedBonusUuid.value,
+          onChanged: (value) {
+            controller.selectedBonusUuid.value = value!;
+          },
+          activeColor: const Color(0xFF0FA588), // warna custom
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Card(
-                    color: badgeColor,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.grey),
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                    ),
-                    child: Container(
-                      padding: EdgeInsets.all(4),
-                      child: Text(
-                        badgeText,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+              Card(
+                color: badgeColor,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.transparent),
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  child: Text(
+                    badgeText,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(title),
-                ],
-              ),
-              Obx(
-                () => Icon(
-                  controller.selectedBonusUuid.value == uuid
-                      ? Icons.circle
-                      : Icons.circle_outlined,
                 ),
               ),
+              const SizedBox(height: 4),
+              Text(title),
             ],
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 4,
           ),
         ),
       ),

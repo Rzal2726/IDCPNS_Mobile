@@ -11,7 +11,7 @@ class DetailEventController extends GetxController {
   late String uuid;
   RxMap<String, dynamic> dataEvent = <String, dynamic>{}.obs;
   RxString selectedPaket = "".obs;
-  RxString selectedOption = "".obs;
+  RxString selectedOption = "Detail".obs;
   RxList<String> option = ['Detail', 'FAQ'].obs;
 
   RxBool loading = true.obs;

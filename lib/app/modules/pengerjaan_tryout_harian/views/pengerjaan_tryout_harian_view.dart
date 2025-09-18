@@ -27,6 +27,7 @@ class PengerjaanTryoutHarianView
             ],
           ),
           child: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: Colors.white,
             elevation: 0,
             scrolledUnderElevation: 0,

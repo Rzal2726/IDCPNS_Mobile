@@ -20,29 +20,44 @@ class HomeView extends GetView<HomeController> {
       ),
 
       bottomNavigationBar: Obx(
-        () => BottomNavigationBar(
-          backgroundColor: Colors.white,
-          selectedItemColor: Colors.teal,
-          unselectedItemColor: Colors.grey,
-          selectedFontSize: 12.0,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: controller.tabIndex.value,
-          onTap: (index) {
-            controller.changeBottomBar(index);
-          },
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.assignment),
-              label: 'Tryout',
-            ),
-            BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Bimbel'),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.diamond_sharp),
-              label: 'Platinum',
-            ),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Akun'),
-          ],
+        () => Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(50),
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(0, -3),
+              ),
+            ],
+          ),
+          child: BottomNavigationBar(
+            backgroundColor: Colors.white,
+            selectedItemColor: Colors.teal,
+            unselectedItemColor: Colors.grey,
+            selectedFontSize: 12.0,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: controller.tabIndex.value,
+            onTap: (index) {
+              controller.changeBottomBar(index);
+            },
+            items: [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.assignment),
+                label: 'Tryout',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.school),
+                label: 'Bimbel',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.diamond_sharp),
+                label: 'Platinum',
+              ),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Akun'),
+            ],
+          ),
         ),
       ),
       // bottomNavigationBar: Obx(

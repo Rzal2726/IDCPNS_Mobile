@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
@@ -74,13 +75,14 @@ class HasilTryoutHarianView extends GetView<HasilTryoutHarianController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              SvgPicture.asset("assets/trophy-78dfa836.svg", width: 160),
               const Text(
-                "Terima Kasih Atas Partisipasi Anda",
+                "Selamat Pejuang!",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const SizedBox(height: 4),
               const Text(
-                "Berikut adalah hasil tryout yang telah Anda kerjakan",
+                "Berikut nilai yang kamu dapatkan dari sesi tryout ini",
                 style: TextStyle(fontSize: 14),
               ),
               const SizedBox(height: 32),

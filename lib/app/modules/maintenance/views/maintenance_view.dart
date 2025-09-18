@@ -41,7 +41,7 @@ class MaintenanceView extends GetView<MaintenanceController> {
               children: [
                 // Facebook
                 Link(
-                  uri: Uri.parse('https://www.facebook.com'),
+                  uri: Uri.parse('https://www.facebook.com/share/1Ga7VCtotP/'),
                   builder: (
                     BuildContext context,
                     Future<void> Function()? followLink,
@@ -79,7 +79,9 @@ class MaintenanceView extends GetView<MaintenanceController> {
 
                 // Instagram
                 Link(
-                  uri: Uri.parse('https://www.instagram.com'),
+                  uri: Uri.parse(
+                    'https://www.instagram.com/idcpns?igsh=MTc4ejN2amhnNnRnYw==',
+                  ),
                   builder: (
                     BuildContext context,
                     Future<void> Function()? followLink,
@@ -96,7 +98,9 @@ class MaintenanceView extends GetView<MaintenanceController> {
 
                 // Twitter (X)
                 Link(
-                  uri: Uri.parse('https://www.x.com'),
+                  uri: Uri.parse(
+                    'https://x.com/idcpns?t=Xp6LPpoUCw-OJDd0eNrp0w&s=09',
+                  ),
                   builder: (
                     BuildContext context,
                     Future<void> Function()? followLink,

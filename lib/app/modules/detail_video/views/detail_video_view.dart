@@ -31,6 +31,13 @@ class DetailVideoView extends GetView<DetailVideoController> {
             ],
           ),
           child: AppBar(
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Get.back(result: "refresh");
+              },
+            ),
             backgroundColor: Colors.white,
             elevation: 0,
             scrolledUnderElevation: 0,
@@ -481,6 +488,156 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                       );
                                     },
                                   ),
+                                  Obx(() {
+                                    final current =
+                                        controller.currentPage.value;
+                                    final total = controller.totalPage.value;
+
+                                    if (total == 0) {
+                                      return const SizedBox.shrink(); // tidak ada halaman
+                                    }
+
+                                    // Tentukan window
+                                    int start = current - 1;
+                                    int end = current + 1;
+
+                                    // clamp biar tetap di antara 1 dan total
+                                    start = start < 1 ? 1 : start;
+                                    end = end > total ? total : end;
+
+                                    // Kalau total < 3, pakai semua halaman yg ada
+                                    if (total <= 3) {
+                                      start = 1;
+                                      end = total;
+                                    } else {
+                                      // Kalau current di awal → 1,2,3
+                                      if (current == 1) {
+                                        start = 1;
+                                        end = 3;
+                                      }
+                                      // Kalau current di akhir → total-2, total-1, total
+                                      else if (current == total) {
+                                        start = total - 2;
+                                        end = total;
+                                      }
+                                    }
+
+                                    // Generate daftar halaman
+                                    final pages = List.generate(
+                                      end - start + 1,
+                                      (i) => start + i,
+                                    );
+
+                                    return Container(
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                      ),
+                                      height: 40,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
+                                              if (controller.currentPage.value >
+                                                  1) {
+                                                controller.currentPage.value--;
+                                                controller.getComments(
+                                                  controller.uuid,
+                                                );
+                                              }
+                                            },
+                                            child: const Icon(
+                                              Icons.arrow_back_ios,
+                                              size: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+
+                                          ...pages.map((page) {
+                                            final isActive = page == current;
+                                            return Container(
+                                              margin: EdgeInsets.symmetric(
+                                                horizontal: 2,
+                                              ),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  controller.currentPage.value =
+                                                      page;
+                                                  controller.getComments(
+                                                    controller.uuid,
+                                                  );
+                                                },
+                                                child: AnimatedContainer(
+                                                  duration: Duration(
+                                                    milliseconds: 200,
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        isActive ? 14 : 10,
+                                                    vertical: isActive ? 8 : 6,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        isActive
+                                                            ? Colors
+                                                                .teal
+                                                                .shade100
+                                                            : Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                    border: Border.all(
+                                                      color:
+                                                          isActive
+                                                              ? Colors.teal
+                                                              : Colors
+                                                                  .grey
+                                                                  .shade300,
+                                                      width: isActive ? 2 : 1,
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    '$page',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          isActive
+                                                              ? Colors.teal
+                                                              : Colors.black,
+                                                      fontSize:
+                                                          isActive
+                                                              ? 16
+                                                              : 14, // font lebih besar untuk page aktif
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }),
+
+                                          const SizedBox(width: 8),
+                                          TextButton(
+                                            onPressed: () {
+                                              if (controller.currentPage.value <
+                                                  total) {
+                                                controller.currentPage.value++;
+                                                controller.getComments(
+                                                  controller.uuid,
+                                                );
+                                              }
+                                            },
+                                            child: const Icon(
+                                              Icons.arrow_forward_ios,
+                                              size: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
                                 ],
                               );
                             default:
@@ -761,111 +918,115 @@ class DetailVideoView extends GetView<DetailVideoController> {
                     backgroundColor: Colors.white,
                     isScrollControlled: true,
                     builder: (context) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom,
-                        ),
-                        child: SingleChildScrollView(
-                          child: Container(
-                            padding: const EdgeInsets.all(32),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // === HEADER ===
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      "Balas Pertanyaan",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
+                      return SafeArea(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: SingleChildScrollView(
+                            child: Container(
+                              padding: const EdgeInsets.all(32),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // === HEADER ===
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Balas Pertanyaan",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        controller.questionReplyController
-                                            .clear();
-                                        Navigator.pop(context);
-                                      },
-                                      icon: const Icon(Icons.close),
-                                    ),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                // === TEXT FIELD ===
-                                TextField(
-                                  controller:
-                                      controller.questionReplyController,
-                                  maxLines: 3,
-                                  decoration: InputDecoration(
-                                    hintText: "Tulis pertanyaanmu disini",
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    contentPadding: const EdgeInsets.all(12),
+                                      IconButton(
+                                        onPressed: () {
+                                          controller.questionReplyController
+                                              .clear();
+                                          Navigator.pop(context);
+                                        },
+                                        icon: const Icon(Icons.close),
+                                      ),
+                                    ],
                                   ),
-                                ),
 
-                                const SizedBox(height: 12),
+                                  const SizedBox(height: 12),
 
-                                // === BUTTON ===
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.teal,
-                                      foregroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
+                                  // === TEXT FIELD ===
+                                  TextField(
+                                    controller:
+                                        controller.questionReplyController,
+                                    maxLines: 3,
+                                    decoration: InputDecoration(
+                                      hintText: "Tulis pertanyaanmu disini",
+                                      border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
-                                      ),
+                                      contentPadding: const EdgeInsets.all(12),
                                     ),
-                                    onPressed: () {
-                                      final replyText =
-                                          controller
-                                              .questionReplyController
-                                              .text
-                                              .trim();
+                                  ),
 
-                                      if (replyText.isEmpty) {
-                                        Get.snackbar(
-                                          "Gagal",
-                                          "Kolom pertanyaan tidak boleh kosong",
-                                          backgroundColor: Colors.pink,
-                                          colorText: Colors.white,
+                                  const SizedBox(height: 12),
+
+                                  // === BUTTON ===
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.teal,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        final replyText =
+                                            controller
+                                                .questionReplyController
+                                                .text
+                                                .trim();
+
+                                        if (replyText.isEmpty) {
+                                          Get.snackbar(
+                                            "Gagal",
+                                            "Kolom pertanyaan tidak boleh kosong",
+                                            backgroundColor: Colors.pink,
+                                            colorText: Colors.white,
+                                          );
+                                          return;
+                                        }
+
+                                        controller.addComments(
+                                          payload: {
+                                            "comment": replyText,
+                                            "video_topic_id":
+                                                controller.videoData['id'],
+                                            "parameter":
+                                                controller.videoData['uuid'],
+                                            "parent_id": data['id'],
+                                          },
                                         );
-                                        return;
-                                      }
 
-                                      controller.addComments(
-                                        payload: {
-                                          "comment": replyText,
-                                          "video_topic_id":
-                                              controller.videoData['id'],
-                                          "parameter":
-                                              controller.videoData['uuid'],
-                                          "parent_id": data['id'],
-                                        },
-                                      );
-
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text(
-                                      "Kirim",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        "Kirim",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -946,6 +1107,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
     return Container(
       margin: EdgeInsets.only(
         left: needPadding ? 32 : 0,
+        top: 16,
       ), // indent untuk balasan
       padding: const EdgeInsets.only(bottom: 8),
       width: double.infinity,
@@ -999,94 +1161,123 @@ class DetailVideoView extends GetView<DetailVideoController> {
                 ),
                 onPressed: () {
                   showModalBottomSheet(
-                    isScrollControlled: false,
                     context: context,
-                    builder: (builder) {
+                    backgroundColor: Colors.white,
+                    isScrollControlled: true,
+                    builder: (context) {
                       return SafeArea(
-                        child: Container(
-                          padding: EdgeInsets.all(32),
-                          child: Column(
-                            children: [
-                              Row(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: SingleChildScrollView(
+                            child: Container(
+                              padding: const EdgeInsets.all(32),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    "Balas Komentar",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                  // === HEADER ===
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Balas Pertanyaan",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          controller.questionReplyController
+                                              .clear();
+                                          Navigator.pop(context);
+                                        },
+                                        icon: const Icon(Icons.close),
+                                      ),
+                                    ],
+                                  ),
+
+                                  const SizedBox(height: 12),
+
+                                  // === TEXT FIELD ===
+                                  TextField(
+                                    controller:
+                                        controller.questionReplyController,
+                                    maxLines: 3,
+                                    decoration: InputDecoration(
+                                      hintText: "Tulis pertanyaanmu disini",
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      contentPadding: const EdgeInsets.all(12),
                                     ),
                                   ),
-                                  IconButton(
-                                    onPressed: () {
-                                      controller.questionReplyController.text =
-                                          "";
-                                      Navigator.pop(context);
-                                    },
-                                    icon: Icon(Icons.close),
+
+                                  const SizedBox(height: 12),
+
+                                  // === BUTTON ===
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.teal,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        final replyText =
+                                            controller
+                                                .questionReplyController
+                                                .text
+                                                .trim();
+
+                                        if (replyText.isEmpty) {
+                                          Get.snackbar(
+                                            "Gagal",
+                                            "Kolom pertanyaan tidak boleh kosong",
+                                            backgroundColor: Colors.pink,
+                                            colorText: Colors.white,
+                                          );
+                                          return;
+                                        }
+
+                                        controller.addComments(
+                                          payload: {
+                                            "comment":
+                                                controller
+                                                    .questionReplyController
+                                                    .text,
+                                            "video_topic_id":
+                                                controller.videoData['id'],
+                                            "parameter":
+                                                controller.videoData['uuid'],
+                                            "parent_id": data['id'],
+                                          },
+                                        );
+
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        "Kirim",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
-                              TextField(
-                                controller: controller.questionReplyController,
-                                maxLines: 3,
-                                decoration: InputDecoration(
-                                  hintText: "Tulis pertanyaanmu disini",
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  contentPadding: const EdgeInsets.all(12),
-                                ),
-                              ),
-                              SizedBox(height: 12),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.teal,
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    if (controller
-                                            .questionReplyController
-                                            .text ==
-                                        "") {
-                                      Get.snackbar(
-                                        "Gagal",
-                                        "Mohon isi kolom komentar",
-                                        backgroundColor: Colors.pink,
-                                        colorText: Colors.white,
-                                      );
-                                      return;
-                                    }
-                                    controller.addComments(
-                                      payload: {
-                                        "comment":
-                                            controller
-                                                .questionReplyController
-                                                .text,
-                                        "video_topic_id":
-                                            controller.videoData['id'],
-                                        "parameter":
-                                            controller.videoData['uuid'],
-                                        "parent_id": data['id'],
-                                      },
-                                    );
-                                  },
-                                  child: const Text(
-                                    "Kirim",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       );

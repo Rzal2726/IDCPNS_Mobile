@@ -27,7 +27,7 @@ class VideoSeriesController extends GetxController {
       }.obs;
   List<Map<String, dynamic>> listVideo = <Map<String, dynamic>>[].obs;
   RxString selectedPaketKategori = "Semua".obs;
-  RxInt currentPage = 0.obs;
+  RxInt currentPage = 1.obs;
   RxInt totalPage = 1.obs;
   @override
   void onInit() {
@@ -51,7 +51,7 @@ class VideoSeriesController extends GetxController {
 
   Future<void> fetchVideoData() async {
     final payload = {
-      "perpage": "10",
+      "perpage": "5",
       "menu_category_id": optionsId[selectedPaketKategori.value].toString(),
       "page": currentPage.value,
     };
@@ -65,7 +65,7 @@ class VideoSeriesController extends GetxController {
     print(payload);
     if (response['status'] == "success") {
       listVideo.assignAll(data);
-      totalPage.value = (response['data']['total'] / 10).toInt();
+      totalPage.value = ((response['data']['total'] / 5) as double).ceil();
       print(data);
     } else {
       Get.snackbar("Error", "Failed to fetch data");

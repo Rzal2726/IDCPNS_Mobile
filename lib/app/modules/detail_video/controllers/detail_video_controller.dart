@@ -18,6 +18,7 @@ class DetailVideoController extends GetxController {
 
   late WebViewController webViewController;
   late YoutubePlayerController ytController;
+  late String uuid;
   final questionController = TextEditingController();
   final dio = Dio();
   final questionReplyController = TextEditingController();
@@ -47,6 +48,10 @@ class DetailVideoController extends GetxController {
   RxBool isReady = false.obs;
   RxBool isInit = false.obs;
   RxInt detik = 0.obs;
+  RxInt totalComment = 0.obs;
+  RxInt perPage = 5.obs;
+  RxInt totalPage = 1.obs;
+  RxInt currentPage = 1.obs;
 
   var expandedReplies = <int>{}.obs;
 
@@ -71,7 +76,7 @@ class DetailVideoController extends GetxController {
 
   Future<void> initDetailVideo() async {
     isReady.value = false;
-    final uuid = Get.arguments;
+    uuid = await Get.arguments;
 
     await loadTopic(uuid ?? videoData['uuid']);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -199,9 +204,13 @@ class DetailVideoController extends GetxController {
   }
 
   Future<void> getComments(uuid) async {
-    final payload = {"perpage": "15", "uuid": uuid};
+    final payload = {"uuid": uuid};
     final response = await restClient.postData(
-      url: baseUrl + apiVideoTopicComments,
+      url:
+          baseUrl +
+          apiVideoTopicComments +
+          "?page=" +
+          currentPage.value.toString(),
       payload: payload,
     );
     List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
@@ -210,6 +219,8 @@ class DetailVideoController extends GetxController {
     Map<String, dynamic> pageData = Map<String, dynamic>.from(response['data']);
     commentList.assignAll(data);
     commentPageData.assignAll(pageData);
+    totalComment.value = pageData['total'];
+    totalPage.value = (totalComment.value / perPage.value as double).ceil();
   }
 
   Future<void> getNotes(uuid) async {

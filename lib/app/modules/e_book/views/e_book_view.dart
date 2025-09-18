@@ -377,6 +377,7 @@ class EBookView extends GetView<EBookController> {
                                       // Tombol aksi
                                       TextButton(
                                         onPressed: () {
+                                          Navigator.pop(context);
                                           Get.dialog(
                                             Dialog(
                                               backgroundColor: Colors.white,

@@ -267,7 +267,7 @@ class TryoutPaymentController extends GetxController {
         response['data'],
       );
       transactionData.assignAll(data);
-      Get.offNamed("/tryout-checkout");
+      Get.offNamed("/tryout-checkout", arguments: data['payment_id']);
     } catch (e) {
       Get.snackbar(
         "Gagal",
