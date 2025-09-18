@@ -1,11 +1,9 @@
 import 'package:get/get.dart';
-import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:flutter/material.dart';
 
 class PembahasanTryoutHarianController extends GetxController {
-  //TODO: Implement PembahasanTryoutController
   late String uuid;
   final restClient = RestClient();
   final laporanController = TextEditingController();

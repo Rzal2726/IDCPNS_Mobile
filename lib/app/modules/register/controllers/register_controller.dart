@@ -90,7 +90,8 @@ class RegisterController extends GetxController {
       box.write("photoProfile", user['profile_image_url'] ?? "");
       isLoading.value = false;
       // Navigasi ke HOME
-      Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
+      Get.offNamed(Routes.EMAIL_VERIFICATION);
+      // Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
     } else {
       // Kalau status bukan success, cek apakah ada message error
       if (result['message'] != null) {

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class PaymentCheckoutController extends GetxController {
   final _restClient = RestClient();
@@ -116,10 +117,10 @@ class PaymentCheckoutController extends GetxController {
       if (paymentDetails['tanggal_paid'] == null) {
         print("Belum Dibayar");
         if (compareTimeStamp(paymentDetails['tanggal_kadaluarsa'])) {
-          Get.offAllNamed("/tryout");
+          Get.offAllNamed(Routes.BIMBEL);
         }
       } else {
-        Get.offNamed("/pembayaran-berhasil");
+        Get.offNamed(Routes.PEMBAYARAN_BERHASIL);
         print("Sudah Dibayar");
       }
     }

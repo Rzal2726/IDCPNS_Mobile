@@ -571,6 +571,7 @@ void showPaymentBottomSheet(BuildContext context) {
                                             id: method['id'],
                                             methode: method['code'],
                                             type: data['code'],
+                                            image: method['image_url'],
                                           );
                                     },
                                   ),

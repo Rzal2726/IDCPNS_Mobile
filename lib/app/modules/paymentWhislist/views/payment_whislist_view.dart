@@ -44,7 +44,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                   // Judul
                   Text("Checkout Paket Bimbel", style: AppStyle.styleW900),
                   SizedBox(height: 10),
-                  const Text(
+                  Text(
                     "Bimbel Lainnya",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
@@ -54,9 +54,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                       children: [
                         for (var data in controller.wishLishData)
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
                             child: Card(
                               color: Colors.white,
                               elevation: 2,
@@ -435,85 +433,110 @@ void showPaymentBottomSheet(BuildContext context) {
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
     builder: (context) {
+      final screenHeight = MediaQuery.of(context).size.height;
       return SafeArea(
-        child: Obx(() {
-          return controller.paymantListData.isEmpty
-              ? CircularProgressIndicator()
-              : SingleChildScrollView(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        child: SizedBox(
+          height: screenHeight * 0.5, // 1/2 dari tinggi layar
+          child: Obx(() {
+            return controller.paymantListData.isEmpty
+                ? Center(child: CircularProgressIndicator())
+                : Column(
                   children: [
-                    // Header dengan judul + tombol close
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Metode Pembayaran",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.close, color: Colors.black54),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-
-                    // Loop kategori payment
-                    for (var data in controller.paymantListData) ...[
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "${data['name']}",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
                       ),
-                      SizedBox(height: 10),
-                      SizedBox(
-                        height: 110,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            for (var method in data['xendit_payment_method'])
-                              Container(
-                                width: 140,
-                                margin: EdgeInsets.only(right: 12),
-                                child: paymentItem(
-                                  svgPath: method['image_url'],
-                                  title: method['name'],
-                                  subtitle:
-                                      "Biaya Admin: ${method['biaya_admin']}",
-                                  onTap: () {
-                                    Get.back();
-                                    controller.paymentMethod.value =
-                                        method['code'];
-                                    controller.paymentMethodId.value =
-                                        method['id'];
-                                    controller.paymentImage.value =
-                                        method['image_url'];
-                                    controller.paymentType.value = data['code'];
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Metode Pembayaran",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.black54,
+                            ),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                                    if (method['code'] == "OVO")
-                                      showPhoneNumberBottomSheet(context);
-                                  },
+                    const SizedBox(height: 20),
+
+                    // KONTEN (yang bisa discroll)
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            for (var data in controller.paymantListData) ...[
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "${data['name']}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                height: 180,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: [
+                                    for (var method
+                                        in data['xendit_payment_method'])
+                                      Container(
+                                        width: 140,
+                                        margin: const EdgeInsets.only(
+                                          right: 12,
+                                        ),
+                                        child: paymentItem(
+                                          svgPath: method['image_url'],
+                                          title: method['name'],
+                                          subtitle:
+                                              "Biaya Admin: ${method['biaya_admin']}",
+                                          onTap: () {
+                                            Get.back();
+                                            controller.paymentMethod.value =
+                                                method['code'];
+                                            controller.paymentMethodId.value =
+                                                method['id'];
+                                            controller.paymentImage.value =
+                                                method['image_url'];
+                                            controller.paymentType.value =
+                                                data['code'];
+                                            if (method['code'] == "OVO") {
+                                              showPhoneNumberBottomSheet(
+                                                context,
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                            ],
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
-                    ],
+                    ),
                   ],
-                ),
-              );
-        }),
+                );
+          }),
+        ),
       );
     },
   );
@@ -541,16 +564,21 @@ Widget paymentItem({
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: 30,
-            child: SvgPicture.network(
-              svgPath,
-              height: 25,
-              placeholderBuilder:
-                  (context) => SizedBox(
-                    height: 30,
-                    width: 30,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
+            width: 60, // kasih lebar fix biar rata
+            height: 60, // kasih tinggi fix biar rata
+            child: Center(
+              child: SvgPicture.network(
+                svgPath,
+                fit: BoxFit.contain,
+                placeholderBuilder:
+                    (context) => const SizedBox(
+                      height: 30,
+                      width: 30,
+                      child: Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+              ),
             ),
           ),
           SizedBox(height: 8),

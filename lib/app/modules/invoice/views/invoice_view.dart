@@ -10,6 +10,7 @@ class InvoiceView extends GetView<InvoiceController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text("Invoice Pembelian"),
         backgroundColor: Colors.white,
@@ -34,13 +35,6 @@ class InvoiceView extends GetView<InvoiceController> {
                   Text(
                     "INVOICE",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text("Print"),
-                    ),
                   ),
                   SizedBox(height: 10),
                   Column(
@@ -152,17 +146,6 @@ class InvoiceView extends GetView<InvoiceController> {
                         ],
                       ),
                     ],
-                  ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                      ),
-                      onPressed: () => Get.back(),
-                      child: Text("Kembali"),
-                    ),
                   ),
                 ],
               );

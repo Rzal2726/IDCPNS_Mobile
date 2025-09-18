@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
 
@@ -149,6 +150,10 @@ class MyAccountView extends GetView<MyAccountController> {
                       isDense: true,
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(12),
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                   ),
                   SizedBox(height: 30),
 
@@ -162,6 +167,10 @@ class MyAccountView extends GetView<MyAccountController> {
                       isDense: true,
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(12),
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                   ),
                   SizedBox(height: 30),
 

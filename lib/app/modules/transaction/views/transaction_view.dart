@@ -252,22 +252,7 @@ class TransactionView extends GetView<TransactionController> {
                     return _buildEmptyState();
                   }
 
-                  return Column(
-                    children: [
-                      _buildTransactionList(allData),
-                      SizedBox(height: 20),
-                      Visibility(
-                        visible: controller.transactions.isNotEmpty,
-                        child: ReusablePagination(
-                          nextPage: controller.nextPage,
-                          prevPage: controller.prevPage,
-                          currentPage: controller.currentPage,
-                          totalPage: controller.totalPage,
-                          goToPage: controller.goToPage,
-                        ),
-                      ),
-                    ],
-                  );
+                  return _buildTransactionList(allData);
                 }),
               ),
             ],
@@ -299,109 +284,126 @@ Widget _buildEmptyState() {
 }
 
 Widget _buildTransactionList(List<dynamic> filtered) {
+  final controller = Get.put(TransactionController());
   return ListView.separated(
     padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
-    itemCount: filtered.length,
-    separatorBuilder: (_, __) => SizedBox(height: 12),
+    itemCount: filtered.length + 1, // ⬅️ +1 untuk pagination
+    separatorBuilder: (_, i) => SizedBox(height: 12),
     itemBuilder: (_, i) {
-      final trx = filtered[i];
-      print("sddd ${trx['payment_details'][0]['item_parent_name'].toString()}");
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade300,
-              blurRadius: 6,
-              offset: Offset(0, 2),
+      if (i == filtered.length) {
+        return Column(
+          children: [
+            SizedBox(height: 20), // ⬅️ jarak sebelum pagination
+            Visibility(
+              visible: controller.transactions.isNotEmpty,
+              child: ReusablePagination(
+                nextPage: controller.nextPage,
+                prevPage: controller.prevPage,
+                currentPage: controller.currentPage,
+                totalPage: controller.totalPage,
+                goToPage: controller.goToPage,
+              ),
             ),
           ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(14, 12, 12, 14),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color:
-                            trx['status'] == 'PAID'
-                                ? Colors.green
-                                : (trx['status'] == ('PENDING')
-                                    ? Colors.amber
-                                    : Colors.red),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        trx['status']?.toString().toUpperCase() == 'PAID'
-                            ? "Sukses"
-                            : trx['status'] == 'PENDING'
-                            ? "Menunggu Pembayaran"
-                            : "Gagal",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
+        );
+      }
+
+      final trx = filtered[i];
+      return GestureDetector(
+        onTap: () {
+          Get.toNamed(Routes.INVOICE, arguments: trx['id']);
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade300,
+                blurRadius: 6,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(14, 12, 12, 14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              trx['status'] == 'PAID'
+                                  ? Colors.green
+                                  : (trx['status'] == 'PENDING'
+                                      ? Colors.amber
+                                      : Colors.red),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          trx['status']?.toString().toUpperCase() == 'PAID'
+                              ? "Sukses"
+                              : trx['status'] == 'PENDING'
+                              ? "Menunggu Pembayaran"
+                              : "Gagal",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      trx['no_order'],
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                      SizedBox(height: 10),
+                      Text(
+                        trx['no_order'],
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      (trx['payment_details'] != null &&
-                              trx['payment_details'].isNotEmpty)
-                          ? (trx['payment_details'][0]['item_parent_name'] ??
-                              trx['payment_details'][0]['item_name'] ??
-                              "-")
-                          : "-",
-                      style: TextStyle(
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.black,
+                      SizedBox(height: 4),
+                      Text(
+                        (trx['payment_details'] != null &&
+                                trx['payment_details'].isNotEmpty)
+                            ? (trx['payment_details'][0]['item_parent_name'] ??
+                                trx['payment_details'][0]['item_name'] ??
+                                "-")
+                            : "-",
+                        style: TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-
-                    SizedBox(height: 2),
-                    Text(
-                      '${trx['tanggal']} - ${formatRupiah(trx['amount'])}',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                      SizedBox(height: 2),
+                      Text(
+                        '${trx['tanggal']} - ${formatRupiah(trx['amount'])}',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(width: 8),
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(Routes.INVOICE, arguments: trx['id']);
-                },
-                child: CircleAvatar(
+                SizedBox(width: 8),
+                CircleAvatar(
                   radius: 18,
                   backgroundColor: Colors.teal,
                   child: Icon(Icons.chevron_right_rounded, color: Colors.white),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );

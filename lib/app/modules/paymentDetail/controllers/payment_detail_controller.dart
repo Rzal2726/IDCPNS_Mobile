@@ -203,10 +203,13 @@ class PaymentDetailController extends GetxController {
     required int id,
     required String methode,
     required String type,
+    required String image,
   }) {
+    print("XXX");
     paymentMethod.value = methode;
     paymentMethodId.value = id;
     paymentType.value = type;
+    paymentImage.value = image;
   }
 
   void createPayment() async {

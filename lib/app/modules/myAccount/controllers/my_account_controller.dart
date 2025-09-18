@@ -113,9 +113,7 @@ class MyAccountController extends GetxController {
 
   Future<void> postProfile() async {
     String? errorMessage;
-    if (newProfile.isEmpty) {
-      errorMessage = "Foto profil harus diisi.";
-    } else if (namaLengkapController.text.isEmpty) {
+    if (namaLengkapController.text.isEmpty) {
       errorMessage = "Nama lengkap harus diisi.";
     } else if (emailController.text.isEmpty) {
       errorMessage = "Email harus diisi.";
@@ -145,7 +143,7 @@ class MyAccountController extends GetxController {
       errorMessage = "Silakan pilih referensi.";
     }
     if (errorMessage != null) {
-      showSnackbar("Gagal", errorMessage);
+      Get.snackbar("Gagal", errorMessage);
       return;
     }
     final url = baseUrl + apiGetUser;

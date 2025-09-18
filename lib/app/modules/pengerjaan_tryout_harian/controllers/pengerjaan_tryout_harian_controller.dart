@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+
+
 import 'package:idcpns_mobile/app/constant/api_url.dart';
-import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
