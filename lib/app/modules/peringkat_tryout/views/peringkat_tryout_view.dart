@@ -127,7 +127,7 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text("Lengkapi Form"),
+                                                Text("Filter"),
                                                 IconButton(
                                                   onPressed:
                                                       () => Navigator.pop(
