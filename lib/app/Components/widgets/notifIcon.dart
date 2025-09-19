@@ -50,6 +50,7 @@ class _NotifIconState extends State<NotifIcon> {
   Widget build(BuildContext context) {
     return Obx(() {
       final count = allUnreadData.length;
+      final displayCount = count > 99 ? "99+" : count.toString();
       final hasUnread = count > 0;
 
       return Padding(
@@ -77,7 +78,7 @@ class _NotifIconState extends State<NotifIcon> {
                       minHeight: 14,
                     ),
                     child: Text(
-                      '$count',
+                      '$displayCount',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 9,

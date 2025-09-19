@@ -52,7 +52,7 @@ class RekeningController extends GetxController {
       ].obs;
   void saveAccount() async {
     // Validasi Pilihan Bank
-    if (selectedBank.value.isEmpty || bankId.value == 0) {
+    if (bankId.value == 0) {
       Get.snackbar(
         "Gagal",
         "Silakan pilih bank",

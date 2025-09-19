@@ -96,27 +96,56 @@ void showChoiceBottomSheet<T>({
                     ),
                     SizedBox(height: 16),
 
-                    // Tombol submit
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          onSubmit();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
+                    // Row tombol Submit & Reset
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              // Reset selected value
+                              selectedValue.value = null;
+                              onSelected(null); // pastikan controller diupdate
+                              onSubmit(); // langsung panggil getTryout/getBimbel
+                              Navigator.pop(context);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Colors.teal),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                            child: Text(
+                              "Reset",
+                              style: TextStyle(color: Colors.teal),
+                            ),
                           ),
                         ),
-                        child: Text("Cari"),
-                      ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              onSubmit();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                            child: Text("Cari"),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
@@ -39,7 +40,6 @@ class TarikKomisiController extends GetxController {
       final number = int.tryParse(text);
       if (number == null) return;
 
-      // simpan ke RxInt
       nominalValue.value = number;
 
       final newText = formatter.format(number);
@@ -59,9 +59,14 @@ class TarikKomisiController extends GetxController {
 
       if (result["status"] == "success") {
         bankList.value = result['data'];
+      } else {
+        notifHelper.show(
+          result["messages"] ?? "Gagal memuat data bank",
+          type: 0,
+        );
       }
     } catch (e) {
-      print("Error getBank: $e");
+      notifHelper.show("Error memuat data bank: $e", type: 0);
     }
   }
 
@@ -77,28 +82,14 @@ class TarikKomisiController extends GetxController {
       final result = await _restClient.postData(url: url, payload: payload);
 
       if (result["status"] == "success") {
-        Get.snackbar(
-          "Berhasil",
-          "Penarikan berhasil diproses",
-          snackPosition: SnackPosition.TOP, // notif di atas
-          margin: EdgeInsets.all(12),
-          backgroundColor: Colors.green.shade600,
-          colorText: Colors.white,
-        );
+        notifHelper.show("Penarikan berhasil diproses", type: 1);
       } else {
-        Get.snackbar(
-          "Gagal",
-          result["messages"] ?? "Terjadi kesalahan",
-          snackPosition: SnackPosition.TOP, // notif di atas
-          margin: EdgeInsets.all(12),
-        );
+        notifHelper.show(result["messages"] ?? "Terjadi kesalahan", type: 0);
       }
     } catch (e) {
-      Get.snackbar(
-        "Error",
+      notifHelper.show(
         "Komisi yang tersedia tidak cukup untuk melakukan penarikan ini",
-        snackPosition: SnackPosition.TOP, // notif di atas
-        margin: EdgeInsets.all(12),
+        type: 0,
       );
     }
   }

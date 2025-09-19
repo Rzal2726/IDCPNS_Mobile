@@ -103,6 +103,7 @@ class WishlistController extends GetxController {
       print("emailnnyaa ${result.toString()}");
       if (result["status"] == "success") {
         whistlistData.value = result['data'];
+        print("xxx ${result}");
         totalPage.value = result['data']['last_page'];
       }
     } catch (e) {

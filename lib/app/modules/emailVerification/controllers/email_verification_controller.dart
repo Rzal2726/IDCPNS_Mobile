@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -111,7 +112,7 @@ class EmailVerificationController extends GetxController {
           final isVerified = result["data"]["is_email_verified"] ?? false;
           if (isVerified) {
             timer.cancel();
-            Get.snackbar("Success", "Register berhasil");
+            notifHelper.show("Register berhasil", type: 0);
             Get.toNamed(Routes.LOGIN);
           }
         }

@@ -69,10 +69,20 @@ class ProgramSayaController extends GetxController {
     }
   }
 
+  void resetFilter() {
+    searchQuery.value = '';
+    searchController.clear();
+    selectedKategoriId.value = 0;
+    currentPage.value = 1;
+    selectedEventKategori.value = "Semua";
+  }
+
   void getData({int page = 1, String search = ""}) {
     if (selectedTab.value == 0) {
+      resetFilter();
       getTryout(page: page, search: search); // fetch Tryout
     } else if (selectedTab.value == 1) {
+      resetFilter();
       getBimbel(page: page, search: search); // fetch Bimbel
     }
   }

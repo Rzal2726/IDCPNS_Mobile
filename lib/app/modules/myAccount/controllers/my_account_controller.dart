@@ -2,6 +2,7 @@ import 'package:dio/dio.dart' as dio;
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/modules/lengkapiBiodata/controllers/lengkapi_biodata_controller.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
@@ -181,17 +182,9 @@ class MyAccountController extends GetxController {
 
     if (result["status"] == "success") {
       getUser();
-      Get.snackbar(
-        "Sukses",
-        "Profil berhasil diperbarui",
-        snackPosition: SnackPosition.TOP,
-      );
+      notifHelper.show("Profil berhasil diperbarui", type: 1);
     } else {
-      Get.snackbar(
-        "Gagal",
-        result["message"] ?? "Terjadi kesalahan",
-        snackPosition: SnackPosition.TOP,
-      );
+      notifHelper.show(result["message"] ?? "Terjadi kesalahan", type: 0);
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/menuCategoryFilter.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import '../controllers/program_saya_controller.dart';
 
@@ -44,28 +45,14 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                   SizedBox(height: 8),
 
                   // Search
-                  TextField(
+                  SearchRowButton(
                     controller: controller.searchController,
-                    onSubmitted:
-                        (_) => controller.searchData(), // enter keyboard
-                    decoration: InputDecoration(
-                      hintText: 'Cari',
-                      suffixIcon: GestureDetector(
-                        onTap: () => controller.searchData(), // tap icon search
-                        child: Icon(Icons.search, color: Colors.grey),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.teal),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.teal),
-                      ),
-                      isDense: true,
-                      contentPadding: EdgeInsets.all(10),
-                    ),
+                    onSearch: () {
+                      controller
+                          .searchData(); // callback saat enter atau tap tombol
+                    },
                   ),
+
                   SizedBox(height: 15),
 
                   // Title

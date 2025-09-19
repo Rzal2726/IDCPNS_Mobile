@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/modules/transaction/controllers/transaction_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -30,59 +31,76 @@ class TransactionView extends GetView<TransactionController> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 child: Obx(() {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children:
-                        controller.option.map((option) {
-                          final isSelected =
-                              controller.selectedOption.value == option;
+                  return SingleChildScrollView(
+                    scrollDirection:
+                        Axis.horizontal, // ✅ bikin scroll horizontal
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children:
+                          controller.option.map((option) {
+                            final isSelected =
+                                controller.selectedOption.value == option;
 
-                          return GestureDetector(
-                            onTap: () {
-                              controller.selectedOption.value = option;
+                            return GestureDetector(
+                              onTap: () {
+                                controller.selectedOption.value = option;
 
-                              // Tentukan status untuk API
-                              String status = "";
-                              if (option == "Sukses") status = "SUCCESS";
-                              if (option == "Menunggu Pembayaran")
-                                status = "PENDING";
-                              if (option == "Gagal") status = "FAILED";
-                              controller.status.value = status;
-                              controller.getTransaction(status: status);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    option,
-                                    style: TextStyle(
-                                      color:
-                                          isSelected
-                                              ? Colors.teal
-                                              : Colors.grey[700],
-                                      fontWeight:
-                                          isSelected
-                                              ? FontWeight.bold
-                                              : FontWeight.normal,
+                                // Tentukan status untuk API
+                                String status = "";
+                                if (option == "Sukses") status = "SUCCESS";
+                                if (option == "Menunggu Pembayaran")
+                                  status = "PENDING";
+                                if (option == "Gagal") status = "FAILED";
+
+                                controller.status.value = status;
+
+                                // Reset field lainnya ke default sebelum fetch
+                                controller.currentPage.value = 1;
+                                controller.searchController.clear();
+                                controller.startDateController.clear();
+
+                                // Panggil API hanya dengan status
+                                controller.getTransaction(
+                                  page: controller.currentPage.value,
+                                  search: "", // reset
+                                  status: status,
+                                  date: "", // reset
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      option,
+                                      style: TextStyle(
+                                        color:
+                                            isSelected
+                                                ? Colors.teal
+                                                : Colors.grey[700],
+                                        fontWeight:
+                                            isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  AnimatedContainer(
-                                    duration: Duration(milliseconds: 200),
-                                    height: 2,
-                                    width: isSelected ? 20 : 0,
-                                    color: Colors.teal,
-                                  ),
-                                ],
+                                    SizedBox(height: 4),
+                                    AnimatedContainer(
+                                      duration: Duration(milliseconds: 200),
+                                      height: 2,
+                                      width: isSelected ? 20 : 0,
+                                      color: Colors.teal,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        }).toList(),
+                            );
+                          }).toList(),
+                    ),
                   );
                 }),
               ),
@@ -92,53 +110,17 @@ class TransactionView extends GetView<TransactionController> {
               // ===== SEARCH =====
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
-                child: TextField(
+                child: SearchRowButton(
                   controller: controller.searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Cari',
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 14,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.teal, width: 1.2),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.teal, width: 1.6),
-                    ),
-                    suffixIcon: InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () {
-                        // Panggil API hanya saat klik ikon search
-                        controller.getTransaction(
-                          page: 1, // biasanya reset ke halaman 1 saat search
-                          search: controller.searchController.text,
-                          date: controller.startDateController.text,
-                          status: controller.status.value,
-                        );
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 8),
-                        child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 6),
-                          width: 38,
-                          child: Icon(
-                            Icons.search_rounded,
-                            size: 22,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                    ),
-                    suffixIconConstraints: BoxConstraints(
-                      minWidth: 0,
-                      minHeight: 0,
-                    ),
-                  ),
+                  hintText: 'Cari',
+                  onSearch: () {
+                    controller.getTransaction(
+                      page: 1, // reset halaman ke 1 saat search
+                      search: controller.searchController.text,
+                      date: controller.startDateController.text,
+                      status: controller.status.value,
+                    );
+                  },
                 ),
               ),
 
@@ -470,35 +452,64 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                     ),
                     SizedBox(height: 16),
 
-                    // Tombol Cari
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Kirim data ke controller
-                          controller.getTransaction(
-                            page: controller.currentPage.value,
-                            date: controller.startDateController.text,
-                            status: controller.status.value,
-                          );
-                          print(
-                            "Start: ${controller.startDateController.text}",
-                          );
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
+                    // Row tombol Reset + Cari
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              controller.startDateController.clear();
+                              final today = DateTime.now();
+                              controller.endDateController.text =
+                                  "${today.day.toString().padLeft(2, '0')}/"
+                                  "${today.month.toString().padLeft(2, '0')}/"
+                                  "${today.year}";
+                              controller.getTransaction(
+                                page: controller.currentPage.value,
+                                date:
+                                    controller
+                                        .startDateController
+                                        .text, // akan kosong
+                                status: controller.status.value,
+                              );
+                              Navigator.pop(context); // tutup bottom sheet
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Colors.teal),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            child: Text(
+                              "Reset",
+                              style: TextStyle(color: Colors.teal),
+                            ),
                           ),
                         ),
-                        child: Text("Cari"),
-                      ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              controller.getTransaction(
+                                page: controller.currentPage.value,
+                                date: controller.startDateController.text,
+                                status: controller.status.value,
+                              );
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            child: Text("Cari"),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

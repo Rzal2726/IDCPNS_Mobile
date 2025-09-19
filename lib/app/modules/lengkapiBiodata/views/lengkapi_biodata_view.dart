@@ -108,7 +108,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                     // Email
                     TextField(
                       controller: controller.emailController,
-                      keyboardType: TextInputType.emailAddress,
+                      enabled: false,
                       decoration: InputDecoration(
                         labelText: "Email",
                         border: OutlineInputBorder(),

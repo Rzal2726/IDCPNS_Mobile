@@ -73,26 +73,64 @@ class ForgetPasswordView extends GetView<ForgetPasswordController> {
                       SizedBox(height: 24),
 
                       // Tombol Kirim
-                      ElevatedButton(
-                        onPressed: () {
-                          controller.sendEmail(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                      Row(
+                        children: [
+                          // Tombol Masuk (Outlined)
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Get.offNamed(Routes.LOGIN);
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                  color: Colors.teal,
+                                  width: 2,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text(
+                                'Masuk',
+                                style: TextStyle(
+                                  color: Colors.teal,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
-                          minimumSize: Size.fromHeight(50),
-                        ),
-                        child: Text(
-                          'Kirim',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                          const SizedBox(width: 12), // jarak antar tombol
+                          // Tombol Kirim (Filled)
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                controller.sendEmail(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                minimumSize: const Size.fromHeight(50),
+                              ),
+                              child: const Text(
+                                'Kirim',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                       SizedBox(height: 16),
 

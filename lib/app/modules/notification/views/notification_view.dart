@@ -13,10 +13,7 @@ class NotificationView extends GetView<NotificationController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        leftType: AppBarLeftType.backWithTitle,
-        title: "Notifikasi",
-      ),
+      appBar: basicAppBarWithoutNotif("Notifikasi"),
       body: SafeArea(
         child: Obx(() {
           return SingleChildScrollView(
@@ -58,6 +55,7 @@ class NotificationView extends GetView<NotificationController> {
                                     idNotif: ids,
                                   );
                                 }
+                                controller.idSelected.clear();
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.teal,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -13,12 +14,11 @@ class LoginController extends GetxController {
   // Controllers untuk TextField
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
   RxBool isLoadingSigninGoogle = false.obs;
-  // States
   final isLoading = false.obs;
   final isEmailVerified = false.obs;
   GoogleSignInAccount? currentUser;
-  // ✅ Tambahkan ini untuk toggle password
   final isPasswordVisible = false.obs;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
@@ -32,39 +32,26 @@ class LoginController extends GetxController {
 
     // Validasi kosong
     if (email.isEmpty) {
-      Get.snackbar(
-        "Peringatan",
-        "Email tidak boleh kosong!",
-        snackPosition: SnackPosition.TOP,
-      );
+      notifHelper.show("Email tidak boleh kosong!", type: 0);
       return;
     }
 
     if (password.isEmpty) {
-      Get.snackbar(
-        "Peringatan",
-        "Password tidak boleh kosong!",
-        snackPosition: SnackPosition.TOP,
-      );
+      notifHelper.show("Password tidak boleh kosong!", type: 0);
       return;
     }
 
     // Validasi format email
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(email)) {
-      Get.snackbar(
-        "Peringatan",
-        "Format email tidak valid!",
-
-        snackPosition: SnackPosition.TOP,
-      );
+      notifHelper.show("Format email tidak valid!", type: 0);
       return;
     }
 
     final url = baseUrl + apiLogin;
     final payload = {"email": email, "password": password};
     isLoading.value = true;
-    print("xxx2 $payload");
+
     final result = await _restClient.postData(url: url, payload: payload);
 
     if (result['error'] == false) {
@@ -79,9 +66,10 @@ class LoginController extends GetxController {
       box.write("photoProfile", user['profile_image_url']);
       box.write("isEmailVerified", user["is_email_verified"] ?? false);
 
-      // Reset TextField
       emailController.clear();
       passwordController.clear();
+
+      // notifHelper.show("Login berhasil!", type: 1);
 
       if (user["is_email_verified"] == true) {
         if (user['user_status_id'] == 2) {
@@ -93,9 +81,8 @@ class LoginController extends GetxController {
         Get.toNamed(Routes.EMAIL_VERIFICATION);
       }
     } else {
-      // Ambil pesan error dari API
       String errorMessage = result['message'] ?? "Email atau Password invalid.";
-      Get.snackbar("Error", errorMessage, snackPosition: SnackPosition.TOP);
+      notifHelper.show(errorMessage, type: 0);
     }
 
     isLoading.value = false;
@@ -104,7 +91,6 @@ class LoginController extends GetxController {
   Future<void> handleSignIn() async {
     currentUser = await _googleSignIn.signIn();
     try {
-      print("xxxc ${currentUser!.email.toString()}");
       if (currentUser != null) {
         box.write('name', currentUser!.displayName);
         box.write('email', currentUser!.email);
@@ -112,12 +98,11 @@ class LoginController extends GetxController {
         box.write('photo', currentUser!.photoUrl);
         loginSocmed(currentUser: currentUser!, provider: 1);
       } else {
-        print("xxx keluar");
         handleSignOut();
         Get.offAllNamed(Routes.LOGIN);
       }
     } catch (error) {
-      print("xxx gagal ${error}");
+      notifHelper.show("Login Google gagal: $error", type: 0);
     }
   }
 
@@ -136,17 +121,13 @@ class LoginController extends GetxController {
       "type": "google",
     };
 
-    print("xxx ${payload.toString()}");
-
     isLoading.value = true;
     final result = await _restClient.postData(url: url, payload: payload);
 
     if (result["error"] == false) {
-      // Login berhasil
       final data = result["data"];
       final user = data["user"];
 
-      // Simpan data user di box
       box.write("token", data["access_token"]);
       box.write("name", user["name"]);
       box.write("afiCode", user["kode_afiliasi"] ?? "");
@@ -154,9 +135,8 @@ class LoginController extends GetxController {
       box.write("email", user["email"]);
       box.write("photoProfile", user['profile_image_url'] ?? "");
 
-      print("ppss ${user['profile_image_url'].toString()}");
+      // notifHelper.show("Login berhasil!", type: 1);
 
-      // Navigasi ke HOME
       if (user["is_email_verified"] == true) {
         if (user['user_status_id'] == 2) {
           Get.toNamed(Routes.LENGKAPI_BIODATA);
@@ -167,9 +147,8 @@ class LoginController extends GetxController {
         Get.toNamed(Routes.EMAIL_VERIFICATION);
       }
     } else {
-      // Login gagal, munculin pesan dari API
       final message = result["message"] ?? "Login sosial media gagal.";
-      Get.snackbar("Error", message, snackPosition: SnackPosition.TOP);
+      notifHelper.show(message, type: 0);
       _googleSignIn.disconnect();
       _googleSignIn.signOut();
     }
@@ -184,6 +163,13 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
+    emailController.clear();
+    passwordController.clear();
+    isLoading.value = false;
+    isLoadingSigninGoogle.value = false;
+    isPasswordVisible.value = false;
+    isEmailVerified.value = false;
+    currentUser = null;
     super.onClose();
   }
 }

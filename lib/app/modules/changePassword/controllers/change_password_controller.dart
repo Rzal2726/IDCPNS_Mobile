@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
@@ -48,6 +49,24 @@ class ChangePasswordController extends GetxController {
     final oldPassword = oldPasswordController.text.trim();
     final conPassword = confirmPasswordController.text.trim();
 
+    // ✅ Validasi satu-satu
+    if (oldPassword.isEmpty) {
+      notifHelper.show("Password lama tidak boleh kosong", type: 0);
+      return;
+    }
+    if (newPassword.isEmpty) {
+      notifHelper.show("Password baru tidak boleh kosong", type: 0);
+      return;
+    }
+    if (conPassword.isEmpty) {
+      notifHelper.show("Konfirmasi password tidak boleh kosong", type: 0);
+      return;
+    }
+    if (newPassword != conPassword) {
+      notifHelper.show("Konfirmasi password tidak cocok", type: 0);
+      return;
+    }
+
     final url = baseUrl + apiPasswordChange;
     final payload = {
       "password": newPassword,
@@ -61,29 +80,20 @@ class ChangePasswordController extends GetxController {
     final result = await _restClient.postData(url: url, payload: payload);
 
     if (result['status'] == "success") {
-      Get.snackbar("Berhasil", "Password berhasil diubah");
+      notifHelper.show("Password berhasil diubah", type: 1);
     } else {
-      // Ambil messages
       var messages = result['messages'] ?? {};
 
-      // Cek password error
       if (messages['password'] != null && messages['password'].isNotEmpty) {
-        String passwordError = messages['password'][0];
-        Get.snackbar("Gagal", passwordError, snackPosition: SnackPosition.TOP);
-      }
-      // Cek password_confirmation error hanya jika password error tidak ada
-      else if (messages['password_confirmation'] != null &&
+        notifHelper.show(messages['password'][0], type: 0);
+      } else if (messages['password_confirmation'] != null &&
           messages['password_confirmation'].isNotEmpty) {
-        String confirmError = messages['password_confirmation'][0];
-        Get.snackbar("Gagal", confirmError, snackPosition: SnackPosition.TOP);
-      }
-      // Fallback error umum
-      else {
-        Get.snackbar(
-          "Gagal",
-          "Password gagal diubah",
-          snackPosition: SnackPosition.TOP,
-        );
+        notifHelper.show(messages['password_confirmation'][0], type: 0);
+      } else if (messages['old_password'] != null &&
+          messages['old_password'].isNotEmpty) {
+        notifHelper.show(messages['old_password'][0], type: 0);
+      } else {
+        notifHelper.show("Password gagal diubah", type: 0);
       }
     }
 

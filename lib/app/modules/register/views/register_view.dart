@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import '../controllers/register_controller.dart';
 
@@ -204,12 +205,10 @@ class RegisterView extends GetView<RegisterController> {
                             : () {
                               if (controller.formKey.currentState!.validate()) {
                                 if (!controller.isAgreed.value) {
-                                  Get.snackbar(
-                                    "Peringatan",
+                                  notifHelper.show(
                                     "Anda harus menyetujui Syarat & Ketentuan",
-                                    snackPosition: SnackPosition.TOP,
+                                    type: 0,
                                   );
-
                                   return;
                                 }
                                 controller.onRegister();

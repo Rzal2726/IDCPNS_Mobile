@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
@@ -14,56 +15,25 @@ class MyBimbelView extends GetView<MyBimbelController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60),
-        child: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Get.back(),
-          ),
-          title: Text('Bimbel Saya', style: TextStyle(color: Colors.black)),
-          actions: [
-            IconButton(
-              icon: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Icon(Icons.notifications_none, color: Colors.teal),
-                  Positioned(
-                    right: -4,
-                    top: -4,
-                    child: Container(
-                      padding: EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '9+',
-                        style: TextStyle(color: Colors.white, fontSize: 10),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              onPressed: () {},
-            ),
-          ],
-        ),
+      appBar: secondaryAppBar(
+        "Bimbel Saya",
+        onBack: () {
+          Get.offNamed(Routes.HOME, arguments: {'initialIndex': 2});
+        },
       ),
       body: SafeArea(
         child: Obx(() {
+          final data = (controller.listBimbel['data'] as List?) ?? [];
+
           return Padding(
             padding: AppStyle.screenPadding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Title & subtitle
-                Text(
-                  'Bimbel Saya',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                //   'Bimbel Saya',
+                //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                // ),      Text(
                 SizedBox(height: 4),
                 Text(
                   'Pilih bimbel dan belajar bersama peserta lainnya.',
@@ -145,15 +115,12 @@ class MyBimbelView extends GetView<MyBimbelController> {
                   ),
                 ),
                 SizedBox(height: 15),
-
-                // List Bimbel + Skeletonizer
-                controller.isLoading.value
+                data.isEmpty
                     ? Skeletonizer(
-                      enabled: true,
                       child: ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: 5, // jumlah skeleton item
+                        itemCount: 3,
                         itemBuilder:
                             (context, index) => Container(
                               margin: EdgeInsets.only(bottom: 20),
@@ -161,25 +128,32 @@ class MyBimbelView extends GetView<MyBimbelController> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade300,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    height: 12,
-                                    width: 60,
+                                    height: 20,
+                                    width: 80,
                                     color: Colors.grey.shade300,
                                   ),
                                   SizedBox(height: 7),
                                   Container(
                                     height: 16,
-                                    width: double.infinity,
+                                    width: 120,
                                     color: Colors.grey.shade300,
                                   ),
                                   SizedBox(height: 7),
                                   Container(
                                     height: 14,
-                                    width: double.infinity,
+                                    width: 160,
                                     color: Colors.grey.shade300,
                                   ),
                                 ],
@@ -187,14 +161,12 @@ class MyBimbelView extends GetView<MyBimbelController> {
                             ),
                       ),
                     )
-                    : controller.listBimbel['data'].isEmpty
-                    ? Center(child: Text('Data kosong'))
                     : ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: controller.listBimbel['data'].length,
+                      itemCount: data.length,
                       itemBuilder: (context, index) {
-                        var item = controller.listBimbel['data'][index];
+                        var item = data[index];
                         return InkWell(
                           onTap:
                               () => Get.toNamed(
@@ -235,7 +207,7 @@ class MyBimbelView extends GetView<MyBimbelController> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
-                                    item['menu']!,
+                                    item['menu'] ?? '',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
@@ -245,7 +217,7 @@ class MyBimbelView extends GetView<MyBimbelController> {
                                 ),
                                 SizedBox(height: 7),
                                 Text(
-                                  item['bimbel_parent_name']!,
+                                  item['bimbel_parent_name'] ?? '',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -253,7 +225,7 @@ class MyBimbelView extends GetView<MyBimbelController> {
                                 ),
                                 SizedBox(height: 7),
                                 Text(
-                                  item['bimbel_name']!,
+                                  item['bimbel_name'] ?? '',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 13,
@@ -265,7 +237,6 @@ class MyBimbelView extends GetView<MyBimbelController> {
                         );
                       },
                     ),
-
                 SizedBox(height: 20), // jarak sebelum pagination
                 // Pagination
                 if (controller.listBimbel['data'] != null &&

@@ -98,9 +98,7 @@ class LengkapiBiodataController extends GetxController {
     String? errorMessage;
     isLoading.value = true;
     // urut sesuai form di gambar
-    if (newProfile.isEmpty) {
-      errorMessage = "Foto profil harus diisi.";
-    } else if (namaLengkapController.text.isEmpty) {
+    if (namaLengkapController.text.isEmpty) {
       errorMessage = "Nama lengkap harus diisi.";
     } else if (emailController.text.isEmpty) {
       errorMessage = "Email harus diisi.";
@@ -139,10 +137,13 @@ class LengkapiBiodataController extends GetxController {
       final url = baseUrl + apiGetUser;
 
       final formData = dio.FormData.fromMap({
-        "foto": await dio.MultipartFile.fromFile(
-          newProfile.value,
-          filename: "profile.jpg",
-        ),
+        "foto":
+            (newProfile.value.isNotEmpty)
+                ? await dio.MultipartFile.fromFile(
+                  newProfile.value,
+                  filename: "profile.jpg",
+                )
+                : "assets/profileDefault.jpeg", // pake default kalau kosong
         "name": namaLengkapController.text,
         "email": emailController.text,
         "no_hp": hpController.text,
@@ -181,6 +182,7 @@ class LengkapiBiodataController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+    isLoading.value = false;
   }
 
   Future<void> getPendidikan({String? id}) async {
@@ -315,6 +317,19 @@ class LengkapiBiodataController extends GetxController {
   }
 
   Map<String, String> jenisKelaminMap = {"L": "Laki-laki", "P": "Perempuan"};
+
+  // 🔧 Regex email validator sederhana
+  bool isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    isLoading.value = false;
+    return emailRegex.hasMatch(email);
+  }
+
+  // 🔧 Minimal digit nomor telepon (misal 10)
+  bool isValidPhone(String phone, {int minLength = 10}) {
+    isLoading.value = false;
+    return phone.isNotEmpty && phone.length >= minLength;
+  }
 }
 
 void showSnackbar(String title, String message, {bool success = false}) {
@@ -325,15 +340,4 @@ void showSnackbar(String title, String message, {bool success = false}) {
     colorText: Colors.white,
     snackPosition: SnackPosition.TOP,
   );
-}
-
-// 🔧 Regex email validator sederhana
-bool isValidEmail(String email) {
-  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-  return emailRegex.hasMatch(email);
-}
-
-// 🔧 Minimal digit nomor telepon (misal 10)
-bool isValidPhone(String phone, {int minLength = 10}) {
-  return phone.isNotEmpty && phone.length >= minLength;
 }

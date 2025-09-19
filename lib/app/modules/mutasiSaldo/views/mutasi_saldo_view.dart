@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/mutasi_saldo_controller.dart';
@@ -13,160 +15,151 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
   const MutasiSaldoView({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: secondaryAppBar(
-        "Afiliasi",
-        onBack: () {
-          Get.back();
-        },
-      ),
-      body: SafeArea(
-        child: Obx(() {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: AppStyle.screenPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Search box
-                  TextField(
-                    controller: controller.searchController,
-                    decoration: InputDecoration(
+    return PopScope(
+      canPop: false, // false supaya tidak auto-pop
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          // Saat tombol back ditekan
+          Get.toNamed(Routes.AFFILIATE);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: secondaryAppBar(
+          "Mutasi Saldo",
+          onBack: () {
+            Get.back();
+          },
+        ),
+        body: SafeArea(
+          child: Obx(() {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: AppStyle.screenPadding,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Search box
+                    SearchRowButton(
+                      controller: controller.searchController,
+                      onSearch: () {
+                        controller.getMutasiSaldo(
+                          search: controller.searchController.text,
+                        );
+                      },
                       hintText: "Cari",
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.teal),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.teal),
-                      ),
-                      suffixIcon: GestureDetector(
-                        onTap: () {
-                          // Panggil API saat icon search ditekan
-                          controller.getMutasiSaldo(
-                            search: controller.searchController.text,
-                          );
-                        },
-                        child: Icon(Icons.search, color: Colors.black54),
-                      ),
                     ),
-                    onSubmitted: (value) {
-                      // Panggil API saat user tekan "Enter"
-                      controller.getMutasiSaldo(search: value);
-                    },
-                  ),
 
-                  SizedBox(height: 30),
+                    SizedBox(height: 30),
 
-                  // Card Rincian Komisi
-                  Card(
-                    color: Colors.white,
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Mutasi Saldo",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                    // Card Rincian Komisi
+                    Card(
+                      color: Colors.white,
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Mutasi Saldo",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child:
-                                controller.mutasiSaldoData['data'] == null ||
-                                        controller
-                                            .mutasiSaldoData['data']
-                                            .isEmpty
-                                    ? Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child:
+                                  controller.mutasiSaldoData['data'] == null ||
+                                          controller
+                                              .mutasiSaldoData['data']
+                                              .isEmpty
+                                      ? Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                              "assets/emptyArchiveIcon.svg", // ilustrasi kosong
+                                              height: 100,
+                                            ),
+                                            SizedBox(height: 8),
+                                            Text(
+                                              "Tidak ada transaksi",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                      : Column(
                                         children: [
-                                          SvgPicture.asset(
-                                            "assets/emptyArchiveIcon.svg", // ilustrasi kosong
-                                            height: 100,
+                                          Column(
+                                            children: [
+                                              for (
+                                                var i = 0;
+                                                i <
+                                                    controller
+                                                        .mutasiSaldoData['data']
+                                                        .length;
+                                                i++
+                                              )
+                                                buildbalanceTransfer(
+                                                  number: i + 1,
+                                                  date:
+                                                      controller
+                                                          .mutasiSaldoData['data'][i]['tanggal'] ??
+                                                      '',
+                                                  price:
+                                                      formatRupiah(
+                                                        controller
+                                                            .mutasiSaldoData['data'][i]['nominal'],
+                                                      ) ??
+                                                      'Rp0',
+                                                  status: _getStatus(
+                                                    controller
+                                                        .mutasiSaldoData['data'][i]['status'],
+                                                  ),
+                                                  statusColor: _getStatusColor(
+                                                    controller
+                                                        .mutasiSaldoData['data'][i]['status'],
+                                                  ),
+                                                ),
+                                            ],
                                           ),
-                                          SizedBox(height: 8),
-                                          Text(
-                                            "Tidak ada transaksi",
-                                            style: TextStyle(
-                                              color: Colors.grey,
+                                          SizedBox(height: 20),
+                                          Visibility(
+                                            visible:
+                                                controller
+                                                    .mutasiSaldoData
+                                                    .isNotEmpty,
+                                            child: ReusablePagination(
+                                              nextPage: controller.nextPage,
+                                              prevPage: controller.prevPage,
+                                              currentPage:
+                                                  controller.currentPage,
+                                              totalPage: controller.totalPage,
+                                              goToPage: controller.goToPage,
                                             ),
                                           ),
                                         ],
                                       ),
-                                    )
-                                    : Column(
-                                      children: [
-                                        Column(
-                                          children: [
-                                            for (
-                                              var i = 0;
-                                              i <
-                                                  controller
-                                                      .mutasiSaldoData['data']
-                                                      .length;
-                                              i++
-                                            )
-                                              buildbalanceTransfer(
-                                                number: i + 1,
-                                                date:
-                                                    controller
-                                                        .mutasiSaldoData['data'][i]['tanggal'] ??
-                                                    '',
-                                                price:
-                                                    formatRupiah(
-                                                      controller
-                                                          .mutasiSaldoData['data'][i]['nominal'],
-                                                    ) ??
-                                                    'Rp0',
-                                                status: _getStatus(
-                                                  controller
-                                                      .mutasiSaldoData['data'][i]['status'],
-                                                ),
-                                                statusColor: _getStatusColor(
-                                                  controller
-                                                      .mutasiSaldoData['data'][i]['status'],
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 20),
-                                        Visibility(
-                                          visible:
-                                              controller
-                                                  .mutasiSaldoData
-                                                  .isNotEmpty,
-                                          child: ReusablePagination(
-                                            nextPage: controller.nextPage,
-                                            prevPage: controller.prevPage,
-                                            currentPage: controller.currentPage,
-                                            totalPage: controller.totalPage,
-                                            goToPage: controller.goToPage,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }

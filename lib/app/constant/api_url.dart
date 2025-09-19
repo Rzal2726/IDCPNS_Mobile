@@ -112,7 +112,7 @@ const String apiGetRankingBimbel = "v1/bimbel/pretest/ranking";
 const String apiGetBimbelOther = "v1/bimbel/other-bimbel";
 const String apiPretestResult = "v1/bimbel/pretest/result";
 const String apiLaporPretestSoal = "v1/bimbel/pretest/lapor/soal";
-const String apiGetPretestQuestions = "/v1/bimbel/pretest/soal";
+const String apiGetPretestQuestions = "v1/bimbel/pretest/soal";
 
 const String apiGetTryoutHarianList = "v1/tryout-harian/list/";
 const String apiGetTryoutHarianDetail = "v1/tryout-harian/detail/";

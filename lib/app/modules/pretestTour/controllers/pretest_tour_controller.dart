@@ -78,6 +78,12 @@ class PretestTourController extends GetxController {
     super.onClose();
   }
 
+  List<String> contohOpsi = [
+    "Jawaban A - Lorem ipsum dolor sit amet.",
+    "Jawaban B - Consectetur adipiscing elit.",
+    "Jawaban C - Sed do eiusmod tempor.",
+    "Jawaban D - Ut labore et dolore magna aliqua.",
+  ];
   void initTargets() {
     targets.add(
       TargetFocus(

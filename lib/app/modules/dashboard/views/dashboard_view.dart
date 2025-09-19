@@ -51,6 +51,11 @@ class DashboardView extends GetView<DashboardController> {
                     'Highlight',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
+                  SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
+                  Divider(
+                    thickness: 0.2,
+                    color: Colors.grey, // bisa diganti kalau mau lebih soft
+                  ),
                   SizedBox(height: 10),
                   SizedBox(
                     height: 150, // tinggi carousel
@@ -315,6 +320,11 @@ class DashboardView extends GetView<DashboardController> {
                   ),
                   SizedBox(height: 4),
                   Text('Pilih layanan yang cocok sebagai teman belajar kamu'),
+                  SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
+                  Divider(
+                    thickness: 0.2,
+                    color: Colors.grey, // bisa diganti kalau mau lebih soft
+                  ),
                   SizedBox(height: 30),
 
                   Row(
@@ -375,6 +385,11 @@ class DashboardView extends GetView<DashboardController> {
                   Text(
                     style: TextStyle(color: Colors.grey),
                     'Pilih kategori yang cocok sebagai teman belajar kamu',
+                  ),
+                  SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
+                  Divider(
+                    thickness: 0.2,
+                    color: Colors.grey, // bisa diganti kalau mau lebih soft
                   ),
                   SizedBox(height: 30),
 
@@ -439,6 +454,11 @@ class DashboardView extends GetView<DashboardController> {
                   Text(
                     style: TextStyle(color: Colors.grey),
                     'Pilihan utama kami untuk anda',
+                  ),
+                  SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
+                  Divider(
+                    thickness: 0.2,
+                    color: Colors.grey, // bisa diganti kalau mau lebih soft
                   ),
                   SizedBox(height: 30),
                   recoData['tryout_formasi'] != null
@@ -731,6 +751,14 @@ class DashboardView extends GetView<DashboardController> {
                           style: TextStyle(color: Colors.grey),
                           'Ikuti event tryout dari rekomendasi kita untuk anda!',
                         ),
+                        SizedBox(
+                          height: 8,
+                        ), // kasih jarak biar gak terlalu nempel
+                        Divider(
+                          thickness: 0.2,
+                          color:
+                              Colors.grey, // bisa diganti kalau mau lebih soft
+                        ),
                         SizedBox(height: 30),
 
                         // Search field
@@ -887,16 +915,30 @@ class DashboardView extends GetView<DashboardController> {
                     ),
                   ),
                   SizedBox(height: 50),
-                  Text(
-                    'Rekomendasi Tryout',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Rekomendasi Tryout',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Ikuti event tryout dari rekomendasi kita untuk anda!',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ), // kasih jarak biar gak terlalu nempel
+                      Divider(
+                        thickness: 0.2,
+                        color: Colors.grey, // bisa diganti kalau mau lebih soft
+                      ),
+                    ],
                   ),
 
-                  //
-                  Text(
-                    'Ikuti event tryout dari rekomendasi kita untuk anda!',
-                    style: TextStyle(color: Colors.grey),
-                  ),
                   SizedBox(height: 30),
                   controller.tryoutRecomHomeData.isNotEmpty
                       ? buildRecomenTryoutCard(
@@ -912,6 +954,12 @@ class DashboardView extends GetView<DashboardController> {
                       )
                       : Column(
                         children: [
+                          SvgPicture.asset(
+                            "assets/learningEmpty.svg",
+                            height: 150, // atur tinggi sesuai kebutuhan
+                            width: 150, // optional, bisa sesuaikan
+                          ),
+                          SizedBox(height: 20),
                           Container(
                             child: Center(
                               child: Text(
@@ -924,12 +972,6 @@ class DashboardView extends GetView<DashboardController> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20),
-                          SvgPicture.asset(
-                            "assets/learningEmpty.svg",
-                            height: 150, // atur tinggi sesuai kebutuhan
-                            width: 150, // optional, bisa sesuaikan
-                          ),
                         ],
                       ),
 
@@ -938,6 +980,11 @@ class DashboardView extends GetView<DashboardController> {
                   Text(
                     'Program Afiliasi',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
+                  Divider(
+                    thickness: 0.2,
+                    color: Colors.grey, // bisa diganti kalau mau lebih soft
                   ),
                   SizedBox(height: 30),
 
@@ -968,6 +1015,13 @@ class DashboardView extends GetView<DashboardController> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ), // kasih jarak biar gak terlalu nempel
+                      Divider(
+                        thickness: 0.2,
+                        color: Colors.grey, // bisa diganti kalau mau lebih soft
                       ),
                       SizedBox(height: 30),
                       Row(

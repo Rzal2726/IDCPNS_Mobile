@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/wishlist_controller.dart';
 
@@ -13,82 +13,71 @@ class WishlistView extends GetView<WishlistController> {
   const WishlistView({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: secondaryAppBar(
-        "Wishlist",
-        onBack: () {
-          Get.back();
-        },
-      ),
-      body: SafeArea(
-        child: Obx(() {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: controller.searchController,
-                          decoration: InputDecoration(
-                            hintText: 'Apa yang ingin Anda cari?',
-                            suffixIcon: Icon(Icons.search, color: Colors.black),
-                            isDense: true,
-                            contentPadding: EdgeInsets.all(10),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Colors.teal),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Colors.teal),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: Colors.teal,
-                                width: 2,
+    return PopScope(
+      canPop: false, // false supaya tidak auto-pop
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          // Saat tombol back ditekan
+          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: secondaryAppBar(
+          "Wishlist",
+          onBack: () {
+            Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
+          },
+        ),
+        body: SafeArea(
+          child: Obx(() {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: controller.searchController,
+                            decoration: InputDecoration(
+                              hintText: 'Apa yang ingin Anda cari?',
+                              suffixIcon: Icon(
+                                Icons.search,
+                                color: Colors.black,
+                              ),
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(10),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: Colors.teal),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: Colors.teal),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: Colors.teal,
+                                  width: 2,
+                                ),
                               ),
                             ),
-                          ),
-                          onSubmitted: (value) {
-                            // Jika user tekan "Enter" di keyboard
-                            controller.getWhislist(search: value);
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Callback ketika tombol "Cari" ditekan
-                          controller.getWhislist(
-                            search: controller.searchController.text,
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            onSubmitted: (value) {
+                              // Jika user tekan "Enter" di keyboard
+                              controller.getWhislist(search: value);
+                            },
                           ),
                         ),
-                        child: Text(
-                          'Cari',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 7),
-                  Visibility(
-                    visible: controller.whistlistData.isNotEmpty,
-                    child: Row(
-                      children: [
+                        SizedBox(width: 8),
                         ElevatedButton(
                           onPressed: () {
-                            Get.toNamed(Routes.PAYMENT_WHISLIST);
+                            // Callback ketika tombol "Cari" ditekan
+                            controller.getWhislist(
+                              search: controller.searchController.text,
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.teal,
@@ -97,44 +86,88 @@ class WishlistView extends GetView<WishlistController> {
                             ),
                           ),
                           child: Text(
-                            'Beli Semua',
+                            'Cari',
                             style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            showBimbelBottomSheet(context);
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                'Filter',
-                                style: TextStyle(
-                                  color: Colors.teal,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(
-                                Icons.keyboard_arrow_down,
-                                size: 18,
-                                color: Colors.teal,
-                              ),
-                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(height: 16),
+                    SizedBox(height: 7),
+                    (controller.whistlistData['data'] != null &&
+                            controller.whistlistData['data']!.isNotEmpty)
+                        ? Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Get.toNamed(Routes.PAYMENT_WHISLIST);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                'Beli Semua',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            Spacer(),
+                            GestureDetector(
+                              onTap: () {
+                                showBimbelBottomSheet(context);
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Filter',
+                                    style: TextStyle(
+                                      color: Colors.teal,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Icon(
+                                    Icons.keyboard_arrow_down,
+                                    size: 18,
+                                    color: Colors.teal,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                        : Padding(
+                          padding: EdgeInsets.only(top: 30),
+                          child: Column(
+                            children: [
+                              SvgPicture.asset(
+                                "assets/learningEmpty.svg",
+                                height: 150,
+                                width: 150,
+                              ),
+                              SizedBox(height: 20),
+                              Center(
+                                child: Text(
+                                  'Wishlist Anda saat ini kosong. Mulailah menambahkan produk favorit Anda sekarang!',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
 
-                  // Loop manual pakai for
-                  Skeletonizer(
-                    enabled:
-                        controller.whistlistData['data'] == null ||
-                        controller.whistlistData['data'].isEmpty,
-                    child: Column(
+                    SizedBox(height: 16),
+
+                    // Loop manual pakai for
+                    Column(
                       children:
                           (controller.whistlistData['data'] ?? List.filled(5, {})).map<
                             Widget
@@ -221,23 +254,23 @@ class WishlistView extends GetView<WishlistController> {
                             );
                           }).toList(),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Visibility(
-                    visible: controller.whistlistData.isNotEmpty,
-                    child: ReusablePagination(
-                      nextPage: controller.nextPage,
-                      prevPage: controller.prevPage,
-                      currentPage: controller.currentPage,
-                      totalPage: controller.totalPage,
-                      goToPage: controller.goToPage,
-                    ),
-                  ),
-                ],
+                    SizedBox(height: 20),
+                    (controller.whistlistData['data'] != null &&
+                            controller.whistlistData['data']!.isNotEmpty)
+                        ? ReusablePagination(
+                          nextPage: controller.nextPage,
+                          prevPage: controller.prevPage,
+                          currentPage: controller.currentPage,
+                          totalPage: controller.totalPage,
+                          goToPage: controller.goToPage,
+                        )
+                        : SizedBox.shrink(),
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }

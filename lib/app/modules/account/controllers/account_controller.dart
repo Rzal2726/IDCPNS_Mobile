@@ -35,13 +35,19 @@ class AccountController extends GetxController {
   Future<void> logoutAkun() async {
     try {
       await box.erase();
-      await _googleSignIn
-          .disconnect(); // reset session supaya akun tidak otomatis dipilih
-      await _googleSignIn.signOut(); // logout dari akun
-      print('Google logout berhasil, session sudah di-reset.');
+
+      // Coba logout Google tanpa peduli user login pake apa
+      try {
+        await _googleSignIn.disconnect();
+        await _googleSignIn.signOut();
+        print('Google logout berhasil / atau tidak ada session Google.');
+      } catch (e) {
+        print('Tidak ada akun Google yang sedang login atau sudah logout: $e');
+      }
+
       Get.offAllNamed(Routes.LOGIN);
     } catch (error) {
-      print('Error saat logout Google: $error');
+      print('Error saat logout: $error');
     }
   }
 

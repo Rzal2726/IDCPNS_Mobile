@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -14,7 +15,7 @@ class ForgetPasswordController extends GetxController {
     final email = forgetEmailController.text.trim();
 
     if (email.isEmpty) {
-      Get.snackbar("Peringatan", "Email harus diisi!");
+      notifHelper.show("Email harus diisi!", type: 0);
       return;
     }
 
@@ -24,10 +25,26 @@ class ForgetPasswordController extends GetxController {
     isLoading.value = true;
     try {
       final result = await _restClient.postData(url: url, payload: payload);
-      showEmailSentBottomSheet(context);
+
+      if (result["status"] == "error") {
+        // Ambil pesan error dari response
+        final messages = result["messages"];
+        String errorMsg = "Terjadi kesalahan.";
+
+        if (messages != null &&
+            messages["email"] != null &&
+            messages["email"].isNotEmpty) {
+          errorMsg =
+              messages["email"][0]; // contoh: "email harus berupa alamat surel yang valid."
+        }
+        notifHelper.show(errorMsg, type: 0);
+      } else {
+        // Jika berhasil
+        showEmailSentBottomSheet(context);
+      }
     } catch (e) {
       debugPrint("Unexpected error: $e");
-      Get.snackbar("Error", "Gagal mengirim email. Silakan coba lagi.");
+      notifHelper.show("Terjadi kesalahan saat mengirim email.", type: 0);
     } finally {
       isLoading.value = false;
     }

@@ -103,6 +103,7 @@ class MyAccountView extends GetView<MyAccountController> {
                   // Email
                   TextField(
                     controller: controller.emailController,
+                    enabled: false,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       labelText: "Email",
@@ -111,6 +112,7 @@ class MyAccountView extends GetView<MyAccountController> {
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
                   ),
+
                   SizedBox(height: 30),
 
                   // Nomor HP

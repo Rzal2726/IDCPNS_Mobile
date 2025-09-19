@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifIcon.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 enum AppBarLeftType { logo, back, backWithTitle, title }
 
@@ -98,8 +99,22 @@ CustomAppBar secondaryAppBar(String title, {VoidCallback? onBack}) {
     leftType: AppBarLeftType.backWithTitle,
     title: title,
     onBack: () {
-      Get.back();
+      if (onBack != null) {
+        onBack();
+      } else {
+        Get.back(); // default behavior
+      }
     },
     showNotifIcon: true,
+  );
+}
+
+CustomAppBar basicAppBarWithoutNotif(String title, {VoidCallback? onBack}) {
+  return CustomAppBar(
+    leftType: AppBarLeftType.backWithTitle,
+    title: title,
+    onBack: () {
+      Get.back();
+    },
   );
 }
