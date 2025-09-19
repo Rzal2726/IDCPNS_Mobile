@@ -12,7 +12,7 @@ class MyBimbelController extends GetxController {
   final options = <Map<String, dynamic>>[].obs;
   final TextEditingController searchController = TextEditingController();
   RxString selectedEventKategori = "Semua".obs;
-
+  RxBool showSkeleton = true.obs;
   RxInt currentPage = 1.obs;
   RxInt totalPages = 0.obs;
   RxInt totalPage = 0.obs;
@@ -20,6 +20,9 @@ class MyBimbelController extends GetxController {
   final count = 0.obs;
   @override
   void onInit() {
+    Future.delayed(Duration(seconds: 5), () {
+      showSkeleton.value = false;
+    });
     getData();
     getKategori();
     super.onInit();

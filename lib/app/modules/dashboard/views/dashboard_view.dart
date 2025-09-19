@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/exitDialog.dart';
 import 'package:idcpns_mobile/app/Components/widgets/programTryoutGratisCard.dart';
 import 'package:idcpns_mobile/app/Components/widgets/wdigetTryoutEventCard.dart';
@@ -330,7 +331,7 @@ class DashboardView extends GetView<DashboardController> {
                   Row(
                     children: [
                       Expanded(
-                        child: InkWell(
+                        child: GestureDetector(
                           onTap: () {
                             (Get.find<HomeController>()).changeBottomBar(
                               1,
@@ -346,7 +347,7 @@ class DashboardView extends GetView<DashboardController> {
                       SizedBox(width: 20),
 
                       Expanded(
-                        child: InkWell(
+                        child: GestureDetector(
                           onTap: () {
                             (Get.find<HomeController>()).changeBottomBar(2);
                           },
@@ -359,7 +360,7 @@ class DashboardView extends GetView<DashboardController> {
                       ),
                       SizedBox(width: 20),
                       Expanded(
-                        child: InkWell(
+                        child: GestureDetector(
                           onTap: () {
                             (Get.find<HomeController>()).changeBottomBar(3);
                           },
@@ -952,28 +953,7 @@ class DashboardView extends GetView<DashboardController> {
                         periode: data['range_date_string'],
                         type: "x",
                       )
-                      : Column(
-                        children: [
-                          SvgPicture.asset(
-                            "assets/learningEmpty.svg",
-                            height: 150, // atur tinggi sesuai kebutuhan
-                            width: 150, // optional, bisa sesuaikan
-                          ),
-                          SizedBox(height: 20),
-                          Container(
-                            child: Center(
-                              child: Text(
-                                'belum ada event',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      : EmptyStateWidget(message: "Belum ada event"),
 
                   SizedBox(height: 50),
 

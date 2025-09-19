@@ -58,6 +58,7 @@ class SplashController extends GetxController {
       box.write("token", data["access_token"]);
       box.write("name", user["name"]);
       box.write("afiCode", user["kode_afiliasi"]);
+      box.write("afiAgree", user["is_afiliasi_agree"]);
       box.write("idUser", user["id"]);
       box.write("email", user["email"]);
       box.write("password", password); // simpan password kembali

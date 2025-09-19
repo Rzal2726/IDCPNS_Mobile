@@ -4,6 +4,7 @@ import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/menuCategoryFilter.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
+import 'package:idcpns_mobile/app/Components/widgets/skeletonizerWidget.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import '../controllers/program_saya_controller.dart';
 
@@ -110,49 +111,31 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                         ),
                       ],
                     ),
-                    child:
-                        programList.isEmpty
-                            ? Text(
-                              "Tidak ada program ditemukan",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
-                            : Column(
-                              children: [
-                                for (var program in programList)
-                                  _buildProgramCard(
-                                    controller.selectedTab.value == 0
-                                        ? program['name']
-                                        : program['bimbel_parent_name'],
-                                    () {
-                                      if (controller.selectedTab.value == 0) {
-                                        Get.toNamed(
-                                          Routes.DETAIL_TRYOUT_SAYA,
-                                          arguments: program['uuid'],
-                                        );
-                                      } else {
-                                        Get.toNamed(
-                                          Routes.DETAIL_MY_BIMBEL,
-                                          arguments: program['uuid'],
-                                        );
-                                      }
-                                    },
-                                  ),
-                                SizedBox(height: 20),
-                                Visibility(
-                                  visible: programList.isNotEmpty,
-                                  child: ReusablePagination(
-                                    nextPage: controller.nextPage,
-                                    prevPage: controller.prevPage,
-                                    currentPage: controller.currentPage,
-                                    totalPage: controller.totalPage,
-                                    goToPage: controller.goToPage,
-                                  ),
-                                ),
-                              ],
-                            ),
+                    child: SkeletonListWidget(
+                      data: programList,
+                      emptyMessage: "Tidak ada program ditemukan",
+                      itemBuilder:
+                          (program) => _buildProgramCard(
+                            controller.selectedTab.value == 0
+                                ? program['name']
+                                : program['bimbel_parent_name'],
+                            () {
+                              if (controller.selectedTab.value == 0) {
+                                Get.toNamed(
+                                  Routes.DETAIL_TRYOUT_SAYA,
+                                  arguments: program['uuid'],
+                                );
+                              } else {
+                                Get.toNamed(
+                                  Routes.DETAIL_MY_BIMBEL,
+                                  arguments: program['uuid'],
+                                );
+                              }
+                            },
+                          ),
+                      skeletonCount: 3, // jumlah skeleton item
+                      skeletonDuration: Duration(seconds: 5),
+                    ),
                   ),
                 ],
               ),

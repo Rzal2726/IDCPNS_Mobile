@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -166,11 +167,10 @@ class BimbelView extends GetView<BimbelController> {
               Obx(() {
                 if (controller.bimbelData.isEmpty) {
                   return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 32),
+                    padding: EdgeInsets.symmetric(vertical: 10),
                     child: Center(
-                      child: Text(
-                        'Belum ada paket tersedia',
-                        style: TextStyle(color: Colors.grey),
+                      child: EmptyStateWidget(
+                        message: 'Belum ada paket yang tersedia',
                       ),
                     ),
                   );
@@ -211,22 +211,21 @@ class BimbelView extends GetView<BimbelController> {
                   },
                 );
               }),
-              Visibility(
-                visible: controller.bimbelData.isNotEmpty,
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Center(
-                    child: ReusablePagination(
-                      currentPage: controller.currentPage,
-                      totalPage: controller.totalPage,
-                      goToPage: controller.goToPage,
-                      nextPage: controller.nextPage,
-                      prevPage: controller.prevPage,
+              controller.bimbelData.isNotEmpty
+                  ? Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Center(
+                      child: ReusablePagination(
+                        currentPage: controller.currentPage,
+                        totalPage: controller.totalPage,
+                        goToPage: controller.goToPage,
+                        nextPage: controller.nextPage,
+                        prevPage: controller.prevPage,
+                      ),
                     ),
-                  ),
-                ),
-              ),
+                  )
+                  : const SizedBox.shrink(),
             ],
           ),
         ),
@@ -250,7 +249,6 @@ class BimbelView extends GetView<BimbelController> {
       onTap: onTap,
       child: Container(
         height: 140, // FIXED HEIGHT
-
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: Colors.white,
@@ -265,6 +263,7 @@ class BimbelView extends GetView<BimbelController> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            /// IMAGE SIDE
             Container(
               width: 120,
               child: ClipRRect(
@@ -272,64 +271,97 @@ class BimbelView extends GetView<BimbelController> {
                   topLeft: Radius.circular(12),
                   bottomLeft: Radius.circular(12),
                 ),
-                child: Image.network(image, fit: BoxFit.cover),
+                child: Image.network(
+                  image,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (context, error, stackTrace) => Icon(
+                        Icons.broken_image,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
+                ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 15,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: true,
-                  ),
 
-                  SizedBox(height: 10),
-                  Text(
-                    "${formatRupiah(hargaTerendah)} - ${formatRupiah(hargaTertinggi)}",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                      decoration: TextDecoration.lineThrough,
-                    ),
-                  ),
-
-                  Text(
-                    "${formatRupiah(hargaFixTerendah)} - ${formatRupiah(hargaFixTertinggi)}",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 14,
-                    ),
-                  ),
-                  SizedBox(height: 3),
-                  Align(
-                    alignment: Alignment.centerRight, // Bikin rata kanan
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.teal,
-                        borderRadius: BorderRadius.circular(8),
+            /// TEXT SIDE
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    /// TITLE
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 15,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    SizedBox(height: 10),
+
+                    /// HARGA CORETL
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
                       child: Text(
-                        kategori,
+                        "${formatRupiah(hargaTerendah)} - ${formatRupiah(hargaTertinggi)}",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.grey,
                           fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.lineThrough,
                         ),
                       ),
                     ),
-                  ),
-                ],
+
+                    /// HARGA FIX
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "${formatRupiah(hargaFixTerendah)} - ${formatRupiah(hargaFixTertinggi)}",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 3),
+
+                    /// KATEGORI TAG (pindah ke kanan pakai Row)
+                    Row(
+                      children: [
+                        Spacer(),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            kategori,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

@@ -22,8 +22,12 @@ class WishlistController extends GetxController {
   RxInt currentPage = 1.obs;
   RxInt totalPages = 0.obs;
   RxInt totalPage = 0.obs;
+  RxBool showSkeleton = true.obs;
   @override
   void onInit() {
+    Future.delayed(Duration(seconds: 5), () {
+      showSkeleton.value = false;
+    });
     getWhislist();
     getKategori();
     super.onInit();

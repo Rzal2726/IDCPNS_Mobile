@@ -14,21 +14,22 @@ class AffiliateController extends GetxController {
   RxInt komisiTotal = 0.obs;
   RxInt komisiTersedia = 0.obs;
   RxInt komisiDitarik = 0.obs;
+  RxInt isAfiliateAgree = 0.obs;
   TextEditingController kodeController = TextEditingController();
   @override
   void onInit() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showSyaratKetentuanDialog();
-    });
-    kodeController.text = box.read('afiCode') ?? '';
+    print("xxx");
 
     getCheckAffiliate();
     getFinance();
+    kodeController.text = box.read('afiCode') ?? '';
+
     super.onInit();
   }
 
   @override
   void onReady() {
+    getUser();
     super.onReady();
   }
 
@@ -73,6 +74,58 @@ class AffiliateController extends GetxController {
       print("Error simpan kode: $e");
       notifHelper.show("Terjadi kesalahan, coba lagi", type: 0);
     }
+  }
+
+  Future<void> getUser() async {
+    print("xxx masuk");
+    var agree = box.read("afiAgree");
+
+    if (agree.toString() == "0") {
+      print("xxx masuk2 ${agree}");
+      showSyaratKetentuanDialog(
+        onAgree: () {
+          postAgree();
+        },
+      );
+      // WidgetsBinding.instance.addPostFrameCallback((_) {
+      //   showSyaratKetentuanDialog(
+      //     onAgree: () {
+      //       postAgree();
+      //     },
+      //   );
+      // });
+    }
+
+    // final url = await baseUrl + apiGetUser;
+    //
+    // final result = await _restClient.getData(url: url);
+    // if (result["status"] == "success") {
+    //   var data = result['data'];
+    //   isAfiliateAgree.value = data['is_afiliasi_agree'];
+    //   if (data['is_afiliasi_agree'] == 0) {
+    //     print("xxx masuk");
+    //     showSyaratKetentuanDialog(
+    //       onAgree: () {
+    //         postAgree();
+    //       },
+    //     );
+    //   }
+    // } else {
+    //   print("error : $result");
+    // }
+  }
+
+  Future<void> postAgree() async {
+    try {
+      final url = await baseUrl + apiPostAgree;
+
+      final result = await _restClient.getData(url: url);
+      if (result["status"] == "success") {
+        var data = result['message'];
+        notifHelper.show(data, type: 1);
+        box.remove("afiAgree");
+      }
+    } catch (e) {}
   }
 
   Future<void> getCheckAffiliate() async {

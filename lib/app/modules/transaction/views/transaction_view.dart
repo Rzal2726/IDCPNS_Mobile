@@ -4,6 +4,7 @@ import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
+import 'package:idcpns_mobile/app/Components/widgets/skeletonizerWidget.dart';
 import 'package:idcpns_mobile/app/modules/transaction/controllers/transaction_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -15,189 +16,181 @@ class TransactionView extends GetView<TransactionController> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: secondaryAppBar(
-          "Transaksi",
-          onBack: () {
-            Get.back();
-          },
-        ),
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ===== OPTION BAR GANTI TAB =====
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: Obx(() {
-                  return SingleChildScrollView(
-                    scrollDirection:
-                        Axis.horizontal, // ✅ bikin scroll horizontal
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children:
-                          controller.option.map((option) {
-                            final isSelected =
-                                controller.selectedOption.value == option;
-
-                            return GestureDetector(
-                              onTap: () {
-                                controller.selectedOption.value = option;
-
-                                // Tentukan status untuk API
-                                String status = "";
-                                if (option == "Sukses") status = "SUCCESS";
-                                if (option == "Menunggu Pembayaran")
-                                  status = "PENDING";
-                                if (option == "Gagal") status = "FAILED";
-
-                                controller.status.value = status;
-
-                                // Reset field lainnya ke default sebelum fetch
-                                controller.currentPage.value = 1;
-                                controller.searchController.clear();
-                                controller.startDateController.clear();
-
-                                // Panggil API hanya dengan status
-                                controller.getTransaction(
-                                  page: controller.currentPage.value,
-                                  search: "", // reset
-                                  status: status,
-                                  date: "", // reset
-                                );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      option,
-                                      style: TextStyle(
-                                        color:
-                                            isSelected
-                                                ? Colors.teal
-                                                : Colors.grey[700],
-                                        fontWeight:
-                                            isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    AnimatedContainer(
-                                      duration: Duration(milliseconds: 200),
-                                      height: 2,
-                                      width: isSelected ? 20 : 0,
-                                      color: Colors.teal,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                    ),
-                  );
-                }),
-              ),
-
-              SizedBox(height: 8),
-
-              // ===== SEARCH =====
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: SearchRowButton(
-                  controller: controller.searchController,
-                  hintText: 'Cari',
-                  onSearch: () {
-                    controller.getTransaction(
-                      page: 1, // reset halaman ke 1 saat search
-                      search: controller.searchController.text,
-                      date: controller.startDateController.text,
-                      status: controller.status.value,
-                    );
-                  },
-                ),
-              ),
-
-              SizedBox(height: 12),
-
-              // ===== HEADER RIWAYAT + FILTER =====
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Text(
-                      'Riwayat Transaksi',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
-                    ),
-                    Spacer(),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () {
-                        showTransactionFilterBottomSheet(context);
-                      },
+      child: PopScope(
+        canPop: false, // false = cegah pop otomatis
+        onPopInvoked: (didPop) async {
+          if (didPop) return;
+          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 3});
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: secondaryAppBar(
+            "Transaksi",
+            onBack: () {
+              Get.toNamed(Routes.HOME, arguments: {'initialIndex': 3});
+            },
+          ),
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ===== OPTION BAR GANTI TAB =====
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: Obx(() {
+                    return SingleChildScrollView(
+                      scrollDirection:
+                          Axis.horizontal, // ✅ bikin scroll horizontal
                       child: Row(
-                        children: [
-                          Text(
-                            'Filter',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                            ),
-                          ),
-                          SizedBox(width: 4),
-                          Icon(Icons.arrow_drop_down, size: 18),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children:
+                            controller.option.map((option) {
+                              final isSelected =
+                                  controller.selectedOption.value == option;
 
-              SizedBox(height: 8),
+                              return GestureDetector(
+                                onTap: () {
+                                  controller.selectedOption.value = option;
 
-              // ===== LIST TRANSAKSI =====
-              Expanded(
-                child: Obx(() {
-                  if (controller.isloading.value) {
-                    return Skeletonizer(
-                      child: ListView.builder(
-                        itemCount: 5,
-                        itemBuilder:
-                            (context, index) => Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8.0,
-                                horizontal: 16,
-                              ),
-                              child: Container(
-                                height: 70,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(8),
+                                  // Tentukan status untuk API
+                                  String status = "";
+                                  if (option == "Sukses") status = "SUCCESS";
+                                  if (option == "Menunggu Pembayaran")
+                                    status = "PENDING";
+                                  if (option == "Gagal") status = "FAILED";
+
+                                  controller.status.value = status;
+
+                                  // Reset field lainnya ke default sebelum fetch
+                                  controller.currentPage.value = 1;
+                                  controller.searchController.clear();
+                                  controller.startDateController.clear();
+
+                                  // Panggil API hanya dengan status
+                                  controller.getTransaction(
+                                    page: controller.currentPage.value,
+                                    search: "", // reset
+                                    status: status,
+                                    date: "", // reset
+                                  );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        option,
+                                        style: TextStyle(
+                                          color:
+                                              isSelected
+                                                  ? Colors.teal
+                                                  : Colors.grey[700],
+                                          fontWeight:
+                                              isSelected
+                                                  ? FontWeight.bold
+                                                  : FontWeight.normal,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      AnimatedContainer(
+                                        duration: Duration(milliseconds: 200),
+                                        height: 2,
+                                        width: isSelected ? 20 : 0,
+                                        color: Colors.teal,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+                            }).toList(),
                       ),
                     );
-                  }
+                  }),
+                ),
 
-                  final allData = controller.transactions['data'] ?? [];
-                  if (allData.isEmpty) {
-                    return _buildEmptyState();
-                  }
+                SizedBox(height: 8),
 
-                  return _buildTransactionList(allData);
-                }),
-              ),
-            ],
+                // ===== SEARCH =====
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: SearchRowButton(
+                    controller: controller.searchController,
+                    hintText: 'Cari',
+                    onSearch: () {
+                      controller.getTransaction(
+                        page: 1, // reset halaman ke 1 saat search
+                        search: controller.searchController.text,
+                        date: controller.startDateController.text,
+                        status: controller.status.value,
+                      );
+                    },
+                  ),
+                ),
+
+                SizedBox(height: 12),
+
+                // ===== HEADER RIWAYAT + FILTER =====
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Riwayat Transaksi',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Spacer(),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () {
+                          showTransactionFilterBottomSheet(context);
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              'Filter',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(Icons.arrow_drop_down, size: 18),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 8),
+
+                // ===== LIST TRANSAKSI =====
+                Expanded(
+                  child: Obx(() {
+                    final allData = controller.transactions['data'] ?? [];
+
+                    if (allData.isEmpty) {
+                      return SkeletonListWidget<dynamic>(
+                        data: [],
+                        skeletonDuration: Duration(seconds: 5),
+                        skeletonCount: 5,
+                        emptyMessage: "Tidak ada transaksi ditemukan",
+                        emptySvgAsset: "assets/empty_transactions.svg",
+                        itemBuilder: (_) => SizedBox.shrink(),
+                      );
+                    }
+                    return _buildTransactionList(allData);
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
       ),
