@@ -248,7 +248,7 @@ class BimbelView extends GetView<BimbelController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 140, // FIXED HEIGHT
+        height: 140, // tetap fixed biar row-nya rapi
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: Colors.white,
@@ -264,35 +264,32 @@ class BimbelView extends GetView<BimbelController> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             /// IMAGE SIDE
-            Container(
-              width: 120,
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  bottomLeft: Radius.circular(12),
-                ),
-                child: Image.network(
-                  image,
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (context, error, stackTrace) => Icon(
-                        Icons.broken_image,
-                        size: 40,
-                        color: Colors.grey,
-                      ),
-                ),
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                bottomLeft: Radius.circular(12),
+              ),
+              child: Image.network(
+                image,
+                height: 140,
+                width: 140, // kasih lebar biar konsisten di row
+                fit: BoxFit.contain, // jaga rasio, selalu kelihatan full
+                errorBuilder:
+                    (context, error, stackTrace) => const Icon(
+                      Icons.broken_image,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
               ),
             ),
 
-            /// TEXT SIDE
             Expanded(
               child: Padding(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    /// TITLE
                     Text(
                       title,
                       style: const TextStyle(
@@ -302,45 +299,37 @@ class BimbelView extends GetView<BimbelController> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-
-                    SizedBox(height: 10),
-
-                    /// HARGA CORETL
+                    const SizedBox(height: 10),
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "${formatRupiah(hargaTerendah)} - ${formatRupiah(hargaTertinggi)}",
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
                           decoration: TextDecoration.lineThrough,
                         ),
                       ),
                     ),
-
-                    /// HARGA FIX
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "${formatRupiah(hargaFixTerendah)} - ${formatRupiah(hargaFixTertinggi)}",
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w900,
                           fontSize: 14,
                         ),
                       ),
                     ),
-
-                    SizedBox(height: 3),
-
-                    /// KATEGORI TAG (pindah ke kanan pakai Row)
+                    const SizedBox(height: 3),
                     Row(
                       children: [
-                        Spacer(),
+                        const Spacer(),
                         Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 4,
                           ),
@@ -350,7 +339,7 @@ class BimbelView extends GetView<BimbelController> {
                           ),
                           child: Text(
                             kategori,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,

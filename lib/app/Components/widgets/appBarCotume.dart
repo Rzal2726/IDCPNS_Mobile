@@ -31,36 +31,36 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: 0,
       title: Row(
         children: [
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           if (leftType == AppBarLeftType.logo) ...[
             Padding(
-              padding: const EdgeInsets.only(left: 20),
+              padding: EdgeInsets.only(left: 20),
               child: Image.asset('assets/logo.png', height: 50),
             ),
           ],
           if (leftType == AppBarLeftType.back) ...[
             Padding(
-              padding: const EdgeInsets.only(left: 4),
+              padding: EdgeInsets.only(left: 4),
               child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                icon: Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: onBack ?? () => Get.back(),
               ),
             ),
           ],
           if (leftType == AppBarLeftType.backWithTitle) ...[
             Padding(
-              padding: const EdgeInsets.only(left: 4),
+              padding: EdgeInsets.only(left: 4),
               child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                icon: Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: onBack ?? () => Get.back(),
               ),
             ),
             if (title != null)
               Padding(
-                padding: const EdgeInsets.only(left: 4),
+                padding: EdgeInsets.only(left: 4),
                 child: Text(
                   title!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
@@ -70,7 +70,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           if (leftType == AppBarLeftType.title && title != null) ...[
             Text(
               title!,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
@@ -79,19 +79,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        if (showNotifIcon) const NotifIcon(),
+        if (showNotifIcon) NotifIcon(),
         if (actions != null) ...actions!,
       ],
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
 
 /// 🔥 Shortcut Template
 CustomAppBar basicAppBar() {
-  return const CustomAppBar(leftType: AppBarLeftType.logo, showNotifIcon: true);
+  return CustomAppBar(leftType: AppBarLeftType.logo, showNotifIcon: true);
 }
 
 CustomAppBar secondaryAppBar(String title, {VoidCallback? onBack}) {

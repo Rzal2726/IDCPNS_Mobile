@@ -253,7 +253,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                         final isDisabled =
                             (firstPurchasedIndex != -1 &&
                                 i == firstPurchasedIndex);
-
+                        print("xxx ${subData['uuid'].toString()}");
                         return _buildRadioOption(
                           subData['name'], // title
                           formatRupiah(subData['harga']), // harga lama
@@ -267,88 +267,131 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                 ),
 
                 SizedBox(height: 16),
+                Row(
+                  children: [
+                    // Tombol Wishlist
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed:
+                            controller.isLoadingButton.value
+                                ? null
+                                : () {
+                                  if (controller.isCheklist == true) {
+                                    controller.getDeleteWhisList();
+                                  } else {
+                                    controller.getAddWhislist();
+                                  }
+                                },
+                        style: OutlinedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor:
+                              controller.isCheklist == true
+                                  ? Colors.teal.shade300
+                                  : Colors.white,
+                          foregroundColor:
+                              controller.isCheklist == true
+                                  ? Colors.white
+                                  : Colors.teal.shade300,
+                          side: BorderSide(
+                            color: Colors.teal.shade300,
+                            width: 1.5,
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child:
+                            controller.isLoadingButton.value
+                                ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      controller.isCheklist == true
+                                          ? Colors
+                                              .white // kalau tombol teal, loading putih biar keliatan
+                                          : Colors
+                                              .teal
+                                              .shade300, // kalau tombol putih, loading teal biar keliatan
+                                    ),
+                                  ),
+                                )
+                                : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      controller.isCheklist == true
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color:
+                                          controller.isCheklist == true
+                                              ? Colors.white
+                                              : Colors.teal.shade300,
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      controller.isCheklist == true
+                                          ? 'Hapus Wishlist'
+                                          : 'Tambah Wishlist',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color:
+                                            controller.isCheklist == true
+                                                ? Colors.white
+                                                : Colors.teal.shade300,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
 
-                // Tombol Wishlist
-                OutlinedButton.icon(
-                  icon: Icon(
-                    controller.datalCheckList.isNotEmpty
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color:
-                        controller.datalCheckList.isNotEmpty
-                            ? Colors.white
-                            : Colors.teal,
-                  ),
-                  label: Text(
-                    controller.datalCheckList.isNotEmpty
-                        ? 'Hapus dari Wishlist -'
-                        : 'Tambahkan ke Wishlist +',
-                    style: TextStyle(
-                      color:
-                          controller.datalCheckList.isNotEmpty
-                              ? Colors.white
-                              : Colors.teal,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
+                    // Tombol Daftar
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (controller.selectedPaket.value == "") {
+                            Get.snackbar(
+                              "Peringatan",
+                              "Silakan pilih paket terlebih dahulu.",
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.red.withOpacity(0.8),
+                              colorText: Colors.white,
+                            );
+                            return;
+                          }
+                          Get.toNamed(
+                            Routes.PAYMENT_DETAIL,
+                            arguments: controller.selectedPaket.value,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: Colors.teal.shade300,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          'Daftar',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor:
-                        controller.datalCheckList.isNotEmpty
-                            ? Colors.teal
-                            : Colors.white,
-                    side: BorderSide(color: Colors.teal, width: 2),
-                    minimumSize: Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  onPressed: () {
-                    if (controller.datalCheckList.isNotEmpty) {
-                      controller.getDeleteWhisList();
-                    } else {
-                      controller.getAddWhislist();
-                    }
-                  },
+                  ],
                 ),
-                SizedBox(height: 8),
-
-                // Tombol Daftar
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    minimumSize: Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  onPressed: () {
-                    if (controller.selectedPaket.value == "") {
-                      Get.snackbar(
-                        "Peringatan",
-                        "Silakan pilih paket terlebih dahulu.",
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.red.withOpacity(0.8),
-                        colorText: Colors.white,
-                      );
-                      return;
-                    }
-                    Get.toNamed(
-                      Routes.PAYMENT_DETAIL,
-                      arguments: controller.selectedPaket.value,
-                    );
-                  },
-                  child: Text(
-                    'Daftar Sekarang',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-
+                SizedBox(height: 16),
                 // TabBar
                 Column(
                   children: [
@@ -416,16 +459,16 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                       index: controller.currentIndex.value,
                       children: [
                         // Case 0
-                        SizedBox(
-                          height:
-                              MediaQuery.of(
-                                context,
-                              ).size.height, // batas tinggi = layar penuh
-                          child: SingleChildScrollView(
-                            child: Html(data: data['deskripsi_pc']),
-                          ),
+                        // SizedBox(
+                        //   height:
+                        //       MediaQuery.of(
+                        //         context,
+                        //       ).size.height, // batas tinggi = layar penuh
+                        //   child:
+                        // ),
+                        SingleChildScrollView(
+                          child: Html(data: data['deskripsi_pc']),
                         ),
-
                         // Case 1
                         SizedBox(
                           height: MediaQuery.of(context).size.height,
@@ -458,7 +501,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                                     } else {
                                       // item terakhir = pagination
                                       return Padding(
-                                        padding: const EdgeInsets.symmetric(
+                                        padding: EdgeInsets.symmetric(
                                           vertical: 16,
                                         ),
                                         child: ReusablePagination(
@@ -478,11 +521,8 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                         ),
 
                         // Case 2
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height,
-                          child: SingleChildScrollView(
-                            child: Html(data: data['faq_pc']),
-                          ),
+                        SingleChildScrollView(
+                          child: Html(data: data['faq_pc']),
                         ),
                       ],
                     ),
@@ -502,7 +542,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
     String newPrice,
     String uuid,
     DetailBimbelController controller, {
-    bool isDisabled = false, // disable radio kalau paket sudah dibeli
+    bool isDisabled = false,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
@@ -510,48 +550,68 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Kiri: Radio + Title
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Obx(
-                () => Radio<String>(
-                  value: uuid,
-                  groupValue: controller.selectedPaket.value,
-                  onChanged:
-                      isDisabled
-                          ? null
-                          : (value) {
-                            if (value != null) {
-                              controller.pilihPaket(value);
-                              print("xxx selected: ${value.toString()}");
-                            }
-                          },
-                  activeColor: Colors.teal,
+          // Kiri: Radio + Title (dibungkus Expanded biar gak dorong kanan keluar)
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Obx(
+                  () => Radio<String>(
+                    value: uuid,
+                    groupValue: controller.selectedPaket.value,
+                    onChanged:
+                        isDisabled
+                            ? null
+                            : (value) {
+                              if (value != null) {
+                                controller.pilihPaket(value);
+                                print("xxx selected: $value");
+                              }
+                            },
+                    activeColor: Colors.teal,
+                  ),
                 ),
-              ),
-              Text(title, style: TextStyle(fontSize: 14)),
-            ],
+                // Judul paket (wrap text kalau kepanjangan)
+                Flexible(
+                  child: Text(
+                    title,
+                    style: TextStyle(fontSize: 14),
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2, // batasi 2 baris biar rapih
+                  ),
+                ),
+              ],
+            ),
           ),
 
-          // Kanan: Harga lama + baru
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                oldPrice,
-                style: TextStyle(
-                  decoration: TextDecoration.lineThrough,
-                  color: Colors.grey,
+          SizedBox(width: 8),
+
+          // Kanan: Harga (dibungkus Flexible supaya wrap atau shrink)
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  oldPrice,
+                  style: TextStyle(
+                    decoration: TextDecoration.lineThrough,
+                    color: Colors.grey,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                isDisabled ? '' : newPrice, // kalau disabled, harga baru hilang
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-            ],
+                SizedBox(height: 4),
+                if (!isDisabled)
+                  Text(
+                    newPrice,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+              ],
+            ),
           ),
         ],
       ),

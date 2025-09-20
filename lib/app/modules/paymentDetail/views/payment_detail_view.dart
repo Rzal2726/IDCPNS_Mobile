@@ -89,136 +89,118 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
 
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        for (var data in controller.otherBimbelData)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                            ),
-                            child: Card(
-                              color: Colors.white,
-                              elevation: 2,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Container(
-                                width: 300,
-                                padding: EdgeInsets.all(12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                  Column(
+                    children: [
+                      for (var data in controller.otherBimbelData)
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Header row (title + X)
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    // Header row (title + X)
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          data['name'] ?? '',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
+                                    Text(
+                                      data['name'] ?? '',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Obx(() {
+                                      final isSelected = controller
+                                          .selectedPaketPerCard
+                                          .containsKey(data['id']);
+                                      return Visibility(
+                                        visible: isSelected,
+                                        maintainSize: true,
+                                        maintainAnimation: true,
+                                        maintainState: true,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            // hapus paket dari selected
+                                            controller.selectedPaketPerCard
+                                                .remove(data['id']);
+
+                                            // langsung hapus promo code dan reset amountPromo
+                                            controller.promoController.clear();
+                                            controller.promoAmount.value = 0;
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(4),
+                                            child: Icon(
+                                              Icons.cancel,
+                                              size: 20,
+                                              color: Colors.red,
+                                            ),
                                           ),
                                         ),
-                                        Obx(() {
-                                          final isSelected = controller
-                                              .selectedPaketPerCard
-                                              .containsKey(data['id']);
-                                          return Visibility(
-                                            visible: isSelected,
-                                            maintainSize: true,
-                                            maintainAnimation: true,
-                                            maintainState: true,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                // hapus paket dari selected
-                                                controller.selectedPaketPerCard
-                                                    .remove(data['id']);
-
-                                                // langsung hapus promo code dan reset amountPromo
-                                                controller.promoController
-                                                    .clear();
-                                                controller.promoAmount.value =
-                                                    0;
-                                              },
-                                              child: Container(
-                                                padding: EdgeInsets.all(4),
-                                                child: Icon(
-                                                  Icons.cancel,
-                                                  size: 20,
-                                                  color: Colors.red,
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                      ],
-                                    ),
-
-                                    SizedBox(height: 8),
-
-                                    Column(
-                                      children: [
-                                        for (
-                                          var i = 0;
-                                          i < data['bimbel_list'].length;
-                                          i++
-                                        )
-                                          Builder(
-                                            builder: (_) {
-                                              final subData =
-                                                  data['bimbel_list'][i];
-
-                                              // index paket pertama yang sudah dibeli
-                                              final firstPurchasedIndex =
-                                                  data['bimbel_list']
-                                                      .indexWhere(
-                                                        (e) =>
-                                                            e['is_purchase'] ==
-                                                            true,
-                                                      );
-
-                                              // skip paket yang lebih murah dari paket yang sudah dibeli
-                                              if (firstPurchasedIndex != -1 &&
-                                                  i < firstPurchasedIndex) {
-                                                return SizedBox.shrink();
-                                              }
-
-                                              // harga yang ditampilkan dikurangi harga paket yang sudah dibeli
-                                              final hargaTampil =
-                                                  (firstPurchasedIndex != -1 &&
-                                                          i > firstPurchasedIndex)
-                                                      ? subData['harga_fix'] -
-                                                          data['bimbel_list'][firstPurchasedIndex]['harga_fix']
-                                                      : subData['harga_fix'];
-
-                                              // disable jika paket sudah dibeli
-                                              final isDisabled =
-                                                  (firstPurchasedIndex != -1 &&
-                                                      i == firstPurchasedIndex);
-
-                                              return _buildRadioOption(
-                                                subData['name'], // title
-                                                subData['id'], // paketId
-                                                data['id'], // parentId
-                                                hargaTampil, // hargaFix
-                                                controller,
-                                                isDisabled:
-                                                    isDisabled, // disable jika sudah dibeli
-                                              );
-                                            },
-                                          ),
-                                      ],
-                                    ),
+                                      );
+                                    }),
                                   ],
                                 ),
-                              ),
+
+                                SizedBox(height: 8),
+
+                                Column(
+                                  children: [
+                                    for (
+                                      var i = 0;
+                                      i < data['bimbel_list'].length;
+                                      i++
+                                    )
+                                      Builder(
+                                        builder: (_) {
+                                          final subData =
+                                              data['bimbel_list'][i];
+
+                                          // index paket pertama yang sudah dibeli
+                                          final firstPurchasedIndex =
+                                              data['bimbel_list'].indexWhere(
+                                                (e) => e['is_purchase'] == true,
+                                              );
+
+                                          // skip paket yang lebih murah dari paket yang sudah dibeli
+                                          if (firstPurchasedIndex != -1 &&
+                                              i < firstPurchasedIndex) {
+                                            return SizedBox.shrink();
+                                          }
+
+                                          // harga yang ditampilkan dikurangi harga paket yang sudah dibeli
+                                          final hargaTampil =
+                                              (firstPurchasedIndex != -1 &&
+                                                      i > firstPurchasedIndex)
+                                                  ? subData['harga_fix'] -
+                                                      data['bimbel_list'][firstPurchasedIndex]['harga_fix']
+                                                  : subData['harga_fix'];
+
+                                          // disable jika paket sudah dibeli
+                                          final isDisabled =
+                                              (firstPurchasedIndex != -1 &&
+                                                  i == firstPurchasedIndex);
+
+                                          return _buildRadioOption(
+                                            subData['name'], // title
+                                            subData['id'], // paketId
+                                            data['id'], // parentId
+                                            hargaTampil, // hargaFix
+                                            controller,
+                                            isDisabled:
+                                                isDisabled, // disable jika sudah dibeli
+                                          );
+                                        },
+                                      ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
                   SizedBox(height: 20),
 

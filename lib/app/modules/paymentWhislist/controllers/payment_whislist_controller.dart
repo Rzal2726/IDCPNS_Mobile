@@ -26,7 +26,7 @@ class PaymentWhislistController extends GetxController {
   RxInt promoAmount = 0.obs;
   // untuk state radio pilihan (sub bimbel)
   RxMap<int, String> selectedSub = <int, String>{}.obs;
-
+  RxBool isLoading = true.obs;
   @override
   void onInit() {
     super.onInit();
@@ -99,32 +99,48 @@ class PaymentWhislistController extends GetxController {
   }
 
   Future<void> getData() async {
+    isLoading.value = true;
     try {
       final url = baseUrl + apiGetDataBuyAllWhishlist;
-
       final result = await _restClient.getData(url: url);
       print("wishlist response: $result");
 
       if (result["status"] == "success") {
         wishLishData.value = result["data"];
 
-        final firstItem = result["data"][0]; // ambil index pertama
-        final productDetail = firstItem["productDetail"];
+        if (result["data"].isNotEmpty) {
+          final firstItem = result["data"][0];
+          final productDetail = firstItem["productDetail"];
 
-        // cek bimbel_parent_id
-        if (firstItem["bimbel_parent_id"] != null) {
-          // bukan null → ambil name
-          wishListFirstProduct.value = productDetail["name"];
-        } else {
-          // null → ambil formasi
-          wishListFirstProduct.value = productDetail["formasi"];
+          // Set nama produk pertama
+          if (firstItem["bimbel_parent_id"] != null) {
+            wishListFirstProduct.value = productDetail["name"];
+          } else {
+            wishListFirstProduct.value = productDetail["formasi"];
+          }
         }
+
+        // ✅ Auto pilih semua paket tryout
+        for (var item in result["data"]) {
+          if (item["bimbel_parent_id"] == null) {
+            final productDetail = item["productDetail"];
+            pilihPaket(item["id"], {
+              "type": "tryout",
+              "id": productDetail?["id"],
+              "harga_fix": productDetail?["harga_fix"],
+            });
+          }
+        }
+
+        isLoading.value = false;
       } else {
         wishLishData.clear();
+        isLoading.value = false;
       }
     } catch (e) {
       print("Error fetch wishlist: $e");
       wishLishData.clear();
+      isLoading.value = false;
     }
   }
 

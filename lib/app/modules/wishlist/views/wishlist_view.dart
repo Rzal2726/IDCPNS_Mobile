@@ -21,7 +21,7 @@ class WishlistView extends GetView<WishlistController> {
       onPopInvoked: (didPop) {
         if (!didPop) {
           // Saat tombol back ditekan
-          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
+          Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
         }
       },
       child: Scaffold(
@@ -29,7 +29,7 @@ class WishlistView extends GetView<WishlistController> {
         appBar: secondaryAppBar(
           "Wishlist",
           onBack: () {
-            Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
+            Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
           },
         ),
         body: SafeArea(

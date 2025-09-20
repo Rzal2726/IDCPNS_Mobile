@@ -20,12 +20,16 @@ class DetailBimbelController extends GetxController
   var idBimbel = Get.arguments;
   RxInt currentIndex = 0.obs;
   List<JadwalFilter> jadwalFilter = [];
+  RxBool isCheklist = false.obs;
+  RxBool isLoadingButton = false.obs;
 
   @override
   void onInit() async {
     await initializeDateFormatting('id_ID', null);
     super.onInit();
+    getCheckWhislist();
     getDetailBimbel(id: idBimbel);
+
     tabController = TabController(length: 3, vsync: this);
   }
 
@@ -73,11 +77,11 @@ class DetailBimbelController extends GetxController
 
           if (filtered.isNotEmpty) {
             // ambil data terakhir dari list awal yang sudah di-filter
-            final lastItem = filtered.last;
+            final lastItem = filtered.first;
 
             // ambil index pertama dari list awal setelah filter → ini sebenarnya lastItem
             selectedPaket.value = lastItem['uuid'];
-            print("xxx ${selectedPaket.toString()}");
+            print("xxx3 ${selectedPaket.toString()}");
           }
         } else {
           selectedPaket.value = ""; // fallback, misal 0 berarti belum dipilih
@@ -95,20 +99,24 @@ class DetailBimbelController extends GetxController
 
       if (result["status"] == "success") {
         var data = result['data'];
-        if (data != null) {
+        if (data != null && data.isNotEmpty) {
           datalCheckList.value = data;
+          isCheklist.value = true; // ✅ set true kalau data ada
           wishlistUuid.value = data['uuid'] ?? "";
         } else {
-          datalCheckList.value = {}; // kosongin kalau null
+          datalCheckList.value = {}; // kosongin kalau null/empty
+          isCheklist.value = false; // ✅ set false kalau data kosong
           wishlistUuid.value = "";
         }
       }
     } catch (e) {
       print("Error polling check wishlist: $e");
+      isCheklist.value = false; // ✅ fallback ke false kalau error
     }
   }
 
   Future<void> getAddWhislist() async {
+    isLoadingButton.value = true;
     try {
       final url = await baseUrl + apiAddWhistlist;
       var payload = {
@@ -118,24 +126,29 @@ class DetailBimbelController extends GetxController
       print("sad ${payload.toString()}");
       final result = await _restClient.postData(url: url, payload: payload);
       if (result["status"] == "success") {
+        isCheklist.value = true;
         getCheckWhislist();
       }
     } catch (e) {
       print("Error: $e");
     }
+    isLoadingButton.value = false;
   }
 
   Future<void> getDeleteWhisList() async {
+    isLoadingButton.value = true;
     try {
       final url = await baseUrl + apiDeleteWhislist;
       var payload = {"uuid": datalCheckList['uuid']};
       final result = await _restClient.postData(url: url, payload: payload);
       if (result["status"] == "success") {
+        isCheklist.value = false;
         getCheckWhislist();
       }
     } catch (e) {
       print("Error: $e");
     }
+    isLoadingButton.value = false;
   }
 
   void pilihPaket(String paket) {
