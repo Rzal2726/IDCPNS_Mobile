@@ -8,6 +8,7 @@ import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
@@ -89,57 +90,16 @@ class BimbelView extends GetView<BimbelController> {
               SizedBox(height: 20),
 
               // Search row
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: controller.searchController,
-                      decoration: InputDecoration(
-                        hintText: 'apa yang Anda cari',
-                        hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
-                        suffixIcon: Icon(Icons.search, color: Colors.black87),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 15,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.teal),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.teal, width: 2),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {
-                      controller.getBimbel(
-                        menuCategoryId:
-                            controller.selectedKategoriId.value?.toString(),
-                        search: controller.searchController.text,
-                      );
-                    },
-
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 14,
-                      ),
-                    ),
-                    child: Text(
-                      'Cari',
-                      style: TextStyle(color: Colors.white, fontSize: 17),
-                    ),
-                  ),
-                ],
+              SearchRowButton(
+                controller: controller.searchController,
+                onSearch: () {
+                  controller.getBimbel(
+                    menuCategoryId:
+                        controller.selectedKategoriId.value?.toString(),
+                    search: controller.searchController.text,
+                  );
+                },
+                hintText: 'Apa yang ingin Anda cari?',
               ),
 
               SizedBox(height: 50),
@@ -165,49 +125,104 @@ class BimbelView extends GetView<BimbelController> {
 
               // List paket (mirip style gambar)
               Obx(() {
-                if (controller.bimbelData.isEmpty) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Center(
-                      child: EmptyStateWidget(
-                        message: 'Belum ada paket yang tersedia',
-                      ),
-                    ),
+                if (controller.bimbelData.isNotEmpty) {
+                  // ✅ Ada data
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: controller.bimbelData.length,
+                    itemBuilder: (context, index) {
+                      final paket = controller.bimbelData[index];
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 16.0,
+                        ),
+                        child: _cardPaketBimbel(
+                          image: paket['gambar'] ?? '',
+                          title: paket['name'] ?? '',
+                          hargaFixTertinggi:
+                              paket['price_list']['harga_fix_tertinggi'] ?? '',
+                          hargaTertinggi:
+                              paket['price_list']['harga_tertinggi'] ?? '',
+                          hargaTerendah:
+                              paket['price_list']['harga_terendah'] ?? '',
+                          hargaFixTerendah:
+                              paket['price_list']['harga_fix_terendah'] ?? '',
+                          kategori: paket['menu_category']['menu'] ?? '',
+                          color: Colors.teal,
+                          onTap: () {
+                            Get.toNamed(
+                              Routes.DETAIL_BIMBEL,
+                              arguments: paket['uuid'],
+                            );
+                          },
+                        ),
+                      );
+                    },
                   );
                 }
 
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: controller.bimbelData.length,
-                  itemBuilder: (context, index) {
-                    final paket = controller.bimbelData[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8.0,
-                        horizontal: 16.0,
-                      ), // jarak antar card
-                      child: _cardPaketBimbel(
-                        image: paket['gambar'] ?? '',
-                        title: paket['name'] ?? '',
-                        hargaFixTertinggi:
-                            paket['price_list']['harga_fix_tertinggi'] ?? '',
-                        hargaTertinggi:
-                            paket['price_list']['harga_tertinggi'] ?? '',
-                        hargaTerendah:
-                            paket['price_list']['harga_terendah'] ?? '',
-                        hargaFixTerendah:
-                            paket['price_list']['harga_fix_terendah'] ?? '',
-                        kategori: paket['menu_category']['menu'] ?? '',
-                        color: Colors.teal,
-                        onTap: () {
-                          Get.toNamed(
-                            Routes.DETAIL_BIMBEL,
-                            arguments: paket['uuid'],
-                          );
-                        },
-                      ),
-                    );
+                // ⏳ Kalau kosong → skeleton dulu, baru empty message
+                return FutureBuilder(
+                  future: Future.delayed(Duration(seconds: 5)),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      // Skeleton selama 5 detik
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: 3,
+                        itemBuilder:
+                            (context, index) => Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 8.0,
+                                horizontal: 16.0,
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade300,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: 100,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      height: 16,
+                                      width: 160,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      height: 14,
+                                      width: 120,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                      );
+                    } else {
+                      // ❌ Setelah 5 detik tetap kosong → pakai EmptyStateWidget
+                      return EmptyStateWidget(
+                        message: 'Belum ada paket yang tersedia',
+                      );
+                    }
                   },
                 );
               }),

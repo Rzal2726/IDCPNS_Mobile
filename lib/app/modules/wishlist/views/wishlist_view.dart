@@ -49,60 +49,55 @@ class WishlistView extends GetView<WishlistController> {
                       hintText:
                           'Apa yang ingin Anda cari?', // optional, kalau SearchRowButton mendukung
                     ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Get.toNamed(Routes.PAYMENT_WHISLIST);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Beli Semua',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ),
+                        Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            showBimbelBottomSheet(context);
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                'Filter',
+                                style: TextStyle(
+                                  color: Colors.teal,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                size: 18,
+                                color: Colors.teal,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
                     SizedBox(height: 7),
                     (controller.whistlistData['data'] != null &&
                             controller.whistlistData['data']!.isNotEmpty)
                         ? Column(
                           children: [
-                            // Row tombol Beli Semua + Filter
-                            Row(
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Get.toNamed(Routes.PAYMENT_WHISLIST);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.teal,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Beli Semua',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    showBimbelBottomSheet(context);
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'Filter',
-                                        style: TextStyle(
-                                          color: Colors.teal,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      SizedBox(width: 4),
-                                      Icon(
-                                        Icons.keyboard_arrow_down,
-                                        size: 18,
-                                        color: Colors.teal,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            SizedBox(height: 16),
-
                             // Daftar wishlist
                             Column(
                               children:
@@ -157,7 +152,8 @@ class WishlistView extends GetView<WishlistController> {
                             ),
                           ],
                         )
-                        : controller.showSkeleton.value
+                        : (controller.showSkeleton.value ||
+                            controller.isLoading.value)
                         ? Skeletonizer(
                           child: ListView.builder(
                             shrinkWrap: true,
@@ -486,27 +482,80 @@ class WishlistView extends GetView<WishlistController> {
                   // Tombol Cari
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        controller.getWhislist(
-                          menuCategoryId:
-                              controller.selectedKategoriId.value?.toString(),
-                          produk: controller.selectedEventProduct.value,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                    child: Row(
+                      children: [
+                        // Tombol Batal
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () async {
+                              controller.selectedKategoriId.value = 0;
+                              controller.selectedEventKategori.value = 'Semua';
+                              controller.selectedProductiId.value = 0;
+                              controller.selectedEventProduct.value = 'Semua';
+
+                              controller.isLoading.value =
+                                  true; // ⬅️ mulai loading
+
+                              await controller.getWhislist(
+                                menuCategoryId: null, // ambil semua
+                                produk: null,
+                              );
+
+                              controller.isLoading.value =
+                                  false; // ⬅️ matikan loading
+
+                              Navigator.pop(
+                                context,
+                              ); // tutup popup/setelah selesai
+                            },
+
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.teal,
+                              side: BorderSide(color: Colors.teal),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                            child: Text("Reset"),
+                          ),
                         ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
+                        SizedBox(width: 12),
+                        // Tombol Cari
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+
+                              controller.isLoading.value = true;
+
+                              await controller.getWhislist(
+                                menuCategoryId:
+                                    controller.selectedKategoriId.value
+                                        ?.toString(),
+                                produk: controller.selectedEventProduct.value,
+                              );
+
+                              controller.isLoading.value = false;
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                            child: Text("Cari"),
+                          ),
                         ),
-                      ),
-                      child: Text("Cari"),
+                      ],
                     ),
                   ),
                 ],

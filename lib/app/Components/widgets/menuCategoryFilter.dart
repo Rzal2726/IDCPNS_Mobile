@@ -12,6 +12,7 @@ void showChoiceBottomSheet<T>({
   required Rx<T?> selectedValue,
   required void Function(T?) onSelected,
   required void Function() onSubmit,
+  required void Function() onReset, // ✅ tambahin callback reset
 }) {
   showModalBottomSheet(
     context: context,
@@ -102,10 +103,7 @@ void showChoiceBottomSheet<T>({
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () {
-                              // Reset selected value
-                              selectedValue.value = null;
-                              onSelected(null); // pastikan controller diupdate
-                              onSubmit(); // langsung panggil getTryout/getBimbel
+                              onReset(); // ✅ serahin ke luar
                               Navigator.pop(context);
                             },
                             style: OutlinedButton.styleFrom(

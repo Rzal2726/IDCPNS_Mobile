@@ -16,13 +16,32 @@ class ProgramSayaController extends GetxController {
   RxInt totalPages = 0.obs;
   RxInt totalPage = 0.obs;
   RxString selectedEventKategori = "Semua".obs;
-
+  RxBool showSkeleton = true.obs;
   // 🔹 daftar program (sementara hardcode, nanti bisa diisi dari API)
 
   @override
   void onInit() {
     getTryout();
     getKategori();
+    tryoutData.listen((data) {
+      if (data.isNotEmpty) {
+        showSkeleton.value = false; // ada data, langsung matiin skeleton
+      }
+    });
+
+    // listener buat bimbel
+    bimbelData.listen((data) {
+      if (data.isNotEmpty) {
+        showSkeleton.value = false;
+      }
+    });
+
+    // fallback timer kalau tetap kosong setelah 5 detik
+    Future.delayed(const Duration(seconds: 5), () {
+      if (tryoutData.isEmpty && bimbelData.isEmpty) {
+        showSkeleton.value = false;
+      }
+    });
     super.onInit();
   }
 
@@ -136,6 +155,7 @@ class ProgramSayaController extends GetxController {
         "search": search ?? " ",
         "menu_category_id": submenuCategoryId ?? "",
       };
+      print("xxxc ${payload.toString()}");
       final result = await _restClient.postData(url: url, payload: payload);
       if (result["status"] == "success") {
         bimbelData.value = result['data']['data'];
@@ -156,10 +176,10 @@ class ProgramSayaController extends GetxController {
       var payload = {
         "page": page ?? 0,
         "perpage": 10,
-        "search": search ?? " ",
+        "search": search ?? "",
         "menu_category_id": submenuCategoryId ?? "",
       };
-      print('xxx $payload');
+      print("xxxc ${payload.toString()}");
       final result = await _restClient.postData(url: url, payload: payload);
       if (result["status"] == "success") {
         tryoutData.value = result['data']['data'];

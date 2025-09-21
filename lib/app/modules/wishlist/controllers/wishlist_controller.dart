@@ -23,6 +23,7 @@ class WishlistController extends GetxController {
   RxInt totalPages = 0.obs;
   RxInt totalPage = 0.obs;
   RxBool showSkeleton = true.obs;
+  RxBool isLoading = false.obs;
   @override
   void onInit() {
     Future.delayed(Duration(seconds: 5), () {
@@ -90,9 +91,10 @@ class WishlistController extends GetxController {
     int? page,
   }) async {
     try {
-      final url = await baseUrl + apiGetwhislist;
-      var payload = {
-        "perpage": 10, // int
+      final url = baseUrl + apiGetwhislist;
+
+      final payload = {
+        "perpage": 10,
         "menu_category_id":
             selectedKategoriId.value.toString() == "0"
                 ? ""
@@ -102,17 +104,21 @@ class WishlistController extends GetxController {
         "params": (page ?? 0).toString(),
       };
 
-      print("xxx $payload");
+      print("📦 Payload: $payload");
+
       final result = await _restClient.postData(url: url, payload: payload);
-      print("emailnnyaa ${result.toString()}");
+
+      print("Response: $result");
+
       if (result["status"] == "success") {
         whistlistData.value = result['data'];
-        print("xxx ${result}");
         totalPage.value = result['data']['last_page'];
+      } else {
+        print("Request gagal: ${result['message']}");
       }
     } catch (e) {
-      print("Error polling email verification: $e");
-    }
+      print("Error getWhislist: $e");
+    } finally {}
   }
 
   Future<void> getKategori() async {

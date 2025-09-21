@@ -156,12 +156,16 @@ class TransactionView extends GetView<TransactionController> {
                             Text(
                               'Filter',
                               style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
+                                color: Colors.teal,
+                                fontSize: 16,
                               ),
                             ),
                             SizedBox(width: 4),
-                            Icon(Icons.arrow_drop_down, size: 18),
+                            Icon(
+                              Icons.keyboard_arrow_down,
+                              size: 18,
+                              color: Colors.teal,
+                            ),
                           ],
                         ),
                       ),

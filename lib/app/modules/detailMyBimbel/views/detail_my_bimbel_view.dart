@@ -19,13 +19,13 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
       onPopInvoked: (didPop) async {
         if (didPop) return;
         // Arahkan tombol back fisik HP ke halaman BIMBEL
-        Get.toNamed(Routes.BIMBEL);
+        Get.toNamed(Routes.MY_BIMBEL);
       },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: secondaryAppBar(
           "Detail Bimbel Saya",
-          onBack: () => Get.toNamed(Routes.BIMBEL),
+          onBack: () => Get.toNamed(Routes.MY_BIMBEL),
         ),
         body: Obx(() {
           var data = controller.bimbelData;

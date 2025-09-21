@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -43,59 +44,18 @@ class MyBimbelView extends GetView<MyBimbelController> {
                 SizedBox(height: 16),
 
                 // Search bar
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: controller.searchController,
-                        decoration: InputDecoration(
-                          hintText: 'Cari',
-                          suffixIcon: Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: BorderSide(color: Colors.teal),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: BorderSide(color: Colors.teal),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 0,
-                            horizontal: 8,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: () {
-                        controller.getData(
-                          menuCategoryId:
-                              controller.selectedKategoriId.value?.toString(),
-                          search: controller.searchController.text,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                      child: Text(
-                        'Cari',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
+                SearchRowButton(
+                  controller: controller.searchController,
+                  onSearch: () {
+                    controller.getData(
+                      menuCategoryId:
+                          controller.selectedKategoriId.value?.toString(),
+                      search: controller.searchController.text,
+                    );
+                  },
+                  hintText: 'Cari',
                 ),
+
                 SizedBox(height: 30),
 
                 // Filter button
@@ -116,63 +76,72 @@ class MyBimbelView extends GetView<MyBimbelController> {
                   ),
                 ),
                 SizedBox(height: 15),
+                // ganti bagian ini:
                 data.isEmpty
-                    ? controller.showSkeleton.value
-                        ? Skeletonizer(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: 3,
-                            itemBuilder:
-                                (context, index) => Container(
-                                  margin: EdgeInsets.only(bottom: 20),
-                                  padding: EdgeInsets.all(14),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.shade300,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
+                    ? FutureBuilder(
+                      future: Future.delayed(Duration(seconds: 5)),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Skeletonizer(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: 3,
+                              itemBuilder:
+                                  (context, index) => Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    padding: EdgeInsets.all(14),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.shade300,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 20,
+                                          width: 80,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        SizedBox(height: 7),
+                                        Container(
+                                          height: 16,
+                                          width: 120,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        SizedBox(height: 7),
+                                        Container(
+                                          height: 14,
+                                          width: 160,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 20,
-                                        width: 80,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      SizedBox(height: 7),
-                                      Container(
-                                        height: 16,
-                                        width: 120,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      SizedBox(height: 7),
-                                      Container(
-                                        height: 14,
-                                        width: 160,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                          ),
-                        )
-                        : EmptyStateWidget(
-                          message: 'Belum ada Bimbel yang tersedia saat ini',
-                        )
+                            ),
+                          );
+                        } else {
+                          return EmptyStateWidget(
+                            message: 'Belum ada Bimbel yang tersedia saat ini',
+                          );
+                        }
+                      },
+                    )
                     : ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: data.length,
                       itemBuilder: (context, index) {
-                        var item = data[index];
+                        final item = data[index];
                         return InkWell(
                           onTap:
                               () => Get.toNamed(
@@ -243,6 +212,7 @@ class MyBimbelView extends GetView<MyBimbelController> {
                         );
                       },
                     ),
+
                 SizedBox(height: 20), // jarak sebelum pagination
                 // Pagination
                 if (controller.listBimbel['data'] != null &&
