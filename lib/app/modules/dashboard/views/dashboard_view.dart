@@ -241,11 +241,21 @@ class DashboardView extends GetView<DashboardController> {
                                           children: [
                                             Expanded(
                                               child: ElevatedButton.icon(
-                                                onPressed: () {
-                                                  Get.toNamed(
-                                                    Routes.PRETEST_DETAIL,
-                                                  );
-                                                },
+                                                onPressed:
+                                                    data['has_pretest'] == false
+                                                        ? () {
+                                                          Get.toNamed(
+                                                            Routes
+                                                                .PRETEST_DETAIL,
+                                                            arguments: {
+                                                              "item": data,
+                                                              "uuidParent":
+                                                                  data['uuid'],
+                                                            },
+                                                          );
+                                                        }
+                                                        : null, //
+
                                                 icon: Icon(
                                                   Icons.assignment,
                                                   size: 18,
@@ -255,9 +265,6 @@ class DashboardView extends GetView<DashboardController> {
                                                   elevation: 0,
                                                   backgroundColor: Colors.amber,
                                                   foregroundColor: Colors.white,
-                                                  side: BorderSide(
-                                                    color: Colors.amber,
-                                                  ),
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/pretest_ranking_controller.dart';
 
@@ -59,63 +62,88 @@ class PretestRankingView extends GetView<PretestRankingController> {
                   SizedBox(height: 18),
 
                   // Search
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: controller.searchController,
-                          decoration: InputDecoration(
-                            hintText: "Cari Disini",
-                            hintStyle: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            suffixIcon: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                                vertical: 2,
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  controller.getData(
-                                    search: controller.searchController.text,
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 10,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                ),
-                                child: const Text(
-                                  "Cari",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  SearchRowButton(
+                    controller: controller.searchController,
+                    onSearch: () {
+                      controller.getData(
+                        search: controller.searchController.text,
+                      );
+                    },
                   ),
 
                   SizedBox(height: 16),
 
                   // List peserta
                   Obx(() {
+                    final data = controller.rankData;
+
+                    if (data.isEmpty) {
+                      // FutureBuilder dipakai untuk delay 5 detik
+                      return FutureBuilder(
+                        future: Future.delayed(Duration(seconds: 5)),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            // SKELETON LOADER
+                            return Skeletonizer(
+                              enabled: true, // pastikan skeleton aktif
+                              child: Column(
+                                children: List.generate(3, (index) {
+                                  return Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    padding: EdgeInsets.all(14),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.shade300,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 20,
+                                          width: 80,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        SizedBox(height: 7),
+                                        Container(
+                                          height: 16,
+                                          width: 120,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        SizedBox(height: 7),
+                                        Container(
+                                          height: 14,
+                                          width: 160,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              ),
+                            );
+                          } else {
+                            // setelah 5 detik masih kosong -> tampilkan empty state
+                            return EmptyStateWidget(
+                              message: 'Belum ada data rank tersedia saat ini',
+                            );
+                          }
+                        },
+                      );
+                    }
+
+                    // kalau data ADA -> render daftar Card
                     return Column(
                       children:
-                          controller.rankData.map((p) {
+                          data.map((p) {
                             return Card(
                               color: Colors.white,
                               margin: EdgeInsets.only(bottom: 8),
@@ -214,16 +242,15 @@ class PretestRankingView extends GetView<PretestRankingController> {
                   }),
 
                   SizedBox(height: 20),
-                  Visibility(
-                    visible: controller.rankData.isNotEmpty,
-                    child: ReusablePagination(
+                  if (controller.rankData.isNotEmpty)
+                    ReusablePagination(
                       nextPage: controller.nextPage,
                       prevPage: controller.prevPage,
                       currentPage: controller.currentPage,
                       totalPage: controller.totalPage,
                       goToPage: controller.goToPage,
                     ),
-                  ),
+
                   // Paginat
                 ],
               ),

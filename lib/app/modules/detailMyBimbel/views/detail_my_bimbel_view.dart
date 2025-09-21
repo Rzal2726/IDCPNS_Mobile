@@ -767,7 +767,10 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                           ? () {
                                             Get.toNamed(
                                               Routes.PRETEST_DETAIL,
-                                              arguments: item['uuid'],
+                                              arguments: {
+                                                "item": data,
+                                                "uuidParent": data['uuid'],
+                                              },
                                             );
                                           }
                                           : null, // null = tombol disabled

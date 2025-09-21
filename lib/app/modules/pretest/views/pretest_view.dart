@@ -41,7 +41,7 @@ class PretestView extends GetView<PretestController> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
                       ),
@@ -50,7 +50,7 @@ class PretestView extends GetView<PretestController> {
                       showModalBottomSheet(
                         isScrollControlled: true,
                         backgroundColor: Colors.white,
-                        shape: const RoundedRectangleBorder(
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(
                             top: Radius.circular(16),
                           ),
@@ -160,15 +160,14 @@ class PretestView extends GetView<PretestController> {
                                                   borderRadius:
                                                       BorderRadius.circular(8),
                                                 ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      vertical: 14,
-                                                    ),
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 14,
+                                                ),
                                               ),
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
-                                              child: const Text(
+                                              child: Text(
                                                 "Cek Kembali",
                                                 style: TextStyle(
                                                   fontSize: 14,
@@ -177,7 +176,7 @@ class PretestView extends GetView<PretestController> {
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(
+                                          SizedBox(
                                             width: 12,
                                           ), // jarak antar tombol
                                           Expanded(
@@ -193,15 +192,14 @@ class PretestView extends GetView<PretestController> {
                                                   borderRadius:
                                                       BorderRadius.circular(8),
                                                 ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      vertical: 14,
-                                                    ),
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 14,
+                                                ),
                                               ),
                                               onPressed: () async {
                                                 await controller.submitSoal();
                                               },
-                                              child: const Text(
+                                              child: Text(
                                                 "Kirim Jawaban",
                                                 style: TextStyle(
                                                   fontSize: 14,
@@ -249,7 +247,7 @@ class PretestView extends GetView<PretestController> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
                       ),
@@ -274,7 +272,7 @@ class PretestView extends GetView<PretestController> {
                   Obx(
                     () => Text(
                       controller.formattedTime,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   ElevatedButton(
@@ -284,7 +282,7 @@ class PretestView extends GetView<PretestController> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
                       ),
@@ -352,7 +350,7 @@ class PretestView extends GetView<PretestController> {
                                       context: context,
                                       builder: (context) {
                                         return Padding(
-                                          padding: const EdgeInsets.all(16),
+                                          padding: EdgeInsets.all(16),
                                           child: Container(
                                             margin: EdgeInsets.all(16),
                                             child: Column(
@@ -360,13 +358,13 @@ class PretestView extends GetView<PretestController> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                const Text(
+                                                Text(
                                                   "List Nomor Soal",
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                const SizedBox(height: 16),
+                                                SizedBox(height: 16),
                                                 Expanded(
                                                   child:
                                                       controller
@@ -388,7 +386,7 @@ class PretestView extends GetView<PretestController> {
                                                                       ),
                                                                 ),
                                                                 padding:
-                                                                    const EdgeInsets.symmetric(
+                                                                    EdgeInsets.symmetric(
                                                                       horizontal:
                                                                           24,
                                                                       vertical:
@@ -396,9 +394,7 @@ class PretestView extends GetView<PretestController> {
                                                                     ),
                                                               ),
                                                               onPressed: () {},
-                                                              child: const Text(
-                                                                "5",
-                                                              ),
+                                                              child: Text("5"),
                                                             ),
                                                           )
                                                           : GridView.builder(
@@ -406,7 +402,7 @@ class PretestView extends GetView<PretestController> {
                                                                 controller
                                                                     .soalList
                                                                     .length,
-                                                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                                               crossAxisCount:
                                                                   5, // jumlah kolom
                                                               crossAxisSpacing:
@@ -454,7 +450,7 @@ class PretestView extends GetView<PretestController> {
                                                                         ),
                                                                   ),
                                                                   padding:
-                                                                      const EdgeInsets.symmetric(
+                                                                      EdgeInsets.symmetric(
                                                                         horizontal:
                                                                             12,
                                                                         vertical:
@@ -507,7 +503,7 @@ class PretestView extends GetView<PretestController> {
                                           controller.currentQuestion.value--;
                                         }
                                         : null,
-                                icon: const Icon(Icons.arrow_back_ios),
+                                icon: Icon(Icons.arrow_back_ios),
                               ),
 
                               // Tombol nomor soal di page saat ini
@@ -560,7 +556,7 @@ class PretestView extends GetView<PretestController> {
                                         ),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                         horizontal: 4,
                                         vertical: 4,
                                       ),
@@ -588,7 +584,7 @@ class PretestView extends GetView<PretestController> {
                                           controller.currentQuestion.value++;
                                         }
                                         : null,
-                                icon: const Icon(Icons.arrow_forward_ios),
+                                icon: Icon(Icons.arrow_forward_ios),
                               ),
                             ],
                           ),
@@ -601,11 +597,11 @@ class PretestView extends GetView<PretestController> {
                         child: Card(
                           color: Colors.white,
                           child: Padding(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(16),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   "Soal No.X",
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
@@ -638,7 +634,7 @@ class PretestView extends GetView<PretestController> {
                   Card(
                     color: Colors.white,
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
                       child: Column(
                         children: [
                           // Header soal
@@ -647,9 +643,7 @@ class PretestView extends GetView<PretestController> {
                             children: [
                               Text(
                                 "Soal No.${soal['no_soal']}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               Row(
                                 children: [
@@ -671,157 +665,15 @@ class PretestView extends GetView<PretestController> {
                                             : SizedBox(),
                                   ),
                                   IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.flag,
                                       color: Colors.redAccent,
                                     ),
                                     onPressed: () {
-                                      showModalBottomSheet(
-                                        isScrollControlled: true,
-                                        backgroundColor: Colors.white,
-                                        shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(16),
-                                          ),
-                                        ),
-                                        context: context,
-                                        builder: (context) {
-                                          return Padding(
-                                            padding: EdgeInsets.only(
-                                              left: 16,
-                                              right: 16,
-                                              top: 16,
-                                              bottom:
-                                                  MediaQuery.of(
-                                                    context,
-                                                  ).viewInsets.bottom +
-                                                  16,
-                                            ),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  // Header modal
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      const Text(
-                                                        "Laporkan Soal",
-                                                        style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      IconButton(
-                                                        icon: const Icon(
-                                                          Icons.close,
-                                                        ),
-                                                        onPressed:
-                                                            () => Navigator.pop(
-                                                              context,
-                                                            ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const Divider(height: 1),
-                                                  const SizedBox(height: 12),
-                                                  Text(
-                                                    "Silahkan isi form di bawah untuk melaporkan soal:",
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 16),
-                                                  TextField(
-                                                    controller:
-                                                        controller
-                                                            .laporanController,
-                                                    maxLines: 6,
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                          "Isi laporan...",
-                                                      border: OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              8,
-                                                            ),
-                                                      ),
-                                                      contentPadding:
-                                                          const EdgeInsets.all(
-                                                            12,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 20),
-                                                  SizedBox(
-                                                    width: double.infinity,
-                                                    child: ElevatedButton(
-                                                      style: ElevatedButton.styleFrom(
-                                                        backgroundColor:
-                                                            Colors.teal,
-                                                        foregroundColor:
-                                                            Colors.white,
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                8,
-                                                              ),
-                                                        ),
-                                                        padding:
-                                                            const EdgeInsets.symmetric(
-                                                              vertical: 14,
-                                                            ),
-                                                      ),
-                                                      onPressed: () {
-                                                        if (controller
-                                                                .laporanController
-                                                                .text
-                                                                .length <
-                                                            1) {
-                                                          Get.snackbar(
-                                                            "Gagal",
-                                                            "Mohon isi laporan terlebih dahulu",
-                                                            backgroundColor:
-                                                                Colors.pink,
-                                                            colorText:
-                                                                Colors.white,
-                                                          );
-                                                          return;
-                                                        }
-                                                        controller.sendLaporSoal(
-                                                          questionId:
-                                                              soal['id'],
-                                                          laporan:
-                                                              controller
-                                                                  .laporanController
-                                                                  .text,
-                                                          context: context,
-                                                        );
-
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: const Text(
-                                                        "Kirim Laporan",
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                      showLaporSoalModal(
+                                        context,
+                                        soal,
+                                        controller,
                                       );
                                     },
                                   ),
@@ -831,34 +683,73 @@ class PretestView extends GetView<PretestController> {
                           ),
 
                           Container(
-                            margin: const EdgeInsets.all(8),
-                            child: Html(
-                              data: soal['soal'] ?? "",
-                              extensions: [
-                                TagExtension(
-                                  tagsToExtend: {"img"}, // khusus untuk <img>
-                                  builder: (context) {
-                                    final src = context.attributes['src'] ?? '';
-                                    return SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Image.network(
-                                        src,
-                                        fit: BoxFit.contain,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                const Icon(
-                                                  Icons.broken_image,
-                                                  color: Colors.red,
-                                                ),
+                            margin: EdgeInsets.all(8),
+                            child:
+                                (soal['soal'] == null ||
+                                        soal['soal'].toString().isEmpty)
+                                    ? Skeletonizer(
+                                      enabled: true,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            height: 18,
+                                            width: double.infinity,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                          SizedBox(height: 6),
+                                          Container(
+                                            height: 18,
+                                            width: double.infinity,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                          SizedBox(height: 6),
+                                          Container(
+                                            height: 18,
+                                            width:
+                                                MediaQuery.of(
+                                                  context,
+                                                ).size.width *
+                                                0.6,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                                    )
+                                    : Html(
+                                      data: soal['soal'] ?? "",
+                                      extensions: [
+                                        TagExtension(
+                                          tagsToExtend: {
+                                            "img",
+                                          }, // khusus untuk <img>
+                                          builder: (context) {
+                                            final src =
+                                                context.attributes['src'] ?? '';
+                                            return SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Image.network(
+                                                src,
+                                                fit: BoxFit.contain,
+                                                errorBuilder:
+                                                    (
+                                                      context,
+                                                      error,
+                                                      stackTrace,
+                                                    ) => Icon(
+                                                      Icons.broken_image,
+                                                      color: Colors.red,
+                                                    ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
                           ),
 
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24),
 
                           // List opsi jawaban
                           Obx(() {
@@ -866,11 +757,54 @@ class PretestView extends GetView<PretestController> {
                                 controller.selectedAnswers[controller
                                     .currentQuestion
                                     .value];
-                            final options = soal['options'] as List;
 
+                            final options = soal['options'] as List? ?? [];
+
+                            if (options.isEmpty) {
+                              // tampilkan skeleton kalau data masih kosong
+                              return Skeletonizer(
+                                enabled: true,
+                                child: Column(
+                                  children: List.generate(4, (index) {
+                                    return Container(
+                                      margin: EdgeInsets.symmetric(vertical: 4),
+                                      padding: EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 32,
+                                            height: 32,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Expanded(
+                                            child: Container(
+                                              height: 16,
+                                              color: Colors.grey.shade300,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              );
+                            }
+
+                            // kalau options sudah ada → render ListView biasa
                             return ListView.builder(
                               shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
+                              physics: NeverScrollableScrollPhysics(),
                               itemCount: options.length,
                               itemBuilder: (context, index) {
                                 final option = options[index];
@@ -879,14 +813,12 @@ class PretestView extends GetView<PretestController> {
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
-                                    side: const BorderSide(
+                                    side: BorderSide(
                                       color: Colors.grey,
                                       width: 1,
                                     ),
                                   ),
-                                  margin: const EdgeInsets.symmetric(
-                                    vertical: 4,
-                                  ),
+                                  margin: EdgeInsets.symmetric(vertical: 4),
                                   child: RadioListTile(
                                     value: option['id'],
                                     groupValue: selectedAnswer,
@@ -912,7 +844,7 @@ class PretestView extends GetView<PretestController> {
                                           alignment: Alignment.center,
                                           child: Text(
                                             "${option['inisial']}.",
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14,
                                             ),
@@ -952,4 +884,106 @@ class PretestView extends GetView<PretestController> {
       ),
     );
   }
+}
+
+void showLaporSoalModal(
+  BuildContext context,
+  Map soal,
+  PretestController controller,
+) {
+  showModalBottomSheet(
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    context: context,
+    builder: (context) {
+      return Padding(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header modal
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Laporkan Soal",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              Divider(height: 1),
+              SizedBox(height: 12),
+              Text(
+                "Silahkan isi form di bawah untuk melaporkan soal:",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                controller: controller.laporanController,
+                maxLines: 6,
+                decoration: InputDecoration(
+                  hintText: "Isi laporan...",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  contentPadding: EdgeInsets.all(12),
+                ),
+              ),
+              SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onPressed: () {
+                    if (controller.laporanController.text.isEmpty) {
+                      Get.snackbar(
+                        "Gagal",
+                        "Mohon isi laporan terlebih dahulu",
+                        backgroundColor: Colors.pink,
+                        colorText: Colors.white,
+                      );
+                      return;
+                    }
+
+                    controller.sendLaporSoal(
+                      questionId: soal['id'],
+                      laporan: controller.laporanController.text,
+                      context: context,
+                    );
+
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "Kirim Laporan",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
