@@ -402,16 +402,32 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                         elevation: 0,
                       ),
                       onPressed:
-                          controller.getTotalHargaFix() > 0
+                          controller.isLoading.value
+                              ? null // disable tombol kalau lagi loading
+                              : controller.getTotalHargaFix() > 0 &&
+                                  controller.paymentMethodId.value != 0
                               ? () => controller.createPayment()
                               : null,
-                      child: Text(
-                        "Bayar Sekarang",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
+                      child:
+                          controller.isLoading.value
+                              ? SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                  backgroundColor: Colors.teal.shade100,
+                                ),
+                              )
+                              : Text(
+                                "Bayar Sekarang",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
                     ),
                   ),
                 ],
@@ -639,91 +655,99 @@ void showPromoCodeBottomSheet(BuildContext context) {
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.white,
-    shape: RoundedRectangleBorder(
+    shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
     builder: (context) {
-      return SafeArea(
-        child: Obx(() {
-          return controller.paymantListData.isEmpty
-              ? Center(child: CircularProgressIndicator())
-              : SizedBox(
-                height: MediaQuery.of(context).size.height * 0.25,
-                child: SingleChildScrollView(
-                  padding: AppStyle.contentPadding,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Voucher",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.close),
-                            onPressed: () => Get.back(),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 12),
-
-                      Padding(
-                        padding: EdgeInsets.only(top: 1),
-                        child: Row(
+      // PENTING: Tambahkan padding bottom sesuai viewInsets agar naik saat keyboard muncul
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SafeArea(
+          child: Obx(() {
+            return controller.paymantListData.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  child: SingleChildScrollView(
+                    padding: AppStyle.contentPadding,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: TextField(
-                                controller: controller.promoController,
-                                decoration: InputDecoration(
-                                  hintText: "Cari",
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                    borderSide: BorderSide(color: Colors.teal),
-                                  ),
-                                ),
+                            const Text(
+                              "Voucher",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(width: 8),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.teal,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 14,
-                                ),
-                              ),
-                              onPressed: () {
-                                controller.getApplyCode();
-                                Get.back();
-                              },
-                              child: Text(
-                                "Klaim",
-                                style: TextStyle(color: Colors.white),
-                              ),
+                            IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: () => Get.back(),
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 12),
+
+                        Padding(
+                          padding: const EdgeInsets.only(top: 1),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: controller.promoController,
+                                  decoration: InputDecoration(
+                                    hintText: "Cari",
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 10,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                      borderSide: const BorderSide(
+                                        color: Colors.teal,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 14,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  controller.getApplyCode();
+                                  Get.back();
+                                },
+                                child: const Text(
+                                  "Klaim",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-        }),
+                );
+          }),
+        ),
       );
     },
   );

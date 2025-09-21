@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PaymentWhislistController extends GetxController {
   // checkbox utama
@@ -27,6 +28,7 @@ class PaymentWhislistController extends GetxController {
   // untuk state radio pilihan (sub bimbel)
   RxMap<int, String> selectedSub = <int, String>{}.obs;
   RxBool isLoading = true.obs;
+  RxBool isLoadingButton = false.obs;
   @override
   void onInit() {
     super.onInit();
@@ -69,7 +71,7 @@ class PaymentWhislistController extends GetxController {
   }
 
   void pilihMetode(String metode) {
-    metodePembayaran.value = metode;
+    metodePembayaran.value = metode.replaceAll('_', ' ');
   }
 
   Future<void> bayarSekarang() async {
@@ -174,6 +176,7 @@ class PaymentWhislistController extends GetxController {
 
     if (result["status"] == "success") {
       // jika sukses
+      kodePromo.value = promoController.text;
       promoAmount.value = result['data']['nominal'];
       promoCodeName.value = result['data']['voucher_code'];
       promoController.clear();
@@ -212,7 +215,6 @@ class PaymentWhislistController extends GetxController {
       "amount_diskon": promoAmount.value,
       "description": wishListFirstProduct.value,
       "bundling": true,
-      // "bimbel_parent_id": 0,
       "kode_promo": promoCodeName.value,
       "items": getSelectedItems(),
       "source": "",
@@ -223,15 +225,24 @@ class PaymentWhislistController extends GetxController {
       "mobile_number": ovoNumber.value,
     };
     print("xxx${payload.toString()}");
+
     final result = await _restClient.postData(
       url: baseUrl + apiCreatePayment,
       payload: payload,
     );
+
     if (result["status"] == "success") {
-      Get.toNamed(
-        Routes.PAYMENT_CHECKOUT,
-        arguments: result['data']['payment_id'],
-      );
+      final data = result['data'];
+
+      // Pindah halaman dulu
+      Get.offNamed(Routes.PAYMENT_CHECKOUT, arguments: data['payment_id']);
+
+      // Cek apakah ada invoice_url
+      if (data.containsKey('invoice_url') && data['invoice_url'] != null) {
+        final url = data['invoice_url'];
+        // buka link di browser
+        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      }
     } else {
       print("Error: $result");
     }

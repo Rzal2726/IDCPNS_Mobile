@@ -144,7 +144,7 @@ class MyAccountController extends GetxController {
       errorMessage = "Silakan pilih referensi.";
     }
     if (errorMessage != null) {
-      Get.snackbar("Gagal", errorMessage);
+      notifHelper.show(errorMessage, type: 0);
       return;
     }
     final url = baseUrl + apiGetUser;

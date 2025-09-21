@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/Card/jadwalPertemuanCard.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
@@ -357,16 +358,13 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                       child: ElevatedButton(
                         onPressed: () {
                           if (controller.selectedPaket.value == "") {
-                            Get.snackbar(
-                              "Peringatan",
+                            notifHelper.show(
                               "Silakan pilih paket terlebih dahulu.",
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: Colors.red.withOpacity(0.8),
-                              colorText: Colors.white,
+                              type: 0,
                             );
                             return;
                           }
-                          Get.toNamed(
+                          Get.offNamed(
                             Routes.PAYMENT_DETAIL,
                             arguments: controller.selectedPaket.value,
                           );
@@ -565,7 +563,6 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                             : (value) {
                               if (value != null) {
                                 controller.pilihPaket(value);
-                                print("xxx selected: $value");
                               }
                             },
                     activeColor: Colors.teal,

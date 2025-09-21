@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -58,7 +59,7 @@ class AccountController extends GetxController {
     if (await canLaunchUrl(phoneNumber)) {
       await launchUrl(phoneNumber, mode: LaunchMode.externalApplication);
     } else {
-      Get.snackbar("Error", "Tidak dapat membuka WhatsApp.");
+      notifHelper.show("Tidak dapat membuka WhatsApp.", type: 0);
     }
   }
 
@@ -68,7 +69,7 @@ class AccountController extends GetxController {
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
-      Get.snackbar("Error", "Tidak dapat membuka URL.");
+      notifHelper.show("Tidak dapat membuka URL.", type: 0);
     }
   }
 

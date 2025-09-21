@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -172,7 +173,7 @@ class DashboardController extends GetxController {
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
-      Get.snackbar("Error", "Tidak dapat membuka URL.");
+      notifHelper.show("Tidak dapat membuka URL.", type: 0);
     }
   }
 
@@ -182,7 +183,7 @@ class DashboardController extends GetxController {
     if (await canLaunchUrl(phoneNumber)) {
       await launchUrl(phoneNumber, mode: LaunchMode.externalApplication);
     } else {
-      Get.snackbar("Error", "Tidak dapat membuka WhatsApp.");
+      notifHelper.show("Tidak dapat membuka WhatsApp.", type: 0);
     }
   }
 

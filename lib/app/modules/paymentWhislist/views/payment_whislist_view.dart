@@ -476,16 +476,32 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                           elevation: 0,
                         ),
                         onPressed:
-                            controller.getTotalHargaFix() > 0
+                            controller.isLoadingButton.value
+                                ? null // disable tombol kalau lagi loading
+                                : controller.getTotalHargaFix() > 0 &&
+                                    controller.paymentMethodId.value != 0
                                 ? () => controller.createPayment()
                                 : null,
-                        child: Text(
-                          "Bayar Sekarang",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
+                        child:
+                            controller.isLoading.value
+                                ? SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                    backgroundColor: Colors.teal.shade100,
+                                  ),
+                                )
+                                : Text(
+                                  "Bayar Sekarang",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
                       ),
                     ),
                   ],
@@ -638,6 +654,10 @@ void showPaymentBottomSheet(BuildContext context) {
                                                 method['image_url'];
                                             controller.paymentType.value =
                                                 data['code'];
+                                            controller
+                                                .metodePembayaran
+                                                .value = (method['code'] ?? '')
+                                                .replaceAll('_', ' ');
                                             if (method['code'] == "OVO") {
                                               showPhoneNumberBottomSheet(
                                                 context,

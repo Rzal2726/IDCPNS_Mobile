@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PaymentDetailController extends GetxController {
   var uuid = Get.arguments;
@@ -25,6 +28,7 @@ class PaymentDetailController extends GetxController {
   RxInt baseHarga = 0.obs;
   RxInt promoAmount = 0.obs;
   RxInt parentId = 0.obs;
+  RxBool isLoading = false.obs;
   // untuk state radio pilihan (sub bimbel)
 
   @override
@@ -64,26 +68,18 @@ class PaymentDetailController extends GetxController {
   }
 
   void pilihPaket(int parentId, Map<String, dynamic> paket) {
+    print("xxxv ${paket.toString()}");
     selectedPaketPerCard[parentId] = paket;
     selectedPaketPerCard.refresh(); // biar Obx ke-update
   }
 
   void pilihMetode(String metode) {
-    metodePembayaran.value = metode;
+    metodePembayaran.value = metode.replaceAll('_', ' ');
   }
 
   Future<void> bayarSekarang() async {
     // Seolah-olah panggil API
-
-    Get.snackbar(
-      "Sukses",
-      "Pembayaran berhasil diproses (dummy)!",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.teal.withOpacity(0.8),
-      colorText: Colors.white,
-      margin: EdgeInsets.all(12),
-      borderRadius: 8,
-    );
+    notifHelper.show("Pembayaran berhasil diproses", type: 1);
     Get.toNamed(Routes.PAYMENT_CHECKOUT);
   }
 
@@ -103,6 +99,7 @@ class PaymentDetailController extends GetxController {
     if (result["status"] == "success") {
       bimbelData.value = result["data"];
       parentId.value = result['data']['bimbel_parent_id'];
+      baseHarga.value = result['data']['harga_fix'];
       final parent = result["data"]['bimbel_parent'];
       if (parent != null) {
         wishListFirstProduct.value = parent['name'] ?? '';
@@ -114,7 +111,7 @@ class PaymentDetailController extends GetxController {
       // kalau status bukan success, tampilkan pesan server
       print("Fetch failed: ${result['message']}");
       // bisa juga kasih notif ke user
-      Get.snackbar("Gagal", result['message'] ?? "Terjadi kesalahan");
+      notifHelper.show(result['message'] ?? "Terjadi kesalahan", type: 0);
     }
   }
 
@@ -134,7 +131,7 @@ class PaymentDetailController extends GetxController {
       print("Other Bimbel: ${otherBimbelData.value}");
     } else {
       print("Fetch failed: ${result['message']}");
-      Get.snackbar("Gagal", result['message'] ?? "Terjadi kesalahan");
+      notifHelper.show(result['message'] ?? "Terjadi kesalahan", type: 0);
     }
   }
 
@@ -162,22 +159,22 @@ class PaymentDetailController extends GetxController {
     final result = await _restClient.postData(url: url, payload: payload);
 
     if (result == null) {
-      Get.snackbar("Gagal", "Terjadi kesalahan jaringan");
+      notifHelper.show("Terjadi kesalahan jaringan", type: 0);
       return;
     }
 
     if (result["status"] == "success") {
-      // jika sukses
+      kodePromo.value = promoController.text;
       promoAmount.value = result['data']['nominal'];
       promoCodeName.value = result['data']['voucher_code'];
       promoController.clear();
-      Get.snackbar(
-        "Berhasil",
-        "Kode promo berhasil diterapkan: +Rp ${promoAmount.value}",
+
+      notifHelper.show(
+        "Kode promo berhasil diterapkan: +${formatRupiah(promoAmount.value)}",
+        type: 1,
       );
     } else {
-      // error dari server, walau status 500
-      Get.snackbar("Gagal", result["message"] ?? "Terjadi kesalahan");
+      notifHelper.show(result["message"] ?? "Terjadi kesalahan", type: 0);
     }
   }
 
@@ -205,11 +202,12 @@ class PaymentDetailController extends GetxController {
     required String type,
     required String image,
   }) {
-    print("XXX");
+    print("XXXvs");
     paymentMethod.value = methode;
     paymentMethodId.value = id;
     paymentType.value = type;
     paymentImage.value = image;
+    metodePembayaran.value = methode.replaceAll('_', ' ');
   }
 
   void createPayment() async {
@@ -228,33 +226,38 @@ class PaymentDetailController extends GetxController {
       "payment_method": paymentMethod.value,
       "payment_type": paymentType.value,
       "mobile_number": ovoNumber.value,
-      // "type": "bimbel",
-      // "total_amount": getTotalHargaFix(),
-      // "amount_diskon": promoAmount.value,
-      // "description": wishListFirstProduct.value,
-      // "bundling": true,
-      // "bimbel_parent_id": parentId.value,
-      // "kode_promo": promoCodeName.value,
-      // "items": getSelectedItems(),
-      // "source": "",
-      // "useBalance": false,
-      // "payment_method_id": paymentMethodId.value,
-      // "payment_method": paymentMethod.value,
-      // "payment_type": paymentType.value,
-      // "mobile_number": ovoNumber.value,
     };
-    print("xxx${payload.toString()}");
+
+    print("xxxds${payload.toString()}");
+    isLoading.value = true;
     final result = await _restClient.postData(
       url: baseUrl + apiCreatePayment,
       payload: payload,
     );
+
     if (result["status"] == "success") {
-      Get.toNamed(
-        Routes.PAYMENT_CHECKOUT,
-        arguments: result['data']['payment_id'],
-      );
+      final data = result['data'];
+      print("Xxxc ${result["data"].toString()}");
+      // pindah halaman checkout dulu
+      Get.offNamed(Routes.PAYMENT_CHECKOUT, arguments: data['payment_id']);
+
+      // cek jika ada invoice_url
+      if (data.containsKey('invoice_url') && data['invoice_url'] != null) {
+        final String url = data['invoice_url'];
+        try {
+          final uri = Uri.parse(url);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            print("Tidak bisa buka link: $url");
+          }
+        } catch (e) {
+          print("Error saat buka link: $e");
+        }
+      }
     } else {
       print("Error: ${result['message']}");
     }
+    isLoading.value = false;
   }
 }
