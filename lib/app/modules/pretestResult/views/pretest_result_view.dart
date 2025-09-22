@@ -94,10 +94,7 @@ class PretestResultView extends GetView<PretestResultController> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Tambahan Point',
-                              style: TextStyle(fontSize: 15),
-                            ),
+                            Text('Total Point', style: TextStyle(fontSize: 15)),
                             Text(
                               controller.nilaiData['total_point']?.toString() ??
                                   '',
@@ -113,7 +110,7 @@ class PretestResultView extends GetView<PretestResultController> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Total Point',
+                              'Total point kamu',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,

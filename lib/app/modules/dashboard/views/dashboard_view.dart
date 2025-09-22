@@ -242,19 +242,82 @@ class DashboardView extends GetView<DashboardController> {
                                             Expanded(
                                               child: ElevatedButton.icon(
                                                 onPressed:
-                                                    data['has_pretest'] == false
-                                                        ? () {
-                                                          Get.toNamed(
-                                                            Routes
-                                                                .PRETEST_DETAIL,
-                                                            arguments: {
-                                                              "item": data,
-                                                              "uuidParent":
-                                                                  data['uuid'],
-                                                            },
+                                                    (data['has_pretest'] ==
+                                                            false)
+                                                        ? () async {
+                                                          final uuid =
+                                                              data['uuid']
+                                                                  ?.toString() ??
+                                                              '';
+                                                          final eventUuid =
+                                                              data['event_uuid']
+                                                                  ?.toString() ??
+                                                              '';
+
+                                                          if (uuid.isEmpty ||
+                                                              eventUuid
+                                                                  .isEmpty) {
+                                                            Get.snackbar(
+                                                              'Error',
+                                                              'Data tidak lengkap',
+                                                            );
+                                                            return;
+                                                          }
+
+                                                          // optional: tampilkan loading sementara nge-fetch
+                                                          Get.dialog(
+                                                            Center(
+                                                              child:
+                                                                  CircularProgressIndicator(),
+                                                            ),
+                                                            barrierDismissible:
+                                                                false,
                                                           );
+
+                                                          try {
+                                                            final detail =
+                                                                await controller
+                                                                    .getDetailBimbel(
+                                                                      uuid:
+                                                                          uuid,
+                                                                      eventUuid:
+                                                                          eventUuid,
+                                                                    );
+
+                                                            // tutup loading
+                                                            if (Get.isDialogOpen ??
+                                                                false)
+                                                              Get.back();
+
+                                                            if (detail ==
+                                                                null) {
+                                                              Get.snackbar(
+                                                                'Gagal',
+                                                                'Detail pretest tidak ditemukan',
+                                                              );
+                                                              return;
+                                                            }
+
+                                                            Get.toNamed(
+                                                              Routes
+                                                                  .PRETEST_DETAIL,
+                                                              arguments: {
+                                                                'item': detail,
+                                                                'uuidParent':
+                                                                    uuid,
+                                                              },
+                                                            );
+                                                          } catch (e) {
+                                                            if (Get.isDialogOpen ??
+                                                                false)
+                                                              Get.back();
+                                                            Get.snackbar(
+                                                              'Error',
+                                                              'Terjadi kesalahan: $e',
+                                                            );
+                                                          }
                                                         }
-                                                        : null, //
+                                                        : null,
 
                                                 icon: Icon(
                                                   Icons.assignment,
@@ -281,20 +344,78 @@ class DashboardView extends GetView<DashboardController> {
                                             SizedBox(width: 8),
                                             Expanded(
                                               child: ElevatedButton.icon(
-                                                onPressed: () {
-                                                  // aksi buka kelas
-                                                },
+                                                onPressed:
+                                                    (data['url'] != null &&
+                                                            data['url']
+                                                                .toString()
+                                                                .isNotEmpty)
+                                                        ? () async {
+                                                          final url =
+                                                              data['url']
+                                                                  .toString();
+                                                          if (await canLaunchUrl(
+                                                            Uri.parse(url),
+                                                          )) {
+                                                            await launchUrl(
+                                                              Uri.parse(url),
+                                                              mode:
+                                                                  LaunchMode
+                                                                      .externalApplication,
+                                                            );
+                                                          }
+                                                        }
+                                                        : null, // tombol disable kalau url null/kosong
                                                 icon: Icon(
                                                   Icons.computer,
                                                   size: 18,
+                                                  color:
+                                                      (data['url'] != null &&
+                                                              data['url']
+                                                                  .toString()
+                                                                  .isNotEmpty)
+                                                          ? Colors.white
+                                                          : Colors
+                                                              .grey
+                                                              .shade600,
                                                 ),
-                                                label: Text('Buka Kelas'),
+                                                label: Text(
+                                                  'Buka Kelas',
+                                                  style: TextStyle(
+                                                    color:
+                                                        (data['url'] != null &&
+                                                                data['url']
+                                                                    .toString()
+                                                                    .isNotEmpty)
+                                                            ? Colors.white
+                                                            : Colors
+                                                                .grey
+                                                                .shade600,
+                                                  ),
+                                                ),
                                                 style: ElevatedButton.styleFrom(
                                                   elevation: 0,
-                                                  backgroundColor: Colors.teal,
-                                                  foregroundColor: Colors.white,
+                                                  backgroundColor:
+                                                      (data['url'] != null &&
+                                                              data['url']
+                                                                  .toString()
+                                                                  .isNotEmpty)
+                                                          ? Colors
+                                                              .teal // aktif
+                                                          : Colors
+                                                              .grey
+                                                              .shade300, // non-aktif
                                                   side: BorderSide(
-                                                    color: Colors.teal,
+                                                    color:
+                                                        (data['url'] != null &&
+                                                                data['url']
+                                                                    .toString()
+                                                                    .isNotEmpty)
+                                                            ? Colors
+                                                                .teal
+                                                                .shade700
+                                                            : Colors
+                                                                .grey
+                                                                .shade300,
                                                   ),
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:

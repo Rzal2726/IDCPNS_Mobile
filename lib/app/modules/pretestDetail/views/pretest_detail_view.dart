@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -12,12 +13,7 @@ class PretestDetailView extends GetView<PretestDetailController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text("Pretest Detail", style: AppStyle.appBarTitle),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: Colors.black,
-      ),
+      appBar: basicAppBarWithoutNotif("Detail Pretest"),
       body: Obx(() {
         final isLoading = controller.item.isEmpty;
 

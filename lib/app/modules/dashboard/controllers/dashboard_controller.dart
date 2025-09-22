@@ -123,6 +123,39 @@ class DashboardController extends GetxController {
     }
   }
 
+  Future<Map?> getDetailBimbel({
+    required String uuid,
+    required String eventUuid,
+  }) async {
+    try {
+      final url = baseUrl + apiGetDetailBimbelSaya + "/" + uuid;
+
+      final result = await _restClient.getData(url: url);
+
+      if (result["status"] == "success") {
+        final data = result['data'];
+        final events = data['bimbel']?['events'] as List?;
+
+        if (events != null) {
+          print("eventx");
+          final event = events.firstWhere(
+            (e) => e['uuid'] == eventUuid,
+            orElse: () => {},
+          );
+
+          if (event.isNotEmpty) {
+            print("event: ${event.toString()}");
+            return Map.from(event);
+          }
+        }
+      }
+    } catch (e) {
+      print("Error getDetailBimbel: $e");
+    }
+
+    return null;
+  }
+
   Future<void> getTryoutEvent() async {
     try {
       final url = await baseUrl + apiGetTryoutEvent;

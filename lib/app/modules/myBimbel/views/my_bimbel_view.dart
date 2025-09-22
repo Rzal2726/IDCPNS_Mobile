@@ -15,221 +15,230 @@ class MyBimbelView extends GetView<MyBimbelController> {
   const MyBimbelView({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: secondaryAppBar(
-        "Bimbel Saya",
-        onBack: () {
-          Get.offNamed(Routes.HOME, arguments: {'initialIndex': 2});
-        },
-      ),
-      body: SafeArea(
-        child: Obx(() {
-          final data = (controller.listBimbel['data'] as List?) ?? [];
+    return PopScope(
+      canPop: false, // biar kita handle manual
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        // Arahkan tombol back fisik HP ke halaman BIMBEL
+        Get.offNamed(Routes.HOME, arguments: {'initialIndex': 3});
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: secondaryAppBar(
+          "Bimbel Saya",
+          onBack: () {
+            Get.offNamed(Routes.HOME, arguments: {'initialIndex': 3});
+          },
+        ),
+        body: SafeArea(
+          child: Obx(() {
+            final data = (controller.listBimbel['data'] as List?) ?? [];
 
-          return Padding(
-            padding: AppStyle.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title & subtitle
-                //   'Bimbel Saya',
-                //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                // ),      Text(
-                SizedBox(height: 4),
-                Text(
-                  'Pilih bimbel dan belajar bersama peserta lainnya.',
-                  style: TextStyle(color: Colors.grey),
-                ),
-                SizedBox(height: 16),
+            return Padding(
+              padding: AppStyle.screenPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title & subtitle
+                  //   'Bimbel Saya',
+                  //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  // ),      Text(
+                  SizedBox(height: 4),
+                  Text(
+                    'Pilih bimbel dan belajar bersama peserta lainnya.',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  SizedBox(height: 16),
 
-                // Search bar
-                SearchRowButton(
-                  controller: controller.searchController,
-                  onSearch: () {
-                    controller.getData(
-                      menuCategoryId:
-                          controller.selectedKategoriId.value?.toString(),
-                      search: controller.searchController.text,
-                    );
-                  },
-                  hintText: 'Cari',
-                ),
+                  // Search bar
+                  SearchRowButton(
+                    controller: controller.searchController,
+                    onSearch: () {
+                      controller.getData(
+                        menuCategoryId:
+                            controller.selectedKategoriId.value?.toString(),
+                        search: controller.searchController.text,
+                      );
+                    },
+                    hintText: 'Cari',
+                  ),
 
-                SizedBox(height: 30),
+                  SizedBox(height: 30),
 
-                // Filter button
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () => showBimbelBottomSheet(context),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Filter',
-                          style: TextStyle(color: Colors.teal, fontSize: 16),
-                        ),
-                        Icon(Icons.keyboard_arrow_down, color: Colors.teal),
-                      ],
+                  // Filter button
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () => showBimbelBottomSheet(context),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Filter',
+                            style: TextStyle(color: Colors.teal, fontSize: 16),
+                          ),
+                          Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 15),
-                // ganti bagian ini:
-                data.isEmpty
-                    ? FutureBuilder(
-                      future: Future.delayed(Duration(seconds: 5)),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Skeletonizer(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: 3,
-                              itemBuilder:
-                                  (context, index) => Container(
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    padding: EdgeInsets.all(14),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.shade300,
-                                          blurRadius: 4,
-                                          offset: Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          height: 20,
-                                          width: 80,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                        SizedBox(height: 7),
-                                        Container(
-                                          height: 16,
-                                          width: 120,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                        SizedBox(height: 7),
-                                        Container(
-                                          height: 14,
-                                          width: 160,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                            ),
-                          );
-                        } else {
-                          return EmptyStateWidget(
-                            message: 'Belum ada Bimbel yang tersedia saat ini',
-                          );
-                        }
-                      },
-                    )
-                    : ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        final item = data[index];
-                        return InkWell(
-                          onTap:
-                              () => Get.toNamed(
-                                Routes.DETAIL_MY_BIMBEL,
-                                arguments: item['uuid'],
-                              ),
-                          child: Container(
-                            margin: EdgeInsets.only(bottom: 20),
-                            padding: EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.shade300,
-                                  blurRadius: 4,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Color(
-                                      int.parse(
-                                        item['hex'].toString().replaceFirst(
-                                          '#',
-                                          '0xff',
-                                        ),
+                  SizedBox(height: 15),
+                  // ganti bagian ini:
+                  data.isEmpty
+                      ? FutureBuilder(
+                        future: Future.delayed(Duration(seconds: 5)),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Skeletonizer(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: 3,
+                                itemBuilder:
+                                    (context, index) => Container(
+                                      margin: EdgeInsets.only(bottom: 20),
+                                      padding: EdgeInsets.all(14),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.shade300,
+                                            blurRadius: 4,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            height: 20,
+                                            width: 80,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                          SizedBox(height: 7),
+                                          Container(
+                                            height: 16,
+                                            width: 120,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                          SizedBox(height: 7),
+                                          Container(
+                                            height: 14,
+                                            width: 160,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    borderRadius: BorderRadius.circular(8),
+                              ),
+                            );
+                          } else {
+                            return EmptyStateWidget(
+                              message:
+                                  'Belum ada Bimbel yang tersedia saat ini',
+                            );
+                          }
+                        },
+                      )
+                      : ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          final item = data[index];
+                          return InkWell(
+                            onTap:
+                                () => Get.toNamed(
+                                  Routes.DETAIL_MY_BIMBEL,
+                                  arguments: item['uuid'],
+                                ),
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 20),
+                              padding: EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade300,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
                                   ),
-                                  child: Text(
-                                    item['menu'] ?? '',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Color(
+                                        int.parse(
+                                          item['hex'].toString().replaceFirst(
+                                            '#',
+                                            '0xff',
+                                          ),
+                                        ),
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      item['menu'] ?? '',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 7),
-                                Text(
-                                  item['bimbel_parent_name'] ?? '',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                  SizedBox(height: 7),
+                                  Text(
+                                    item['bimbel_parent_name'] ?? '',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 7),
-                                Text(
-                                  item['bimbel_name'] ?? '',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 13,
+                                  SizedBox(height: 7),
+                                  Text(
+                                    item['bimbel_name'] ?? '',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 13,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
+                          );
+                        },
+                      ),
 
-                SizedBox(height: 20), // jarak sebelum pagination
-                // Pagination
-                if (controller.listBimbel['data'] != null &&
-                    controller.listBimbel['data'].isNotEmpty)
-                  Center(
-                    child: ReusablePagination(
-                      currentPage: controller.currentPage,
-                      totalPage: controller.totalPage,
-                      goToPage: controller.goToPage,
-                      nextPage: controller.nextPage,
-                      prevPage: controller.prevPage,
+                  SizedBox(height: 20), // jarak sebelum pagination
+                  // Pagination
+                  if (controller.listBimbel['data'] != null &&
+                      controller.listBimbel['data'].isNotEmpty)
+                    Center(
+                      child: ReusablePagination(
+                        currentPage: controller.currentPage,
+                        totalPage: controller.totalPage,
+                        goToPage: controller.goToPage,
+                        nextPage: controller.nextPage,
+                        prevPage: controller.prevPage,
+                      ),
                     ),
-                  ),
-              ],
-            ),
-          );
-        }),
+                ],
+              ),
+            );
+          }),
+        ),
       ),
     );
   }

@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
+import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,13 +21,13 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
       onPopInvoked: (didPop) async {
         if (didPop) return;
         // Arahkan tombol back fisik HP ke halaman BIMBEL
-        Get.toNamed(Routes.MY_BIMBEL);
+        Get.offNamed(Routes.MY_BIMBEL);
       },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: secondaryAppBar(
           "Detail Bimbel Saya",
-          onBack: () => Get.toNamed(Routes.MY_BIMBEL),
+          onBack: () => Get.offNamed(Routes.MY_BIMBEL),
         ),
         body: Obx(() {
           var data = controller.bimbelData;
@@ -47,7 +49,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                         side: BorderSide(color: Colors.grey.shade300),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -59,7 +61,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                   child: Text(
                                     data['bimbel']?['bimbel_parent']?['name'] ??
                                         '██████████',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20,
                                     ),
@@ -67,7 +69,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                SizedBox(height: 4),
                                 Skeleton.replace(
                                   child: Text(
                                     data['bimbel']?['name'] ?? '███████',
@@ -81,17 +83,17 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: 12),
 
                             // ===== MASA AKTIF =====
-                            const Text(
+                            Text(
                               'Masa Aktif',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: 4),
 
                             // Progress Bar (mirip card tryout)
                             Builder(
@@ -114,12 +116,12 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                       minHeight: 12,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    const SizedBox(height: 8),
+                                    SizedBox(height: 8),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Text(
+                                        Text(
                                           'Sisa Hari',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -128,7 +130,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                         ),
                                         Text(
                                           "$remainingDays Hari Lagi",
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14,
                                             color: Colors.black87,
@@ -140,30 +142,52 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                 );
                               },
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
 
                             // ===== BUTTON UBAH PAKET =====
                             SizedBox(
                               width: double.infinity,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
+                              child: Obx(() {
+                                // cek apakah loading atau data kosong
+                                final isLoading =
+                                    controller.bimbelBuyData.isEmpty;
+
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.teal,
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
                                   ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  // Fungsi lama dipertahankan
-                                },
-                                child: const Text(
-                                  "Ganti Paket",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
+                                  onPressed:
+                                      isLoading
+                                          ? null // tombol tidak bisa ditekan saat loading
+                                          : () {
+                                            buildBuyBimbelDialog(
+                                              context,
+                                              controller,
+                                            );
+                                          },
+                                  child:
+                                      isLoading
+                                          ? SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                          : Text(
+                                            "Ganti Paket",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                );
+                              }),
                             ),
                           ],
                         ),
@@ -195,7 +219,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                         splashColor: Colors.teal.withOpacity(0.2),
                         child: Container(
                           width: 100,
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             vertical: 16,
                             horizontal: 12,
                           ),
@@ -207,7 +231,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                               BoxShadow(
                                 color: Colors.teal.withOpacity(0.08),
                                 blurRadius: 6,
-                                offset: const Offset(0, 3),
+                                offset: Offset(0, 3),
                               ),
                             ],
                           ),
@@ -219,13 +243,13 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                 'assets/icon/iconBuku.svg',
                                 width: 36,
                                 height: 36,
-                                colorFilter: const ColorFilter.mode(
+                                colorFilter: ColorFilter.mode(
                                   Colors.teal,
                                   BlendMode.srcIn,
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              const Text(
+                              SizedBox(height: 10),
+                              Text(
                                 'Materi',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -251,7 +275,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                         splashColor: Colors.red.withOpacity(0.2),
                         child: Container(
                           width: 100,
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             vertical: 16,
                             horizontal: 12,
                           ),
@@ -263,7 +287,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                               BoxShadow(
                                 color: Colors.red.withOpacity(0.08),
                                 blurRadius: 6,
-                                offset: const Offset(0, 3),
+                                offset: Offset(0, 3),
                               ),
                             ],
                           ),
@@ -275,13 +299,13 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                 'assets/icon/iconRekaman.svg',
                                 width: 36,
                                 height: 36,
-                                colorFilter: const ColorFilter.mode(
+                                colorFilter: ColorFilter.mode(
                                   Colors.red,
                                   BlendMode.srcIn,
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              const Text(
+                              SizedBox(height: 10),
+                              Text(
                                 'Rekaman',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -314,7 +338,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                         splashColor: Colors.blue.withOpacity(0.2),
                         child: Container(
                           width: 100,
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             vertical: 16,
                             horizontal: 12,
                           ),
@@ -326,7 +350,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                               BoxShadow(
                                 color: Colors.blue.withOpacity(0.08),
                                 blurRadius: 6,
-                                offset: const Offset(0, 3),
+                                offset: Offset(0, 3),
                               ),
                             ],
                           ),
@@ -338,13 +362,13 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                 'assets/icon/iconPesawatKertas.svg',
                                 width: 36,
                                 height: 36,
-                                colorFilter: const ColorFilter.mode(
+                                colorFilter: ColorFilter.mode(
                                   Colors.blue,
                                   BlendMode.srcIn,
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              const Text(
+                              SizedBox(height: 10),
+                              Text(
                                 'Group',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -587,8 +611,14 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                             Expanded(
                                               child: ElevatedButton.icon(
                                                 onPressed:
-                                                    item['can_pretest'] == true
+                                                    (item['has_pretest'] ==
+                                                                false &&
+                                                            item['can_pretest'] ==
+                                                                true)
                                                         ? () {
+                                                          print(
+                                                            "xxxv ${item['has_pretest']} dan ${item['can_pretest'].toString()}",
+                                                          );
                                                           Get.toNamed(
                                                             Routes
                                                                 .PRETEST_DETAIL,
@@ -604,33 +634,56 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                                           );
                                                         }
                                                         : null, // null = tombol disabled
+
                                                 icon: Icon(
                                                   Icons.assignment,
                                                   size: 18,
+                                                  color:
+                                                      (item['has_pretest'] ==
+                                                                  false &&
+                                                              item['can_pretest'] ==
+                                                                  true)
+                                                          ? Colors
+                                                              .white // icon putih kalau aktif
+                                                          : Colors
+                                                              .grey
+                                                              .shade600, // icon abu kalau disable
                                                 ),
-                                                label: Text('Pretest'),
+                                                label: Text(
+                                                  'Pretest',
+                                                  style: TextStyle(
+                                                    color:
+                                                        (item['has_pretest'] ==
+                                                                    false &&
+                                                                item['can_pretest'] ==
+                                                                    true)
+                                                            ? Colors
+                                                                .white // teks putih kalau aktif
+                                                            : Colors
+                                                                .grey
+                                                                .shade600, // teks abu kalau disable
+                                                  ),
+                                                ),
                                                 style: ElevatedButton.styleFrom(
                                                   elevation: 0,
                                                   backgroundColor:
-                                                      item['can_pretest'] ==
-                                                              true
-                                                          ? Colors.teal
+                                                      (item['has_pretest'] ==
+                                                                  false &&
+                                                              item['can_pretest'] ==
+                                                                  true)
+                                                          ? Colors
+                                                              .amber // kuning kalau aktif
                                                           : Colors
                                                               .grey
-                                                              .shade300, // abu-abu kalau disabled
-                                                  foregroundColor:
-                                                      item['can_pretest'] ==
-                                                              true
-                                                          ? Colors.white
-                                                          : Colors
-                                                              .grey
-                                                              .shade600,
+                                                              .shade300, // abu-abu kalau disable
                                                   side: BorderSide(
                                                     color:
-                                                        item['can_pretest'] ==
-                                                                true
+                                                        (item['has_pretest'] ==
+                                                                    false &&
+                                                                item['can_pretest'] ==
+                                                                    true)
                                                             ? Colors
-                                                                .teal
+                                                                .amber
                                                                 .shade700
                                                             : Colors
                                                                 .grey
@@ -649,23 +702,72 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                                 ),
                                               ),
                                             ),
+
                                             SizedBox(width: 8),
                                             Expanded(
                                               child: ElevatedButton.icon(
-                                                onPressed: () {
-                                                  // aksi buka kelas
-                                                },
+                                                onPressed:
+                                                    (item['url'] != null &&
+                                                            item['url']
+                                                                .toString()
+                                                                .isNotEmpty)
+                                                        ? () async {
+                                                          final url =
+                                                              item['url']
+                                                                  .toString();
+                                                          if (await canLaunchUrl(
+                                                            Uri.parse(url),
+                                                          )) {
+                                                            await launchUrl(
+                                                              Uri.parse(url),
+                                                              mode:
+                                                                  LaunchMode
+                                                                      .externalApplication,
+                                                            );
+                                                          }
+                                                        }
+                                                        : null, // disable kalau url null/kosong
                                                 icon: Icon(
                                                   Icons.video_call,
                                                   size: 18,
+                                                  color:
+                                                      (item['url'] != null &&
+                                                              item['url']
+                                                                  .toString()
+                                                                  .isNotEmpty)
+                                                          ? Colors
+                                                              .white // icon putih kalau aktif
+                                                          : Colors
+                                                              .grey
+                                                              .shade700, // icon abu kalau disable
                                                 ),
-                                                label: Text('Buka Kelas'),
+                                                label: Text(
+                                                  'Buka Kelas',
+                                                  style: TextStyle(
+                                                    color:
+                                                        (item['url'] != null &&
+                                                                item['url']
+                                                                    .toString()
+                                                                    .isNotEmpty)
+                                                            ? Colors
+                                                                .white // teks putih kalau aktif
+                                                            : Colors
+                                                                .grey
+                                                                .shade700, // teks abu kalau disable
+                                                  ),
+                                                ),
                                                 style: ElevatedButton.styleFrom(
                                                   elevation: 0,
                                                   backgroundColor:
-                                                      Colors.grey.shade100,
-                                                  foregroundColor:
-                                                      Colors.grey.shade700,
+                                                      (item['url'] != null &&
+                                                              item['url']
+                                                                  .toString()
+                                                                  .isNotEmpty)
+                                                          ? Colors
+                                                              .teal // aktif
+                                                          : Colors
+                                                              .grey
+                                                              .shade100, // non-aktif
                                                   side: BorderSide(
                                                     color: Colors.grey.shade300,
                                                   ),
@@ -763,35 +865,62 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                               Expanded(
                                 child: ElevatedButton.icon(
                                   onPressed:
-                                      item['can_pretest'] == true
+                                      (item['has_pretest'] == false &&
+                                              item['can_pretest'] == true)
                                           ? () {
                                             Get.toNamed(
                                               Routes.PRETEST_DETAIL,
                                               arguments: {
-                                                "item": data,
-                                                "uuidParent": data['uuid'],
+                                                "item": item,
+                                                "uuidParent":
+                                                    controller
+                                                        .bimbelData['uuid'],
                                               },
                                             );
+                                            print("xxx ${item.toString()}");
                                           }
                                           : null, // null = tombol disabled
-                                  icon: Icon(Icons.assignment, size: 18),
-                                  label: Text('Pretest'),
+
+                                  icon: Icon(
+                                    Icons.assignment,
+                                    size: 18,
+                                    color:
+                                        (item['has_pretest'] == false &&
+                                                item['can_pretest'] == true)
+                                            ? Colors
+                                                .white // icon putih kalau aktif
+                                            : Colors
+                                                .grey
+                                                .shade600, // icon abu kalau disable
+                                  ),
+                                  label: Text(
+                                    'Pretest',
+                                    style: TextStyle(
+                                      color:
+                                          (item['has_pretest'] == false &&
+                                                  item['can_pretest'] == true)
+                                              ? Colors
+                                                  .white // teks putih kalau aktif
+                                              : Colors
+                                                  .grey
+                                                  .shade600, // teks abu kalau disable
+                                    ),
+                                  ),
                                   style: ElevatedButton.styleFrom(
                                     elevation: 0,
                                     backgroundColor:
-                                        item['can_pretest'] == true
-                                            ? Colors.teal
+                                        (item['has_pretest'] == false &&
+                                                item['can_pretest'] == true)
+                                            ? Colors
+                                                .amber // kuning kalau aktif
                                             : Colors
                                                 .grey
-                                                .shade300, // abu-abu kalau disabled
-                                    foregroundColor:
-                                        item['can_pretest'] == true
-                                            ? Colors.white
-                                            : Colors.grey.shade600,
+                                                .shade300, // abu-abu kalau disable
                                     side: BorderSide(
                                       color:
-                                          item['can_pretest'] == true
-                                              ? Colors.teal.shade700
+                                          (item['has_pretest'] == false &&
+                                                  item['can_pretest'] == true)
+                                              ? Colors.amber.shade700
                                               : Colors.grey.shade300,
                                     ),
                                     shape: RoundedRectangleBorder(
@@ -802,18 +931,71 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                   ),
                                 ),
                               ),
+
                               SizedBox(width: 8),
                               Expanded(
                                 child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    // aksi buka kelas
-                                  },
-                                  icon: Icon(Icons.video_call, size: 18),
-                                  label: Text('Buka Kelas'),
+                                  onPressed:
+                                      (item['url'] != null &&
+                                              item['url'].toString().isNotEmpty)
+                                          ? () async {
+                                            final url = item['url'].toString();
+                                            if (await canLaunchUrl(
+                                              Uri.parse(url),
+                                            )) {
+                                              await launchUrl(
+                                                Uri.parse(url),
+                                                mode:
+                                                    LaunchMode
+                                                        .externalApplication,
+                                              );
+                                            } else {
+                                              Get.snackbar(
+                                                "Error",
+                                                "Tidak bisa membuka link",
+                                              );
+                                            }
+                                          }
+                                          : null,
+                                  icon: Icon(
+                                    Icons.video_call,
+                                    size: 18,
+                                    color:
+                                        (item['url'] != null &&
+                                                item['url']
+                                                    .toString()
+                                                    .isNotEmpty)
+                                            ? Colors
+                                                .white // icon putih kalau aktif
+                                            : Colors
+                                                .grey
+                                                .shade700, // icon abu kalau disable
+                                  ),
+                                  label: Text(
+                                    'Buka Kelas',
+                                    style: TextStyle(
+                                      color:
+                                          (item['url'] != null &&
+                                                  item['url']
+                                                      .toString()
+                                                      .isNotEmpty)
+                                              ? Colors
+                                                  .white // teks putih kalau aktif
+                                              : Colors
+                                                  .grey
+                                                  .shade700, // teks abu kalau disable
+                                    ),
+                                  ),
                                   style: ElevatedButton.styleFrom(
                                     elevation: 0,
-                                    backgroundColor: Colors.grey.shade100,
-                                    foregroundColor: Colors.grey.shade700,
+                                    backgroundColor:
+                                        (item['url'] != null &&
+                                                item['url']
+                                                    .toString()
+                                                    .isNotEmpty)
+                                            ? Colors
+                                                .teal // aktif
+                                            : Colors.grey.shade100, // non-aktif
                                     side: BorderSide(
                                       color: Colors.grey.shade300,
                                     ),
@@ -836,6 +1018,220 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
             ),
           );
         }),
+      ),
+    );
+  }
+
+  void buildBuyBimbelDialog(
+    BuildContext context,
+    DetailMyBimbelController controller,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Pilih Bimbel",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+
+                // 🔽 Pakai fungsi _buildRadioOption
+                Column(
+                  children: [
+                    for (
+                      int i = 0;
+                      i < controller.bimbelBuyData['bimbel'].length;
+                      i++
+                    )
+                      Obx(() {
+                        final subData = controller.bimbelBuyData['bimbel'][i];
+
+                        // filter paket yang sedang ditampilkan
+                        if (!(subData['is_showing'] ?? false)) {
+                          return SizedBox.shrink();
+                        }
+
+                        // index paket pertama yang sudah dibeli
+                        final firstPurchasedIndex = controller
+                            .bimbelBuyData['bimbel']
+                            .indexWhere((e) => e['is_purchase'] == true);
+
+                        // skip paket yang lebih murah dari paket yang sudah dibeli
+                        if (firstPurchasedIndex != -1 &&
+                            i < firstPurchasedIndex) {
+                          return SizedBox.shrink();
+                        }
+
+                        // harga yang ditampilkan dikurangi harga paket yang sudah dibeli
+
+                        final hargaTampil = controller.hitungHargaTampil(
+                          subData,
+                          i,
+                          controller.bimbelBuyData['bimbel'],
+                        );
+
+                        // disable jika paket sudah dibeli
+                        final isDisabled =
+                            (firstPurchasedIndex != -1 &&
+                                i == firstPurchasedIndex);
+                        print("xxx ${subData['uuid'].toString()}");
+                        return _buildRadioOption(
+                          subData['name'], // title
+                          formatRupiah(subData['harga']), // harga lama
+                          hargaTampil.toString(), // harga baru
+                          subData['uuid'], // value radio
+                          controller, // controller
+                          isDisabled: isDisabled, // disable jika sudah dibeli
+                        );
+                      }),
+                  ],
+                ),
+                SizedBox(height: 16),
+
+                // Tombol Lanjutkan
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      if (controller.selectedPaket.value == "") {
+                        notifHelper.show(
+                          "Silakan pilih paket terlebih dahulu.",
+                          type: 0,
+                        );
+                        return;
+                      }
+                      Get.offNamed(
+                        Routes.PAYMENT_DETAIL,
+                        arguments: [
+                          controller.selectedPaket.value,
+                          controller.hargaFix.value,
+                        ],
+                      );
+                    },
+                    child: Text(
+                      "Lanjutkan",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRadioOption(
+    String title,
+    String oldPrice,
+    String newPrice,
+    String uuid,
+    DetailMyBimbelController controller, {
+    bool isDisabled = false,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Kiri: Radio + Title (dibungkus Expanded biar gak dorong kanan keluar)
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Obx(
+                  () => Radio<String>(
+                    value: uuid,
+                    groupValue: controller.selectedPaket.value,
+                    onChanged:
+                        isDisabled
+                            ? null
+                            : (value) {
+                              if (value != null) {
+                                controller.pilihPaket(value);
+                                controller.hargaFix.value = int.parse(newPrice);
+                              }
+                            },
+                    activeColor: Colors.teal,
+                  ),
+                ),
+                // Judul paket (wrap text kalau kepanjangan)
+                Flexible(
+                  child: Text(
+                    title,
+                    style: TextStyle(fontSize: 14),
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2, // batasi 2 baris biar rapih
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(width: 8),
+
+          // Kanan: Harga (dibungkus Flexible supaya wrap atau shrink)
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  oldPrice,
+                  style: TextStyle(
+                    decoration: TextDecoration.lineThrough,
+                    color: Colors.grey,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                SizedBox(height: 4),
+                if (!isDisabled)
+                  Text(
+                    formatRupiah(newPrice),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
