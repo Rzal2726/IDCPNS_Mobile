@@ -384,8 +384,8 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
   /// --- Bottomsheet metode pembayaran ---
   Widget _metodePembayaran(BuildContext context) {
     return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      child: Container(
+        margin: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -396,88 +396,107 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
             const SizedBox(height: 12),
 
             // 🔹 Virtual Account
-            Text(
-              "Virtual Account",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 180, // tinggi fix biar nggak overflow
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.virtualAccount.length,
-                itemBuilder: (context, index) {
-                  final data = controller.virtualAccount[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: _methodCard(
-                      SvgPicture.network(data['image_url']),
-                      name: data['name'],
-                      title: data['name'],
-                      subtitle: "Biaya Admin: Rp ${data['biaya_admin']}",
-                      value: data,
-                      context: context,
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Virtual Account",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 180, // tinggi fix biar nggak overflow
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.virtualAccount.length,
+                        itemBuilder: (context, index) {
+                          final data = controller.virtualAccount[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: _methodCard(
+                              SvgPicture.network(data['image_url']),
+                              name: data['name'],
+                              title: data['name'],
+                              subtitle:
+                                  "Biaya Admin: Rp ${data['biaya_admin']}",
+                              value: data,
+                              context: context,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
 
-            // 🔹 E-Wallet
-            Text(
-              "E-Wallet",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 180, // tinggi fix biar nggak overflow
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.eWallet.length,
-                itemBuilder: (context, index) {
-                  final data = controller.eWallet[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: _methodCard(
-                      SvgPicture.network(data['image_url']),
-                      name: data['name'],
-                      title: data['name'],
-                      value: data,
-                      subtitle: "Biaya Admin: ${data['biaya_admin']}",
-                      context: context,
+                    // 🔹 E-Wallet
+                    Text(
+                      "E-Wallet",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 180, // tinggi fix biar nggak overflow
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.eWallet.length,
+                        itemBuilder: (context, index) {
+                          final data = controller.eWallet[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: _methodCard(
+                              SvgPicture.network(data['image_url']),
+                              name: data['name'],
+                              title: data['name'],
+                              value: data,
+                              subtitle: "Biaya Admin: ${data['biaya_admin']}",
+                              context: context,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
 
-            // 🔹 QR Payments
-            Text(
-              "QR Payments",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 180, // tinggi fix biar nggak overflow
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.QR.length,
-                itemBuilder: (context, index) {
-                  final data = controller.QR[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: _methodCard(
-                      SvgPicture.network(data['image_url']),
-                      name: data['name'],
-                      title: data['name'],
-                      value: data,
-                      subtitle: "Biaya Admin: ${data['biaya_admin']}",
-                      context: context,
+                    // 🔹 QR Payments
+                    Text(
+                      "QR Payments",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
-                  );
-                },
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 180, // tinggi fix biar nggak overflow
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.QR.length,
+                        itemBuilder: (context, index) {
+                          final data = controller.QR[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: _methodCard(
+                              SvgPicture.network(data['image_url']),
+                              name: data['name'],
+                              title: data['name'],
+                              value: data,
+                              subtitle: "Biaya Admin: ${data['biaya_admin']}",
+                              context: context,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

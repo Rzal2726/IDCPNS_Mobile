@@ -36,6 +36,7 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+    
     signingConfigs {
         create("release") {
             keyAlias = keystoreProperties["keyAlias"] as String
