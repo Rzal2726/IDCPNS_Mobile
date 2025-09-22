@@ -190,7 +190,7 @@ class KategoriView extends GetView<KategoriController> {
                 }
 
                 return SizedBox(
-                  height: 224,
+                  height: 180,
                   child: PageView.builder(
                     controller: PageController(viewportFraction: 0.85),
                     itemCount: controller.eventTryout.length,
@@ -1029,12 +1029,14 @@ class KategoriView extends GetView<KategoriController> {
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16),
         child: Card(
-          elevation: 3,
-          shadowColor: Colors.teal.withOpacity(0.2),
-          color: Colors.white,
+          elevation: 0,
+          color: Color.fromARGB(255, 231, 246, 243),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Colors.teal.shade100, width: 1),
+            side: BorderSide(
+              color: Color.fromARGB(255, 183, 228, 219),
+              width: 1,
+            ),
           ),
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: Padding(
@@ -1047,8 +1049,8 @@ class KategoriView extends GetView<KategoriController> {
                 // Badge status
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.teal.shade400,
-                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.amber,
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -1106,10 +1108,21 @@ class KategoriView extends GetView<KategoriController> {
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
-                        "Periode: $periode",
+                        "Periode: ",
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.black87,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        "$periode",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.teal,
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
