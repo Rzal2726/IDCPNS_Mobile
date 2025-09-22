@@ -27,6 +27,7 @@ class EBookController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    checkMaintenance();
     initEbook();
   }
 
@@ -43,6 +44,15 @@ class EBookController extends GetxController {
   Future<void> initEbook() async {
     await getEbook();
     await getCategoryList();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 
   Future<void> getEbook() async {

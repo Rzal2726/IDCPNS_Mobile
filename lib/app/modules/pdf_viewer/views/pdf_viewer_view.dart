@@ -17,19 +17,23 @@ class PdfViewerView extends GetView<PdfViewerController> {
         iconTheme: const IconThemeData(color: Colors.black),
         elevation: 1,
       ),
-      body: Obx(
-        () =>
-            controller.url.value == ''
-                ? Skeletonizer(child: Text("data"))
-                : syncfusion.SfPdfViewer.network(
-                  controller.url.value,
-                  enableTextSelection: false,
-                  canShowScrollStatus: true, // status saat scroll
-                  canShowTextSelectionMenu: false,
-                  onDocumentLoadFailed: (details) {
-                    Get.back();
-                  },
-                ),
+      body: SafeArea(
+        child: Obx(
+          () =>
+              controller.url.value == ''
+                  ? Skeletonizer(child: Text("data"))
+                  : syncfusion.SfPdfViewer.network(
+                    pageLayoutMode: syncfusion.PdfPageLayoutMode.single,
+                    scrollDirection: syncfusion.PdfScrollDirection.horizontal,
+                    controller.url.value,
+                    enableTextSelection: false,
+                    canShowScrollStatus: true, // status saat scroll
+                    canShowTextSelectionMenu: false,
+                    onDocumentLoadFailed: (details) {
+                      Get.back();
+                    },
+                  ),
+        ),
       ),
     );
   }

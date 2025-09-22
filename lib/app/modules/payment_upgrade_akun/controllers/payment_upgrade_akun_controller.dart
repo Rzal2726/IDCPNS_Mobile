@@ -36,6 +36,7 @@ class PaymentUpgradeAkunController extends GetxController {
   void onInit() {
     super.onInit();
     initPayment();
+    checkMaintenance();
   }
 
   @override
@@ -275,5 +276,14 @@ class PaymentUpgradeAkunController extends GetxController {
     promoCode.value = "";
     diskon.value = 0;
     initHarga();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

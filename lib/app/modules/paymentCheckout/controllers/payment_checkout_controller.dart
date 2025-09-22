@@ -19,6 +19,7 @@ class PaymentCheckoutController extends GetxController {
 
   @override
   void onInit() {
+    checkMaintenance();
     fetchDetailPayment();
     fetchServerTime();
     startFetchingDetailPayment();
@@ -141,5 +142,14 @@ class PaymentCheckoutController extends GetxController {
 
   List<String> get instruksiAktif {
     return selectedTab.value == "ATM" ? instruksiATM : instruksiMbanking;
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await _restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

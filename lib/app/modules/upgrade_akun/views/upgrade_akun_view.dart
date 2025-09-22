@@ -237,130 +237,137 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
                                       showModalBottomSheet(
                                         context: context,
                                         backgroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(
+                                        shape: const RoundedRectangleBorder(
                                           borderRadius: BorderRadius.vertical(
                                             top: Radius.circular(16),
                                           ),
                                         ),
                                         builder: (context) {
                                           return SafeArea(
-                                            child: SingleChildScrollView(
-                                              child: Container(
-                                                padding: const EdgeInsets.all(
-                                                  16,
-                                                ),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: const [
-                                                            Text(
-                                                              "Bonus",
-                                                              style: TextStyle(
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
+                                            child: Container(
+                                              padding: const EdgeInsets.all(16),
+                                              child: Column(
+                                                children: [
+                                                  // ====== Header tetap di atas ======
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      const Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            "Bonus",
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
-                                                            Text(
-                                                              "Silahkan Pilih Bonus",
+                                                          ),
+                                                          Text(
+                                                            "Silahkan Pilih Bonus",
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      IconButton(
+                                                        onPressed:
+                                                            () => Navigator.pop(
+                                                              context,
                                                             ),
-                                                          ],
-                                                        ),
-                                                        IconButton(
-                                                          onPressed:
-                                                              () =>
-                                                                  Navigator.pop(
-                                                                    context,
-                                                                  ),
-                                                          icon: Icon(
-                                                            Icons.close,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      children:
-                                                          controller.listBonus.map((
-                                                            element,
-                                                          ) {
-                                                            return _bonusCard(
-                                                              badgeText:
-                                                                  element['menu_category']?['menu'] ??
-                                                                  "CPNS",
-                                                              badgeColor:
-                                                                  controller
-                                                                      .categoryColor[element['menu_category']?['menu']]!,
-                                                              title:
-                                                                  element['formasi'] ??
-                                                                  "Bonus CPNS",
-                                                              uuid:
-                                                                  element['uuid']
-                                                                      .toString(),
-                                                            );
-                                                          }).toList(),
-                                                    ),
-                                                    SizedBox(
-                                                      width: double.infinity,
-                                                      child: ElevatedButton(
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor:
-                                                              Colors
-                                                                  .teal, // warna tombol
-                                                          foregroundColor:
-                                                              Colors
-                                                                  .white, // warna teks/icon
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  8,
-                                                                ),
-                                                          ),
-                                                          padding:
-                                                              const EdgeInsets.symmetric(
-                                                                horizontal: 12,
-                                                                vertical: 12,
-                                                              ),
-                                                        ),
-                                                        onPressed: () {
-                                                          if (controller
-                                                                  .selectedBonusUuid
-                                                                  .value ==
-                                                              "") {
-                                                            Get.snackbar(
-                                                              "Gagal",
-                                                              "Silahkan pilih bonus terlebih dahulu",
-
-                                                              backgroundColor:
-                                                                  Colors.pink,
-                                                              colorText:
-                                                                  Colors.white,
-                                                            );
-                                                            return;
-                                                          }
-                                                          Navigator.pop(
-                                                            context,
-                                                          );
-                                                          controller
-                                                              .upgradeSekarang();
-                                                        },
-                                                        child: Text(
-                                                          "Lanjutkan Pembayaran",
+                                                        icon: const Icon(
+                                                          Icons.close,
                                                         ),
                                                       ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 12),
+
+                                                  // ====== ListView Scrollable ======
+                                                  SizedBox(
+                                                    height: 320,
+                                                    child: ListView.builder(
+                                                      itemCount:
+                                                          controller
+                                                              .listBonus
+                                                              .length,
+                                                      itemBuilder: (
+                                                        context,
+                                                        index,
+                                                      ) {
+                                                        final element =
+                                                            controller
+                                                                .listBonus[index];
+
+                                                        return _bonusCard(
+                                                          badgeText:
+                                                              element['menu_category']?['menu'] ??
+                                                              "CPNS",
+                                                          badgeColor:
+                                                              controller
+                                                                  .categoryColor[element['menu_category']?['menu']]!,
+                                                          title:
+                                                              element['formasi'] ??
+                                                              "Bonus CPNS",
+                                                          uuid:
+                                                              element['uuid']
+                                                                  .toString(),
+                                                        );
+                                                      },
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+
+                                                  const SizedBox(height: 12),
+
+                                                  // ====== Tombol tetap di bawah ======
+                                                  SizedBox(
+                                                    width: double.infinity,
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.teal,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 12,
+                                                              vertical: 12,
+                                                            ),
+                                                      ),
+                                                      onPressed: () {
+                                                        if (controller
+                                                                .selectedBonusUuid
+                                                                .value ==
+                                                            "") {
+                                                          Get.snackbar(
+                                                            "Gagal",
+                                                            "Silahkan pilih bonus terlebih dahulu",
+                                                            backgroundColor:
+                                                                Colors.pink,
+                                                            colorText:
+                                                                Colors.white,
+                                                          );
+                                                          return;
+                                                        }
+                                                        Navigator.pop(context);
+                                                        controller
+                                                            .upgradeSekarang();
+                                                      },
+                                                      child: const Text(
+                                                        "Lanjutkan Pembayaran",
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           );

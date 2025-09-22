@@ -10,6 +10,8 @@ import '../modules/bimbelRicord/bindings/bimbel_ricord_binding.dart';
 import '../modules/bimbelRicord/views/bimbel_ricord_view.dart';
 import '../modules/changePassword/bindings/change_password_binding.dart';
 import '../modules/changePassword/views/change_password_view.dart';
+import '../modules/checkout_gagal/bindings/checkout_gagal_binding.dart';
+import '../modules/checkout_gagal/views/checkout_gagal_view.dart';
 import '../modules/checkout_upgrade_akun/bindings/checkout_upgrade_akun_binding.dart';
 import '../modules/checkout_upgrade_akun/views/checkout_upgrade_akun_view.dart';
 import '../modules/commisionDetail/bindings/commision_detail_binding.dart';
@@ -516,6 +518,11 @@ class AppPages {
       name: _Paths.TRYOUT_EVENT_PAYMENT,
       page: () => const TryoutEventPaymentView(),
       binding: TryoutEventPaymentBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHECKOUT_GAGAL,
+      page: () => const CheckoutGagalView(),
+      binding: CheckoutGagalBinding(),
     ),
   ];
 }

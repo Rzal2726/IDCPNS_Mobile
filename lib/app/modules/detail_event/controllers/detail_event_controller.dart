@@ -19,6 +19,7 @@ class DetailEventController extends GetxController {
   void onInit() {
     super.onInit();
     initEvent();
+    checkMaintenance();
   }
 
   @override
@@ -54,5 +55,14 @@ class DetailEventController extends GetxController {
     );
     var formattedValue = customFormatter.format(int.parse(number));
     return formattedValue.toString();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

@@ -39,6 +39,7 @@ class DetailTryoutController extends GetxController {
   void onInit() async {
     super.onInit();
     await initData();
+    checkMaintenance();
   }
 
   @override
@@ -147,6 +148,15 @@ class DetailTryoutController extends GetxController {
     } finally {
       isLoading['image'] = false;
       isLoading['detail'] = false;
+    }
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
     }
   }
 }

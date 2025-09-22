@@ -31,6 +31,7 @@ class PeringkatTryoutHarianController extends GetxController {
   void onInit() {
     super.onInit();
     initRank();
+    checkMaintenance();
   }
 
   @override
@@ -110,4 +111,12 @@ class PeringkatTryoutHarianController extends GetxController {
   }
 
   // { kota_kabupaten: number; menu_category_uuid: string; params: string; perpage: number; provinsi: number; search: string }
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
+  }
 }

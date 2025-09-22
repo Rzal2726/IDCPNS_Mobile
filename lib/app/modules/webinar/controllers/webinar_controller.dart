@@ -29,6 +29,7 @@ class WebinarController extends GetxController {
   void onInit() {
     super.onInit();
     initEbook();
+    checkMaintenance();
   }
 
   @override
@@ -44,6 +45,15 @@ class WebinarController extends GetxController {
   Future<void> initEbook() async {
     await getWebinar();
     await getCategoryList();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 
   Future<void> getWebinar() async {

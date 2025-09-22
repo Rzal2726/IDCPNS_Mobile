@@ -14,6 +14,7 @@ class CommisionDetailController extends GetxController {
   void onInit() {
     getRincianKomisi();
     super.onInit();
+    checkMaintenance();
   }
 
   @override
@@ -64,6 +65,15 @@ class CommisionDetailController extends GetxController {
       }
     } catch (e) {
       print("Error polling email verification: $e");
+    }
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await _restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
     }
   }
 }

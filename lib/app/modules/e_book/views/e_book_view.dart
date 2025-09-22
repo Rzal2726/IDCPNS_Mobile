@@ -337,7 +337,7 @@ class EBookView extends GetView<EBookController> {
                           );
                         }
                         return SafeArea(
-                          child: SingleChildScrollView(
+                          child: Container(
                             padding: EdgeInsets.all(16),
                             child: Column(
                               children: [
@@ -359,151 +359,178 @@ class EBookView extends GetView<EBookController> {
                                     ),
                                   ],
                                 ),
-                                ...controller.eBookList.map((data) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // Text dari title
-                                      Text(
-                                        data['nama'] ?? '',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: controller.eBookList.length,
+                                    shrinkWrap:
+                                        true, // biar bisa dipakai di dalam widget lain seperti Column
+                                    itemBuilder: (context, index) {
+                                      final data = controller.eBookList[index];
+
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0,
                                         ),
-                                      ),
-                                      const SizedBox(width: 8),
-
-                                      // Tombol aksi
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          Get.dialog(
-                                            Dialog(
-                                              backgroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(
-                                                  16,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // ===== Teks judul eBook =====
+                                            Expanded(
+                                              child: Text(
+                                                data['nama'] ?? '',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    // Title
-                                                    Text(
-                                                      "Syarat dan Ketentuan",
-                                                      style: const TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 12),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
 
-                                                    // Message
-                                                    Text(
-                                                      "Saya setuju untuk tidak menyebarkan konten-konten yang ada di website IDCPNS kepada pihak lain.",
-                                                      textAlign:
-                                                          TextAlign.justify,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                      ),
+                                            // ===== Tombol Aksi =====
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                Get.dialog(
+                                                  Dialog(
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            12,
+                                                          ),
                                                     ),
-                                                    const SizedBox(height: 20),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                            16,
+                                                          ),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          // ===== Title =====
+                                                          const Text(
+                                                            "Syarat dan Ketentuan",
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 12,
+                                                          ),
 
-                                                    // Actions
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        // Cancel Button
-                                                        Expanded(
-                                                          child: ElevatedButton(
-                                                            style: ElevatedButton.styleFrom(
-                                                              backgroundColor:
-                                                                  Colors.white,
-                                                              shape: RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      8,
+                                                          // ===== Message =====
+                                                          const Text(
+                                                            "Saya setuju untuk tidak menyebarkan konten-konten "
+                                                            "yang ada di website IDCPNS kepada pihak lain.",
+                                                            textAlign:
+                                                                TextAlign
+                                                                    .justify,
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 20,
+                                                          ),
+
+                                                          // ===== Action Buttons =====
+                                                          Row(
+                                                            children: [
+                                                              // Cancel Button
+                                                              Expanded(
+                                                                child: ElevatedButton(
+                                                                  style: ElevatedButton.styleFrom(
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                            8,
+                                                                          ),
+                                                                      side: const BorderSide(
+                                                                        color:
+                                                                            Colors.teal,
+                                                                      ),
                                                                     ),
-                                                                side: BorderSide(
-                                                                  color:
-                                                                      Colors
-                                                                          .teal,
+                                                                  ),
+                                                                  onPressed: () {
+                                                                    Get.back();
+                                                                  },
+                                                                  child: const Text(
+                                                                    "Tidak Setuju",
+                                                                    style: TextStyle(
+                                                                      color:
+                                                                          Colors
+                                                                              .teal,
+                                                                    ),
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            onPressed: () {
-                                                              Get.back();
-                                                            },
-                                                            child: Text(
-                                                              "Tidak Setuju",
-                                                              style: TextStyle(
-                                                                color:
-                                                                    Colors.teal,
+                                                              const SizedBox(
+                                                                width: 8,
                                                               ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 8,
-                                                        ),
 
-                                                        // Confirm Button
-                                                        Expanded(
-                                                          child: ElevatedButton(
-                                                            style: ElevatedButton.styleFrom(
-                                                              backgroundColor:
-                                                                  Colors.teal,
-                                                              shape: RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      8,
+                                                              // Confirm Button
+                                                              Expanded(
+                                                                child: ElevatedButton(
+                                                                  style: ElevatedButton.styleFrom(
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .teal,
+                                                                    shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                            8,
+                                                                          ),
                                                                     ),
+                                                                  ),
+                                                                  onPressed: () {
+                                                                    Get.back();
+                                                                    Get.toNamed(
+                                                                      "/pdf-viewer",
+                                                                      arguments:
+                                                                          data['link'],
+                                                                    );
+                                                                  },
+                                                                  child: const Text(
+                                                                    "Setuju",
+                                                                    style: TextStyle(
+                                                                      color:
+                                                                          Colors
+                                                                              .white,
+                                                                    ),
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
-                                                            onPressed: () {
-                                                              Get.back();
-                                                              Get.toNamed(
-                                                                "/pdf-viewer",
-                                                                arguments:
-                                                                    data['link'],
-                                                              );
-                                                            },
-                                                            child: Text(
-                                                              "Setuju",
-                                                              style: TextStyle(
-                                                                color:
-                                                                    Colors
-                                                                        .white,
-                                                              ),
-                                                            ),
+                                                            ],
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ],
+                                                  ),
+                                                );
+                                              },
+                                              child: Text(
+                                                data['action'] ?? 'Buka',
+                                                style: const TextStyle(
+                                                  color: Colors.teal,
                                                 ),
                                               ),
                                             ),
-                                          );
-                                        },
-                                        child: Text(
-                                          data['action'] ?? 'Aksi',
-                                          style: const TextStyle(
-                                            color: Colors.teal,
-                                          ),
+                                          ],
                                         ),
-                                      ),
-                                    ],
-                                  );
-                                }).toList(),
+                                      );
+                                    },
+                                  ),
+                                ),
                               ],
                             ),
                           ),

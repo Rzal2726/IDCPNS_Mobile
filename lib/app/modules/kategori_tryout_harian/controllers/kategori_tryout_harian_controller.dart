@@ -15,7 +15,7 @@ class KategoriTryoutHarianController extends GetxController {
   void onInit() {
     super.onInit();
     initTryout();
-    print("Get.arguments");
+    checkMaintenance();
   }
 
   @override
@@ -56,5 +56,14 @@ class KategoriTryoutHarianController extends GetxController {
         }).toList();
     print("data.length: ${data.length.toString()}");
     tryoutList.assignAll(filteredData);
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

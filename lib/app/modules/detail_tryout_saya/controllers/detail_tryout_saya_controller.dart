@@ -41,6 +41,7 @@ class DetailTryoutSayaController extends GetxController {
   void onInit() async {
     super.onInit();
     await initTryoutSaya();
+    checkMaintenance();
   }
 
   @override
@@ -215,6 +216,15 @@ class DetailTryoutSayaController extends GetxController {
   void checkList() {
     print("listJabatan: ${listJabatan}");
     print("listInstansi: ${listInstansi}");
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }
 

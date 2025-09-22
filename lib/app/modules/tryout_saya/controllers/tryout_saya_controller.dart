@@ -56,6 +56,7 @@ class TryoutSayaController extends GetxController {
   void onInit() {
     super.onInit();
     initAll();
+    checkMaintenance();
   }
 
   @override
@@ -66,6 +67,15 @@ class TryoutSayaController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 
   Future<void> initAll() async {

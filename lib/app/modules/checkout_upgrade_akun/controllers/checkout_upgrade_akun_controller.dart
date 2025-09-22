@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CheckoutUpgradeAkunController extends GetxController {
@@ -18,6 +20,10 @@ class CheckoutUpgradeAkunController extends GetxController {
   RxString timeStamp = "".obs;
   RxBool isDeveloper = false.obs;
   RxBool isRedirected = false.obs;
+  RxBool isSuccess = false.obs;
+  RxBool isInit = false.obs;
+  DateTime? initialTime;
+
   final count = 0.obs;
   @override
   void onInit() {
@@ -25,6 +31,7 @@ class CheckoutUpgradeAkunController extends GetxController {
     initPayment();
     fetchServerTime();
     startFetchingDetailPayment();
+    checkMaintenance();
   }
 
   @override
@@ -75,6 +82,24 @@ class CheckoutUpgradeAkunController extends GetxController {
     if (paymentDetails.isNotEmpty) {
       if (paymentDetails['tanggal_paid'] == null) {
         print("Belum Dibayar");
+        if (isInit.value == true) {
+          final pref = await SharedPreferences.getInstance();
+          DateTime? isOvo;
+          if (paymentDetails['payment_details'][0]['xendit_payment_method_id'] ==
+              10) {
+            isOvo = DateTime.parse(
+              pref.getString("initTime")!,
+            ).add(Duration(minutes: 1));
+          } else {
+            isOvo = DateTime.parse(
+              pref.getString("initTime")!,
+            ).add(Duration(days: 1));
+          }
+          if (paymentDetails[''])
+            if (DateTime.now().isAfter(isOvo)) {
+              Get.offNamed("/checkout-gagal");
+            }
+        }
         if (isRedirected.value == false) {
           if (data['invoice_url'] != null) {
             final Uri url = Uri.parse(data['invoice_url']);
@@ -111,6 +136,14 @@ class CheckoutUpgradeAkunController extends GetxController {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
       timestampInMilliseconds * 1000,
     );
+    if (isInit.value == false) {
+      initialTime = DateTime.fromMillisecondsSinceEpoch(
+        timestampInMilliseconds * 1000,
+      );
+      isInit.value = true;
+      final preferences = await SharedPreferences.getInstance();
+      preferences.setString("initTime", initialTime.toString());
+    }
 
     // Simpan hasil ke observable
     timeStamp.value = dateTime.toString();
@@ -156,5 +189,14 @@ class CheckoutUpgradeAkunController extends GetxController {
     print("kadaluarsa: ${fixedDate}");
     print("timeStamp: ${currentDate}");
     return currentDate.isAfter(fixedDate); // true jika currentDate > fixedDate
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

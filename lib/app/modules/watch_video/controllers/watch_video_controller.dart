@@ -24,6 +24,7 @@ class WatchVideoController extends GetxController {
   void onInit() {
     super.onInit();
     initVideoSeries();
+    checkMaintenance();
   }
 
   @override
@@ -38,6 +39,15 @@ class WatchVideoController extends GetxController {
 
   void test() {
     print("object");
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 
   Future<void> initVideoSeries() async {

@@ -13,6 +13,7 @@ class HasilTryoutController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    checkMaintenance();
     initHasil();
   }
 
@@ -30,6 +31,15 @@ class HasilTryoutController extends GetxController {
     uuid = await Get.arguments;
     await getDetailTryout();
     await getNilai();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 
   Future<void> getNilai() async {

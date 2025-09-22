@@ -29,6 +29,7 @@ class TryoutCheckoutController extends GetxController {
     fetchServerTime();
     startFetchingDetailPayment();
     super.onInit();
+    checkMaintenance();
   }
 
   @override
@@ -41,6 +42,15 @@ class TryoutCheckoutController extends GetxController {
     stopFetchingDetailPayment();
 
     super.onClose();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 
   Future<void> initPayment() async {

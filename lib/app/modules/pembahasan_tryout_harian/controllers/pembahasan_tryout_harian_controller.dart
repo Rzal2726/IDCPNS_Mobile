@@ -14,6 +14,7 @@ class PembahasanTryoutHarianController extends GetxController {
   void onInit() {
     super.onInit();
     initPembahasan();
+    checkMaintenance();
   }
 
   @override
@@ -108,5 +109,14 @@ class PembahasanTryoutHarianController extends GetxController {
     });
 
     return isCorrect;
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

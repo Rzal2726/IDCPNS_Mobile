@@ -30,6 +30,7 @@ class DetailBimbelController extends GetxController
     super.onInit();
     getCheckWhislist();
     getDetailBimbel(id: idBimbel);
+    checkMaintenance();
 
     tabController = TabController(length: 3, vsync: this);
   }
@@ -77,11 +78,11 @@ class DetailBimbelController extends GetxController
               }).toList();
 
           if (filtered.isNotEmpty) {
+            // ambil data terakhir dari list awal yang sudah di-filter
             final lastItem = filtered.first;
-            final index = data['bimbel'].indexOf(lastItem);
 
+            // ambil index pertama dari list awal setelah filter → ini sebenarnya lastItem
             selectedPaket.value = lastItem['uuid'];
-            hargaFix.value = hitungHargaTampil(lastItem, index, data['bimbel']);
             print("xxx3 ${selectedPaket.toString()}");
           }
         } else {
@@ -263,6 +264,15 @@ class DetailBimbelController extends GetxController
   void prevPage() {
     if (currentPage.value > 1) {
       currentPage.value--;
+    }
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await _restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
     }
   }
 

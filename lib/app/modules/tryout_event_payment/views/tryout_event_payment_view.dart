@@ -699,7 +699,6 @@ class TryoutEventPaymentView extends GetView<TryoutEventPaymentController> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Column(
           spacing: 8,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -709,6 +708,7 @@ class TryoutEventPaymentView extends GetView<TryoutEventPaymentController> {
               "Voucher",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
+            SizedBox(height: 8),
             TextField(
               onChanged: (value) {
                 controller.voucherController.value = controller
