@@ -97,7 +97,7 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
             ),
 
             // ✅ Overlay muncul saat akun belum upgrade
-            if (controller.data['level_expired_at'] == null)
+            if (controller.userData['level_name'] == "Basic")
               Positioned.fill(
                 child: Container(
                   color: Colors.black.withOpacity(0.5),

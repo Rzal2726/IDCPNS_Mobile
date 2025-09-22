@@ -60,7 +60,6 @@ class DetailVideoController extends GetxController {
   void onInit() async {
     super.onInit();
     initDetailVideo();
-    checkMaintenance();
   }
 
   @override
@@ -481,15 +480,6 @@ class DetailVideoController extends GetxController {
       videoElement.currentTime = $detik;
     }
   """);
-    }
-  }
-
-  Future<void> checkMaintenance() async {
-    final response = await restClient.getData(
-      url: baseUrl + apiCheckMaintenance,
-    );
-    if (response['is_maintenance']) {
-      Get.offAllNamed("/maintenance");
     }
   }
 }

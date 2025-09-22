@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-
+import 'package:idcpns_mobile/app/Components/widgets/wdigetTryoutEventCard.dart';
 import '../controllers/tryout_controller.dart';
 
 class TryoutView extends GetView<TryoutController> {
@@ -384,33 +384,34 @@ class TryoutView extends GetView<TryoutController> {
                   }
 
                   return Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: SizedBox(
-                      height: 180,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: controller.eventTryout.length,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                        ), // jarak kiri-kanan
-                        itemBuilder: (ctx, index) {
-                          final event = controller.eventTryout[index];
-
-                          return SizedBox(
-                            width:
-                                MediaQuery.of(ctx).size.width *
-                                0.85, // fill 85% lebar layar
-                            child: _eventTryoutGratis(
-                              event["uuid"].toString(),
-                              event["label_text"].toString(),
-                              event['name'].toString(),
-                              controller.formatTanggalRange(
-                                "${event["startdate"].toString().substring(0, 10)} - ${event["enddate"].toString().substring(0, 10)}",
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          for (var data in controller.eventTryout)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: SizedBox(
+                                width: 300, // biar card rapi & konsisten
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Get.toNamed(
+                                      "/detail-event",
+                                      arguments: data['uuid'],
+                                    );
+                                  },
+                                  child: buildTryoutCard(
+                                    status: data['label_text'],
+                                    title: data['name'],
+                                    dateRange: data['range_date_string'],
+                                    period: data['periode_text'],
+                                  ),
+                                ),
                               ),
-                              event["periode_text"].toString(),
                             ),
-                          );
-                        },
+                        ],
                       ),
                     ),
                   );
