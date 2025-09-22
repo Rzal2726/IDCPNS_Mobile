@@ -25,6 +25,7 @@ class UpgradeAkunController extends GetxController {
   void onInit() {
     super.onInit();
     initUpgrade();
+    checkMaintenance();
   }
 
   @override
@@ -35,6 +36,15 @@ class UpgradeAkunController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 
   Future<void> initUpgrade() async {

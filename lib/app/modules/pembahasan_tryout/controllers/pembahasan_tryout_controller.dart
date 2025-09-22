@@ -15,6 +15,7 @@ class PembahasanTryoutController extends GetxController {
   void onInit() {
     super.onInit();
     initPembahasan();
+    checkMaintenance();
   }
 
   @override
@@ -84,6 +85,15 @@ class PembahasanTryoutController extends GetxController {
         backgroundColor: Colors.pink,
         colorText: Colors.white,
       );
+    }
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
     }
   }
 }

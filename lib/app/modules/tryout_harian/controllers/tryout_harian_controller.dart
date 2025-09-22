@@ -19,6 +19,7 @@ class TryoutHarianController extends GetxController {
   void onInit() {
     super.onInit();
     initKategori();
+    checkMaintenance();
   }
 
   @override
@@ -33,6 +34,15 @@ class TryoutHarianController extends GetxController {
 
   void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     today = selectedDay;
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 
   Future<void> initKategori() async {

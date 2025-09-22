@@ -24,6 +24,7 @@ class DetailTryoutHarianController extends GetxController {
   void onInit() {
     super.onInit();
     initTryout();
+    checkMaintenance();
   }
 
   @override
@@ -49,5 +50,14 @@ class DetailTryoutHarianController extends GetxController {
     );
     Map<String, dynamic> data = Map<String, dynamic>.from(response['data']);
     dataTryout.assignAll(data);
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

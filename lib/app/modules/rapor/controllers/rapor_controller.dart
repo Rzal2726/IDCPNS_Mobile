@@ -19,6 +19,7 @@ class RaporController extends GetxController {
   void onInit() async {
     super.onInit();
     await initRapor();
+    checkMaintenance();
   }
 
   @override
@@ -130,6 +131,15 @@ class RaporController extends GetxController {
   List<String> get statisticLabels {
     if (statistics.isEmpty) return [];
     return statistics.map((e) => e.label).toList();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }
 

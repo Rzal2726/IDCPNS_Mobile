@@ -510,7 +510,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                           controller.currentPage.value;
                                       final total = controller.totalPage.value;
 
-                                      if (total == 0) {
+                                      if (total <= 1) {
                                         return const SizedBox.shrink(); // tidak ada halaman
                                       }
 
@@ -675,142 +675,114 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                   spacing: 16,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Obx(
-                                      () => SizedBox(
-                                        width: 100,
-                                        child: _badge(
-                                          title: controller.duration.value,
-                                          foregroundColor: Colors.white,
-                                          backgroundColor: Colors.teal,
-                                          radius: 4,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: double.infinity,
-                                      height: 300, // ✅ Tentukan tinggi
-                                      child: Container(
-                                        padding: EdgeInsets.all(16),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            width: 0.5,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        child: RichEditor(
-                                          key: controller.keyEditor,
-                                          editorOptions: RichEditorOptions(
-                                            enableVideo: false,
-                                            placeholder: 'Buat Catatan',
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 5.0,
-                                            ),
-                                            baseFontFamily: 'sans-serif',
-                                            barPosition: BarPosition.TOP,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    // Obx(
-                                    //   () =>
-
-                                    //   //  TextField(
-                                    //   //   controller: controller.questionController,
-                                    //   //   maxLines: 1,
-                                    //   //   decoration: InputDecoration(
-                                    //   //     hintText:
-                                    //   //         "Buat Catatan pada durasi ${controller.duration.value}",
-                                    //   //     border: OutlineInputBorder(
-                                    //   //       borderRadius: BorderRadius.circular(
-                                    //   //         8,
-                                    //   //       ),
-                                    //   //     ),
-                                    //   //     contentPadding: const EdgeInsets.all(
-                                    //   //       12,
-                                    //   //     ),
-                                    //   //   ),
-                                    //   // ),
+                                    Obx(() {
+                                      return _noteForm(controller.isNote.value);
+                                    }),
+                                    // SizedBox(
+                                    //   width: double.infinity,
+                                    //   height: 300, // ✅ Tentukan tinggi
+                                    //   child: Container(
+                                    //     padding: EdgeInsets.all(16),
+                                    //     decoration: BoxDecoration(
+                                    //       border: Border.all(
+                                    //         width: 0.5,
+                                    //         color: Colors.grey,
+                                    //       ),
+                                    //     ),
+                                    //     child: RichEditor(
+                                    //       key: controller.keyEditor,
+                                    //       editorOptions: RichEditorOptions(
+                                    //         enableVideo: false,
+                                    //         placeholder: 'Buat Catatan',
+                                    //         padding: const EdgeInsets.symmetric(
+                                    //           horizontal: 5.0,
+                                    //         ),
+                                    //         baseFontFamily: 'sans-serif',
+                                    //         barPosition: BarPosition.TOP,
+                                    //       ),
+                                    //     ),
+                                    //   ),
                                     // ),
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.teal,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                          ),
-                                        ),
-                                        onPressed: () async {
-                                          // Ambil HTML dari RichEditor
-                                          final String? html =
-                                              await controller
-                                                  .keyEditor
-                                                  .currentState
-                                                  ?.getHtml();
 
-                                          // Pastikan tidak null
-                                          if (html == null) {
-                                            Get.snackbar(
-                                              "Gagal",
-                                              "Catatan tidak boleh kosong",
-                                              backgroundColor: Colors.pink,
-                                              colorText: Colors.white,
-                                            );
-                                            return;
-                                          }
+                                    // SizedBox(
+                                    //   width: double.infinity,
+                                    //   child: ElevatedButton(
+                                    //     style: ElevatedButton.styleFrom(
+                                    //       backgroundColor: Colors.teal,
+                                    //       foregroundColor: Colors.white,
+                                    //       shape: RoundedRectangleBorder(
+                                    //         borderRadius: BorderRadius.circular(
+                                    //           8,
+                                    //         ),
+                                    //       ),
+                                    //       padding: const EdgeInsets.symmetric(
+                                    //         vertical: 12,
+                                    //       ),
+                                    //     ),
+                                    //     onPressed: () async {
+                                    //       // Ambil HTML dari RichEditor
+                                    //       final String? html =
+                                    //           await controller
+                                    //               .keyEditor
+                                    //               .currentState
+                                    //               ?.getHtml();
 
-                                          // Bersihkan HTML dari tag kosong, whitespace, dan karakter yang tidak penting
-                                          final cleanedHtml =
-                                              html
-                                                  .replaceAll(
-                                                    RegExp(r'<[^>]*>'),
-                                                    '',
-                                                  ) // Hapus semua tag HTML
-                                                  .replaceAll(
-                                                    RegExp(r'&nbsp;'),
-                                                    '',
-                                                  ) // Hapus non-breaking space
-                                                  .trim();
+                                    //       // Pastikan tidak null
+                                    //       if (html == null) {
+                                    //         Get.snackbar(
+                                    //           "Gagal",
+                                    //           "Catatan tidak boleh kosong",
+                                    //           backgroundColor: Colors.pink,
+                                    //           colorText: Colors.white,
+                                    //         );
+                                    //         return;
+                                    //       }
 
-                                          // Validasi setelah dibersihkan
-                                          if (cleanedHtml.isEmpty) {
-                                            Get.snackbar(
-                                              "Gagal",
-                                              "Catatan tidak boleh kosong",
-                                              backgroundColor: Colors.pink,
-                                              colorText: Colors.white,
-                                            );
-                                            return;
-                                          }
+                                    //       // Bersihkan HTML dari tag kosong, whitespace, dan karakter yang tidak penting
+                                    //       final cleanedHtml =
+                                    //           html
+                                    //               .replaceAll(
+                                    //                 RegExp(r'<[^>]*>'),
+                                    //                 '',
+                                    //               ) // Hapus semua tag HTML
+                                    //               .replaceAll(
+                                    //                 RegExp(r'&nbsp;'),
+                                    //                 '',
+                                    //               ) // Hapus non-breaking space
+                                    //               .trim();
 
-                                          // Jika lolos validasi, kirim ke server
-                                          controller.addNote(
-                                            payload: {
-                                              "durasi": controller.detik.value,
-                                              "text":
-                                                  html, // Tetap kirim HTML aslinya
-                                              "topicUuid":
-                                                  controller.videoData['uuid'],
-                                            },
-                                          );
-                                        },
+                                    //       // Validasi setelah dibersihkan
+                                    //       if (cleanedHtml.isEmpty) {
+                                    //         Get.snackbar(
+                                    //           "Gagal",
+                                    //           "Catatan tidak boleh kosong",
+                                    //           backgroundColor: Colors.pink,
+                                    //           colorText: Colors.white,
+                                    //         );
+                                    //         return;
+                                    //       }
 
-                                        child: const Text(
-                                          "Buat",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                    //       // Jika lolos validasi, kirim ke server
+                                    //       controller.addNote(
+                                    //         payload: {
+                                    //           "durasi": controller.detik.value,
+                                    //           "text":
+                                    //               html, // Tetap kirim HTML aslinya
+                                    //           "topicUuid":
+                                    //               controller.videoData['uuid'],
+                                    //         },
+                                    //       );
+                                    //     },
+
+                                    //     child: const Text(
+                                    //       "Buat",
+                                    //       style: TextStyle(
+                                    //         fontSize: 16,
+                                    //         fontWeight: FontWeight.bold,
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
                                     ListView.builder(
                                       shrinkWrap: true,
                                       physics:
@@ -1362,11 +1334,16 @@ class DetailVideoView extends GetView<DetailVideoController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _badge(
-                title: duration,
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.teal,
-                radius: 4,
+              InkWell(
+                onTap: () {
+                  controller.seekTo(time.toInt());
+                },
+                child: _badge(
+                  title: duration,
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.teal,
+                  radius: 4,
+                ),
               ),
               Row(
                 children: [
@@ -1552,5 +1529,186 @@ class DetailVideoView extends GetView<DetailVideoController> {
         ],
       ),
     );
+  }
+
+  Widget _noteForm(bool isNote) {
+    return isNote
+        ? Column(
+          spacing: 16,
+          children: [
+            Obx(
+              () => SizedBox(
+                width: 100,
+                child: _badge(
+                  title: controller.duration.value,
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.teal,
+                  radius: 4,
+                ),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 300, // ✅ Tentukan tinggi
+              child: Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(width: 0.5, color: Colors.grey),
+                ),
+                child: RichEditor(
+                  key: controller.keyEditor,
+                  editorOptions: RichEditorOptions(
+                    enableVideo: false,
+                    placeholder: 'Buat Catatan',
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    baseFontFamily: 'sans-serif',
+                    barPosition: BarPosition.TOP,
+                  ),
+                ),
+              ),
+            ),
+
+            Row(
+              spacing: 16,
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.teal,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.teal),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () {
+                      if (controller.isNote.value) {
+                        controller.isNote.value = false;
+                      } else {
+                        controller.isNote.value = true;
+                      }
+
+                      Future.delayed(const Duration(seconds: 1), () {
+                        controller.keyEditor.currentState?.clear();
+                        print("RichEditor sudah di-clear setelah 5 detik");
+                      });
+                    },
+
+                    child: const Text(
+                      "Batal",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () async {
+                      // Ambil HTML dari RichEditor
+                      final String? html =
+                          await controller.keyEditor.currentState?.getHtml();
+
+                      // Pastikan tidak null
+                      if (html == null) {
+                        Get.snackbar(
+                          "Gagal",
+                          "Catatan tidak boleh kosong",
+                          backgroundColor: Colors.pink,
+                          colorText: Colors.white,
+                        );
+                        return;
+                      }
+
+                      // Bersihkan HTML dari tag kosong, whitespace, dan karakter yang tidak penting
+                      final cleanedHtml =
+                          html
+                              .replaceAll(
+                                RegExp(r'<[^>]*>'),
+                                '',
+                              ) // Hapus semua tag HTML
+                              .replaceAll(
+                                RegExp(r'&nbsp;'),
+                                '',
+                              ) // Hapus non-breaking space
+                              .trim();
+
+                      // Validasi setelah dibersihkan
+                      if (cleanedHtml.isEmpty) {
+                        Get.snackbar(
+                          "Gagal",
+                          "Catatan tidak boleh kosong",
+                          backgroundColor: Colors.pink,
+                          colorText: Colors.white,
+                        );
+                        return;
+                      }
+
+                      // Jika lolos validasi, kirim ke server
+                      controller.addNote(
+                        payload: {
+                          "durasi": controller.detik.value,
+                          "text": html, // Tetap kirim HTML aslinya
+                          "topicUuid": controller.videoData['uuid'],
+                        },
+                      );
+                      controller.playVideo();
+                    },
+
+                    child: const Text(
+                      "Buat",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        )
+        : SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.teal,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.teal),
+
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+            onPressed: () {
+              controller.pauseVideo();
+              if (controller.isNote.value) {
+                controller.isNote.value = false;
+              } else {
+                controller.isNote.value = true;
+              }
+
+              Future.delayed(const Duration(seconds: 1), () {
+                controller.keyEditor.currentState?.clear();
+                print("RichEditor sudah di-clear setelah 5 detik");
+              });
+            },
+            child: Text(
+              "Tulis Catatan pada ${controller.duration.value}",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+        );
   }
 }

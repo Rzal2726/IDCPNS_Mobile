@@ -20,6 +20,7 @@ class ChangePasswordController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    checkMaintenance();
   }
 
   @override
@@ -98,5 +99,14 @@ class ChangePasswordController extends GetxController {
     }
 
     isLoading.value = false;
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await _restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

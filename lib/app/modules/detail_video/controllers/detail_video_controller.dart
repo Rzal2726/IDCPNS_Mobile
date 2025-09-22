@@ -47,6 +47,7 @@ class DetailVideoController extends GetxController {
   RxString currentTime = "00:00".obs;
   RxBool isReady = false.obs;
   RxBool isInit = false.obs;
+  RxBool isNote = false.obs;
   RxInt detik = 0.obs;
   RxInt totalComment = 0.obs;
   RxInt perPage = 5.obs;
@@ -59,6 +60,7 @@ class DetailVideoController extends GetxController {
   void onInit() async {
     super.onInit();
     initDetailVideo();
+    checkMaintenance();
   }
 
   @override
@@ -440,6 +442,54 @@ class DetailVideoController extends GetxController {
       expandedReplies.remove(commentId);
     } else {
       expandedReplies.add(commentId);
+    }
+  }
+
+  Future<void> playVideo() async {
+    if (videoData['isyoutube'] == 1) {
+      ytController.play();
+    } else {
+      await webViewController.runJavaScript("""
+    var videoElement = document.querySelector('video');
+    if (videoElement) {
+      videoElement.play();
+    }
+  """);
+    }
+  }
+
+  Future<void> pauseVideo() async {
+    if (videoData['isyoutube'] == 1) {
+      ytController.pause();
+    } else {
+      await webViewController.runJavaScript("""
+    var videoElement = document.querySelector('video');
+    if (videoElement) {
+      videoElement.pause();
+    }
+  """);
+    }
+  }
+
+  Future<void> seekTo(int detik) async {
+    if (videoData['isyoutube'] == 1) {
+      ytController.seekTo(Duration(seconds: detik));
+    } else {
+      await webViewController.runJavaScript("""
+    var videoElement = document.querySelector('video');
+    if (videoElement) {
+      videoElement.currentTime = $detik;
+    }
+  """);
+    }
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
     }
   }
 }

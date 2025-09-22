@@ -44,6 +44,7 @@ class PeringkatTryoutController extends GetxController {
   void onInit() {
     super.onInit();
     initPeringkat();
+    checkMaintenance();
   }
 
   @override
@@ -150,5 +151,14 @@ class PeringkatTryoutController extends GetxController {
     pesertTidakLulus.value = response['peserta_tidak_lulus'];
     totalPage.value =
         (response['data']['total'] / response['data']['per_page']).floor();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

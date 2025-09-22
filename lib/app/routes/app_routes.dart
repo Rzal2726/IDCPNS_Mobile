@@ -75,6 +75,7 @@ abstract class Routes {
   static const PAYMENT_WHISLIST = _Paths.PAYMENT_WHISLIST;
   static const LENGKAPI_BIODATA = _Paths.LENGKAPI_BIODATA;
   static const TRYOUT_EVENT_PAYMENT = _Paths.TRYOUT_EVENT_PAYMENT;
+  static const CHECKOUT_GAGAL = _Paths.CHECKOUT_GAGAL;
 }
 
 abstract class _Paths {
@@ -152,4 +153,5 @@ abstract class _Paths {
   static const PAYMENT_WHISLIST = '/payment-whislist';
   static const LENGKAPI_BIODATA = '/lengkapi-biodata';
   static const TRYOUT_EVENT_PAYMENT = '/tryout-event-payment';
+  static const CHECKOUT_GAGAL = '/checkout-gagal';
 }

@@ -10,6 +10,7 @@ class HasilTryoutHarianController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    checkMaintenance();
     initHasil();
   }
 
@@ -37,5 +38,14 @@ class HasilTryoutHarianController extends GetxController {
       response['data'],
     );
     nilaiChart.assignAll(data);
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

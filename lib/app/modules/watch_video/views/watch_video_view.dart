@@ -135,6 +135,7 @@ class WatchVideoView extends GetView<WatchVideoController> {
                               side: BorderSide(color: Colors.grey.shade300),
                             ),
                             child: ExpansionTile(
+                              initiallyExpanded: index == 0,
                               shape: RoundedRectangleBorder(
                                 side: BorderSide(color: Colors.transparent),
                               ),
@@ -160,14 +161,14 @@ class WatchVideoView extends GetView<WatchVideoController> {
                                     final video = videos[vidIndex];
                                     return InkWell(
                                       onTap: () async {
-                                        final result = await Get.toNamed(
+                                        Get.toNamed(
                                           "/detail-video",
                                           arguments: video['uuid'],
-                                        );
-                                        if (result == 'refresh') {
-                                          controller
-                                              .initVideoSeries(); // Fungsi di halaman A
-                                        }
+                                        )?.then((result) {
+                                          if (result == 'refresh') {
+                                            controller.initVideoSeries();
+                                          }
+                                        });
                                       },
                                       child: ListTile(
                                         contentPadding:
@@ -180,7 +181,16 @@ class WatchVideoView extends GetView<WatchVideoController> {
                                               video['video_completed'].isEmpty
                                                   ? false
                                                   : true, // nanti bisa diubah ke RxBool
-                                          onChanged: (val) {},
+                                          onChanged: (val) {
+                                            Get.toNamed(
+                                              "/detail-video",
+                                              arguments: video['uuid'],
+                                            )?.then((result) {
+                                              if (result == 'refresh') {
+                                                controller.initVideoSeries();
+                                              }
+                                            });
+                                          },
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
                                               4,
@@ -204,11 +214,14 @@ class WatchVideoView extends GetView<WatchVideoController> {
                                             color: Colors.teal,
                                           ),
                                           onPressed: () {
-                                            // Aksi play video
                                             Get.toNamed(
                                               "/detail-video",
                                               arguments: video['uuid'],
-                                            );
+                                            )?.then((result) {
+                                              if (result == 'refresh') {
+                                                controller.initVideoSeries();
+                                              }
+                                            });
                                           },
                                         ),
                                       ),

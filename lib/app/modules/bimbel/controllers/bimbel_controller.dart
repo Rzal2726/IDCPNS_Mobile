@@ -26,6 +26,7 @@ class BimbelController extends GetxController {
     getBimbel();
     getKategori();
     super.onInit();
+    checkMaintenance();
   }
 
   @override
@@ -130,6 +131,15 @@ class BimbelController extends GetxController {
         menuCategoryId: selectedKategoriId.value?.toString(),
       );
       // panggil API fetch data di sini
+    }
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await _restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
     }
   }
 }

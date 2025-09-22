@@ -16,6 +16,7 @@ class DetailWebinarController extends GetxController {
   void onInit() {
     super.onInit();
     initWebinar();
+    checkMaintenance();
   }
 
   @override
@@ -56,5 +57,14 @@ class DetailWebinarController extends GetxController {
       DateTime.parse("$newDate $newTime"),
     );
     return [formattedDate.toString(), formattedTime.toString()];
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

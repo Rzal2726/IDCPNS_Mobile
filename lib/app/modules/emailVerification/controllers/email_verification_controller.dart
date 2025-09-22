@@ -25,6 +25,7 @@ class EmailVerificationController extends GetxController {
     startCountdown(); // mulai countdown otomatis
     // polling email sementara tetap di-comment
     startEmailVerificationPolling();
+    checkMaintenance();
   }
 
   @override
@@ -120,5 +121,14 @@ class EmailVerificationController extends GetxController {
         print("Error polling email verification: $e");
       }
     });
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await _restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 }

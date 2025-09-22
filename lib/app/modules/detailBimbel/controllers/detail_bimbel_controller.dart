@@ -29,6 +29,7 @@ class DetailBimbelController extends GetxController
     super.onInit();
     getCheckWhislist();
     getDetailBimbel(id: idBimbel);
+    checkMaintenance();
 
     tabController = TabController(length: 3, vsync: this);
   }
@@ -262,6 +263,15 @@ class DetailBimbelController extends GetxController
   void prevPage() {
     if (currentPage.value > 1) {
       currentPage.value--;
+    }
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await _restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
     }
   }
 }

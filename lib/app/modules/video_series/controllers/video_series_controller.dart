@@ -33,6 +33,7 @@ class VideoSeriesController extends GetxController {
   void onInit() {
     super.onInit();
     initVideoSeries();
+    checkMaintenance();
   }
 
   @override
@@ -43,6 +44,15 @@ class VideoSeriesController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 
   Future<void> initVideoSeries() async {

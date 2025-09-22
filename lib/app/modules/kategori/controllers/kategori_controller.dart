@@ -49,6 +49,7 @@ class KategoriController extends GetxController {
   void onInit() {
     super.onInit();
     initKategori();
+    checkMaintenance();
   }
 
   @override
@@ -214,6 +215,15 @@ class KategoriController extends GetxController {
       return "${formatter.format(start)} - ${formatterWithYear.format(end)}";
     } else {
       return "${formatterWithYear.format(start)} - ${formatterWithYear.format(end)}";
+    }
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
     }
   }
 }

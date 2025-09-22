@@ -39,6 +39,7 @@ class TryoutPaymentController extends GetxController {
   void onInit() {
     super.onInit();
     startInit();
+    checkMaintenance();
   }
 
   @override
@@ -49,6 +50,15 @@ class TryoutPaymentController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
+    }
   }
 
   Future<void> startInit() async {

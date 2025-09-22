@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import '../controllers/platinum_zone_controller.dart';
 
 class PlatinumZoneView extends GetView<PlatinumZoneController> {
@@ -26,46 +26,8 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
               ),
             ],
           ),
-          child: AppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: Colors.white,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            title: Image.asset(
-              'assets/logo.png', // Dummy logo
-              height: 55,
-            ),
-            actions: [
-              Stack(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.notifications_none,
-                      color: Colors.teal,
-                    ),
-                    onPressed: () {
-                      Get.to(NotificationView());
-                    },
-                  ),
-                  Positioned(
-                    right: 10,
-                    top: 10,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Text(
-                        '4',
-                        style: TextStyle(color: Colors.white, fontSize: 10),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+
+          child: basicAppBar(),
         ),
       ),
       backgroundColor: Colors.white,

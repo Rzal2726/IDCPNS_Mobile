@@ -20,6 +20,7 @@ class DetailMyBimbelController extends GetxController {
   void onInit() {
     getData();
     super.onInit();
+    checkMaintenance();
   }
 
   @override
@@ -78,6 +79,15 @@ class DetailMyBimbelController extends GetxController {
       }
     } catch (e) {
       print("Error polling email verification: $e");
+    }
+  }
+
+  Future<void> checkMaintenance() async {
+    final response = await _restClient.getData(
+      url: baseUrl + apiCheckMaintenance,
+    );
+    if (response['is_maintenance']) {
+      Get.offAllNamed("/maintenance");
     }
   }
 }
