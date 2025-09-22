@@ -60,183 +60,188 @@ class WatchVideoView extends GetView<WatchVideoController> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.all(8),
-            child: Column(
-              children: [
-                Obx(() {
-                  if (controller.loading['video'] == true) {
-                    return Skeletonizer(
-                      child: _cardVidio(
-                        imgUrl:
-                            "https://cms.idcpns.com/storage/upload/video-series/2024-07/d5d2571241b1c69079e3814f01966206.jpg",
-                        kategori: "CPNS",
-                        kategoriColor: Colors.grey,
-                        title: "Materi Lengkap SKD CPNS",
-                        duration: "706",
-                        totalVid: "55",
-                        data: <String, dynamic>{},
-                      ),
-                    );
-                  } else {
-                    if (controller.listVideo.isEmpty) {
-                      return Center(child: Text("Unavailable"));
-                    } else {
-                      return _cardVidio(
-                        imgUrl: controller.prevData['gambar'],
-                        kategori: controller.prevData['menu_category']['menu'],
-                        kategoriColor:
-                            controller.categoryColor[controller
-                                .prevData['menu_category']['menu']]!,
-                        title: controller.prevData['nama'],
-                        duration:
-                            controller.prevData['total_durasi'].toString(),
-                        totalVid:
-                            controller.prevData['video_topics'].length
-                                .toString(),
-                        data: <String, dynamic>{},
+      body: RefreshIndicator(
+        onRefresh: () => controller.initVideoSeries(),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Container(
+              margin: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Obx(() {
+                    if (controller.loading['video'] == true) {
+                      return Skeletonizer(
+                        child: _cardVidio(
+                          imgUrl:
+                              "https://cms.idcpns.com/storage/upload/video-series/2024-07/d5d2571241b1c69079e3814f01966206.jpg",
+                          kategori: "CPNS",
+                          kategoriColor: Colors.grey,
+                          title: "Materi Lengkap SKD CPNS",
+                          duration: "706",
+                          totalVid: "55",
+                          data: <String, dynamic>{},
+                        ),
                       );
-                    }
-                  }
-                }),
-                Obx(() {
-                  if (controller.loading['video'] == true) {
-                    return Skeletonizer(
-                      child: _cardVidio(
-                        imgUrl:
-                            "https://cms.idcpns.com/storage/upload/video-series/2024-07/d5d2571241b1c69079e3814f01966206.jpg",
-                        kategori: "CPNS",
-                        kategoriColor: Colors.grey,
-                        title: "Materi Lengkap SKD CPNS",
-                        duration: "706",
-                        totalVid: "55",
-                        data: <String, dynamic>{},
-                      ),
-                    );
-                  } else {
-                    if (controller.listVideo.isEmpty) {
-                      return Center(child: Text("Unavailable"));
                     } else {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: controller.listVideo.length,
-                        itemBuilder: (context, index) {
-                          final section = controller.listVideo[index];
-                          final videos = section['topics'] as List;
+                      if (controller.listVideo.isEmpty) {
+                        return Center(child: Text("Unavailable"));
+                      } else {
+                        return _cardVidio(
+                          imgUrl: controller.prevData['gambar'],
+                          kategori:
+                              controller.prevData['menu_category']['menu'],
+                          kategoriColor:
+                              controller.categoryColor[controller
+                                  .prevData['menu_category']['menu']]!,
+                          title: controller.prevData['nama'],
+                          duration:
+                              controller.prevData['total_durasi'].toString(),
+                          totalVid:
+                              controller.prevData['video_topics'].length
+                                  .toString(),
+                          data: <String, dynamic>{},
+                        );
+                      }
+                    }
+                  }),
+                  Obx(() {
+                    if (controller.loading['video'] == true) {
+                      return Skeletonizer(
+                        child: _cardVidio(
+                          imgUrl:
+                              "https://cms.idcpns.com/storage/upload/video-series/2024-07/d5d2571241b1c69079e3814f01966206.jpg",
+                          kategori: "CPNS",
+                          kategoriColor: Colors.grey,
+                          title: "Materi Lengkap SKD CPNS",
+                          duration: "706",
+                          totalVid: "55",
+                          data: <String, dynamic>{},
+                        ),
+                      );
+                    } else {
+                      if (controller.listVideo.isEmpty) {
+                        return Center(child: Text("Unavailable"));
+                      } else {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: controller.listVideo.length,
+                          itemBuilder: (context, index) {
+                            final section = controller.listVideo[index];
+                            final videos = section['topics'] as List;
 
-                          return Card(
-                            color: Colors.white,
-                            elevation: 1,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: BorderSide(color: Colors.grey.shade300),
-                            ),
-                            child: ExpansionTile(
-                              initiallyExpanded: index == 0,
+                            return Card(
+                              color: Colors.white,
+                              elevation: 1,
                               shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.transparent),
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(color: Colors.grey.shade300),
                               ),
-                              tilePadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 4,
-                              ),
-                              title: Text(
-                                section['nama'],
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                              child: ExpansionTile(
+                                initiallyExpanded: index == 0,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Colors.transparent),
                                 ),
-                              ),
-                              trailing: const Icon(Icons.keyboard_arrow_down),
-                              children: [
-                                ListView.builder(
-                                  physics:
-                                      const NeverScrollableScrollPhysics(), // biar nggak conflict scroll
-                                  shrinkWrap: true, // wajib untuk nested list
-                                  itemCount: videos.length,
-                                  itemBuilder: (context, vidIndex) {
-                                    final video = videos[vidIndex];
-                                    return InkWell(
-                                      onTap: () async {
-                                        Get.toNamed(
-                                          "/detail-video",
-                                          arguments: video['uuid'],
-                                        )?.then((result) {
-                                          if (result == 'refresh') {
-                                            controller.initVideoSeries();
-                                          }
-                                        });
-                                      },
-                                      child: ListTile(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                              horizontal: 16,
-                                              vertical: 0,
-                                            ),
-                                        leading: Checkbox(
-                                          value:
-                                              video['video_completed'].isEmpty
-                                                  ? false
-                                                  : true, // nanti bisa diubah ke RxBool
-                                          onChanged: (val) {
-                                            Get.toNamed(
-                                              "/detail-video",
-                                              arguments: video['uuid'],
-                                            )?.then((result) {
-                                              if (result == 'refresh') {
-                                                controller.initVideoSeries();
-                                              }
-                                            });
-                                          },
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              4,
-                                            ),
-                                          ),
-                                        ),
-                                        title: Text(
-                                          video['nama'],
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                        subtitle: Text(
-                                          "${video['durasi'].toString()} Menit",
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        trailing: IconButton(
-                                          icon: const Icon(
-                                            Icons.play_circle_fill,
-                                            color: Colors.teal,
-                                          ),
-                                          onPressed: () {
-                                            Get.toNamed(
-                                              "/detail-video",
-                                              arguments: video['uuid'],
-                                            )?.then((result) {
-                                              if (result == 'refresh') {
-                                                controller.initVideoSeries();
-                                              }
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                tilePadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 4,
                                 ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
+                                title: Text(
+                                  section['nama'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                trailing: const Icon(Icons.keyboard_arrow_down),
+                                children: [
+                                  ListView.builder(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(), // biar nggak conflict scroll
+                                    shrinkWrap: true, // wajib untuk nested list
+                                    itemCount: videos.length,
+                                    itemBuilder: (context, vidIndex) {
+                                      final video = videos[vidIndex];
+                                      return InkWell(
+                                        onTap: () async {
+                                          Get.toNamed(
+                                            "/detail-video",
+                                            arguments: video['uuid'],
+                                          )?.then((result) {
+                                            if (result == 'refresh') {
+                                              controller.initVideoSeries();
+                                            }
+                                          });
+                                        },
+                                        child: ListTile(
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                                vertical: 0,
+                                              ),
+                                          leading: Checkbox(
+                                            value:
+                                                video['video_completed'].isEmpty
+                                                    ? false
+                                                    : true, // nanti bisa diubah ke RxBool
+                                            onChanged: (val) {
+                                              Get.toNamed(
+                                                "/detail-video",
+                                                arguments: video['uuid'],
+                                              )?.then((result) {
+                                                if (result == 'refresh') {
+                                                  controller.initVideoSeries();
+                                                }
+                                              });
+                                            },
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                          ),
+                                          title: Text(
+                                            video['nama'],
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            "${video['durasi'].toString()} Menit",
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          trailing: IconButton(
+                                            icon: const Icon(
+                                              Icons.play_circle_fill,
+                                              color: Colors.teal,
+                                            ),
+                                            onPressed: () {
+                                              Get.toNamed(
+                                                "/detail-video",
+                                                arguments: video['uuid'],
+                                              )?.then((result) {
+                                                if (result == 'refresh') {
+                                                  controller.initVideoSeries();
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }
                     }
-                  }
-                }),
-              ],
+                  }),
+                ],
+              ),
             ),
           ),
         ),

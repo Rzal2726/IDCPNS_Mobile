@@ -7,6 +7,7 @@ class PlatinumZoneController extends GetxController {
 
   final restClient = RestClient();
   RxMap<String, dynamic> data = <String, dynamic>{}.obs;
+  RxMap<String, dynamic> userData = <String, dynamic>{}.obs;
   RxBool isActive = false.obs;
   RxBool loading = true.obs;
   @override
@@ -33,6 +34,15 @@ class PlatinumZoneController extends GetxController {
       response['data'],
     );
     data.assignAll(responseData);
+    loading.value = false;
+  }
+
+  Future<void> cekUser() async {
+    final response = await restClient.getData(url: baseUrl + apiGetUser);
+    Map<String, dynamic> responseData = Map<String, dynamic>.from(
+      response['data'],
+    );
+    userData.assignAll(responseData);
     loading.value = false;
   }
 }
