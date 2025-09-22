@@ -19,6 +19,7 @@ class DetailBimbelController extends GetxController
   late TabController tabController;
   var idBimbel = Get.arguments;
   RxInt currentIndex = 0.obs;
+  RxInt hargaFix = 0.obs;
   List<JadwalFilter> jadwalFilter = [];
   RxBool isCheklist = false.obs;
   RxBool isLoadingButton = false.obs;
@@ -272,6 +273,18 @@ class DetailBimbelController extends GetxController
     );
     if (response['is_maintenance']) {
       Get.offAllNamed("/maintenance");
+    }
+  }
+
+  int hitungHargaTampil(Map<String, dynamic> subData, int index, List bimbel) {
+    final firstPurchasedIndex = bimbel.indexWhere(
+      (e) => e['is_purchase'] == true,
+    );
+
+    if (firstPurchasedIndex != -1 && index > firstPurchasedIndex) {
+      return subData['harga_fix'] - bimbel[firstPurchasedIndex]['harga_fix'];
+    } else {
+      return subData['harga_fix'];
     }
   }
 }
