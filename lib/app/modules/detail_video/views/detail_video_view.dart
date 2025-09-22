@@ -1494,10 +1494,24 @@ class DetailVideoView extends GetView<DetailVideoController> {
                   /// Delete button
                   IconButton(
                     onPressed: () {
-                      controller.deleteNotes(
-                        payload: {
-                          "durasi": time,
-                          "topicUuid": controller.videoData['uuid'],
+                      Get.defaultDialog(
+                        buttonColor: Colors.teal,
+                        cancelTextColor: Colors.teal,
+                        title: "Konfirmasi",
+                        middleText:
+                            "Apakah kamu yakin ingin menghapus catatan ini?",
+                        textCancel: "Tidak",
+                        textConfirm: "Ya",
+                        confirmTextColor: Colors.white,
+                        onCancel: () {},
+                        onConfirm: () async {
+                          Get.back();
+                          await controller.deleteNotes(
+                            payload: {
+                              "durasi": time,
+                              "topicUuid": controller.videoData['uuid'],
+                            },
+                          );
                         },
                       );
                     },

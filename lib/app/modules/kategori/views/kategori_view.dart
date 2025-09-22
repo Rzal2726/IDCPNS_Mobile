@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-
+import 'package:idcpns_mobile/app/Components/widgets/wdigetTryoutEventCard.dart';
 import '../controllers/kategori_controller.dart';
 
 class KategoriView extends GetView<KategoriController> {
@@ -189,23 +189,36 @@ class KategoriView extends GetView<KategoriController> {
                   );
                 }
 
-                return SizedBox(
-                  height: 180,
-                  child: PageView.builder(
-                    controller: PageController(viewportFraction: 0.85),
-                    itemCount: controller.eventTryout.length,
-                    itemBuilder: (ctx, index) {
-                      final event = controller.eventTryout[index];
-                      return _eventTryoutGratis(
-                        event["uuid"].toString(),
-                        event["label_text"].toString(),
-                        event['name'].toString(),
-                        controller.formatTanggalRange(
-                          "${event["startdate"].toString().substring(0, 10)} - ${event["enddate"].toString().substring(0, 10)}",
-                        ),
-                        event["periode_text"].toString(),
-                      );
-                    },
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        for (var data in controller.eventTryout)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: SizedBox(
+                              width: 300, // biar card rapi & konsisten
+                              child: GestureDetector(
+                                onTap: () {
+                                  Get.toNamed(
+                                    "/detail-event",
+                                    arguments: data['uuid'],
+                                  );
+                                },
+                                child: buildTryoutCard(
+                                  status: data['label_text'],
+                                  title: data['name'],
+                                  dateRange: data['range_date_string'],
+                                  period: data['periode_text'],
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 );
               }),
