@@ -3,12 +3,15 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class UpgradeAkunController extends GetxController {
   //TODO: Implement UpgradeAkunController
 
   final count = 0.obs;
   final restClient = RestClient();
+  late final WebViewController webController;
+
   RxMap<String, Color> categoryColor =
       <String, Color>{
         "CPNS": Colors.teal,
@@ -21,9 +24,14 @@ class UpgradeAkunController extends GetxController {
   RxList<Map<String, dynamic>> listBonus = <Map<String, dynamic>>[].obs;
   RxString selectedBonusUuid = "".obs;
   RxString selectedDurasi = "".obs;
+  RxBool loading = true.obs;
+
   @override
   void onInit() {
     super.onInit();
+    webController =
+        WebViewController()..setJavaScriptMode(JavaScriptMode.unrestricted);
+    initUpgrade(); // Load initial data
     initUpgrade();
     checkMaintenance();
   }
@@ -48,9 +56,30 @@ class UpgradeAkunController extends GetxController {
   }
 
   Future<void> initUpgrade() async {
+    loading.value = true;
     await fetchDetailUpgrade();
     await fetchListBonus();
     await fetchListDurasi();
+
+    // Escape dynamic HTML safely
+    final htmlContent = '''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class=" px-4">
+      ${detailAkun['deskripsi_mobile'] ?? ''}
+    </body>
+    </html>
+    ''';
+
+    // Load into the existing controller
+    await webController.loadHtmlString(htmlContent);
+
+    loading.value = false;
   }
 
   Future<void> fetchDetailUpgrade() async {
