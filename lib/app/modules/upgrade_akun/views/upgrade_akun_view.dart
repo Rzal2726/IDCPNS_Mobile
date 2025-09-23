@@ -245,6 +245,9 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
                                           child: Container(
                                             padding: const EdgeInsets.all(16),
                                             child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 // ====== Header tetap di atas ======
                                                 Row(
@@ -284,8 +287,7 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
                                                 const SizedBox(height: 12),
 
                                                 // ====== ListView Scrollable ======
-                                                SizedBox(
-                                                  height: 320,
+                                                Expanded(
                                                   child: ListView.builder(
                                                     itemCount:
                                                         controller
@@ -389,7 +391,9 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
               SizedBox(height: 16),
               Obx(() {
                 if (controller.loading.value == true) {
-                  return Skeletonizer(child: Text("data"));
+                  return Skeletonizer(
+                    child: Text("Loading..................."),
+                  );
                 } else {
                   return Expanded(
                     child: WebViewWidget(controller: controller.webController),

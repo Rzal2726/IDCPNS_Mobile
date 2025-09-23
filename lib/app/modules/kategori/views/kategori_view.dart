@@ -850,6 +850,8 @@ class KategoriView extends GetView<KategoriController> {
                         children: [
                           Text(
                             title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
