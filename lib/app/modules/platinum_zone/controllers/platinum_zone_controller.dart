@@ -12,8 +12,8 @@ class PlatinumZoneController extends GetxController {
   RxBool loading = true.obs;
   @override
   void onInit() {
-    cekPlatinum();
     super.onInit();
+    init();
   }
 
   @override
@@ -26,6 +26,12 @@ class PlatinumZoneController extends GetxController {
     super.onClose();
   }
 
+  Future<void> init() async {
+    await cekPlatinum();
+    await cekUser();
+    loading.value = false;
+  }
+
   Future<void> cekPlatinum() async {
     final response = await restClient.getData(
       url: baseUrl + apiCekPlatinumExpired,
@@ -34,7 +40,6 @@ class PlatinumZoneController extends GetxController {
       response['data'],
     );
     data.assignAll(responseData);
-    loading.value = false;
   }
 
   Future<void> cekUser() async {
@@ -43,6 +48,8 @@ class PlatinumZoneController extends GetxController {
       response['data'],
     );
     userData.assignAll(responseData);
-    loading.value = false;
+    if (responseData['level_name'] == "Basic") {
+      isActive.value = true;
+    }
   }
 }
