@@ -391,7 +391,9 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
               SizedBox(height: 16),
               Obx(() {
                 if (controller.loading.value == true) {
-                  return Skeletonizer(child: Text("data"));
+                  return Skeletonizer(
+                    child: Text("Loading..................."),
+                  );
                 } else {
                   return Expanded(
                     child: WebViewWidget(controller: controller.webController),
