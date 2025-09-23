@@ -31,17 +31,16 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+      body: RefreshIndicator(
+        onRefresh: () => controller.init(),
         child: Obx(() {
           if (controller.loading.value) {
             return Skeletonizer(
               child: Container(
+                margin: const EdgeInsets.all(32),
                 child: Column(
-                  spacing: 8,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 8),
                     SizedBox(width: double.infinity, child: _expireCard()),
                     const SizedBox(height: 16),
                     _menuCard(
@@ -58,46 +57,42 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
 
           return Stack(
             children: [
-              // ✅ Bungkus konten utama dengan IgnorePointer
+              // Menu utama yang bisa di-scroll
               IgnorePointer(
-                ignoring: false,
-                child: Container(
-                  child: Column(
-                    spacing: 8,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(width: double.infinity, child: _expireCard()),
-                      _menuCard(
-                        imageurl: "assets/video_series.png",
-                        title: "Video Series",
-                        routeName: "/video-series",
-                        bgColor: const Color.fromARGB(255, 255, 222, 211),
-                      ),
-                      _menuCard(
-                        imageurl: "assets/ebook.png",
-                        title: "E-Book",
-                        routeName: "/e-book",
-                        bgColor: const Color.fromARGB(255, 255, 182, 246),
-                      ),
-                      _menuCard(
-                        imageurl: "assets/tryout_harian.png",
-                        title: "Tryout Harian",
-                        routeName: "/tryout-harian",
-                        bgColor: const Color.fromARGB(255, 177, 220, 255),
-                      ),
-                      _menuCard(
-                        imageurl: "assets/webinar.png",
-                        title: "Webinar",
-                        routeName: "/webinar",
-                        bgColor: const Color.fromARGB(255, 205, 255, 236),
-                      ),
-                    ],
-                  ),
+                ignoring: controller.userData['level_name'] == "Basic",
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  children: [
+                    SizedBox(width: double.infinity, child: _expireCard()),
+                    _menuCard(
+                      imageurl: "assets/video_series.png",
+                      title: "Video Series",
+                      routeName: "/video-series",
+                      bgColor: const Color.fromARGB(255, 255, 222, 211),
+                    ),
+                    _menuCard(
+                      imageurl: "assets/ebook.png",
+                      title: "E-Book",
+                      routeName: "/e-book",
+                      bgColor: const Color.fromARGB(255, 255, 182, 246),
+                    ),
+                    _menuCard(
+                      imageurl: "assets/tryout_harian.png",
+                      title: "Tryout Harian",
+                      routeName: "/tryout-harian",
+                      bgColor: const Color.fromARGB(255, 177, 220, 255),
+                    ),
+                    _menuCard(
+                      imageurl: "assets/webinar.png",
+                      title: "Webinar",
+                      routeName: "/webinar",
+                      bgColor: const Color.fromARGB(255, 205, 255, 236),
+                    ),
+                  ],
                 ),
               ),
 
-              // ✅ Overlay muncul saat akun belum upgrade
+              // Overlay untuk user Basic
               if (controller.userData['level_name'] == "Basic")
                 Positioned.fill(
                   child: Container(

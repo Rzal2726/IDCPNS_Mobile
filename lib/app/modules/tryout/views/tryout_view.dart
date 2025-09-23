@@ -60,7 +60,7 @@ class TryoutView extends GetView<TryoutController> {
                 // Tryout Saya box
                 InkWell(
                   onTap: () {
-                    Get.offNamed("/tryout-saya");
+                    Get.toNamed("/tryout-saya");
                   },
                   child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 16),
