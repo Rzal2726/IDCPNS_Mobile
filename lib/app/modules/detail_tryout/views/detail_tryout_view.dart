@@ -232,7 +232,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                       children: [
                                         Expanded(
                                           child: Obx(
-                                            () => ElevatedButton(
+                                            () => OutlinedButton(
                                               onPressed:
                                                   controller.isLoading['wishlist'] ==
                                                           true
@@ -271,41 +271,111 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                                                 .value = false;
                                                         }
                                                       },
-                                              style: ElevatedButton.styleFrom(
+                                              style: OutlinedButton.styleFrom(
                                                 elevation: 0,
+                                                backgroundColor:
+                                                    controller
+                                                            .isOnWishlist
+                                                            .value
+                                                        ? Colors
+                                                            .teal
+                                                            .shade300 // Saat sudah ada di wishlist → tombol teal
+                                                        : Colors
+                                                            .white, // Default → putih
                                                 foregroundColor:
-                                                    Colors.teal.shade300,
-                                                backgroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  side: BorderSide(
-                                                    color: Colors.teal.shade300,
-                                                    width: 1.5,
-                                                  ),
+                                                    controller
+                                                            .isOnWishlist
+                                                            .value
+                                                        ? Colors.white
+                                                        : Colors.teal.shade300,
+                                                side: BorderSide(
+                                                  color: Colors.teal.shade300,
+                                                  width: 1.5,
                                                 ),
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                       vertical: 12,
                                                     ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
                                               ),
                                               child:
                                                   controller.isLoading['wishlist'] ==
                                                           true
-                                                      ? const SizedBox(
-                                                        height: 20,
+                                                      ? SizedBox(
                                                         width: 20,
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                              strokeWidth: 2,
-                                                            ),
+                                                        height: 20,
+                                                        child: CircularProgressIndicator(
+                                                          strokeWidth: 2,
+                                                          valueColor: AlwaysStoppedAnimation<
+                                                            Color
+                                                          >(
+                                                            controller
+                                                                    .isOnWishlist
+                                                                    .value
+                                                                ? Colors
+                                                                    .white // Loading putih saat tombol teal
+                                                                : Colors
+                                                                    .teal
+                                                                    .shade300, // Loading teal saat tombol putih
+                                                          ),
+                                                        ),
                                                       )
-                                                      : Text(
-                                                        controller
-                                                                .isOnWishlist
-                                                                .value
-                                                            ? "Hapus Dari Wishlist -"
-                                                            : "Tambahkan Ke Wishlist +",
+                                                      : Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          Icon(
+                                                            controller
+                                                                    .isOnWishlist
+                                                                    .value
+                                                                ? Icons.favorite
+                                                                : Icons
+                                                                    .favorite_border,
+                                                            color:
+                                                                controller
+                                                                        .isOnWishlist
+                                                                        .value
+                                                                    ? Colors
+                                                                        .white
+                                                                    : Colors
+                                                                        .teal
+                                                                        .shade300,
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 8,
+                                                          ),
+                                                          Text(
+                                                            controller
+                                                                    .isOnWishlist
+                                                                    .value
+                                                                ? 'Hapus Wishlist'
+                                                                : 'Tambah Wishlist',
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              color:
+                                                                  controller
+                                                                          .isOnWishlist
+                                                                          .value
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .teal
+                                                                          .shade300,
+                                                            ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                        ],
                                                       ),
                                             ),
                                           ),

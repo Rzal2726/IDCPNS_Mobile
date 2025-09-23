@@ -580,6 +580,33 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                         controller.listPembahasan[controller
                                             .currentNumber
                                             .value]['soal'],
+                                    extensions: [
+                                      TagExtension(
+                                        tagsToExtend: {
+                                          "img",
+                                        }, // khusus untuk <img>
+                                        builder: (context) {
+                                          final src =
+                                              context.attributes['src'] ?? '';
+                                          return SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: Image.network(
+                                              src,
+                                              fit: BoxFit.contain,
+                                              errorBuilder:
+                                                  (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) => const Icon(
+                                                    Icons.broken_image,
+                                                    color: Colors.red,
+                                                  ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
                                   ),
                         ),
 
@@ -637,6 +664,33 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                                         controller.listPembahasan[controller
                                             .currentNumber
                                             .value]['pembahasan'],
+                                    extensions: [
+                                      TagExtension(
+                                        tagsToExtend: {
+                                          "img",
+                                        }, // khusus untuk <img>
+                                        builder: (context) {
+                                          final src =
+                                              context.attributes['src'] ?? '';
+                                          return SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: Image.network(
+                                              src,
+                                              fit: BoxFit.contain,
+                                              errorBuilder:
+                                                  (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) => const Icon(
+                                                    Icons.broken_image,
+                                                    color: Colors.red,
+                                                  ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
                                   ),
                         ),
                         Text(
@@ -741,6 +795,26 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                     lineHeight: LineHeight.number(1.3),
                   ),
                 },
+                extensions: [
+                  TagExtension(
+                    tagsToExtend: {"img"}, // khusus untuk <img>
+                    builder: (context) {
+                      final src = context.attributes['src'] ?? '';
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Image.network(
+                          src,
+                          fit: BoxFit.contain,
+                          errorBuilder:
+                              (context, error, stackTrace) => const Icon(
+                                Icons.broken_image,
+                                color: Colors.red,
+                              ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           ],
