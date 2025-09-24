@@ -31,7 +31,6 @@ class UpgradeAkunController extends GetxController {
     super.onInit();
     webController =
         WebViewController()..setJavaScriptMode(JavaScriptMode.unrestricted);
-    initUpgrade(); // Load initial data
     initUpgrade();
     checkMaintenance();
   }
