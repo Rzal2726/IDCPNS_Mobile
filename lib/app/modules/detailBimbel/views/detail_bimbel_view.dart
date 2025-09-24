@@ -243,12 +243,11 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                         }
 
                         // harga yang ditampilkan dikurangi harga paket yang sudah dibeli
-                        final hargaTampil =
-                            (firstPurchasedIndex != -1 &&
-                                    i > firstPurchasedIndex)
-                                ? subData['harga_fix'] -
-                                    data['bimbel'][firstPurchasedIndex]['harga_fix']
-                                : subData['harga_fix'];
+                        final hargaTampil = controller.hitungHargaTampil(
+                          subData,
+                          i,
+                          data['bimbel'],
+                        );
 
                         // disable jika paket sudah dibeli
                         final isDisabled =
@@ -258,7 +257,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                         return _buildRadioOption(
                           subData['name'], // title
                           formatRupiah(subData['harga']), // harga lama
-                          formatRupiah(hargaTampil), // harga baru
+                          hargaTampil.toString(), // harga baru
                           subData['uuid'], // value radio
                           controller, // controller
                           isDisabled: isDisabled, // disable jika sudah dibeli
@@ -366,7 +365,10 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                           }
                           Get.offNamed(
                             Routes.PAYMENT_DETAIL,
-                            arguments: controller.selectedPaket.value,
+                            arguments: [
+                              controller.selectedPaket.value,
+                              controller.hargaFix.value,
+                            ],
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -563,6 +565,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                             : (value) {
                               if (value != null) {
                                 controller.pilihPaket(value);
+                                controller.hargaFix.value = int.parse(newPrice);
                               }
                             },
                     activeColor: Colors.teal,
@@ -602,7 +605,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                 SizedBox(height: 4),
                 if (!isDisabled)
                   Text(
-                    newPrice,
+                    formatRupiah(newPrice),
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,

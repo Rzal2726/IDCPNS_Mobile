@@ -8,7 +8,8 @@ import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PaymentDetailController extends GetxController {
-  var uuid = Get.arguments;
+  var uuid = Get.arguments[0];
+  var hargaFix = Get.arguments[1];
   RxString subPaketName = "".obs;
   RxMap<int, String> selectedSub = <int, String>{}.obs;
   RxMap<int, bool> checked = <int, bool>{}.obs;
@@ -99,7 +100,7 @@ class PaymentDetailController extends GetxController {
     if (result["status"] == "success") {
       bimbelData.value = result["data"];
       parentId.value = result['data']['bimbel_parent_id'];
-      baseHarga.value = result['data']['harga_fix'];
+      baseHarga.value = hargaFix;
       final parent = result["data"]['bimbel_parent'];
       if (parent != null) {
         wishListFirstProduct.value = parent['name'] ?? '';
