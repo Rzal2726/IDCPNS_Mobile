@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -124,19 +125,9 @@ class PretestController extends GetxController {
 
     if (response["status"] == "success") {
       laporanController.text = "";
-      Get.snackbar(
-        "Berhasil",
-        "Berhasil Mengirimkan Laporan",
-        backgroundColor: Colors.teal,
-        colorText: Colors.white,
-      );
+      notifHelper.show("Berhasil Mengirimkan Laporan", type: 1);
     } else {
-      Get.snackbar(
-        "Gagal",
-        "Gagal Mengirimkan Laporan",
-        backgroundColor: Colors.pink,
-        colorText: Colors.white,
-      );
+      notifHelper.show("Gagal Mengirimkan Laporan", type: 0);
     }
   }
 
@@ -155,12 +146,7 @@ class PretestController extends GetxController {
         arguments: {"uuid": uuid, "bimbelUuid": bimbelUuid},
       );
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Tidak dapat mengirim jawaban",
-        colorText: Colors.white,
-        backgroundColor: Colors.pink,
-      );
+      notifHelper.show("Tidak dapat mengirim jawaban", type: 0);
     }
   }
 

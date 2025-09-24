@@ -15,208 +15,215 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: secondaryAppBar(
-        "Program Saya",
-        onBack: () {
-          Get.back();
-        },
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // Tabs
-                Row(
-                  children: [
-                    _buildTabItem('Tryout', 0),
-                    SizedBox(width: 16),
-                    _buildTabItem('Bimbel', 1),
-                  ],
-                ),
-                Divider(thickness: 1, color: Colors.grey.withOpacity(0.2)),
-                SizedBox(height: 8),
-
-                // Search
-                SearchRowButton(
-                  controller: controller.searchController,
-                  onSearch: () {
-                    controller
-                        .searchData(); // callback saat enter atau tap tombol
-                  },
-                ),
-
-                SizedBox(height: 15),
-
-                // Title
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: InkWell(
-                    onTap: () {
-                      showChoiceBottomSheet(
-                        context: context,
-                        title: "Jenis Tryout",
-                        options: controller.options,
-                        selectedValue: controller.selectedKategoriId,
-                        onSelected: (id) {
-                          print("xxx2 ${controller.options.toString()}");
-                          final selectedOption = controller.options.firstWhere(
-                            (o) => o['id'] == id,
-                          );
-                          controller.selectedEventKategori.value =
-                              selectedOption['menu'];
-                        },
-                        onSubmit: () {
-                          controller.selectedTab.value == 0
-                              ? controller.getTryout(
-                                submenuCategoryId:
-                                    controller.selectedKategoriId.value
-                                        ?.toString(),
-                              )
-                              : controller.getBimbel(
-                                submenuCategoryId:
-                                    controller.selectedKategoriId.value
-                                        ?.toString(),
-                              );
-                        },
-                        onReset: () {
-                          controller.selectedTab.value == 0
-                              ? controller.getTryout(submenuCategoryId: "0")
-                              : controller.getBimbel(submenuCategoryId: "0");
-                        },
-                      );
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Filter', style: TextStyle(color: Colors.teal)),
-                        Icon(Icons.keyboard_arrow_down, color: Colors.teal),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 30),
-
-                // Program List
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        blurRadius: 5,
-                        offset: Offset(0, 2),
-                      ),
+    return PopScope(
+      canPop: false, // false = cegah pop otomatis
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: secondaryAppBar(
+          "Program Saya",
+          onBack: () {
+            Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
+          },
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // Tabs
+                  Row(
+                    children: [
+                      _buildTabItem('Tryout', 0),
+                      SizedBox(width: 16),
+                      _buildTabItem('Bimbel', 1),
                     ],
                   ),
-                  child: Obx(() {
-                    final programList =
-                        controller.selectedTab.value == 0
-                            ? controller.tryoutData
-                            : controller.bimbelData;
+                  Divider(thickness: 1, color: Colors.grey.withOpacity(0.2)),
+                  SizedBox(height: 8),
 
-                    // kalau ada data langsung tampilkan
-                    if (programList.isNotEmpty) {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: programList.length,
-                        itemBuilder: (context, index) {
-                          final program = programList[index];
-                          return _buildProgramCard(
+                  // Search
+                  SearchRowButton(
+                    controller: controller.searchController,
+                    onSearch: () {
+                      controller
+                          .searchData(); // callback saat enter atau tap tombol
+                    },
+                  ),
+
+                  SizedBox(height: 15),
+
+                  // Title
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: InkWell(
+                      onTap: () {
+                        showChoiceBottomSheet(
+                          context: context,
+                          title: "Jenis Tryout",
+                          options: controller.options,
+                          selectedValue: controller.selectedKategoriId,
+                          onSelected: (id) {
+                            print("xxx2 ${controller.options.toString()}");
+                            final selectedOption = controller.options
+                                .firstWhere((o) => o['id'] == id);
+                            controller.selectedEventKategori.value =
+                                selectedOption['menu'];
+                          },
+                          onSubmit: () {
                             controller.selectedTab.value == 0
-                                ? program['name']
-                                : program['bimbel_parent_name'],
-                            () {
-                              if (controller.selectedTab.value == 0) {
-                                Get.toNamed(
-                                  Routes.DETAIL_TRYOUT_SAYA,
-                                  arguments: program['uuid'],
+                                ? controller.getTryout(
+                                  submenuCategoryId:
+                                      controller.selectedKategoriId.value
+                                          ?.toString(),
+                                )
+                                : controller.getBimbel(
+                                  submenuCategoryId:
+                                      controller.selectedKategoriId.value
+                                          ?.toString(),
                                 );
-                              } else {
-                                Get.toNamed(
-                                  Routes.DETAIL_MY_BIMBEL,
-                                  arguments: program['uuid'],
-                                );
-                              }
-                            },
-                          );
+                          },
+                          onReset: () {
+                            controller.selectedTab.value == 0
+                                ? controller.getTryout(submenuCategoryId: "0")
+                                : controller.getBimbel(submenuCategoryId: "0");
+                          },
+                        );
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Filter', style: TextStyle(color: Colors.teal)),
+                          Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+
+                  // Program List
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          blurRadius: 5,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Obx(() {
+                      final programList =
+                          controller.selectedTab.value == 0
+                              ? controller.tryoutData
+                              : controller.bimbelData;
+
+                      // kalau ada data langsung tampilkan
+                      if (programList.isNotEmpty) {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: programList.length,
+                          itemBuilder: (context, index) {
+                            final program = programList[index];
+                            return _buildProgramCard(
+                              controller.selectedTab.value == 0
+                                  ? program['name']
+                                  : program['bimbel_parent_name'],
+                              () {
+                                if (controller.selectedTab.value == 0) {
+                                  Get.toNamed(
+                                    Routes.DETAIL_TRYOUT_SAYA,
+                                    arguments: program['uuid'],
+                                  );
+                                } else {
+                                  Get.toNamed(
+                                    Routes.DETAIL_MY_BIMBEL,
+                                    arguments: program['uuid'],
+                                  );
+                                }
+                              },
+                            );
+                          },
+                        );
+                      }
+
+                      // kalau kosong, tampilkan skeleton dulu → lalu otomatis ganti pesan kosong
+                      return FutureBuilder(
+                        future: Future.delayed(Duration(seconds: 5)),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState !=
+                              ConnectionState.done) {
+                            // selama belum 5 detik → skeleton
+                            return Skeletonizer(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: 3,
+                                itemBuilder:
+                                    (context, index) => Container(
+                                      margin: EdgeInsets.only(bottom: 20),
+                                      padding: EdgeInsets.all(14),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.shade300,
+                                            blurRadius: 4,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            height: 20,
+                                            width: 80,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                          SizedBox(height: 7),
+                                          Container(
+                                            height: 16,
+                                            width: 120,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                          SizedBox(height: 7),
+                                          Container(
+                                            height: 14,
+                                            width: 160,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                              ),
+                            );
+                          } else {
+                            // lewat 5 detik tapi data masih kosong
+                            return Column(
+                              children: [
+                                EmptyStateWidget(
+                                  message: "Tidak ada Program ditemukan",
+                                ),
+                                SizedBox(height: 30),
+                              ],
+                            );
+                          }
                         },
                       );
-                    }
-
-                    // kalau kosong, tampilkan skeleton dulu → lalu otomatis ganti pesan kosong
-                    return FutureBuilder(
-                      future: Future.delayed(Duration(seconds: 5)),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState != ConnectionState.done) {
-                          // selama belum 5 detik → skeleton
-                          return Skeletonizer(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: 3,
-                              itemBuilder:
-                                  (context, index) => Container(
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    padding: EdgeInsets.all(14),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.shade300,
-                                          blurRadius: 4,
-                                          offset: Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          height: 20,
-                                          width: 80,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                        SizedBox(height: 7),
-                                        Container(
-                                          height: 16,
-                                          width: 120,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                        SizedBox(height: 7),
-                                        Container(
-                                          height: 14,
-                                          width: 160,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                            ),
-                          );
-                        } else {
-                          // lewat 5 detik tapi data masih kosong
-                          return Column(
-                            children: [
-                              EmptyStateWidget(
-                                message: "Tidak ada Program ditemukan",
-                              ),
-                              SizedBox(height: 30),
-                            ],
-                          );
-                        }
-                      },
-                    );
-                  }),
-                ),
-              ],
+                    }),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -92,9 +92,7 @@ class PaymentCheckoutController extends GetxController {
     "Konfirmasi transaksi hingga selesai",
   ];
 
-  void cekStatus() {
-    Get.snackbar("Pembayaran", "Cek status pembayaran (dummy)");
-  }
+  void cekStatus() {}
 
   void fetchDetailPayment() async {
     // Ambil data transaksi dari controller sebelumnya

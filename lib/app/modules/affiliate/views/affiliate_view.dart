@@ -18,7 +18,7 @@ class AffiliateView extends GetView<AffiliateController> {
       onPopInvoked: (didPop) {
         if (!didPop) {
           // Saat tombol back ditekan
-          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 3});
+          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
         }
       },
       child: Scaffold(
@@ -26,7 +26,7 @@ class AffiliateView extends GetView<AffiliateController> {
         appBar: secondaryAppBar(
           "Afiliasi",
           onBack: () {
-            Get.toNamed(Routes.HOME, arguments: {'initialIndex': 3});
+            Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
           },
         ),
         body: SafeArea(

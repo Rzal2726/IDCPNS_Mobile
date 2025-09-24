@@ -301,8 +301,8 @@ class BimbelView extends GetView<BimbelController> {
               ),
               child: Image.network(
                 image,
-                height: 140,
-                width: 140, // kasih lebar biar konsisten di row
+                height: 144,
+                width: 144, // kasih lebar biar konsisten di row
                 fit: BoxFit.contain, // jaga rasio, selalu kelihatan full
                 errorBuilder:
                     (context, error, stackTrace) =>

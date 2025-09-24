@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifIcon.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
+import 'package:idcpns_mobile/app/modules/notification/controllers/notification_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 enum AppBarLeftType { logo, back, backWithTitle, title }
@@ -35,7 +37,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           if (leftType == AppBarLeftType.logo) ...[
             Padding(
               padding: EdgeInsets.only(left: 20),
-              child: Image.asset('assets/logo.png', height: 50),
+              child: InkWell(
+                onTap: () {
+                  // (Get.find<HomeController>()).changeBottomBar(0);
+                  // hapus controller HomeController dulu
+                  // if (Get.isRegistered<HomeController>()) {
+                  //   Get.delete<HomeController>();
+                  // }
+
+                  // baru navigasi ke HOME
+                  // (Get.find<HomeController>()).changeBottomBar(0);
+                },
+                child: Image.asset('assets/logo.png', height: 50),
+              ),
             ),
           ],
           if (leftType == AppBarLeftType.back) ...[
@@ -52,7 +66,20 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               padding: EdgeInsets.only(left: 4),
               child: IconButton(
                 icon: Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: onBack ?? () => Get.back(),
+                onPressed: () {
+                  // langsung pasang / ambil controller
+                  final notifC = Get.put(NotificationController());
+
+                  // jalankan onBack kalau ada, kalau nggak pakai Get.back()
+                  if (onBack != null) {
+                    onBack!();
+                  } else {
+                    Get.back();
+                  }
+
+                  // refresh notif setelah kembali
+                  notifC.getNotif();
+                },
               ),
             ),
             if (title != null)
@@ -114,6 +141,7 @@ CustomAppBar basicAppBarWithoutNotif(String title, {VoidCallback? onBack}) {
     leftType: AppBarLeftType.backWithTitle,
     title: title,
     onBack: () {
+      NotifIcon();
       Get.back();
     },
   );

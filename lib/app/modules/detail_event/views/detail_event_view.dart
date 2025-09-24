@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -162,11 +163,9 @@ class DetailEventView extends GetView<DetailEventController> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (controller.selectedPaket.value == "") {
-                        Get.snackbar(
-                          "Gagal",
+                        notifHelper.show(
                           "Mohon pilih paket terlebih dahulu",
-                          colorText: Colors.white,
-                          backgroundColor: Colors.pink,
+                          type: 0,
                         );
                         return;
                       }

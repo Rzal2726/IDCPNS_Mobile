@@ -18,7 +18,7 @@ Widget pertemuanCardBuilder({
         Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
         SizedBox(height: 4),
         Text(
-          "${value} WIB",
+          "${value}",
           style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
         ),
       ],

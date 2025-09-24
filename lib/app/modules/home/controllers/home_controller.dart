@@ -28,19 +28,25 @@ class HomeController extends GetxController {
   ];
 
   @override
+  @override
   void onInit() {
     super.onInit();
+
+    // register controller yang dibutuhkan
     Get.lazyPut(() => AccountController());
     Get.lazyPut(() => TryoutController());
     Get.lazyPut(() => BimbelController());
     Get.lazyPut(() => PlatinumZoneController());
     Get.lazyPut(() => DashboardController());
+
     print("ssada");
+
     // cek jika ada argument dari route
     final initialIndex = Get.arguments?['initialIndex'] ?? 0;
 
     tabIndex.value = initialIndex;
     currentIndex.value = initialIndex;
+
     checkMaintenance();
   }
 

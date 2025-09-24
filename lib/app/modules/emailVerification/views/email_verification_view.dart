@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 import '../controllers/email_verification_controller.dart';
@@ -16,72 +19,42 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
       onPopInvoked: (didPop) {
         if (!didPop) {
           Get.offAllNamed(Routes.LOGIN);
+          controller.otpController.clear();
           // pakai offAll biar gak bisa balik ke verify lagi
         }
       },
       child: Scaffold(
         backgroundColor: Colors.white,
+        appBar: basicAppBarWithoutNotif(
+          "verifikasi akun",
+          onBack: () {
+            Get.offAllNamed(Routes.LOGIN);
+            controller.otpController.clear();
+          },
+        ),
         body: SafeArea(
-          child: Column(
-            children: [
-              // HEADER
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset('assets/logo.png', height: 60),
-                    Stack(
-                      children: [
-                        Icon(Icons.notifications_rounded, size: 28),
-                        Positioned(
-                          right: 0,
-                          top: 0,
-                          child: Container(
-                            width: 16,
-                            height: 16,
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                '4',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              // KONTEN UTAMA (DITENGAH)
-              Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 30),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+          child: Expanded(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Ilustrasi amplop
+                      SvgPicture.asset('assets/verifyIcon.svg', height: 240),
+                      SizedBox(height: 15),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Ilustrasi amplop
-                          SvgPicture.asset(
-                            'assets/verifyIcon.svg',
-                            height: 240,
-                          ),
-                          SizedBox(height: 15),
+                          // Judul
                           Text(
                             "Segera Verifikasi Email Anda",
                             textAlign: TextAlign.left,
                             style: TextStyle(fontSize: 30),
                           ),
+
+                          SizedBox(height: 16),
 
                           // Deskripsi
                           Obx(
@@ -108,10 +81,10 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
                                     ),
                                     TextSpan(
                                       text:
-                                          " untuk tautan verifikasi. Jika Anda tidak menerima email, silahkan klik tombol ",
+                                          ". Masukkan kode verifikasi di bawah ini. Jika kode belum diterima, klik tombol ",
                                     ),
                                     TextSpan(
-                                      text: "Kirim Ulang Email",
+                                      text: "Kirim Ulang OTP",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey,
@@ -126,91 +99,156 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
 
                           SizedBox(height: 24),
 
-                          // Tombol
-                          Obx(
-                            () => SizedBox(
-                              width: 200,
-                              height: 45,
-                              child: OutlinedButton(
-                                onPressed:
-                                    controller.isButtonEnabled.value
-                                        ? () => controller.resendEmail()
-                                        : null, // otomatis disable
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor:
-                                      controller.isButtonEnabled.value
-                                          ? Colors.teal
-                                          : Colors.grey, // warna teks & icon
-                                  side: BorderSide(
-                                    color:
-                                        controller.isButtonEnabled.value
-                                            ? Colors.teal
-                                            : Colors.grey, // warna border
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                ),
-                                child: Text(
-                                  "Kirim Ulang Email",
-                                  style: TextStyle(
-                                    color:
-                                        controller.isButtonEnabled.value
-                                            ? Colors.teal
-                                            : Colors.grey, // warna teks
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 12),
-
-                          // Countdown
-                          Obx(
-                            () => Text(
-                              controller.isButtonEnabled.value
-                                  ? "Anda bisa kirim ulang email sekarang"
-                                  : "Anda dapat mengirim ulang email dalam ${controller.countdown.value} detik",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          RichText(
-                            text: TextSpan(
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey,
-                              ),
+                          // TextField input kode OTP
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24),
+                            child: Row(
                               children: [
-                                TextSpan(text: "Email yang diinput salah? "),
-                                TextSpan(
-                                  text: "Ubah disini",
-                                  style: TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold,
+                                // TextField
+                                Expanded(
+                                  child: TextField(
+                                    controller: controller.otpController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      hintText: "Masukkan kode OTP",
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                        borderSide: BorderSide(
+                                          color: Colors.teal,
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                        borderSide: BorderSide(
+                                          color: Colors.teal,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                        borderSide: BorderSide(
+                                          color: Colors.teal,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 14,
+                                      ),
+                                    ),
                                   ),
-                                  recognizer:
-                                      TapGestureRecognizer()
-                                        ..onTap = () {
-                                          _showChangeEmailDialog(
-                                            context,
-                                            "${controller.box.read("email")}",
-                                          );
-                                        },
+                                ),
+
+                                SizedBox(width: 8),
+
+                                // Tombol Kirim
+                                ElevatedButton(
+                                  onPressed: () {
+                                    controller.sendOtp(); // fungsi kirim OTP
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.teal,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 14,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "Kirim",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
+
+                          SizedBox(height: 16),
                         ],
                       ),
-                    ),
+                      SizedBox(height: 24),
+
+                      // Tombol
+                      Obx(
+                        () => SizedBox(
+                          width: 200,
+                          height: 45,
+                          child: OutlinedButton(
+                            onPressed:
+                                controller.isButtonEnabled.value
+                                    ? () => controller.resendEmail()
+                                    : null, // otomatis disable
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor:
+                                  controller.isButtonEnabled.value
+                                      ? Colors.teal
+                                      : Colors.grey, // warna teks & icon
+                              side: BorderSide(
+                                color:
+                                    controller.isButtonEnabled.value
+                                        ? Colors.teal
+                                        : Colors.grey, // warna border
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                            ),
+                            child: Text(
+                              "Kirim Ulang Email",
+                              style: TextStyle(
+                                color:
+                                    controller.isButtonEnabled.value
+                                        ? Colors.teal
+                                        : Colors.grey, // warna teks
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 12),
+
+                      // Countdown
+                      Obx(
+                        () => Text(
+                          controller.isButtonEnabled.value
+                              ? "Anda bisa kirim ulang email sekarang"
+                              : "Anda dapat mengirim ulang email dalam ${controller.countdown.value} detik",
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(fontSize: 15, color: Colors.grey),
+                          children: [
+                            TextSpan(text: "Email yang diinput salah? "),
+                            TextSpan(
+                              text: "Ubah disini",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              recognizer:
+                                  TapGestureRecognizer()
+                                    ..onTap = () {
+                                      _showChangeEmailDialog(
+                                        context,
+                                        "${controller.box.read("email")}",
+                                      );
+                                    },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),

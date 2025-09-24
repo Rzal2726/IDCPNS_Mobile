@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -129,7 +130,7 @@ class LengkapiBiodataController extends GetxController {
     }
 
     if (errorMessage != null) {
-      showSnackbar("Gagal", errorMessage);
+      notifHelper.show(errorMessage, type: 0);
       return;
     }
 
@@ -164,14 +165,7 @@ class LengkapiBiodataController extends GetxController {
       print("response ${result.toString()}");
 
       if (result["status"] == "success") {
-        Get.snackbar(
-          "Berhasil",
-          "Biodata berhasil disimpan.",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 2),
-        );
+        notifHelper.show("Biodata berhasil disimpan.", type: 1);
 
         // kasih delay sedikit biar snackbar sempat tampil
         await Future.delayed(Duration(milliseconds: 500));
@@ -333,11 +327,5 @@ class LengkapiBiodataController extends GetxController {
 }
 
 void showSnackbar(String title, String message, {bool success = false}) {
-  Get.snackbar(
-    title,
-    message,
-    backgroundColor: success ? Colors.green : Colors.red,
-    colorText: Colors.white,
-    snackPosition: SnackPosition.TOP,
-  );
+  notifHelper.show(message, type: success ? 1 : 0);
 }

@@ -170,16 +170,34 @@ class NotificationView extends GetView<NotificationController> {
                     child: Column(
                       children: [
                         if (controller.notifData.isNotEmpty)
-                          for (var data in controller.notifData)
-                            if (data['read'] == 0)
-                              _buildNotificationItem(
-                                '${data['title']}',
-                                '${data['created_at']}',
-                                0,
-                                data['id'],
-                                data['description'],
-                                data['orderId']?.toString() ?? "",
-                              ),
+                          Column(
+                            children:
+                                controller.notifData.any((d) => d['read'] == 0)
+                                    ? [
+                                      for (var data in controller.notifData)
+                                        if (data['read'] == 0)
+                                          _buildNotificationItem(
+                                            '${data['title']}',
+                                            '${data['created_at']}',
+                                            0,
+                                            data['id'],
+                                            data['description'],
+                                            data['orderId']?.toString() ?? "",
+                                          ),
+                                    ]
+                                    : [
+                                      Center(
+                                        child: Text(
+                                          "Tidak ada pesan baru",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[600],
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                          ),
 
                         // placeholder dummy kalau kosong
                         if (controller.notifData.isEmpty)
@@ -239,16 +257,35 @@ class NotificationView extends GetView<NotificationController> {
                     ],
                   ),
                   SizedBox(height: 8),
-                  for (var data in controller.notifData)
-                    if (data['read'] == 1)
-                      _buildNotificationItem(
-                        '${data['title']}',
-                        '${data['created_at']}',
-                        1,
-                        data['id'],
-                        data['description'],
-                        data['orderId']?.toString() ?? "",
-                      ),
+                  Column(
+                    children:
+                        controller.notifData.any((d) => d['read'] == 1)
+                            ? [
+                              for (var data in controller.notifData)
+                                if (data['read'] == 1)
+                                  _buildNotificationItem(
+                                    '${data['title']}',
+                                    '${data['created_at']}',
+                                    1,
+                                    data['id'],
+                                    data['description'],
+                                    data['orderId']?.toString() ?? "",
+                                  ),
+                            ]
+                            : [
+                              Center(
+                                child: Text(
+                                  "Tidak ada pesan yang sudah dibaca",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                            ],
+                  ),
                 ],
               ),
             ),

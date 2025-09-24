@@ -19,7 +19,7 @@ class _NotifIconState extends State<NotifIcon> {
   @override
   void initState() {
     super.initState();
-    getNotif(); // fetch sekali pas widget dipasang
+    getNotif(); // fetch awal
   }
 
   Future<void> getNotif() async {
@@ -39,7 +39,7 @@ class _NotifIconState extends State<NotifIcon> {
                 .map<int>((item) => item["id"] as int)
                 .toList();
 
-        allUnreadData.assignAll(unread);
+        allUnreadData.assignAll(unread); // otomatis rebuild Obx
       }
     } catch (e) {
       debugPrint("Error fetch notif: $e");
@@ -56,7 +56,12 @@ class _NotifIconState extends State<NotifIcon> {
       return Padding(
         padding: const EdgeInsets.only(right: 16.0),
         child: InkWell(
-          onTap: () => Get.toNamed(Routes.NOTIFICATION),
+          onTap: () {
+            // buka halaman notifikasi, lalu refresh notif saat kembali
+            Get.toNamed(Routes.NOTIFICATION)?.then((_) {
+              getNotif(); // refresh otomatis setelah back
+            });
+          },
           borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [

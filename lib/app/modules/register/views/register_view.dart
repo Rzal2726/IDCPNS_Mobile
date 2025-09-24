@@ -33,51 +33,63 @@ class RegisterView extends GetView<RegisterController> {
                 SizedBox(height: 32),
 
                 // Nama Lengkap
-                Text(
-                  "Nama Lengkap *",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                RichText(
+                  text: TextSpan(
+                    text: "Nama Lengkap ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontSize: 14,
+                    ),
+                    children: [
+                      TextSpan(text: "*", style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
                 ),
                 SizedBox(height: 8),
                 TextFormField(
                   controller: controller.nameController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   decoration: _inputDecoration("Masukkan nama lengkap"),
-                  // validator: (value) {
-                  //   if (value == null || value.trim().isEmpty) {
-                  //     return 'Nama tidak boleh kosong.';
-                  //   }
-                  //   return null;
-                  // },
                 ),
                 SizedBox(height: 16),
 
                 // Email
-                Text("Email", style: TextStyle(fontWeight: FontWeight.w600)),
+                RichText(
+                  text: TextSpan(
+                    text: "Email ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontSize: 14,
+                    ),
+                    children: [
+                      TextSpan(text: "*", style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 8),
                 TextFormField(
                   controller: controller.regEmailController,
                   keyboardType: TextInputType.emailAddress,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   decoration: _inputDecoration("Masukkan alamat email"),
-                  // validator: (value) {
-                  //   if (value == null || value.trim().isEmpty) {
-                  //     return 'Email tidak boleh kosong.';
-                  //   }
-                  //   if (!GetUtils.isEmail(value.trim())) {
-                  //     return 'Email tidak valid.';
-                  //   }
-                  //   if (controller.emailError.value.isNotEmpty) {
-                  //     return controller.emailError.value; // munculin error API
-                  //   }
-                  //   return null;
-                  // },
                 ),
                 SizedBox(height: 16),
 
                 // Password
-                Text(
-                  "Kata Sandi *",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                RichText(
+                  text: TextSpan(
+                    text: "Password ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontSize: 14,
+                    ),
+                    children: [
+                      TextSpan(text: "*", style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
                 ),
                 SizedBox(height: 8),
                 Obx(
@@ -98,20 +110,23 @@ class RegisterView extends GetView<RegisterController> {
                         onPressed: controller.togglePasswordVisibility,
                       ),
                     ),
-                    // validator: (value) {
-                    //   if (value == null || value.length < 8) {
-                    //     return 'Password minimal 8 karakter.';
-                    //   }
-                    //   return null;
-                    // },
                   ),
                 ),
                 SizedBox(height: 16),
 
                 // Konfirmasi Password
-                Text(
-                  "Konfirmasi Kata Sandi *",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                RichText(
+                  text: TextSpan(
+                    text: "Konfirmasi Password ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontSize: 14,
+                    ),
+                    children: [
+                      TextSpan(text: "*", style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
                 ),
                 SizedBox(height: 8),
                 Obx(
@@ -120,7 +135,7 @@ class RegisterView extends GetView<RegisterController> {
                     obscureText: !controller.isConfirmPasswordVisible.value,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     decoration: _inputDecoration(
-                      "Masukkan konfirmasi kata sandi",
+                      "Masukkan konfirmasi password",
                     ).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -132,16 +147,11 @@ class RegisterView extends GetView<RegisterController> {
                         onPressed: controller.toggleConfirmPasswordVisibility,
                       ),
                     ),
-                    // validator: (value) {
-                    //   if (value != controller.regPasswordController.text) {
-                    //     return 'Konfirmasi password tidak cocok.';
-                    //   }
-                    //   return null;
-                    // },
                   ),
                 ),
                 SizedBox(height: 16),
 
+                // Kode Afiliator
                 Text(
                   "Kode Afiliator",
                   style: TextStyle(fontWeight: FontWeight.w600),
@@ -183,8 +193,6 @@ class RegisterView extends GetView<RegisterController> {
                                   TapGestureRecognizer()
                                     ..onTap = () {
                                       Get.toNamed(Routes.TERM_CONDITONS);
-                                      // Atau bisa pindah halaman:
-                                      // Get.to(() => SyaratKetentuanPage());
                                     },
                             ),
                             TextSpan(text: ' yang berlaku'),
@@ -242,9 +250,7 @@ class RegisterView extends GetView<RegisterController> {
                   onPressed:
                       controller.isLoading.value
                           ? null
-                          : () {
-                            controller.handleSignIn();
-                          },
+                          : () => controller.handleSignIn(),
                   icon: Image.asset('assets/goggleIcon.png', height: 28),
                   label:
                       controller.isLoading.value
@@ -265,16 +271,13 @@ class RegisterView extends GetView<RegisterController> {
                             ),
                           ),
                   style: OutlinedButton.styleFrom(
-                    backgroundColor:
-                        Colors.white, // samakan dengan ElevatedButton
+                    backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                     minimumSize: Size.fromHeight(50),
-                    side: BorderSide(
-                      color: Colors.grey,
-                    ), // optional, sesuai taste
+                    side: BorderSide(color: Colors.grey),
                   ),
                 ),
 

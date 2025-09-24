@@ -34,182 +34,193 @@ class WishlistView extends GetView<WishlistController> {
         ),
         body: SafeArea(
           child: Obx(() {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-                child: Column(
-                  children: [
-                    SearchRowButton(
-                      controller: controller.searchController,
-                      onSearch: () {
-                        controller.getWhislist(
-                          search: controller.searchController.text,
-                        );
-                      },
-                      hintText:
-                          'Apa yang ingin Anda cari?', // optional, kalau SearchRowButton mendukung
-                    ),
-                    SizedBox(height: 16),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Get.toNamed(Routes.PAYMENT_WHISLIST);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            'Beli Semua',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            showBimbelBottomSheet(context);
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                'Filter',
-                                style: TextStyle(
-                                  color: Colors.teal,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(
-                                Icons.keyboard_arrow_down,
-                                size: 18,
-                                color: Colors.teal,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+              child: Column(
+                children: [
+                  // Search
+                  SearchRowButton(
+                    controller: controller.searchController,
+                    onSearch: () {
+                      controller.getWhislist(
+                        search: controller.searchController.text,
+                      );
+                    },
+                    hintText: 'Apa yang ingin Anda cari?',
+                  ),
+                  SizedBox(height: 16),
 
-                    SizedBox(height: 7),
-                    (controller.whistlistData['data'] != null &&
-                            controller.whistlistData['data']!.isNotEmpty)
-                        ? Column(
+                  // Baris tombol "Beli Semua" + Filter
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Get.toNamed(Routes.PAYMENT_WHISLIST);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          'Beli Semua',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ),
+                      Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          showBimbelBottomSheet(context);
+                        },
+                        child: Row(
                           children: [
-                            // Daftar wishlist
-                            Column(
-                              children:
-                                  controller.whistlistData['data']!
-                                      .map<Widget>(
-                                        (item) => Padding(
-                                          padding: EdgeInsets.only(bottom: 12),
-                                          child: _buildWishlistItem(
-                                            imageUrl:
-                                                item['productDetail']['gambar'],
-                                            title:
-                                                item['productDetail']['name'] ??
-                                                item['productDetail']['formasi'],
-                                            oldPrice:
-                                                (item['productDetail']?['price_list']?['harga_terendah'] ??
-                                                        "")
-                                                    .toString(),
-                                            oldPriceFix:
-                                                (item['productDetail']?['price_list']?['harga_fix_terendah'] ??
-                                                        "")
-                                                    .toString(),
-                                            newPrice:
-                                                (item['productDetail']?['price_list']?['harga_tertinggi'] ??
-                                                        item['productDetail']['harga'])
-                                                    .toString(),
-                                            newPriceFix:
-                                                (item['productDetail']?['price_list']?['harga_fix_tertinggi'] ??
-                                                        item['productDetail']['harga_fix'])
-                                                    .toString(),
-                                            tag:
-                                                item['productDetail']['menu_category']['menu'],
-                                            tagColor:
-                                                item['productDetail']['menu_category']['warna']['hex'],
-                                            isBimbel:
-                                                item['bimbel_parent_id'] !=
-                                                null,
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
+                            Text(
+                              'Filter',
+                              style: TextStyle(
+                                color: Colors.teal,
+                                fontSize: 16,
+                              ),
                             ),
-
-                            SizedBox(height: 20),
-
-                            // Pagination
-                            ReusablePagination(
-                              nextPage: controller.nextPage,
-                              prevPage: controller.prevPage,
-                              currentPage: controller.currentPage,
-                              totalPage: controller.totalPage,
-                              goToPage: controller.goToPage,
+                            SizedBox(width: 4),
+                            Icon(
+                              Icons.keyboard_arrow_down,
+                              size: 18,
+                              color: Colors.teal,
                             ),
                           ],
-                        )
-                        : (controller.showSkeleton.value ||
-                            controller.isLoading.value)
-                        ? Skeletonizer(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: 3, // jumlah skeleton item
-                            itemBuilder:
-                                (context, index) => Container(
-                                  margin: EdgeInsets.only(bottom: 20),
-                                  padding: EdgeInsets.all(14),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.shade300,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 20,
-                                        width: 80,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      SizedBox(height: 7),
-                                      Container(
-                                        height: 16,
-                                        width: 120,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      SizedBox(height: 7),
-                                      Container(
-                                        height: 14,
-                                        width: 160,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                          ),
-                        )
-                        : Padding(
-                          padding: EdgeInsets.only(top: 30),
-                          child: EmptyStateWidget(
-                            message:
-                                'Wishlist Anda saat ini kosong. Silakan tambahkan produk favorit Anda untuk melihatnya di sini.',
-                            svgAsset: "assets/learningEmpty.svg",
-                          ),
                         ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 7),
+
+                  // Konten (expand biar isiannya bisa center)
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        if (controller.showSkeleton.value ||
+                            controller.isLoading.value) {
+                          // Skeleton loading
+                          return Skeletonizer(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: 3,
+                              itemBuilder:
+                                  (context, index) => Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    padding: EdgeInsets.all(14),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.shade300,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 20,
+                                          width: 80,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        SizedBox(height: 7),
+                                        Container(
+                                          height: 16,
+                                          width: 120,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        SizedBox(height: 7),
+                                        Container(
+                                          height: 14,
+                                          width: 160,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                            ),
+                          );
+                        } else if (controller.whistlistData['data'] != null &&
+                            controller.whistlistData['data']!.isNotEmpty) {
+                          // Ada data → tampilkan list
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Column(
+                                  children:
+                                      controller.whistlistData['data']!
+                                          .map<Widget>(
+                                            (item) => Padding(
+                                              padding: EdgeInsets.only(
+                                                bottom: 12,
+                                              ),
+                                              child: _buildWishlistItem(
+                                                imageUrl:
+                                                    item['productDetail']['gambar'],
+                                                title:
+                                                    item['productDetail']['name'] ??
+                                                    item['productDetail']['formasi'],
+                                                oldPrice:
+                                                    (item['productDetail']?['price_list']?['harga_terendah'] ??
+                                                            "")
+                                                        .toString(),
+                                                oldPriceFix:
+                                                    (item['productDetail']?['price_list']?['harga_fix_terendah'] ??
+                                                            "")
+                                                        .toString(),
+                                                newPrice:
+                                                    (item['productDetail']?['price_list']?['harga_tertinggi'] ??
+                                                            item['productDetail']['harga'])
+                                                        .toString(),
+                                                newPriceFix:
+                                                    (item['productDetail']?['price_list']?['harga_fix_tertinggi'] ??
+                                                            item['productDetail']['harga_fix'])
+                                                        .toString(),
+                                                tag:
+                                                    item['productDetail']['menu_category']['menu'],
+                                                tagColor:
+                                                    item['productDetail']['menu_category']['warna']['hex'],
+                                                isBimbel:
+                                                    item['bimbel_parent_id'] !=
+                                                    null,
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                ),
+                                SizedBox(height: 20),
+                                ReusablePagination(
+                                  nextPage: controller.nextPage,
+                                  prevPage: controller.prevPage,
+                                  currentPage: controller.currentPage,
+                                  totalPage: controller.totalPage,
+                                  goToPage: controller.goToPage,
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          // Kosong → benar-benar center
+                          return Center(
+                            child: EmptyStateWidget(
+                              message:
+                                  'Wishlist Anda saat ini kosong. Silakan tambahkan produk favorit Anda untuk melihatnya di sini.',
+                              svgAsset: "assets/learningEmpty.svg",
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
             );
           }),
@@ -254,16 +265,24 @@ class WishlistView extends GetView<WishlistController> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            width: 120,
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                bottomLeft: Radius.circular(12),
-              ),
-              child: Image.network(imageUrl, fit: BoxFit.cover),
+          /// IMAGE SIDE
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              bottomLeft: Radius.circular(12),
+            ),
+            child: Image.network(
+              imageUrl,
+              height: 144,
+              width: 144, // sama seperti card1
+              fit: BoxFit.fill,
+              errorBuilder:
+                  (context, error, stackTrace) =>
+                      Icon(Icons.broken_image, size: 40, color: Colors.grey),
             ),
           ),
+
+          /// TEXT SIDE
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(8),
@@ -281,8 +300,9 @@ class WishlistView extends GetView<WishlistController> {
                     overflow: TextOverflow.ellipsis,
                     softWrap: true,
                   ),
-
                   SizedBox(height: 10),
+
+                  // Harga lama
                   Text(
                     isBimbel == true
                         ? "${formatRupiah((oldPrice ?? ""))} - ${formatRupiah((newPrice ?? ""))}"
@@ -294,6 +314,7 @@ class WishlistView extends GetView<WishlistController> {
                     ),
                   ),
 
+                  // Harga fix
                   Text(
                     isBimbel == true
                         ? "${formatRupiah((oldPriceFix ?? ""))} - ${formatRupiah((newPriceFix ?? ""))}"
@@ -305,6 +326,7 @@ class WishlistView extends GetView<WishlistController> {
                     ),
                   ),
                   SizedBox(height: 3),
+
                   Align(
                     alignment: Alignment.centerRight, // Bikin rata kanan
                     child: Container(
@@ -341,7 +363,7 @@ class WishlistView extends GetView<WishlistController> {
       backgroundColor: Colors.transparent, // biar ada radius
       builder: (ctx) {
         return FractionallySizedBox(
-          heightFactor: 0.6, // maksimal 60% layar, bisa ubah sesuai kebutuhan
+          heightFactor: 0.47, // maksimal 60% layar, bisa ubah sesuai kebutuhan
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -488,25 +510,23 @@ class WishlistView extends GetView<WishlistController> {
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () async {
+                              Navigator.pop(context);
                               controller.selectedKategoriId.value = 0;
                               controller.selectedEventKategori.value = 'Semua';
                               controller.selectedProductiId.value = 0;
                               controller.selectedEventProduct.value = 'Semua';
 
-                              controller.isLoading.value =
-                                  true; // ⬅️ mulai loading
+                              controller.isLoading.value = true;
 
                               await controller.getWhislist(
-                                menuCategoryId: null, // ambil semua
-                                produk: null,
+                                menuCategoryId: "0", // ambil semua
+                                produk: "",
                               );
 
                               controller.isLoading.value =
                                   false; // ⬅️ matikan loading
 
-                              Navigator.pop(
-                                context,
-                              ); // tutup popup/setelah selesai
+                              // tutup popup/setelah selesai
                             },
 
                             style: OutlinedButton.styleFrom(

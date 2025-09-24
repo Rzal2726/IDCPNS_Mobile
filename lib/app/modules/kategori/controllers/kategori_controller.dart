@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
@@ -134,7 +135,7 @@ class KategoriController extends GetxController {
       totalPage.value = (totalPaket.value / perPage.value).toInt();
       currentPage.value = response['data']['current_page'];
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      notifHelper.show("terjadi kesalahan", type: 0);
     } finally {
       loading['paket'] = false;
     }
@@ -168,7 +169,7 @@ class KategoriController extends GetxController {
       totalBimbelPage.value = (totalBimbel.value / perPage.value).toInt();
       currentBimbelPage.value = response['data']['current_page'];
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      notifHelper.show("terjadi kesalahan", type: 0);
     } finally {
       loading['bimbel'] = false;
     }

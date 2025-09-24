@@ -20,14 +20,14 @@ class TransactionView extends GetView<TransactionController> {
         canPop: false, // false = cegah pop otomatis
         onPopInvoked: (didPop) async {
           if (didPop) return;
-          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 3});
+          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
         },
         child: Scaffold(
           backgroundColor: Colors.white,
           appBar: secondaryAppBar(
             "Transaksi",
             onBack: () {
-              Get.toNamed(Routes.HOME, arguments: {'initialIndex': 3});
+              Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
             },
           ),
           body: SafeArea(

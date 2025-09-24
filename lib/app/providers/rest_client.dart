@@ -1,17 +1,23 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:idcpns_mobile/app/modules/notification/controllers/notification_controller.dart';
 import 'package:idcpns_mobile/app/providers/exceptions.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class RestClient {
   Dio dio = Dio();
-
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
   // BaseApiService() : dio = Dio(options);
 
   Future<RestClient> init() async {
+    // final notifC = Get.put(NotificationController());
+    // notifC.getNotif();
     try {
       await GetStorage.init();
       final box = GetStorage();
@@ -180,7 +186,7 @@ class RestClient {
   _processResponse(response) {
     if (response == null) {
       // ignore: avoid_print
-      return print("Something went wrong");
+      return print("Something went wrong1");
     }
     switch (response.statusCode) {
       case 200:
@@ -192,26 +198,33 @@ class RestClient {
       case 400:
         var message = jsonDecode(response.toString())["message"];
         // showPopup("Error", message);
+        print("xxcode1");
         throw ClientException(message: message, response: response.data);
       case 401:
         var message = jsonDecode(response.toString())["message"];
+        print("xxcode2");
         if (message == 'Token Expired') {
+          print("xxcode2.1");
           return ClientException(message: message, response: response.data);
         }
         // showPopup("Error", message);
         throw message;
       case 404:
         var message = jsonDecode(response.toString())["message"];
+        print("xxcode3");
         // showPopup("Error", message);
         throw message;
       case 500:
         var message = jsonDecode(response.toString())["message"];
+        print("xxcode4");
         if (message == 'Server Error') {
+          print("xxcode4.1");
           return ClientException(message: message, response: response.data);
         }
         // showPopup("Error", "Server Error");
-        throw ServerException(message: "Something went wrong");
+        throw ServerException(message: "Something went wrong2");
       case 504:
+        print("xxcode5");
         // showPopup("Error", "Server Down");
         throw ServerException(message: "Server went down");
       default:
@@ -220,21 +233,95 @@ class RestClient {
         // showPopup("Error", message);
         throw HttpException(
           statusCode: response.statusCode,
-          message: "Something went wrong",
+          message: "Something went wrong3",
         );
     }
   }
 
   _dioException(DioException dioErr) {
     switch (dioErr.type) {
-      // case DioExceptionType.response:
-      //   throw _processResponse(dioErr.response);
       case DioExceptionType.sendTimeout:
-        throw "Something went wrong";
+        throw "Something went wrong4";
       case DioExceptionType.receiveTimeout:
-        throw "Something went wrong";
+        throw "Something went wrong5";
       default:
-        throw "Something went wrong";
+        // tampilkan dialog logout
+        Get.dialog(
+          AlertDialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16), // sudut dialog membulat
+            ),
+            title: Row(
+              children: const [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.orange,
+                  size: 28,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  "Peringatan",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+            content: const Text(
+              "Akun ini terhubung dengan device lain.\n\n"
+              "Untuk melanjutkan, silakan login kembali.",
+              style: TextStyle(
+                fontSize: 15,
+                height: 1.4,
+                color: Colors.black54,
+              ),
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+                onPressed: () async {
+                  try {
+                    await _googleSignIn.disconnect();
+                    await _googleSignIn.signOut();
+                    print(
+                      'Google logout berhasil / atau tidak ada session Google.',
+                    );
+                  } catch (e) {
+                    print(
+                      'Tidak ada akun Google yang sedang login atau sudah logout: $e',
+                    );
+                  }
+
+                  Get.offAllNamed(Routes.LOGIN);
+                },
+                child: const Text(
+                  "OK",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          barrierDismissible: false,
+          barrierColor: Colors.transparent,
+        );
+
+        break;
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -76,16 +77,7 @@ class PaymentWhislistController extends GetxController {
 
   Future<void> bayarSekarang() async {
     // Seolah-olah panggil API
-
-    Get.snackbar(
-      "Sukses",
-      "Pembayaran berhasil diproses (dummy)!",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.teal.withOpacity(0.8),
-      colorText: Colors.white,
-      margin: EdgeInsets.all(12),
-      borderRadius: 8,
-    );
+    notifHelper.show("Pembayaran berhasil diproses", type: 1);
     Get.toNamed(Routes.PAYMENT_CHECKOUT);
   }
 
@@ -170,7 +162,7 @@ class PaymentWhislistController extends GetxController {
     final result = await _restClient.postData(url: url, payload: payload);
 
     if (result == null) {
-      Get.snackbar("Gagal", "Terjadi kesalahan jaringan");
+      notifHelper.show("Terjadi kesalahan jaringan", type: 0);
       return;
     }
 
@@ -180,13 +172,12 @@ class PaymentWhislistController extends GetxController {
       promoAmount.value = result['data']['nominal'];
       promoCodeName.value = result['data']['voucher_code'];
       promoController.clear();
-      Get.snackbar(
-        "Berhasil",
+      notifHelper.show(
         "Kode promo berhasil diterapkan: +Rp ${promoAmount.value}",
+        type: 1,
       );
     } else {
-      // error dari server, walau status 500
-      Get.snackbar("Gagal", result["message"] ?? "Terjadi kesalahan");
+      notifHelper.show((result["message"] ?? "Terjadi kesalahan"), type: 0);
     }
   }
 
