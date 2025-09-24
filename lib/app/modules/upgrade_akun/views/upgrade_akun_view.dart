@@ -16,7 +16,9 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
     final List<Map<String, dynamic>> features = [
       {"name": "50+ Video Series", "platinum": true, "basic": false},
       {"name": "20+ Materi Ebook", "platinum": true, "basic": false},
-      {"name": "Ratusan Soal", "platinum": true, "basic": false},
+      {"name": "Ratusan Soal Tryout Harian", "platinum": true, "basic": false},
+      {"name": "Bonus Tryout Bebas Pilih", "platinum": true, "basic": false},
+      {"name": "Akses Premium Webinar", "platinum": true, "basic": false},
     ];
 
     return Scaffold(

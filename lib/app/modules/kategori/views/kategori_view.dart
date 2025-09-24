@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-
+import 'package:idcpns_mobile/app/Components/widgets/wdigetTryoutEventCard.dart';
 import '../controllers/kategori_controller.dart';
 
 class KategoriView extends GetView<KategoriController> {
@@ -189,23 +189,36 @@ class KategoriView extends GetView<KategoriController> {
                   );
                 }
 
-                return SizedBox(
-                  height: 224,
-                  child: PageView.builder(
-                    controller: PageController(viewportFraction: 0.85),
-                    itemCount: controller.eventTryout.length,
-                    itemBuilder: (ctx, index) {
-                      final event = controller.eventTryout[index];
-                      return _eventTryoutGratis(
-                        event["uuid"].toString(),
-                        event["label_text"].toString(),
-                        event['name'].toString(),
-                        controller.formatTanggalRange(
-                          "${event["startdate"].toString().substring(0, 10)} - ${event["enddate"].toString().substring(0, 10)}",
-                        ),
-                        event["periode_text"].toString(),
-                      );
-                    },
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        for (var data in controller.eventTryout)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: SizedBox(
+                              width: 300, // biar card rapi & konsisten
+                              child: GestureDetector(
+                                onTap: () {
+                                  Get.toNamed(
+                                    "/detail-event",
+                                    arguments: data['uuid'],
+                                  );
+                                },
+                                child: buildTryoutCard(
+                                  status: data['label_text'],
+                                  title: data['name'],
+                                  dateRange: data['range_date_string'],
+                                  period: data['periode_text'],
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 );
               }),
@@ -1029,12 +1042,14 @@ class KategoriView extends GetView<KategoriController> {
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16),
         child: Card(
-          elevation: 3,
-          shadowColor: Colors.teal.withOpacity(0.2),
-          color: Colors.white,
+          elevation: 0,
+          color: Color.fromARGB(255, 231, 246, 243),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Colors.teal.shade100, width: 1),
+            side: BorderSide(
+              color: Color.fromARGB(255, 183, 228, 219),
+              width: 1,
+            ),
           ),
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: Padding(
@@ -1047,8 +1062,8 @@ class KategoriView extends GetView<KategoriController> {
                 // Badge status
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.teal.shade400,
-                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.amber,
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -1106,10 +1121,21 @@ class KategoriView extends GetView<KategoriController> {
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
-                        "Periode: $periode",
+                        "Periode: ",
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.black87,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        "$periode",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.teal,
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
