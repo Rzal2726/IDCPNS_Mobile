@@ -65,6 +65,8 @@ dependencies:
 #  google_sign_in: ^7.1.1
   firebase_core: ^2.22.0  # pastikan firebase_core terbaru
   rich_editor: ^0.1.1
+  youtube_explode_dart: ^2.3.9
+  youtube_player_iframe: ^5.2.2
 
 dev_dependencies:
   flutter_test:

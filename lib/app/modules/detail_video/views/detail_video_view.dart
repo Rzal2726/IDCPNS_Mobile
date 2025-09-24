@@ -7,8 +7,7 @@ import 'package:idcpns_mobile/app/modules/notification/views/notification_view.d
 import 'package:rich_editor/rich_editor.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import '../controllers/detail_video_controller.dart';
 
 class DetailVideoView extends GetView<DetailVideoController> {
@@ -111,26 +110,11 @@ class DetailVideoView extends GetView<DetailVideoController> {
                               );
                             } else {
                               if (controller.videoData['isyoutube'] == 1) {
-                                return YoutubePlayerBuilder(
-                                  player: YoutubePlayer(
-                                    controller: controller.ytController,
-                                    showVideoProgressIndicator: true,
-                                    progressIndicatorColor: Colors.teal,
-                                    progressColors: ProgressBarColors(
-                                      playedColor: Colors.teal,
-                                      handleColor: Colors.teal.shade400,
-                                    ),
-                                    onReady: () {
-                                      debugPrint('Player is ready.');
-                                    },
-                                  ),
+                                return YoutubePlayerScaffold(
+                                  controller: controller.ytController,
+                                  aspectRatio: 16 / 9,
                                   builder: (context, player) {
-                                    return Column(
-                                      children: [
-                                        // ✅ Player otomatis fullscreen jika user klik tombol fullscreen
-                                        player,
-                                      ],
-                                    );
+                                    return Column(children: [player]);
                                   },
                                 );
                               } else {
@@ -1685,6 +1669,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
                         },
                       );
                       controller.playVideo();
+                      controller.isNote.value = false;
                     },
 
                     child: const Text(
