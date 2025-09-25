@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -9,8 +10,10 @@ import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:rich_editor/rich_editor.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart'
+    as ytFlutter;
 
 class DetailVideoController extends GetxController {
   final count = 0.obs;
@@ -70,9 +73,6 @@ class DetailVideoController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    if (videoData['isyoutube'] == 1) {
-      ytController.dispose();
-    }
   }
 
   Future<void> initDetailVideo() async {
@@ -148,18 +148,32 @@ class DetailVideoController extends GetxController {
   }
 
   Future<void> initYoutube(String uri) async {
-    final videoId = YoutubePlayer.convertUrlToId(uri);
-    ytController = YoutubePlayerController(
-      initialVideoId: videoId!,
-      flags: const YoutubePlayerFlags(autoPlay: true, mute: false),
+    final videoId = ytFlutter.YoutubePlayer.convertUrlToId(uri);
+    ytController = YoutubePlayerController.fromVideoId(
+      videoId: videoId!,
+      autoPlay: true,
+      params: const YoutubePlayerParams(showFullscreenButton: true),
     );
     // Listener untuk cek durasi video
-    ytController.addListener(() {
-      if (ytController.value.isReady) {
-        final totalDuration = ytController.value.position;
-        duration.value = formatytDuration(totalDuration);
-        detik.value = totalDuration.inSeconds;
-        print("Total Video Duration: ${duration.value}");
+    Timer? ytTimer;
+
+    ytController.listen((event) async {
+      if (!event.hasError) {
+        print("YouTube player ready!");
+
+        // Mulai polling setiap 1 detik
+        ytTimer?.cancel();
+        ytTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+          final currentPos = await ytController.currentTime;
+          final totalDur = await ytController.currentTime;
+
+          duration.value = formatytDuration(
+            Duration(seconds: totalDur.floor()),
+          );
+          detik.value = currentPos.floor();
+
+          print("Posisi: ${detik.value}s / Total: ${duration.value}");
+        });
       }
     });
   }
@@ -169,9 +183,8 @@ class DetailVideoController extends GetxController {
     isReady.value = false;
 
     // 🔹 Bersihkan controller sebelumnya
-    if (videoData['isyoutube'] == 1 && ytController.value.isPlaying) {
-      ytController.pause();
-      ytController.dispose();
+    if (videoData['isyoutube'] == 1) {
+      ytController.stopVideo();
     }
 
     // Reset webViewController jika sebelumnya WebView
@@ -446,7 +459,7 @@ class DetailVideoController extends GetxController {
 
   Future<void> playVideo() async {
     if (videoData['isyoutube'] == 1) {
-      ytController.play();
+      ytController.playVideo();
     } else {
       await webViewController.runJavaScript("""
     var videoElement = document.querySelector('video');
@@ -459,7 +472,7 @@ class DetailVideoController extends GetxController {
 
   Future<void> pauseVideo() async {
     if (videoData['isyoutube'] == 1) {
-      ytController.pause();
+      ytController.pauseVideo();
     } else {
       await webViewController.runJavaScript("""
     var videoElement = document.querySelector('video');
@@ -472,7 +485,8 @@ class DetailVideoController extends GetxController {
 
   Future<void> seekTo(int detik) async {
     if (videoData['isyoutube'] == 1) {
-      ytController.seekTo(Duration(seconds: detik));
+      ytController.seekTo(seconds: detik.toDouble(), allowSeekAhead: true);
+      ytController.playVideoAt(detik);
     } else {
       await webViewController.runJavaScript("""
     var videoElement = document.querySelector('video');
