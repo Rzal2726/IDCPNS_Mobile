@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:idcpns_mobile/app/modules/notification/controllers/notification_controller.dart';
 import 'package:idcpns_mobile/app/providers/exceptions.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
@@ -16,8 +15,6 @@ class RestClient {
   // BaseApiService() : dio = Dio(options);
 
   Future<RestClient> init() async {
-    // final notifC = Get.put(NotificationController());
-    // notifC.getNotif();
     try {
       await GetStorage.init();
       final box = GetStorage();

@@ -84,7 +84,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                     ],
                   ),
                   SizedBox(height: 10),
-                  const Text(
+                  Text(
                     "Bimbel Lainnya",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
@@ -110,6 +110,9 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
                                       ),
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                      maxLines: 2,
                                     ),
                                     Obx(() {
                                       final isSelected = controller
@@ -266,7 +269,15 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
-                          Icon(Icons.chevron_right),
+                          controller.kodePromo.value.isNotEmpty
+                              ? GestureDetector(
+                                onTap: () {
+                                  controller.kodePromo.value = '';
+                                  controller.promoAmount.value = 0;
+                                },
+                                child: Icon(Icons.close),
+                              )
+                              : Icon(Icons.chevron_right),
                         ],
                       ),
                     ),
@@ -281,7 +292,10 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                   ),
                   SizedBox(height: 10),
                   GestureDetector(
-                    onTap: () => showPromoCodeBottomSheet(context),
+                    onTap:
+                        controller.kodePromo.value.isNotEmpty
+                            ? null
+                            : () => showPromoCodeBottomSheet(context),
                     child: Container(
                       padding: EdgeInsets.symmetric(
                         vertical: 12,
@@ -366,7 +380,54 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                         ],
                       ),
                       SizedBox(height: 6),
-                      // Baris Total Harga (bold)
+                      if (controller.biayaAdmin != 0)
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Biaya admin",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                                Text(
+                                  "${formatRupiah(controller.biayaAdmin.value)}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 6),
+                          ],
+                        ),
+
+                      if (controller.promoAmount != 0)
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Diskon",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                                Text(
+                                  "${formatRupiah(controller.promoAmount.value)}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 6),
+                          ],
+                        ),
+
                       Row(
                         children: [
                           Expanded(
@@ -376,7 +437,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                             ),
                           ),
                           Text(
-                            "${formatRupiah((controller.getTotalHargaFix() - controller.promoAmount.value))}",
+                            "${formatRupiah((controller.getTotalHargaFix() + controller.biayaAdmin.value - controller.promoAmount.value))}",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -450,7 +511,7 @@ Widget _buildRadioOption(
   bool isDisabled = false, // disable radio jika paket sudah dibeli
 }) {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
+    padding: EdgeInsets.symmetric(vertical: 4),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -480,15 +541,15 @@ Widget _buildRadioOption(
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ),
-            const SizedBox(width: 4),
-            Text(title, style: const TextStyle(fontSize: 12)),
+            SizedBox(width: 4),
+            Text(title, style: TextStyle(fontSize: 12)),
           ],
         ),
 
         // Harga
         Text(
           isDisabled ? '' : formatRupiah(hargaFix),
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
       ],
     ),
@@ -563,6 +624,23 @@ void showPaymentBottomSheet(BuildContext context) {
                                         "Biaya Admin: ${method['biaya_admin']}",
                                     onTap: () {
                                       Get.back();
+                                      controller.updateBiayaAdmin(
+                                        method['biaya_admin'],
+                                      );
+                                      controller.ovoNumber.value = "";
+                                      controller.ovoController.clear();
+                                      controller.paymentMethod.value =
+                                          method['code'];
+                                      controller.paymentMethodId.value =
+                                          method['id'];
+                                      controller.paymentImage.value =
+                                          method['image_url'];
+                                      controller.paymentType.value =
+                                          data['code'];
+                                      controller
+                                          .metodePembayaran
+                                          .value = (method['code'] ?? '')
+                                          .replaceAll('_', ' ');
                                       method['code'] == "OVO"
                                           ? showPhoneNumberBottomSheet(context)
                                           : controller.paymentSelected(
@@ -655,7 +733,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
+    shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
     builder: (context) {
@@ -667,9 +745,9 @@ void showPromoCodeBottomSheet(BuildContext context) {
         child: SafeArea(
           child: Obx(() {
             return controller.paymantListData.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+                ? Center(child: CircularProgressIndicator())
                 : SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.25,
+                  height: MediaQuery.of(context).size.height * 0.15,
                   child: SingleChildScrollView(
                     padding: AppStyle.contentPadding,
                     child: Column(
@@ -678,7 +756,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               "Voucher",
                               style: TextStyle(
                                 fontSize: 18,
@@ -686,23 +764,25 @@ void showPromoCodeBottomSheet(BuildContext context) {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.close),
+                              icon: Icon(Icons.close),
                               onPressed: () => Get.back(),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
 
                         Padding(
-                          padding: const EdgeInsets.only(top: 1),
+                          padding: EdgeInsets.only(top: 1),
                           child: Row(
                             children: [
                               Expanded(
                                 child: TextField(
                                   controller: controller.promoController,
+                                  inputFormatters: [UpperCaseTextFormatter()],
                                   decoration: InputDecoration(
-                                    hintText: "Cari",
-                                    contentPadding: const EdgeInsets.symmetric(
+                                    hintText:
+                                        "CARI", // hintText juga bisa kamu bikin kapital manual
+                                    contentPadding: EdgeInsets.symmetric(
                                       horizontal: 12,
                                       vertical: 10,
                                     ),
@@ -711,21 +791,21 @@ void showPromoCodeBottomSheet(BuildContext context) {
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(6),
-                                      borderSide: const BorderSide(
+                                      borderSide: BorderSide(
                                         color: Colors.teal,
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: 8),
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.teal,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(6),
                                   ),
-                                  padding: const EdgeInsets.symmetric(
+                                  padding: EdgeInsets.symmetric(
                                     horizontal: 24,
                                     vertical: 14,
                                   ),
@@ -734,7 +814,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
                                   controller.getApplyCode();
                                   Get.back();
                                 },
-                                child: const Text(
+                                child: Text(
                                   "Klaim",
                                   style: TextStyle(color: Colors.white),
                                 ),
@@ -757,6 +837,8 @@ void showPhoneNumberBottomSheet(BuildContext context) {
   final controller = Get.put(PaymentDetailController());
   showModalBottomSheet(
     context: context,
+    isDismissible: false,
+    enableDrag: false,
     isScrollControlled: true,
     backgroundColor: Colors.white,
     shape: RoundedRectangleBorder(
@@ -773,7 +855,7 @@ void showPhoneNumberBottomSheet(BuildContext context) {
             return controller.paymantListData.isEmpty
                 ? Center(child: CircularProgressIndicator())
                 : SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.25,
+                  height: MediaQuery.of(context).size.height * 0.15,
                   child: SingleChildScrollView(
                     padding: AppStyle.contentPadding,
                     child: Column(
@@ -791,7 +873,10 @@ void showPhoneNumberBottomSheet(BuildContext context) {
                             ),
                             IconButton(
                               icon: Icon(Icons.close),
-                              onPressed: () => Get.back(),
+                              onPressed: () {
+                                controller.clearPaymentSelection();
+                                Get.back();
+                              },
                             ),
                           ],
                         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
@@ -28,6 +29,7 @@ class PaymentDetailController extends GetxController {
   RxString paymentType = "".obs;
   RxInt baseHarga = 0.obs;
   RxInt promoAmount = 0.obs;
+  RxInt biayaAdmin = 0.obs;
   RxInt parentId = 0.obs;
   RxBool isLoading = false.obs;
   // untuk state radio pilihan (sub bimbel)
@@ -179,12 +181,46 @@ class PaymentDetailController extends GetxController {
     }
   }
 
+  void updateBiayaAdmin(String biayaAdminRaw) {
+    final totalPaket = selectedPaketPerCard.values
+        .map((paket) => (paket["harga_fix"] ?? 0) as int)
+        .fold(0, (total, harga) => total + harga);
+
+    final totalSebelumPromo = baseHarga.value + totalPaket;
+
+    if (biayaAdminRaw.endsWith('%')) {
+      // Hitung persen dari total sebelum promo
+      final persen =
+          double.tryParse(biayaAdminRaw.replaceAll('%', '').trim()) ?? 0.0;
+
+      biayaAdmin.value =
+          (totalSebelumPromo * persen / 100).round(); // hasil rupiah
+    } else {
+      // Langsung pakai nominal
+      biayaAdmin.value = int.tryParse(biayaAdminRaw) ?? 0;
+    }
+  }
+
+  void clearPaymentSelection() {
+    ovoNumber.value = "";
+    ovoController.clear();
+    paymentMethod.value = "";
+    paymentMethodId.value = 0;
+    paymentImage.value = "";
+    paymentType.value = "";
+    metodePembayaran.value = "";
+    biayaAdmin.value = 0; // reset biaya admin juga
+  }
+
   int getTotalHargaFix() {
-    return (baseHarga.value +
-        selectedPaketPerCard.values
-            .map((paket) => paket["harga_fix"] as int)
-            .fold(0, (total, harga) => total + harga));
-    ;
+    print("xxc ${baseHarga.toString()}");
+    final totalPaket = selectedPaketPerCard.values
+        .map((paket) => (paket["harga_fix"] ?? 0) as int)
+        .fold(0, (total, harga) => total + harga);
+
+    final total = baseHarga.value + totalPaket;
+
+    return total < 0 ? 0 : total;
   }
 
   Future<void> getAddOvoNumber() async {
@@ -214,7 +250,7 @@ class PaymentDetailController extends GetxController {
   void createPayment() async {
     final payload = {
       "type": "bimbel",
-      "total_amount": getTotalHargaFix(),
+      "total_amount": getTotalHargaFix() + biayaAdmin.value - promoAmount.value,
       "amount_diskon": promoAmount.value,
       "description": wishListFirstProduct.value,
       "bundling": true,
@@ -240,7 +276,10 @@ class PaymentDetailController extends GetxController {
       final data = result['data'];
       print("Xxxc ${result["data"].toString()}");
       // pindah halaman checkout dulu
-      Get.offNamed(Routes.PAYMENT_CHECKOUT, arguments: data['payment_id']);
+      Get.offNamed(
+        Routes.PAYMENT_CHECKOUT,
+        arguments: [data['payment_id'], data['tanggal_kadaluarsa']],
+      );
 
       // cek jika ada invoice_url
       if (data.containsKey('invoice_url') && data['invoice_url'] != null) {

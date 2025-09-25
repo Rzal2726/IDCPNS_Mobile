@@ -3,11 +3,13 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/paymentTracsactionWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/Components/widgets/skeletonizerWidget.dart';
 import 'package:idcpns_mobile/app/modules/transaction/controllers/transaction_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TransactionView extends GetView<TransactionController> {
   const TransactionView({super.key});
@@ -50,11 +52,12 @@ class TransactionView extends GetView<TransactionController> {
 
                               return GestureDetector(
                                 onTap: () {
+                                  controller.isloading.value = true;
                                   controller.selectedOption.value = option;
 
                                   // Tentukan status untuk API
                                   String status = "";
-                                  if (option == "Sukses") status = "SUCCESS";
+                                  if (option == "Sukses") status = "PAID";
                                   if (option == "Menunggu Pembayaran")
                                     status = "PENDING";
                                   if (option == "Gagal") status = "FAILED";
@@ -180,7 +183,7 @@ class TransactionView extends GetView<TransactionController> {
                   child: Obx(() {
                     final allData = controller.transactions['data'] ?? [];
 
-                    if (allData.isEmpty) {
+                    if (allData.isEmpty || controller.isloading.value == true) {
                       return SkeletonListWidget<dynamic>(
                         data: [],
                         skeletonDuration: Duration(seconds: 5),
@@ -228,7 +231,7 @@ Widget _buildTransactionList(List<dynamic> filtered) {
     padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
     itemCount: filtered.length + 1, // ⬅️ +1 untuk pagination
     separatorBuilder: (_, i) => SizedBox(height: 12),
-    itemBuilder: (_, i) {
+    itemBuilder: (context, i) {
       if (i == filtered.length) {
         return Column(
           children: [
@@ -250,7 +253,74 @@ Widget _buildTransactionList(List<dynamic> filtered) {
       final trx = filtered[i];
       return GestureDetector(
         onTap: () {
-          Get.toNamed(Routes.INVOICE, arguments: trx['id']);
+          trx['status'] == 'PENDING'
+              ? showPaymentSheet(
+                context,
+                onCancel: () {
+                  showPaymentSheet2(
+                    context,
+                    onCancel: () {
+                      controller.deleteTransaction(id: trx['id'].toString());
+                    },
+                    onPay: () async {
+                      try {
+                        if (trx.containsKey('invoice_url') &&
+                            trx['invoice_url'] != null) {
+                          final String url = trx['invoice_url'];
+                          final uri = Uri.parse(url);
+
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(
+                              uri,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            debugPrint("Tidak bisa buka link: $url");
+                          }
+                        }
+                      } catch (e) {
+                        debugPrint("Error saat buka link: $e");
+                      }
+
+                      // Tetap lanjut ke halaman checkout
+                      Get.offNamed(
+                        Routes.PAYMENT_CHECKOUT,
+                        arguments: [
+                          trx['payment_id'],
+                          trx['tanggal_kadaluarsa'],
+                        ],
+                      );
+                    },
+                  );
+                },
+                onPay: () async {
+                  try {
+                    if (trx.containsKey('invoice_url') &&
+                        trx['invoice_url'] != null) {
+                      final String url = trx['invoice_url'];
+                      final uri = Uri.parse(url);
+
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      } else {
+                        debugPrint("Tidak bisa buka link: $url");
+                      }
+                    }
+                  } catch (e) {
+                    debugPrint("Error saat buka link: $e");
+                  }
+
+                  // Tetap lanjut ke halaman checkout
+                  Get.offNamed(
+                    Routes.PAYMENT_CHECKOUT,
+                    arguments: [trx['payment_id'], trx['tanggal_kadaluarsa']],
+                  );
+                },
+              )
+              : Get.toNamed(Routes.INVOICE, arguments: trx['id']);
         },
         child: Container(
           decoration: BoxDecoration(

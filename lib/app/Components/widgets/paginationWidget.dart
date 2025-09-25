@@ -25,6 +25,11 @@ class ReusablePagination extends StatelessWidget {
       int current = currentPage.value;
       int total = totalPage.value;
 
+      // kalau totalPage < 2 atau total data < 10 → langsung hide
+      if (total <= 1) {
+        return const SizedBox.shrink();
+      }
+
       // Generate daftar halaman mirip Pagination A
       List<int> pagesToShow = [];
       if (total <= 3) {

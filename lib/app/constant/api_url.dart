@@ -130,3 +130,4 @@ const String apiGetWebinarDetail = "v1/webinar/detail/";
 const String apiGetRekomendasiTryoutHome = "v1/home/event";
 const String apiCheckMaintenance = "v1/general/is-maintenance";
 const String apiPostAgree = "v1/account/user/afiliasi-agreement";
+const String apiCencelPayment = "v1/account/transaction/cancel";

@@ -16,7 +16,7 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false, // false = cegah pop otomatis
+      canPop: false,
       onPopInvoked: (didPop) async {
         if (didPop) return;
         Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
@@ -35,14 +35,68 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
               padding: EdgeInsets.all(16),
               child: Column(
                 children: [
-                  // Tabs
-                  Row(
-                    children: [
-                      _buildTabItem('Tryout', 0),
-                      SizedBox(width: 16),
-                      _buildTabItem('Bimbel', 1),
-                    ],
+                  // Custom Tabs
+                  Obx(
+                    () => Row(
+                      children:
+                          ["Tryout", "Bimbel"].asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final option = entry.value;
+                            final isSelected =
+                                controller.selectedTab.value == index;
+
+                            return GestureDetector(
+                              onTap: () {
+                                controller.selectedTab.value = index;
+
+                                // Reset state
+                                controller.currentPage.value = 1;
+                                controller.totalPage.value = 0;
+                                controller.searchController.clear();
+
+                                // Panggil API sesuai tab
+                                if (index == 0) {
+                                  controller.getTryout();
+                                } else {
+                                  controller.getBimbel();
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      option,
+                                      style: TextStyle(
+                                        color:
+                                            isSelected
+                                                ? Colors.teal
+                                                : Colors.grey[700],
+                                        fontWeight:
+                                            isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    AnimatedContainer(
+                                      duration: Duration(milliseconds: 200),
+                                      height: 2,
+                                      width: isSelected ? 20 : 0,
+                                      color: Colors.teal,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                    ),
                   ),
+
                   Divider(thickness: 1, color: Colors.grey.withOpacity(0.2)),
                   SizedBox(height: 8),
 
@@ -50,14 +104,13 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                   SearchRowButton(
                     controller: controller.searchController,
                     onSearch: () {
-                      controller
-                          .searchData(); // callback saat enter atau tap tombol
+                      controller.searchData();
                     },
                   ),
 
                   SizedBox(height: 15),
 
-                  // Title
+                  // Filter
                   Align(
                     alignment: Alignment.centerRight,
                     child: InkWell(
@@ -68,29 +121,33 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                           options: controller.options,
                           selectedValue: controller.selectedKategoriId,
                           onSelected: (id) {
-                            print("xxx2 ${controller.options.toString()}");
                             final selectedOption = controller.options
                                 .firstWhere((o) => o['id'] == id);
                             controller.selectedEventKategori.value =
                                 selectedOption['menu'];
                           },
                           onSubmit: () {
-                            controller.selectedTab.value == 0
-                                ? controller.getTryout(
-                                  submenuCategoryId:
-                                      controller.selectedKategoriId.value
-                                          ?.toString(),
-                                )
-                                : controller.getBimbel(
-                                  submenuCategoryId:
-                                      controller.selectedKategoriId.value
-                                          ?.toString(),
-                                );
+                            if (controller.selectedTab.value == 0) {
+                              controller.getTryout(
+                                submenuCategoryId:
+                                    controller.selectedKategoriId.value
+                                        .toString(),
+                              );
+                            } else {
+                              controller.getBimbel(
+                                submenuCategoryId:
+                                    controller.selectedKategoriId.value
+                                        .toString(),
+                              );
+                            }
                           },
+
                           onReset: () {
-                            controller.selectedTab.value == 0
-                                ? controller.getTryout(submenuCategoryId: "0")
-                                : controller.getBimbel(submenuCategoryId: "0");
+                            if (controller.selectedTab.value == 0) {
+                              controller.getTryout(submenuCategoryId: "0");
+                            } else {
+                              controller.getBimbel(submenuCategoryId: "0");
+                            }
                           },
                         );
                       },
@@ -107,60 +164,66 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
 
                   // Program List
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          blurRadius: 5,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
                     child: Obx(() {
                       final programList =
                           controller.selectedTab.value == 0
                               ? controller.tryoutData
                               : controller.bimbelData;
 
-                      // kalau ada data langsung tampilkan
                       if (programList.isNotEmpty) {
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: programList.length,
-                          itemBuilder: (context, index) {
-                            final program = programList[index];
-                            return _buildProgramCard(
-                              controller.selectedTab.value == 0
-                                  ? program['name']
-                                  : program['bimbel_parent_name'],
-                              () {
-                                if (controller.selectedTab.value == 0) {
-                                  Get.toNamed(
-                                    Routes.DETAIL_TRYOUT_SAYA,
-                                    arguments: program['uuid'],
-                                  );
-                                } else {
-                                  Get.toNamed(
-                                    Routes.DETAIL_MY_BIMBEL,
-                                    arguments: program['uuid'],
-                                  );
-                                }
+                        return Column(
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: programList.length,
+                              itemBuilder: (context, index) {
+                                final program = programList[index];
+                                return _buildProgramCard(
+                                  controller.selectedTab.value == 0
+                                      ? program['name']
+                                      : program['bimbel_parent_name'],
+                                  () {
+                                    if (controller.selectedTab.value == 0) {
+                                      Get.toNamed(
+                                        Routes.DETAIL_TRYOUT_SAYA,
+                                        arguments: program['uuid'],
+                                      );
+                                    } else {
+                                      Get.toNamed(
+                                        Routes.DETAIL_MY_BIMBEL,
+                                        arguments: program['uuid'],
+                                      );
+                                    }
+                                  },
+                                );
                               },
-                            );
-                          },
+                            ),
+                            programList.isNotEmpty
+                                ? Container(
+                                  color: Colors.white,
+                                  padding: EdgeInsets.symmetric(vertical: 8),
+                                  child: Center(
+                                    child: ReusablePagination(
+                                      currentPage: controller.currentPage,
+                                      totalPage: controller.totalPage,
+                                      goToPage: controller.goToPage,
+                                      nextPage: controller.nextPage,
+                                      prevPage: controller.prevPage,
+                                    ),
+                                  ),
+                                )
+                                : SizedBox.shrink(),
+                          ],
                         );
                       }
 
-                      // kalau kosong, tampilkan skeleton dulu → lalu otomatis ganti pesan kosong
+                      // kalau kosong, skeleton / empty state
                       return FutureBuilder(
                         future: Future.delayed(Duration(seconds: 5)),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState !=
                               ConnectionState.done) {
-                            // selama belum 5 detik → skeleton
                             return Skeletonizer(
                               child: ListView.builder(
                                 shrinkWrap: true,
@@ -208,7 +271,6 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                               ),
                             );
                           } else {
-                            // lewat 5 detik tapi data masih kosong
                             return Column(
                               children: [
                                 EmptyStateWidget(
@@ -228,48 +290,6 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTabItem(String title, int index) {
-    return GestureDetector(
-      onTap: () {
-        controller.selectedTab.value = index;
-
-        // Reset pagination
-        controller.currentPage.value = 1;
-        controller.totalPage.value = 1; // sementara, nanti diupdate dari API
-
-        // Panggil fetch API sesuai tab
-        if (index == 0) {
-          controller.getTryout(page: 1); // mulai dari page 1
-        } else if (index == 1) {
-          controller.getBimbel(page: 1);
-        }
-      },
-
-      child: Obx(() {
-        bool isSelected = controller.selectedTab.value == index;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: isSelected ? Colors.teal : Colors.black54,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-            SizedBox(height: 4),
-            AnimatedContainer(
-              duration: Duration(milliseconds: 200),
-              height: 2,
-              width: isSelected ? 40 : 0,
-              color: Colors.teal,
-            ),
-          ],
-        );
-      }),
     );
   }
 

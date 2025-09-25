@@ -7,7 +7,8 @@ import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class PaymentCheckoutController extends GetxController {
   final _restClient = RestClient();
-  var uuid = Get.arguments;
+  var uuid = Get.arguments[0];
+  var expired = Get.arguments[1];
   Timer? _paymentTimer;
   RxList<String> option = ["ATM", "MBanking"].obs;
   RxString selectedOption = "ATM".obs;
@@ -97,7 +98,7 @@ class PaymentCheckoutController extends GetxController {
   void fetchDetailPayment() async {
     // Ambil data transaksi dari controller sebelumnya
     final response = await _restClient.getData(
-      url: baseUrl + apiGetPaymentDetail + "/" + uuid,
+      url: baseUrl + apiGetPaymentDetail + "/" + uuid.toString(),
     );
 
     // Ambil data dari response, pakai Map aja

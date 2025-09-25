@@ -39,7 +39,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               padding: EdgeInsets.only(left: 20),
               child: InkWell(
                 onTap: () {
-                  // (Get.find<HomeController>()).changeBottomBar(0);
+                  (Get.find<HomeController>()).changeBottomBar(0);
                   // hapus controller HomeController dulu
                   // if (Get.isRegistered<HomeController>()) {
                   //   Get.delete<HomeController>();

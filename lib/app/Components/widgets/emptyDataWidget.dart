@@ -17,21 +17,18 @@ class EmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      // supaya isi bisa ambil ruang penuh
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min, // biar column sekecil konten
-          children: [
-            SvgPicture.asset(svgAsset, height: svgHeight, width: svgWidth),
-            const SizedBox(height: 20),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey, fontSize: 18),
-            ),
-          ],
-        ),
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(svgAsset, height: svgHeight, width: svgWidth),
+          const SizedBox(height: 20),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.grey, fontSize: 18),
+          ),
+        ],
       ),
     );
   }
