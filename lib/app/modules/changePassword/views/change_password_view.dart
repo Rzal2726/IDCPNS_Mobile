@@ -15,14 +15,14 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
       canPop: false, // false = cegah pop otomatis
       onPopInvoked: (didPop) async {
         if (didPop) return;
-        Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
+        Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
       },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: secondaryAppBar(
           "Ubah kata sandi",
           onBack: () {
-            Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
+            Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
           },
         ),
         body: SafeArea(

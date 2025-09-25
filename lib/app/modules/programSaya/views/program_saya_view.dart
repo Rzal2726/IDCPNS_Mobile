@@ -19,14 +19,14 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
       canPop: false,
       onPopInvoked: (didPop) async {
         if (didPop) return;
-        Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
+        Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
       },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: secondaryAppBar(
           "Program Saya",
           onBack: () {
-            Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
+            Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
           },
         ),
         body: SafeArea(

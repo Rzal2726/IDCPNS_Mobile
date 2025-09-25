@@ -1097,7 +1097,7 @@ class DashboardView extends GetView<DashboardController> {
                   SizedBox(height: 30),
 
                   GestureDetector(
-                    onTap: () => Get.toNamed(Routes.AFFILIATE),
+                    onTap: () => Get.offNamed(Routes.AFFILIATE),
                     child: Container(
                       height: 150,
                       decoration: BoxDecoration(

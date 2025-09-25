@@ -63,6 +63,14 @@ class TransactionController extends GetxController {
     }
   }
 
+  void getDate() {
+    getTransaction(
+      page: currentPage.value,
+      date: startDateController.text,
+      status: status.value,
+    );
+  }
+
   void _onSearchChanged() {
     final query = searchController.text;
     // Optional: pakai debounce supaya API tidak kebanyakan dipanggil

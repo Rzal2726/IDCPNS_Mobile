@@ -34,6 +34,8 @@ class PaymentCheckoutController extends GetxController {
 
   @override
   void onClose() {
+    _paymentTimer?.cancel();
+    _paymentTimer = null;
     super.onClose();
   }
 
@@ -42,7 +44,7 @@ class PaymentCheckoutController extends GetxController {
     _paymentTimer?.cancel();
 
     // Jalankan timer periodic setiap 5 detik
-    _paymentTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _paymentTimer = Timer.periodic(Duration(seconds: 5), (timer) {
       fetchDetailPayment();
       fetchServerTime();
     });

@@ -18,7 +18,7 @@ class AffiliateView extends GetView<AffiliateController> {
       onPopInvoked: (didPop) {
         if (!didPop) {
           // Saat tombol back ditekan
-          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
+          Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
         }
       },
       child: Scaffold(
@@ -26,7 +26,7 @@ class AffiliateView extends GetView<AffiliateController> {
         appBar: secondaryAppBar(
           "Afiliasi",
           onBack: () {
-            Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
+            Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
           },
         ),
         body: SafeArea(
@@ -64,14 +64,14 @@ class AffiliateView extends GetView<AffiliateController> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.check_circle, size: 18, color: Colors.black54),
+                      Icon(Icons.check_circle, size: 18, color: Colors.teal),
                       SizedBox(width: 8),
 
                       Expanded(
                         child: RichText(
                           text: TextSpan(
                             text: "Informasi selengkapnya : ",
-                            style: TextStyle(color: Colors.black, fontSize: 14),
+                            style: TextStyle(color: Colors.black, fontSize: 12),
                             children: [
                               TextSpan(
                                 text: "Klik disini.",
@@ -98,6 +98,7 @@ class AffiliateView extends GetView<AffiliateController> {
                       TextField(
                         controller: controller.kodeController,
                         focusNode: FocusNode(),
+                        readOnly: controller.affiliateStatus.value == true,
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white,
@@ -118,24 +119,33 @@ class AffiliateView extends GetView<AffiliateController> {
                           ),
                         ),
                       ),
-
-                      SizedBox(height: 16),
-
-                      ElevatedButton(
-                        onPressed: controller.simpanKode,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          minimumSize: Size(double.infinity, 48),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                      SizedBox(height: 12),
+                      Visibility(
+                        visible: controller.affiliateStatus.value == false,
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            bottom: 12,
+                          ), // atas & bawah 12
+                          child: ElevatedButton(
+                            onPressed: controller.simpanKode,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              minimumSize: Size(double.infinity, 48),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              "Simpan",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                              ),
+                            ),
                           ),
                         ),
-                        child: Text(
-                          "Simpan",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ),
                       ),
-                      SizedBox(height: 10),
+
                       Text(
                         "Kamu tidak dapat mengubah kode referral jika sudah ada user lain yang memakai kode referral kamu saat daftar.",
                         style: TextStyle(color: Colors.black87, fontSize: 15),
@@ -232,7 +242,7 @@ class AffiliateView extends GetView<AffiliateController> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(Icons.check_circle, size: 18, color: Colors.black54),
+        Icon(Icons.check_circle, size: 18, color: Colors.teal),
         SizedBox(width: 8),
         Expanded(child: Text(text, style: TextStyle(fontSize: 15))),
       ],

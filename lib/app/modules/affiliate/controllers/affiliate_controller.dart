@@ -9,7 +9,7 @@ import 'package:idcpns_mobile/app/providers/rest_client.dart';
 class AffiliateController extends GetxController {
   final _restClient = RestClient();
   var box = GetStorage();
-  RxBool affiliateStatus = false.obs;
+  RxBool affiliateStatus = true.obs;
   RxMap finaceData = {}.obs;
   RxInt komisiTotal = 0.obs;
   RxInt komisiTersedia = 0.obs;

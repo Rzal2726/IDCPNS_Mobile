@@ -17,14 +17,14 @@ class MyAccountView extends GetView<MyAccountController> {
       canPop: false, // biar kita handle manual
       onPopInvoked: (didPop) async {
         if (didPop) return;
-        Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
+        Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
       },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: secondaryAppBar(
           "Ubah Akun",
           onBack: () {
-            Get.toNamed(Routes.HOME, arguments: {'initialIndex': 4});
+            Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
           },
         ),
         body: SafeArea(
