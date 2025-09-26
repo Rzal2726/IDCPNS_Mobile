@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -25,6 +26,7 @@ class PaymentWhislistController extends GetxController {
   RxString paymentType = "".obs;
   RxInt baseHarga = 0.obs;
   RxInt promoAmount = 0.obs;
+  RxInt biayaAdmin = 0.obs;
   // untuk state radio pilihan (sub bimbel)
   RxMap<int, String> selectedSub = <int, String>{}.obs;
   RxBool isLoading = true.obs;
@@ -76,16 +78,7 @@ class PaymentWhislistController extends GetxController {
 
   Future<void> bayarSekarang() async {
     // Seolah-olah panggil API
-
-    Get.snackbar(
-      "Sukses",
-      "Pembayaran berhasil diproses (dummy)!",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.teal.withOpacity(0.8),
-      colorText: Colors.white,
-      margin: EdgeInsets.all(12),
-      borderRadius: 8,
-    );
+    notifHelper.show("Pembayaran berhasil diproses", type: 1);
     Get.toNamed(Routes.PAYMENT_CHECKOUT);
   }
 
@@ -170,7 +163,7 @@ class PaymentWhislistController extends GetxController {
     final result = await _restClient.postData(url: url, payload: payload);
 
     if (result == null) {
-      Get.snackbar("Gagal", "Terjadi kesalahan jaringan");
+      notifHelper.show("Terjadi kesalahan jaringan", type: 0);
       return;
     }
 
@@ -180,22 +173,56 @@ class PaymentWhislistController extends GetxController {
       promoAmount.value = result['data']['nominal'];
       promoCodeName.value = result['data']['voucher_code'];
       promoController.clear();
-      Get.snackbar(
-        "Berhasil",
+      notifHelper.show(
         "Kode promo berhasil diterapkan: +Rp ${promoAmount.value}",
+        type: 1,
       );
     } else {
-      // error dari server, walau status 500
-      Get.snackbar("Gagal", result["message"] ?? "Terjadi kesalahan");
+      notifHelper.show((result["message"] ?? "Terjadi kesalahan"), type: 0);
+    }
+  }
+
+  void clearPaymentSelection() {
+    ovoNumber.value = "";
+    ovoController.clear();
+    paymentMethod.value = "";
+    paymentMethodId.value = 0;
+    paymentImage.value = "";
+    paymentType.value = "";
+    metodePembayaran.value = "";
+    biayaAdmin.value = 0; // reset biaya admin juga
+  }
+
+  void updateBiayaAdmin(String biayaAdminRaw) {
+    final totalPaket = selectedPaketPerCard.values
+        .map((paket) => (paket["harga_fix"] ?? 0) as int)
+        .fold(0, (total, harga) => total + harga);
+
+    final totalSebelumPromo = baseHarga.value + totalPaket;
+
+    if (biayaAdminRaw.endsWith('%')) {
+      // Hitung persen dari total sebelum promo
+      final persen =
+          double.tryParse(biayaAdminRaw.replaceAll('%', '').trim()) ?? 0.0;
+
+      biayaAdmin.value =
+          (totalSebelumPromo * persen / 100).round(); // hasil rupiah
+    } else {
+      // Langsung pakai nominal
+      biayaAdmin.value = int.tryParse(biayaAdminRaw) ?? 0;
     }
   }
 
   int getTotalHargaFix() {
-    return (baseHarga.value +
-        selectedPaketPerCard.values
-            .map((paket) => paket["harga_fix"] as int)
-            .fold(0, (total, harga) => total + harga));
-    ;
+    final totalPaket = selectedPaketPerCard.values
+        .map((paket) => (paket["harga_fix"] ?? 0) as int)
+        .fold(0, (total, harga) => total + harga);
+
+    final total = baseHarga.value + totalPaket;
+
+    // tambahkan biaya admin yang sudah dihitung
+
+    return total < 0 ? 0 : total;
   }
 
   Future<void> getAddOvoNumber() async {
@@ -205,13 +232,12 @@ class PaymentWhislistController extends GetxController {
     }
     ovoNumber.value = text;
     // Optional: print the value to verify it's working
-    print('OVO number saved: ${ovoNumber.value}');
   }
 
   void createPayment() async {
     final payload = {
       "type": "wishlist",
-      "total_amount": getTotalHargaFix(),
+      "total_amount": getTotalHargaFix() + biayaAdmin.value - promoAmount.value,
       "amount_diskon": promoAmount.value,
       "description": wishListFirstProduct.value,
       "bundling": true,

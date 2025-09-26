@@ -1,6 +1,6 @@
 class AppException implements Exception {
   AppException({
-    this.message = "Something went wrong",
+    this.message = "Something went wrong0",
     this.response,
     this.statusCode,
   });
@@ -10,17 +10,16 @@ class AppException implements Exception {
 }
 
 class ServerException extends AppException {
-  ServerException({
-    String message = "Something went wrong",
-  }) : super(message: message);
+  ServerException({String message = "Something went wrong9"})
+    : super(message: message);
 }
 
 class ClientException extends AppException {
   ClientException({String? message, dynamic response})
-      : super(message: message, response: response);
+    : super(message: message, response: response);
 }
 
 class HttpException extends AppException {
   HttpException({String? message, int? statusCode})
-      : super(message: message, statusCode: statusCode);
+    : super(message: message, statusCode: statusCode);
 }

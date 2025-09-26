@@ -950,9 +950,9 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                                         .externalApplication,
                                               );
                                             } else {
-                                              Get.snackbar(
-                                                "Error",
+                                              notifHelper.show(
                                                 "Tidak bisa membuka link",
+                                                type: 0,
                                               );
                                             }
                                           }

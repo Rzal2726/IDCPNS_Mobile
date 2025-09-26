@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/detail_tryout_controller.dart';
@@ -596,10 +597,11 @@ void _showSnackBar(
   String successMessage,
   String failureMessage,
 ) {
-  Get.snackbar(
-    success ? "Berhasil" : "Gagal",
-    success ? successMessage : failureMessage,
-    backgroundColor: success ? Colors.teal : Colors.pink,
-    colorText: Colors.white,
-  );
+  notifHelper.show((success ? "Berhasil" : "Gagal"), type: (success ? 1 : 0));
+  // Get.snackbar(
+  //   success ? "Berhasil" : "Gagal",
+  //   success ? successMessage : failureMessage,
+  //   backgroundColor: success ? Colors.teal : Colors.pink,
+  //   colorText: Colors.white,
+  // );
 }

@@ -3,6 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_svg/flutter_html_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -164,40 +165,31 @@ class DetailEventView extends GetView<DetailEventController> {
                     }
                   }
                 }),
-                Obx(
-                  () => SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (controller.selectedPaket.value == "") {
-                          Get.snackbar(
-                            "Gagal",
-                            "Mohon pilih paket terlebih dahulu",
-                            colorText: Colors.white,
-                            backgroundColor: Colors.pink,
-                          );
-                          return;
-                        }
-                        Get.toNamed(
-                          "/tryout-event-payment",
-                          arguments: controller.uuid,
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (controller.selectedPaket.value == "") {
+                        notifHelper.show(
+                          "Mohon pilih paket terlebih dahulu",
+                          type: 0,
                         );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal.shade300,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        return;
+                      }
+                      Get.toNamed(
+                        "/tryout-event-payment",
+                        arguments: controller.uuid,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal.shade300,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      child:
-                          controller.userData.isNotEmpty
-                              ? controller.userData['level_name'] != "Platinum"
-                                  ? Text("Daftar Sekarang")
-                                  : Text("Klaim")
-                              : Skeletonizer(child: Text("Loading")),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
+                    child: Text("Daftar Sekarang"),
                   ),
                 ),
                 SizedBox(height: 16),

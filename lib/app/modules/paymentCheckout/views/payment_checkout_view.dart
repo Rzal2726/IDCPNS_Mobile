@@ -598,9 +598,31 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
 }
 
 Widget buildCountdown(int seconds) {
+  final controller = Get.put(PaymentCheckoutController());
+  int countdownSeconds = seconds; // default fallback
+  var expired = Get.arguments[1];
+  if (expired != null) {
+    try {
+      final expireDate = DateTime.parse(expired);
+      final now = DateTime.now();
+      final diff = expireDate.difference(now).inSeconds;
+
+      if (diff > 0) {
+        countdownSeconds = diff;
+      } else {
+        countdownSeconds = 0; // sudah kadaluarsa
+      }
+    } catch (e) {
+      debugPrint("Error parsing expired date: $e");
+    }
+  }
+
   return TweenAnimationBuilder<Duration>(
-    duration: Duration(seconds: seconds),
-    tween: Tween(begin: Duration(seconds: seconds), end: Duration.zero),
+    duration: Duration(seconds: countdownSeconds),
+    tween: Tween(
+      begin: Duration(seconds: countdownSeconds),
+      end: Duration.zero,
+    ),
     onEnd: () {
       debugPrint("Countdown selesai!");
     },

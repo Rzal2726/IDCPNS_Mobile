@@ -15,17 +15,19 @@ class EmailVerificationController extends GetxController {
   var isButtonEnabled = true.obs; // bisa langsung klik
   RxBool isLoading = false.obs;
   TextEditingController newEmailController = TextEditingController();
+  TextEditingController otpController = TextEditingController();
   Timer? pollingTimer;
   RxString email = "".obs;
   @override
   void onInit() {
-    super.onInit();
+    email.value = box.read('email');
     countdown.value = 30; // mulai dari 30 detik
     isButtonEnabled.value = false; // tombol disable saat countdown
     startCountdown(); // mulai countdown otomatis
     // polling email sementara tetap di-comment
-    startEmailVerificationPolling();
+    // startEmailVerificationPolling();
     checkMaintenance();
+    super.onInit();
   }
 
   @override
@@ -43,26 +45,49 @@ class EmailVerificationController extends GetxController {
   }
 
   void resendEmail() {
-    sendEmail();
     countdown.value = 30;
     isButtonEnabled.value = false;
+    apiSendEmail();
     startCountdown();
   }
 
-  Future<void> sendEmail() async {
+  Future<void> apiSendEmail() async {
     isLoading.value = true;
-    try {
-      final url = baseUrl + apiEmailResend;
-      final payload = {"name": box.read("name"), "email": box.read("email")};
-      print("payload ${payload.toString()}");
-      final result = await _restClient.postData(url: url, payload: payload);
 
-      if (result["status"] == "success") {
-      } else {}
-    } catch (e) {
-    } finally {
-      isLoading.value = false;
+    final url = baseUrl + apiEmailResend;
+    final payload = {"name": box.read("name"), "email": box.read("email")};
+
+    final result = await _restClient.postData(url: url, payload: payload);
+
+    if (result["status"] == "success") {
+      notifHelper.show(result['message'], type: 1);
+    } else {
+      notifHelper.show(result["message"], type: 0);
     }
+
+    isLoading.value = false;
+  }
+
+  Future<void> sendOtp() async {
+    isLoading.value = true;
+
+    final url = baseUrl + apiSendOtp;
+    final payload = {
+      "otp_code": otpController.text,
+      "email": box.read("email"),
+    };
+
+    final result = await _restClient.postData(url: url, payload: payload);
+
+    if (result["status"] == "success") {
+      notifHelper.show("Register berhasil", type: 1);
+      otpController.clear();
+      Get.toNamed(Routes.LOGIN);
+    } else {
+      notifHelper.show(result["message"], type: 0);
+    }
+
+    isLoading.value = false;
   }
 
   Future<void> changeAndSendEmail() async {
@@ -76,9 +101,9 @@ class EmailVerificationController extends GetxController {
       final result = await _restClient.postData(url: url, payload: payload);
 
       if (result["status"] == "success") {
-        Get.snackbar(
-          "Berhasil",
+        notifHelper.show(
           "Email berhasil diperbarui. Silakan cek email untuk verifikasi.",
+          type: 1,
         );
         box.write("email", newEmailController.text);
         email.value = newEmailController.text; // update Rx variable
@@ -88,10 +113,10 @@ class EmailVerificationController extends GetxController {
             (result["message"] is Map && result["message"]["email"] != null)
                 ? result["message"]["email"][0]
                 : "Terjadi kesalahan, silakan coba lagi.";
-        Get.snackbar("Gagal", errorMessage);
+        notifHelper.show(errorMessage, type: 0);
       }
     } catch (e) {
-      Get.snackbar("Gagal", "Email ini sudah terdaftar.");
+      notifHelper.show("Email ini sudah terdaftar.", type: 0);
     } finally {
       newEmailController.clear();
       isLoading.value = false;
@@ -100,28 +125,29 @@ class EmailVerificationController extends GetxController {
 
   // sementara fungsi polling di-comment
 
-  Future<void> startEmailVerificationPolling() async {
-    pollingTimer?.cancel();
-    pollingTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
-      try {
-        final url = await baseUrl + apiGetUser;
-
-        final result = await _restClient.getData(url: url);
-        print("emailnnyaa ${result.toString()}");
-        if (result["status"] == "success") {
-          print("emailnnyaa ${result["data"].toString()}");
-          final isVerified = result["data"]["is_email_verified"] ?? false;
-          if (isVerified) {
-            timer.cancel();
-            notifHelper.show("Register berhasil", type: 1);
-            Get.toNamed(Routes.LOGIN);
-          }
-        }
-      } catch (e) {
-        print("Error polling email verification: $e");
-      }
-    });
-  }
+  // Future<void> startEmailVerificationPolling() async {
+  //   pollingTimer?.cancel();
+  //   pollingTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+  //     try {
+  //       final url = await baseUrl + apiGetUser;
+  //
+  //       final result = await _restClient.getData(url: url);
+  //       print("emailnnyaa ${result.toString()}");
+  //       if (result["status"] == "success") {
+  //         print("emailnnyaa ${result["data"].toString()}");
+  //         final isVerified = result["data"]["is_email_verified"] ?? false;
+  //         if (isVerified) {
+  //           timer.cancel();
+  //           notifHelper.show("Register berhasil", type: 1);
+  //           otpController.clear();
+  //           Get.toNamed(Routes.LOGIN);
+  //         }
+  //       }
+  //     } catch (e) {
+  //       print("Error polling email verification: $e");
+  //     }
+  //   });
+  // }
 
   Future<void> checkMaintenance() async {
     final response = await _restClient.getData(

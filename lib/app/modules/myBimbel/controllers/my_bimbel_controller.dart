@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
@@ -39,7 +40,7 @@ class MyBimbelController extends GetxController {
   }
 
   void doSearch() {
-    Get.snackbar('Cari', 'Fitur pencarian belum tersedia');
+    notifHelper.show('Fitur pencarian belum tersedia', type: 0);
   }
 
   Future<void> getData({

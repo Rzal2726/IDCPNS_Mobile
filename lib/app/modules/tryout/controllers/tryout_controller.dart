@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
@@ -140,7 +141,7 @@ class TryoutController extends GetxController {
       totalPage.value = (totalPaket.value / perPage.value).toInt();
       currentPage.value = response['data']['current_page'];
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      notifHelper.show("Terjadi Kesalahan", type: 0);
     } finally {
       isLoading.value = false;
       loading['paket'] = false;

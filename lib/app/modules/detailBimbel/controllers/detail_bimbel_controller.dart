@@ -80,7 +80,12 @@ class DetailBimbelController extends GetxController
           if (filtered.isNotEmpty) {
             // ambil data terakhir dari list awal yang sudah di-filter
             final lastItem = filtered.first;
-
+            final index = data['bimbel'].indexOf(lastItem);
+            hargaFix.value = hitungHargaTampil(
+              lastItem,
+              index,
+              data['bimbel'],
+            ); // ✅
             // ambil index pertama dari list awal setelah filter → ini sebenarnya lastItem
             selectedPaket.value = lastItem['uuid'];
             print("xxx3 ${selectedPaket.toString()}");

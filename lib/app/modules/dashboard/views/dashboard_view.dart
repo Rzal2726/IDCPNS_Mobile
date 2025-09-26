@@ -10,6 +10,7 @@ import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/exitDialog.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/programTryoutGratisCard.dart';
 import 'package:idcpns_mobile/app/Components/widgets/wdigetTryoutEventCard.dart';
 import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
@@ -36,23 +37,7 @@ class DashboardView extends GetView<DashboardController> {
         }
       },
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(25),
-                  spreadRadius: 1,
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-
-            child: basicAppBar(),
-          ),
-        ),
+        appBar: basicAppBar(),
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Obx(() {
@@ -273,9 +258,9 @@ class DashboardView extends GetView<DashboardController> {
                                                           if (uuid.isEmpty ||
                                                               eventUuid
                                                                   .isEmpty) {
-                                                            Get.snackbar(
-                                                              'Error',
+                                                            notifHelper.show(
                                                               'Data tidak lengkap',
+                                                              type: 0,
                                                             );
                                                             return;
                                                           }
@@ -307,9 +292,9 @@ class DashboardView extends GetView<DashboardController> {
 
                                                             if (detail ==
                                                                 null) {
-                                                              Get.snackbar(
-                                                                'Gagal',
+                                                              notifHelper.show(
                                                                 'Detail pretest tidak ditemukan',
+                                                                type: 0,
                                                               );
                                                               return;
                                                             }
@@ -327,9 +312,9 @@ class DashboardView extends GetView<DashboardController> {
                                                             if (Get.isDialogOpen ??
                                                                 false)
                                                               Get.back();
-                                                            Get.snackbar(
-                                                              'Error',
-                                                              'Terjadi kesalahan: $e',
+                                                            notifHelper.show(
+                                                              'Terjadi kesalahan',
+                                                              type: 0,
                                                             );
                                                           }
                                                         }
@@ -835,7 +820,6 @@ class DashboardView extends GetView<DashboardController> {
                                     style: TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.brown,
                                     ),
                                   ),
                                   SizedBox(height: 8),
@@ -1113,7 +1097,7 @@ class DashboardView extends GetView<DashboardController> {
                   SizedBox(height: 30),
 
                   GestureDetector(
-                    onTap: () => Get.toNamed(Routes.AFFILIATE),
+                    onTap: () => Get.offNamed(Routes.AFFILIATE),
                     child: Container(
                       height: 150,
                       decoration: BoxDecoration(
@@ -1188,64 +1172,74 @@ Widget _buildHelpContainer({
   required String title,
   required String description,
   required String buttonText,
-  required VoidCallback onPressed, // callback tombol
+  required VoidCallback onPressed,
 }) {
   return Expanded(
-    child: Container(
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+    child: SizedBox(
+      height: 220, // tinggi tetap
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          border: Border.all(color: Colors.grey.shade300, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: Offset(0, 3),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            description,
-            style: TextStyle(fontSize: 14, color: Colors.black54),
-          ),
-          SizedBox(height: 16),
-          Divider(color: Colors.grey[400], height: 1),
-          SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: onPressed, // pakai callback
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF16A085),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 12.0),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(height: 8),
+            Expanded(
               child: Text(
-                buttonText,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                description,
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+                overflow: TextOverflow.fade,
+                maxLines: 4, // biar gak terlalu panjang
+                softWrap: true,
+              ),
+            ),
+            SizedBox(height: 16),
+            Divider(color: Colors.grey[400], height: 1),
+            SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: onPressed,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF16A085),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 12.0),
+                ),
+                child: Text(
+                  buttonText,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
@@ -1260,7 +1254,7 @@ Widget _buildServiceCard(
   return Stack(
     children: [
       Container(
-        width: 100,
+        width: 120,
         height: 140,
         decoration: BoxDecoration(
           color: Colors.white,

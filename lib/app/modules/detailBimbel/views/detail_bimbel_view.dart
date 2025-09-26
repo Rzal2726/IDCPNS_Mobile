@@ -284,14 +284,8 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                                 },
                         style: OutlinedButton.styleFrom(
                           elevation: 0,
-                          backgroundColor:
-                              controller.isCheklist == true
-                                  ? Colors.teal.shade300
-                                  : Colors.white,
-                          foregroundColor:
-                              controller.isCheklist == true
-                                  ? Colors.white
-                                  : Colors.teal.shade300,
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.teal.shade300,
                           side: BorderSide(
                             color: Colors.teal.shade300,
                             width: 1.5,
@@ -328,7 +322,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                                           : Icons.favorite_border,
                                       color:
                                           controller.isCheklist == true
-                                              ? Colors.white
+                                              ? Colors.teal
                                               : Colors.teal.shade300,
                                     ),
                                     SizedBox(width: 8),
@@ -339,10 +333,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
-                                        color:
-                                            controller.isCheklist == true
-                                                ? Colors.white
-                                                : Colors.teal.shade300,
+                                        color: Colors.teal.shade300,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -363,6 +354,9 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                             );
                             return;
                           }
+                          print(
+                            "Xxxb ${controller.selectedPaket.toString()} dan ${controller.hargaFix.toString()}",
+                          );
                           Get.offNamed(
                             Routes.PAYMENT_DETAIL,
                             arguments: [

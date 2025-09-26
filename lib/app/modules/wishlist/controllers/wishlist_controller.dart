@@ -90,6 +90,7 @@ class WishlistController extends GetxController {
     String? search,
     int? page,
   }) async {
+    isLoading.value = true;
     try {
       final url = baseUrl + apiGetwhislist;
 
@@ -118,7 +119,9 @@ class WishlistController extends GetxController {
       }
     } catch (e) {
       print("Error getWhislist: $e");
-    } finally {}
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> getKategori() async {

@@ -146,7 +146,7 @@ class RegisterController extends GetxController {
     }
 
     if (password != confirmPassword) {
-      notifHelper.show("Password dan konfirmasi tidak cocok!", type: 0);
+      notifHelper.show("Konfirmasi password tidak cocok!", type: 0);
       return;
     }
     if (kodeAfiliator != null && kodeAfiliator.isNotEmpty) {
@@ -192,13 +192,28 @@ class RegisterController extends GetxController {
         box.write("password", password);
         box.write("isEmailVerified", user["is_email_verified"] ?? false);
 
+        // Reset form biar kosong lagi
+        nameController.clear();
+        regEmailController.clear();
+        regPasswordController.clear();
+        confirmPasswordController.clear();
+        affiliatorController.clear();
+        isAgreed.value = false;
+
         notifHelper.show(
           "Register berhasil, silakan verifikasi email",
           type: 1,
         );
         Get.toNamed(Routes.EMAIL_VERIFICATION);
       } else {
-        final msg = result["message"]?['email']?[0] ?? "Terjadi kesalahan";
+        final msg =
+            (result["message"]?['email'] != null &&
+                    (result["message"]?['email'] as List).isNotEmpty)
+                ? result["message"]['email'][0]
+                : (result["message"]?['password'] != null &&
+                    (result["message"]?['password'] as List).isNotEmpty)
+                ? result["message"]['password'][0]
+                : "Terjadi kesalahan";
         notifHelper.show(msg, type: 0);
       }
     } catch (e) {

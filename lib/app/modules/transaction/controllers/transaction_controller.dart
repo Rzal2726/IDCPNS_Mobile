@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
@@ -22,15 +23,6 @@ class TransactionController extends GetxController {
   @override
   void onInit() {
     getTransaction();
-    // searchController.addListener(() {
-    //   // optional: delay manual atau pakai Timer kalau mau debounce
-    //   getTransaction(
-    //     page: 1,
-    //     search: searchController.text,
-    //     date: startDateController.text,
-    //     status: status.value,
-    //   );
-    // });
     super.onInit();
     // Dummy data
   }
@@ -71,6 +63,14 @@ class TransactionController extends GetxController {
     }
   }
 
+  void getDate() {
+    getTransaction(
+      page: currentPage.value,
+      date: startDateController.text,
+      status: status.value,
+    );
+  }
+
   void _onSearchChanged() {
     final query = searchController.text;
     // Optional: pakai debounce supaya API tidak kebanyakan dipanggil
@@ -88,29 +88,38 @@ class TransactionController extends GetxController {
     String? status,
     String? date,
   }) async {
-    try {
-      isloading.value = true;
-      final url = await baseUrl + apiGetTransaction;
-      var payload = {
-        "perpage": 10,
-        "page": page ?? 0,
-        "tanggal_mulai": dateFormat(date ?? ""),
-        "search": search ?? "",
-        "status": status ?? "",
-      };
-      print("xxx${payload.toString()}");
-      final result = await _restClient.postData(url: url, payload: payload);
+    isloading.value = true;
+    final url = await baseUrl + apiGetTransaction;
+    var payload = {
+      "perpage": 10,
+      "page": page ?? 0,
+      "tanggal_mulai": dateFormat(date ?? ""),
+      "search": search ?? "",
+      "status": status ?? "",
+    };
+    print("xxx${payload.toString()}");
+    final result = await _restClient.postData(url: url, payload: payload);
 
-      if (result["status"] == "success") {
-        var data = result['data'];
-        transactions.value = data;
-        totalPage.value = data['last_page'];
-        print("Xxxc ${result['data']['last_page']}");
-      }
-    } catch (e) {
-      print("Error polling email verification: $e");
+    if (result["status"] == "success") {
+      var data = result['data'];
+      transactions.value = data;
+      totalPage.value = data['last_page'];
+      print("Xxxc ${result['data']['last_page']}");
     }
     isloading.value = false;
+  }
+
+  Future<void> deleteTransaction({required String id}) async {
+    try {
+      final url = await baseUrl + apiCencelPayment + "/" + id;
+      final result = await _restClient.postData(url: url);
+      if (result["status"] == "success") {
+        notifHelper.show("Transaksi berhasil dibatalkan", type: 1);
+        getTransaction();
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 }
 
