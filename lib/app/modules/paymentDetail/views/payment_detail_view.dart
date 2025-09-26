@@ -263,21 +263,15 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                           SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              controller.metodePembayaran.isEmpty
-                                  ? "Pilih Pembayaran"
-                                  : controller.metodePembayaran.value,
+                              controller.ovoNumber.value.isNotEmpty
+                                  ? controller.ovoNumber.value
+                                  : controller.metodePembayaran.value.isNotEmpty
+                                  ? controller.metodePembayaran.value
+                                  : "Pilih Pembayaran",
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
-                          controller.kodePromo.value.isNotEmpty
-                              ? GestureDetector(
-                                onTap: () {
-                                  controller.kodePromo.value = '';
-                                  controller.promoAmount.value = 0;
-                                },
-                                child: Icon(Icons.close),
-                              )
-                              : Icon(Icons.chevron_right),
+                          Icon(Icons.chevron_right),
                         ],
                       ),
                     ),
@@ -323,7 +317,15 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
-                          Icon(Icons.chevron_right),
+                          controller.kodePromo.value.isNotEmpty
+                              ? GestureDetector(
+                                onTap: () {
+                                  controller.kodePromo.value = '';
+                                  controller.promoAmount.value = 0;
+                                },
+                                child: Icon(Icons.close),
+                              )
+                              : Icon(Icons.chevron_right),
                         ],
                       ),
                     ),

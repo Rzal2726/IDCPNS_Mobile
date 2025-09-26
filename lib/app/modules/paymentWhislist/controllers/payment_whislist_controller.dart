@@ -21,6 +21,7 @@ class PaymentWhislistController extends GetxController {
   RxString ovoNumber = "".obs;
   RxInt paymentMethodId = 0.obs;
   RxString paymentMethod = "".obs;
+  RxString biayaAdminRaw = "".obs;
   RxString promoCodeName = "".obs;
   RxString paymentImage = "".obs;
   RxString paymentType = "".obs;
