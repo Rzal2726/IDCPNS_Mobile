@@ -96,7 +96,11 @@ class PretestDetailView extends GetView<PretestDetailController> {
                                 ),
                               ),
                               onPressed:
-                                  isLoading ? null : controller.mulaiPretest,
+                                  isLoading
+                                      ? null
+                                      : controller.item['jumlah_soal'] != 0
+                                      ? controller.mulaiPretest
+                                      : null,
                               child: Text(
                                 "Mulai Pretest",
                                 style: TextStyle(

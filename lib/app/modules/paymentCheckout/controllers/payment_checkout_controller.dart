@@ -7,8 +7,9 @@ import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class PaymentCheckoutController extends GetxController {
   final _restClient = RestClient();
-  var uuid = Get.arguments[0];
-  var expired = Get.arguments[1];
+  late String uuid;
+  late String expired;
+
   Timer? _paymentTimer;
   RxList<String> option = ["ATM", "MBanking"].obs;
   RxString selectedOption = "ATM".obs;
@@ -20,6 +21,14 @@ class PaymentCheckoutController extends GetxController {
 
   @override
   void onInit() {
+    var args = Get.arguments;
+    if (args != null && args is List && args.length >= 2) {
+      uuid = args[0];
+      expired = args[1];
+      print("uuidx $uuid dan $expired");
+    } else {
+      print("⚠️ Get.arguments kosong atau tidak sesuai format");
+    }
     checkMaintenance();
     fetchDetailPayment();
     fetchServerTime();

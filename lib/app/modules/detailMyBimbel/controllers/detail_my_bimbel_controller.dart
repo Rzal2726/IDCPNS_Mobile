@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 
 class DetailMyBimbelController extends GetxController {
   final _restClient = RestClient();
+  final box = GetStorage();
   var uuid = Get.arguments;
   var paketName = "Bimbel SKD CPNS 2024 Batch 12".obs;
   var paketType = "Reguler".obs;
@@ -17,11 +19,14 @@ class DetailMyBimbelController extends GetxController {
   RxList jadwalKelas = [].obs;
   RxList jadwalKelasIsRunning = [].obs;
   RxString selectedPaket = "".obs;
+  RxString levelName = "".obs;
 
   final count = 0.obs;
   @override
   void onInit() {
     getData();
+    print("xxv ${box.read('levelName')}");
+    levelName.value = box.read('levelName') ?? "";
     super.onInit();
     checkMaintenance();
   }

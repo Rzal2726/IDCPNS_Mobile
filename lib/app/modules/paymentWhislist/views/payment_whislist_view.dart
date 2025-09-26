@@ -115,6 +115,11 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                     .clear();
                                                 controller.promoAmount.value =
                                                     0;
+                                                controller.updateBiayaAdmin(
+                                                  controller
+                                                      .biayaAdminRaw
+                                                      .value,
+                                                );
                                               },
                                               child: Icon(
                                                 Icons.cancel,
@@ -209,6 +214,11 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                     .clear();
                                                 controller.promoAmount.value =
                                                     0;
+                                                controller.updateBiayaAdmin(
+                                                  controller
+                                                      .biayaAdminRaw
+                                                      .value,
+                                                );
                                               },
                                               child: Icon(
                                                 Icons.cancel,
@@ -261,6 +271,11 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                         .promoAmount
                                                         .value = 0;
                                                   }
+                                                  controller.updateBiayaAdmin(
+                                                    controller
+                                                        .biayaAdminRaw
+                                                        .value,
+                                                  );
                                                 },
                                               ),
                                               Text(

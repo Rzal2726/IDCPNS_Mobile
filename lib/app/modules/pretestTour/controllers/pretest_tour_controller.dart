@@ -125,7 +125,7 @@ class PretestTourController extends GetxController {
           TargetContent(
             align: ContentAlign.bottom,
             child: Padding(
-              padding: const EdgeInsets.only(top: 80.0),
+              padding: const EdgeInsets.only(top: 150.0),
               child: const Text(
                 "Konten soal yang ditanyakan.",
                 style: TextStyle(color: Colors.white, fontSize: 18),
@@ -143,7 +143,7 @@ class PretestTourController extends GetxController {
           TargetContent(
             align: ContentAlign.top,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 280.0),
+              padding: const EdgeInsets.only(bottom: 70.0),
               child: const Text(
                 "Opsi jawaban yang harus dipilih.",
                 style: TextStyle(color: Colors.white, fontSize: 18),
@@ -179,7 +179,7 @@ class PretestTourController extends GetxController {
           TargetContent(
             align: ContentAlign.bottom,
             child: Padding(
-              padding: const EdgeInsets.only(top: 280.0),
+              padding: const EdgeInsets.only(top: 240.0),
               child: const Text(
                 "Navigasi urutan soal.",
                 style: TextStyle(color: Colors.white, fontSize: 18),

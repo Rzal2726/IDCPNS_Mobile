@@ -115,9 +115,10 @@ class PretestController extends GetxController {
     required BuildContext context,
   }) async {
     final payload = {
-      "bimbel_question_id": questionId.toString(),
+      "pretest_soal_id": questionId.toString(),
       "laporan": laporan,
     };
+    print("xxc ${payload.toString()}");
     final response = await restClient.postData(
       url: baseUrl + apiLaporPretestSoal,
       payload: payload,
@@ -138,13 +139,25 @@ class PretestController extends GetxController {
         "bimbel_event_id": bimbelUuid,
         "items": selectedAnswersList,
       };
-      print("xxx ${payload}");
+
+      final response = await restClient.postData(
+        url: baseUrl + apiSubmitPretest,
+        payload: payload,
+      );
+
       stop();
 
-      Get.offAllNamed(
-        Routes.PRETEST_RESULT,
-        arguments: {"uuid": uuid, "bimbelUuid": bimbelUuid},
-      );
+      if (response['status'] == 'success') {
+        Get.offAllNamed(
+          Routes.PRETEST_RESULT,
+          arguments: {"uuid": uuid, "bimbelUuid": bimbelUuid},
+        );
+      } else {
+        notifHelper.show(
+          response['message'] ?? "Gagal mengirim jawaban",
+          type: 0,
+        );
+      }
     } catch (e) {
       notifHelper.show("Tidak dapat mengirim jawaban", type: 0);
     }
