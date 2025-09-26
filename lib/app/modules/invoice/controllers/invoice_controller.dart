@@ -27,27 +27,34 @@ class InvoiceController extends GetxController {
   }
 
   Future<void> getData() async {
+    print("Xxxc ${Get.arguments}");
     try {
       final url = await baseUrl + apiGetTransaction;
 
       final result = await _restClient.postData(url: url);
 
       if (result["status"] == "success") {
-        var id = Get.arguments;
+        var id = Get.arguments.toString();
 
-        // pastikan result['data'] berupa list
         var data = result['data']['data'] as List;
 
-        // cari data pertama yang id-nya sesuai dengan argument
+        // 1️⃣ Cari berdasarkan id dulu
         var found = data.firstWhere(
-          (item) => item['id'] == id,
-          orElse: () => null, // biar gak error kalau ga ketemu
+          (item) => item['id'].toString() == id,
+          orElse: () => null,
+        );
+
+        // 2️⃣ Kalau gak ketemu, baru cari berdasarkan uuid
+        found ??= data.firstWhere(
+          (item) => item['uuid'].toString() == id,
+          orElse: () => null,
         );
 
         if (found != null) {
           notifData.value = found;
+          print("✅ Ketemu data: ${notifData['uuid']}");
         } else {
-          print("Data dengan id $id tidak ditemukan");
+          print("❌ Data dengan id/uuid $id tidak ditemukan");
         }
       }
     } catch (e) {
