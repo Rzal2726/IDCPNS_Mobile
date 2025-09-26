@@ -464,7 +464,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                           ],
                         ),
                         SizedBox(height: 6),
-                        if (controller.biayaAdmin != 0)
+                        if (controller.biayaAdmin.value != 0)
                           Column(
                             children: [
                               Row(
@@ -612,6 +612,7 @@ Widget _buildRadioOption(
                       "id": value, // id paket
                       "harga_fix": hargaFix,
                     });
+                    controller.updateBiayaAdmin(controller.biayaAdminRaw.value);
                   }
                 },
                 activeColor: Colors.teal,
@@ -706,9 +707,7 @@ void showPaymentBottomSheet(BuildContext context) {
                                         in data['xendit_payment_method'])
                                       Container(
                                         width: 140,
-                                        margin: const EdgeInsets.only(
-                                          right: 12,
-                                        ),
+                                        margin: EdgeInsets.only(right: 12),
                                         child: paymentItem(
                                           svgPath: method['image_url'],
                                           title: method['name'],
@@ -716,9 +715,14 @@ void showPaymentBottomSheet(BuildContext context) {
                                               "Biaya Admin: ${method['biaya_admin']}",
                                           onTap: () {
                                             Get.back();
+                                            print(
+                                              "xxxv ${method['biaya_admin'].toString()}",
+                                            );
                                             controller.updateBiayaAdmin(
                                               method['biaya_admin'],
                                             );
+                                            controller.biayaAdminRaw.value =
+                                                method['biaya_admin'];
                                             controller.ovoNumber.value = "";
                                             controller.ovoController.clear();
                                             controller.paymentMethod.value =

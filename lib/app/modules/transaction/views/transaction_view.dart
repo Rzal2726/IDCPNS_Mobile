@@ -341,7 +341,7 @@ Widget _buildTransactionList(List<dynamic> filtered) {
                   } catch (e) {
                     debugPrint("Error saat buka link: $e");
                   }
-
+                  print("ccx ${trx['id'].toString()}");
                   // Tetap lanjut ke halaman checkout
                   Get.offNamed(
                     Routes.PAYMENT_CHECKOUT,

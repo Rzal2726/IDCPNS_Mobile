@@ -181,6 +181,7 @@ class NotificationView extends GetView<NotificationController> {
                                             '${data['created_at']}',
                                             0,
                                             data['id'],
+                                            data['parameter'] ?? "",
                                             data['description'],
                                             data['orderId']?.toString() ?? "",
                                           ),
@@ -207,6 +208,7 @@ class NotificationView extends GetView<NotificationController> {
                               '••••••',
                               0,
                               0,
+                              "",
                               '••••••••••••••••••',
                               '',
                             ),
@@ -268,6 +270,7 @@ class NotificationView extends GetView<NotificationController> {
                                     '${data['created_at']}',
                                     1,
                                     data['id'],
+                                    data['parameter'] ?? "",
                                     data['description'],
                                     data['orderId']?.toString() ?? "",
                                   ),
@@ -402,6 +405,7 @@ class NotificationView extends GetView<NotificationController> {
     String date,
     int tipe,
     int id,
+    String parameter,
     String desc,
     String idOrder,
   ) {
@@ -469,6 +473,7 @@ class NotificationView extends GetView<NotificationController> {
                     orderNo: idOrder,
                     message: desc,
                     id: id,
+                    parameter: parameter,
                   );
                   controller.getReadNotif(id: id);
                 },
@@ -499,8 +504,15 @@ class NotificationView extends GetView<NotificationController> {
               SizedBox(width: 8),
               TextButton(
                 onPressed: () {
-                  controller.getDeleteNotif(id: id);
+                  showDeleteBottomSheet(
+                    title: "Hapus Pesan",
+                    message: "Apakah anda yakin ingin menghapus pesan ini?",
+                    onConfirm: () {
+                      controller.getDeleteNotif(id: id);
+                    },
+                  );
                 },
+
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
                   minimumSize: Size(40, 20),
@@ -522,6 +534,7 @@ void showPaymentBottomSheet({
   String? orderNo,
   String? message,
   int? id,
+  String? parameter,
 }) {
   showModalBottomSheet(
     context: Get.context!,
@@ -598,7 +611,7 @@ void showPaymentBottomSheet({
                         Navigator.pop(context);
                         title == "Menunggu Pembayaran"
                             ? Get.toNamed(Routes.TRANSACTION)
-                            : Get.toNamed(Routes.INVOICE, arguments: id);
+                            : Get.toNamed(Routes.INVOICE, arguments: parameter);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal, // ganti ke teal
@@ -616,6 +629,106 @@ void showPaymentBottomSheet({
                       ),
                     ),
                   ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void showDeleteBottomSheet({
+  required String title,
+  String? message,
+  required VoidCallback onConfirm,
+}) {
+  showModalBottomSheet(
+    backgroundColor: Colors.white,
+    context: Get.context!,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (context) {
+      return SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.15,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(Icons.close, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 16),
+
+                if (message != null)
+                  Text(
+                    message,
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+
+                Spacer(),
+
+                // Tombol Aksi
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.grey),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: Text("Batal"),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          onConfirm();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: Text(
+                          "Hapus",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

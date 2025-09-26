@@ -62,8 +62,7 @@ class MyAccountController extends GetxController {
     super.onClose();
   }
 
-  // nanti buat function ambil data API
-
+  // nanti buat function ambil data API7
   void simpanData() {
     postProfile();
   }
