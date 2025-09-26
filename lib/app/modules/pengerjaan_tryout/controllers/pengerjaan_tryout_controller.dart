@@ -38,6 +38,7 @@ class PengerjaanTryoutController extends GetxController {
   RxMap<int, dynamic> selectedAnswers = <int, dynamic>{}.obs;
   RxList<Map<String, dynamic>> selectedAnswersList =
       <Map<String, dynamic>>[].obs;
+  RxSet<int> viewedQuestions = <int>{}.obs;
   RxString uuid = "".obs;
   RxInt totalSoal = 0.obs;
   DateTime initialTimer = DateTime.now();
@@ -66,8 +67,9 @@ class PengerjaanTryoutController extends GetxController {
     localStorage = await SharedPreferences.getInstance();
     await getDetailTryout();
     await getTryoutSoal();
-    uuid.value = await tryoutData['uuid'];
+    uuid.value = tryoutData.value['uuid'];
     if (soalList.isNotEmpty) {
+      viewedQuestions.add(0);
       startQuestion(soalList[currentQuestion.value]['id']);
       startCountdown(tryoutData['tryout']['waktu_pengerjaan']);
     }
@@ -100,6 +102,8 @@ class PengerjaanTryoutController extends GetxController {
     localStorage.setString("soal_uuid", uuid.value);
     print("Target Instansi: ${localStorage.getString('instansi')}");
     print("Target Jabatan: ${localStorage.getString('jabatan')}");
+    print("Selected Answers: $selectedAnswers");
+    print("Selected Answers List: $selectedAnswersList");
   }
 
   Future<void> getDetailTryout() async {
@@ -254,6 +258,12 @@ class PengerjaanTryoutController extends GetxController {
     // Update soal aktif ke soal baru
     activeQuestionId = questionId;
     startTime = now;
+
+    // Mark as viewed
+    final index = soalList.indexWhere((e) => e['id'] == questionId);
+    if (index != -1) {
+      viewedQuestions.add(index);
+    }
   }
 
   /// Ambil total waktu untuk soal tertentu
@@ -346,5 +356,28 @@ class PengerjaanTryoutController extends GetxController {
           element['tryout_question_id'] == id &&
           element['tryout_question_option_id'] != 0,
     );
+  }
+
+  void markAnswer(int index, bool isQAnswered) {
+    viewedQuestions.add(index);
+  }
+
+  bool checkMarkAnswer(int questionNumber) {
+    final index = questionNumber - 1;
+    if (index < 0 || index >= soalList.length) {
+      return true;
+    }
+    final isCurrent = index == currentQuestion.value;
+    final isViewed = viewedQuestions.contains(index) && !isCurrent;
+    final isAnsweredHere = checkIsAnswered(index);
+    return isAnsweredHere || !isViewed;
+  }
+
+  bool checkIsAnswered(int index) {
+    if (index < 0 || index >= selectedAnswersList.length) {
+      return false;
+    }
+    final data = selectedAnswersList[index];
+    return data['tryout_question_option_id'] != 0;
   }
 }

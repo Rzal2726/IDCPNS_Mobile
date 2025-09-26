@@ -68,7 +68,7 @@ class TryoutEventPaymentController extends GetxController {
     uuid = await Get.arguments;
     await fetchDetailTryout();
     // await fetchDetailTryoutEvent();
-    await fetchDetailTryoutOther();
+    // await fetchDetailTryoutOther();
     await fetchListPayment();
     loading['bayar'] = false;
   }
@@ -93,7 +93,6 @@ class TryoutEventPaymentController extends GetxController {
 
   Future<void> fetchDetailTryout() async {
     try {
-      restClient.getData(url: baseUrl + apiGetDetailTryoutPaket + uuid);
       final response = await restClient.getData(
         url: baseUrl + apiGetDetailTryoutEvent + uuid,
       );

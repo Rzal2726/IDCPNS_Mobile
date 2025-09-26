@@ -497,6 +497,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                             itemBuilder: (context, index) {
                               final data = controller.bundling[index];
                               return _cardBundling(
+                                (index + 1).toString(),
                                 data['name'] ?? "",
                                 data['jumlah_soal']?.toString() ?? "",
                                 data['waktu_pengerjaan']?.toString() ?? "",
@@ -545,7 +546,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
   }
 }
 
-Widget _cardBundling(String Judul, String soal, String durasi) {
+Widget _cardBundling(String num, String Judul, String soal, String durasi) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
     decoration: BoxDecoration(
@@ -555,20 +556,40 @@ Widget _cardBundling(String Judul, String soal, String durasi) {
     ),
     child: Container(
       padding: EdgeInsets.all(12),
-      child: Column(
-        children: [
-          Text(Judul, style: TextStyle(fontSize: 16)),
-          SizedBox(height: 8),
-          Row(
-            spacing: 8,
-            children: [
-              Icon(Icons.list, color: Colors.blueAccent),
-              Text("${soal} Soal"),
-              Icon(Icons.timer, color: Colors.teal),
-              Text("${durasi} Menit"),
-            ],
-          ),
-        ],
+      child: SizedBox(
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          spacing: 16,
+          children: [
+            Card(
+              elevation: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(num),
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(Judul, style: TextStyle(fontSize: 16)),
+                SizedBox(height: 8),
+                SizedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    spacing: 8,
+                    children: [
+                      Icon(Icons.list, color: Colors.blueAccent),
+                      Text("${soal} Soal"),
+                      Icon(Icons.timer, color: Colors.teal),
+                      Text("${durasi} Menit"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     ),
   );

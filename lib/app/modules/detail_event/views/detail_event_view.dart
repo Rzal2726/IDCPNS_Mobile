@@ -14,6 +14,7 @@ class DetailEventView extends GetView<DetailEventController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: Container(
@@ -169,17 +170,26 @@ class DetailEventView extends GetView<DetailEventController> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (controller.selectedPaket.value == "") {
-                        notifHelper.show(
-                          "Mohon pilih paket terlebih dahulu",
-                          type: 0,
-                        );
-                        return;
+                      if (controller.userData['level_name'] != "Platinum") {
+                        if (controller.selectedPaket.value == "") {
+                          notifHelper.show(
+                            "Mohon pilih paket terlebih dahulu",
+                            type: 0,
+                          );
+                          return;
+                        }
                       }
-                      Get.toNamed(
-                        "/tryout-event-payment",
-                        arguments: controller.uuid,
-                      );
+                      if (controller.selectedPaket.value == "Free") {
+                        Get.toNamed(
+                          "/tryout-event-free-payment",
+                          arguments: controller.dataEvent,
+                        );
+                      } else {
+                        Get.toNamed(
+                          "/tryout-event-payment",
+                          arguments: controller.uuid,
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal.shade300,
@@ -189,7 +199,17 @@ class DetailEventView extends GetView<DetailEventController> {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    child: Text("Daftar Sekarang"),
+                    child: Obx(() {
+                      if (controller.loading.value == true) {
+                        return Skeletonizer(child: Text("Loading.."));
+                      } else {
+                        if (controller.userData['level_name'] != "Platinum") {
+                          return Text("Daftar Sekarang");
+                        } else {
+                          return Text("Klaim");
+                        }
+                      }
+                    }),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -198,7 +218,7 @@ class DetailEventView extends GetView<DetailEventController> {
                 ),
                 InkWell(
                   onTap: () {
-                    Get.toNamed("/upgrade-akun");
+                    Get.offNamed("/upgrade-akun");
                   },
                   child: Text(
                     "Upgrade ke platinum sekarang!",

@@ -316,6 +316,12 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                     ),
                     onPressed: () {
                       if (controller.currentQuestion.value > 0) {
+                        controller.markAnswer(
+                          controller.currentQuestion.value,
+                          controller.checkIsAnswered(
+                            controller.currentQuestion.value,
+                          ),
+                        );
                         controller.currentQuestion.value--;
                         controller.startQuestion(
                           controller.soalList[controller
@@ -352,6 +358,12 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                     onPressed: () {
                       if (controller.currentQuestion.value <
                           controller.soalList.length - 1) {
+                        controller.markAnswer(
+                          controller.currentQuestion.value,
+                          controller.checkIsAnswered(
+                            controller.currentQuestion.value,
+                          ),
+                        );
                         controller.currentQuestion.value++;
                         controller.startQuestion(
                           controller.soalList[controller
@@ -485,6 +497,12 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                                                               soal['id'],
                                                                             )
                                                                             ? Colors.teal.shade100
+                                                                            : controller.viewedQuestions.contains(
+                                                                              controller.soalList.indexOf(
+                                                                                soal,
+                                                                              ),
+                                                                            )
+                                                                            ? Colors.grey.shade200
                                                                             : Colors.white,
                                                                     foregroundColor:
                                                                         Colors
@@ -507,6 +525,16 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                                                     ),
                                                                   ),
                                                                   onPressed: () {
+                                                                    controller.markAnswer(
+                                                                      controller
+                                                                          .currentQuestion
+                                                                          .value,
+                                                                      controller.checkIsAnswered(
+                                                                        controller
+                                                                            .currentQuestion
+                                                                            .value,
+                                                                      ),
+                                                                    );
                                                                     controller
                                                                         .currentQuestion
                                                                         .value = index;
@@ -552,15 +580,40 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                             controller.currentPage.value = pageIndex;
                           }
 
+                          int totalPages =
+                              (controller.soalList.length /
+                                      controller.numberPerPage.value)
+                                  .ceil();
+
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               // Tombol Back
                               IconButton(
                                 onPressed:
-                                    controller.currentQuestion.value > 0
+                                    controller.currentPage.value > 0
                                         ? () {
-                                          controller.currentQuestion.value--;
+                                          controller.currentPage.value--;
+                                          int newQuestionIndex =
+                                              controller.currentPage.value *
+                                              controller.numberPerPage.value;
+                                          newQuestionIndex = newQuestionIndex
+                                              .clamp(
+                                                0,
+                                                controller.soalList.length - 1,
+                                              );
+                                          controller.markAnswer(
+                                            controller.currentQuestion.value,
+                                            controller.checkIsAnswered(
+                                              controller.currentQuestion.value,
+                                            ),
+                                          );
+                                          controller.currentQuestion.value =
+                                              newQuestionIndex;
+                                          controller.startQuestion(
+                                            controller
+                                                .soalList[newQuestionIndex]['id'],
+                                          );
                                         }
                                         : null,
                                 icon: const Icon(Icons.arrow_back_ios),
@@ -608,6 +661,9 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                                       .value ==
                                                   questionNumber - 1
                                               ? Colors.green.shade100
+                                              : controller.viewedQuestions
+                                                  .contains(questionNumber - 1)
+                                              ? Colors.grey.shade200
                                               : Colors.white,
                                       foregroundColor: Colors.black,
                                       shape: RoundedRectangleBorder(
@@ -622,6 +678,12 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                       ),
                                     ),
                                     onPressed: () {
+                                      controller.markAnswer(
+                                        controller.currentQuestion.value,
+                                        controller.checkIsAnswered(
+                                          controller.currentQuestion.value,
+                                        ),
+                                      );
                                       controller.currentQuestion.value =
                                           questionNumber - 1;
                                       controller.startQuestion(
@@ -638,10 +700,30 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                               // Tombol Next
                               IconButton(
                                 onPressed:
-                                    (controller.currentQuestion.value + 1) <
-                                            controller.soalList.length
+                                    controller.currentPage.value <
+                                            totalPages - 1
                                         ? () {
-                                          controller.currentQuestion.value++;
+                                          controller.currentPage.value++;
+                                          int newQuestionIndex =
+                                              controller.currentPage.value *
+                                              controller.numberPerPage.value;
+                                          newQuestionIndex = newQuestionIndex
+                                              .clamp(
+                                                0,
+                                                controller.soalList.length - 1,
+                                              );
+                                          controller.markAnswer(
+                                            controller.currentQuestion.value,
+                                            controller.checkIsAnswered(
+                                              controller.currentQuestion.value,
+                                            ),
+                                          );
+                                          controller.currentQuestion.value =
+                                              newQuestionIndex;
+                                          controller.startQuestion(
+                                            controller
+                                                .soalList[newQuestionIndex]['id'],
+                                          );
                                         }
                                         : null,
                                 icon: const Icon(Icons.arrow_forward_ios),
