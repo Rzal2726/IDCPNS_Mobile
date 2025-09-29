@@ -627,11 +627,10 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                             Expanded(
                                               child: ElevatedButton.icon(
                                                 onPressed:
-                                                    (1 == 1)
-                                                        // (item['has_pretest'] ==
-                                                        //             false &&
-                                                        //         item['can_pretest'] ==
-                                                        //             true)
+                                                    (item['has_pretest'] ==
+                                                                false &&
+                                                            item['can_pretest'] ==
+                                                                true)
                                                         ? () {
                                                           print(
                                                             "xxxv ${item['has_pretest']} dan ${item['can_pretest'].toString()}",
