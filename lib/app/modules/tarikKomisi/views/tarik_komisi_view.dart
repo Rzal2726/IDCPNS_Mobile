@@ -15,7 +15,7 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
       canPop: false, // false supaya tidak auto-pop
       onPopInvoked: (didPop) {
         if (!didPop) {
-          Get.toNamed(Routes.AFFILIATE);
+          Get.offNamed(Routes.AFFILIATE);
         }
       },
       child: Scaffold(
@@ -23,7 +23,7 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
         appBar: secondaryAppBar(
           "Tarik Komisi",
           onBack: () {
-            Get.toNamed(Routes.AFFILIATE);
+            Get.offNamed(Routes.AFFILIATE);
           },
         ),
         body: SafeArea(

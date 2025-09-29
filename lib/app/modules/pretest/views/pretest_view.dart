@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/exitDialog.dart';
 import 'package:idcpns_mobile/app/Components/widgets/exitPretetsNotif.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -957,11 +958,9 @@ void showLaporSoalModal(
                   ),
                   onPressed: () {
                     if (controller.laporanController.text.isEmpty) {
-                      Get.snackbar(
-                        "Gagal",
+                      notifHelper.show(
                         "Mohon isi laporan terlebih dahulu",
-                        backgroundColor: Colors.pink,
-                        colorText: Colors.white,
+                        type: 0,
                       );
                       return;
                     }

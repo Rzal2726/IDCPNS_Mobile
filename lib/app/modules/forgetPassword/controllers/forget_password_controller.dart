@@ -26,25 +26,32 @@ class ForgetPasswordController extends GetxController {
     try {
       final result = await _restClient.postData(url: url, payload: payload);
 
-      if (result["status"] == "error") {
-        // Ambil pesan error dari response
-        final messages = result["messages"];
-        String errorMsg = "Terjadi kesalahan.";
+      String? errorMsg;
 
+      // Cek kalau ada field "status" dengan value "error"
+      if (result["status"] == "error") {
+        final messages = result["messages"];
         if (messages != null &&
             messages["email"] != null &&
             messages["email"].isNotEmpty) {
-          errorMsg =
-              messages["email"][0]; // contoh: "email harus berupa alamat surel yang valid."
+          errorMsg = messages["email"][0];
+        } else {
+          errorMsg = "Terjadi kesalahan.";
         }
+      }
+      // Cek kalau response punya key "message" (contoh kasus 404)
+      else if (result["message"] != null) {
+        errorMsg = result["message"];
+      }
+
+      if (errorMsg != null) {
         notifHelper.show(errorMsg, type: 0);
       } else {
-        // Jika berhasil
+        // Jika sukses
         showEmailSentBottomSheet(context);
       }
     } catch (e) {
-      debugPrint("Unexpected error: $e");
-      notifHelper.show("Terjadi kesalahan saat mengirim email.", type: 0);
+      notifHelper.show("Terjadi kesalahan pada server.", type: 0);
     } finally {
       isLoading.value = false;
     }

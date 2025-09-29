@@ -90,9 +90,9 @@ class AccountView extends GetView<AccountController> {
                                   decoration: BoxDecoration(
                                     color:
                                         controller.levelName.toLowerCase() ==
-                                                "developer"
-                                            ? Colors.teal
-                                            : Colors.grey[300],
+                                                "basic"
+                                            ? Colors.grey[300]
+                                            : Colors.teal,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
@@ -101,9 +101,9 @@ class AccountView extends GetView<AccountController> {
                                       fontSize: 15,
                                       color:
                                           controller.levelName.toLowerCase() ==
-                                                  "developer"
-                                              ? Colors.white
-                                              : Colors.black87,
+                                                  "basic"
+                                              ? Colors.black87
+                                              : Colors.white,
                                     ),
                                   ),
                                 ),
@@ -170,32 +170,32 @@ class AccountView extends GetView<AccountController> {
                   buildMenuItem(
                     icon: Icons.person,
                     title: "Akun",
-                    onTap: () => Get.toNamed(Routes.MY_ACCOUNT),
+                    onTap: () => Get.offNamed(Routes.MY_ACCOUNT),
                   ),
                   buildMenuItem(
                     icon: Icons.lock,
-                    title: "Kata Sandi",
-                    onTap: () => Get.toNamed(Routes.CHANGE_PASSWORD),
+                    title: "Kata sandi",
+                    onTap: () => Get.offNamed(Routes.CHANGE_PASSWORD),
                   ),
                   buildMenuItem(
                     icon: Icons.favorite,
                     title: "Wishlist",
-                    onTap: () => Get.toNamed(Routes.WISHLIST),
+                    onTap: () => Get.offNamed(Routes.WISHLIST),
                   ),
                   buildMenuItem(
                     icon: Icons.list_alt,
                     title: "Transaksi",
-                    onTap: () => Get.toNamed(Routes.TRANSACTION),
+                    onTap: () => Get.offNamed(Routes.TRANSACTION),
                   ),
                   buildMenuItem(
                     icon: Icons.list_alt,
                     title: "Program Saya",
-                    onTap: () => Get.toNamed(Routes.PROGRAM_SAYA),
+                    onTap: () => Get.offNamed(Routes.PROGRAM_SAYA),
                   ),
                   buildMenuItem(
                     icon: Icons.group,
                     title: "Afiliasi",
-                    onTap: () => Get.toNamed(Routes.AFFILIATE),
+                    onTap: () => Get.offNamed(Routes.AFFILIATE),
                   ),
                   Column(
                     children: [

@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/modules/paymentDetail/controllers/payment_detail_controller.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -92,7 +93,9 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                             ),
-                                            overflow: TextOverflow.ellipsis,
+                                            softWrap: true,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.visible,
                                           ),
                                         ),
                                         Obx(() {
@@ -183,7 +186,9 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                             ),
-                                            overflow: TextOverflow.ellipsis,
+                                            softWrap: true,
+                                            overflow: TextOverflow.visible,
+                                            maxLines: null,
                                           ),
                                         ),
                                         Obx(() {
@@ -261,6 +266,9 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                               Text(
                                                 '${data['productDetail']?['formasi'] ?? ''}',
                                                 style: TextStyle(fontSize: 14),
+                                                softWrap: true,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ],
                                           ),
@@ -335,9 +343,14 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                             SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                controller.metodePembayaran.isEmpty
-                                    ? "Pilih Pembayaran"
-                                    : controller.metodePembayaran.value,
+                                controller.ovoNumber.value.isNotEmpty
+                                    ? controller.ovoNumber.value
+                                    : controller
+                                        .metodePembayaran
+                                        .value
+                                        .isNotEmpty
+                                    ? controller.metodePembayaran.value
+                                    : "Pilih Pembayaran",
                                 style: TextStyle(fontSize: 14),
                               ),
                             ),
@@ -355,7 +368,10 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                     ),
                     SizedBox(height: 10),
                     GestureDetector(
-                      onTap: () => showPromoCodeBottomSheet(context),
+                      onTap:
+                          controller.kodePromo.value.isNotEmpty
+                              ? null
+                              : () => showPromoCodeBottomSheet(context),
                       child: Container(
                         padding: EdgeInsets.symmetric(
                           vertical: 12,
@@ -383,7 +399,15 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                 style: TextStyle(fontSize: 14),
                               ),
                             ),
-                            Icon(Icons.chevron_right),
+                            controller.kodePromo.value.isNotEmpty
+                                ? GestureDetector(
+                                  onTap: () {
+                                    controller.kodePromo.value = '';
+                                    controller.promoAmount.value = 0;
+                                  },
+                                  child: Icon(Icons.close),
+                                )
+                                : Icon(Icons.chevron_right),
                           ],
                         ),
                       ),
@@ -440,7 +464,53 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                           ],
                         ),
                         SizedBox(height: 6),
-                        // Baris Total Harga (bold)
+                        if (controller.biayaAdmin.value != 0)
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "Biaya admin",
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                  Text(
+                                    "${formatRupiah(controller.biayaAdmin.value)}",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 6),
+                            ],
+                          ),
+                        if (controller.promoAmount != 0)
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "Diskon",
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                  Text(
+                                    "${formatRupiah(controller.promoAmount.value)}",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 6),
+                            ],
+                          ),
+
                         Row(
                           children: [
                             Expanded(
@@ -450,7 +520,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                               ),
                             ),
                             Text(
-                              "${formatRupiah((controller.getTotalHargaFix() - controller.promoAmount.value))}",
+                              "${formatRupiah((controller.getTotalHargaFix() + controller.biayaAdmin.value - controller.promoAmount.value))}",
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -542,6 +612,7 @@ Widget _buildRadioOption(
                       "id": value, // id paket
                       "harga_fix": hargaFix,
                     });
+                    controller.updateBiayaAdmin(controller.biayaAdminRaw.value);
                   }
                 },
                 activeColor: Colors.teal,
@@ -636,9 +707,7 @@ void showPaymentBottomSheet(BuildContext context) {
                                         in data['xendit_payment_method'])
                                       Container(
                                         width: 140,
-                                        margin: const EdgeInsets.only(
-                                          right: 12,
-                                        ),
+                                        margin: EdgeInsets.only(right: 12),
                                         child: paymentItem(
                                           svgPath: method['image_url'],
                                           title: method['name'],
@@ -646,6 +715,16 @@ void showPaymentBottomSheet(BuildContext context) {
                                               "Biaya Admin: ${method['biaya_admin']}",
                                           onTap: () {
                                             Get.back();
+                                            print(
+                                              "xxxv ${method['biaya_admin'].toString()}",
+                                            );
+                                            controller.updateBiayaAdmin(
+                                              method['biaya_admin'],
+                                            );
+                                            controller.biayaAdminRaw.value =
+                                                method['biaya_admin'];
+                                            controller.ovoNumber.value = "";
+                                            controller.ovoController.clear();
                                             controller.paymentMethod.value =
                                                 method['code'];
                                             controller.paymentMethodId.value =
@@ -771,7 +850,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
                           .bottom, // ini bikin konten naik saat keyboard muncul
                 ),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.25,
+                  height: MediaQuery.of(context).size.height * 0.15,
                   child: SingleChildScrollView(
                     padding: AppStyle.contentPadding,
                     child: Column(
@@ -802,8 +881,10 @@ void showPromoCodeBottomSheet(BuildContext context) {
                               Expanded(
                                 child: TextField(
                                   controller: controller.promoController,
+                                  inputFormatters: [UpperCaseTextFormatter()],
                                   decoration: InputDecoration(
-                                    hintText: "Cari",
+                                    hintText:
+                                        "CARI", // hintText juga bisa kamu bikin kapital manual
                                     contentPadding: EdgeInsets.symmetric(
                                       horizontal: 12,
                                       vertical: 10,
@@ -861,13 +942,14 @@ void showPhoneNumberBottomSheet(BuildContext context) {
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.white,
+    isDismissible: false,
+    enableDrag: false,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
     builder: (context) {
       return SafeArea(
         child: Padding(
-          // Tambahkan padding di sini
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
@@ -875,7 +957,7 @@ void showPhoneNumberBottomSheet(BuildContext context) {
             return controller.paymantListData.isEmpty
                 ? Center(child: CircularProgressIndicator())
                 : SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.25,
+                  height: MediaQuery.of(context).size.height * 0.15,
                   child: SingleChildScrollView(
                     padding: AppStyle.contentPadding,
                     child: Column(
@@ -893,83 +975,79 @@ void showPhoneNumberBottomSheet(BuildContext context) {
                             ),
                             IconButton(
                               icon: Icon(Icons.close),
-                              onPressed: () => Get.back(),
+                              onPressed: () {
+                                controller.clearPaymentSelection();
+                                Get.back();
+                              },
                             ),
                           ],
                         ),
                         SizedBox(height: 12),
-                        Padding(
-                          padding: EdgeInsets.only(top: 1),
-                          child: Row(
-                            children: [
-                              // Tambahkan Textbox untuk "+62" di sini
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  "+62",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                "+62",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(width: 8),
-
-                              Expanded(
-                                child: TextField(
-                                  controller: controller.ovoController,
-                                  keyboardType: TextInputType.phone,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
-                                  decoration: InputDecoration(
-                                    hintText: "Kirim",
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 10,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                      borderSide: BorderSide(
-                                        color: Colors.teal,
-                                      ),
-                                    ),
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: TextField(
+                                controller: controller.ovoController,
+                                keyboardType: TextInputType.phone,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: "Kirim",
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 10,
                                   ),
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  shape: RoundedRectangleBorder(
+                                  border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(6),
                                   ),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 14,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                    borderSide: BorderSide(color: Colors.teal),
                                   ),
                                 ),
-                                onPressed: () {
-                                  controller.getAddOvoNumber();
-                                  Get.back();
-                                },
-                                child: Text(
-                                  "Kirim",
-                                  style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 14,
                                 ),
                               ),
-                            ],
-                          ),
+                              onPressed: () {
+                                controller.getAddOvoNumber();
+                                Get.back();
+                              },
+                              child: Text(
+                                "Kirim",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

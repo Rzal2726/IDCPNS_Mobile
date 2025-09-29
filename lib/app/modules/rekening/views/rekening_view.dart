@@ -15,7 +15,7 @@ class RekeningView extends GetView<RekeningController> {
       canPop: false, // false supaya tidak auto-pop
       onPopInvoked: (didPop) {
         if (!didPop) {
-          Get.toNamed(Routes.AFFILIATE);
+          Get.offNamed(Routes.AFFILIATE);
         }
       },
       child: Scaffold(
@@ -23,7 +23,7 @@ class RekeningView extends GetView<RekeningController> {
         appBar: secondaryAppBar(
           "Rekening",
           onBack: () {
-            Get.toNamed(Routes.AFFILIATE);
+            Get.offNamed(Routes.AFFILIATE);
           },
         ),
         body: SafeArea(
@@ -49,7 +49,7 @@ class RekeningView extends GetView<RekeningController> {
                               children: [
                                 Icon(
                                   Icons.check_circle_outline,
-                                  color: Colors.grey,
+                                  color: Colors.teal,
                                   size: 20,
                                 ),
                                 SizedBox(width: 8),

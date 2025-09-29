@@ -3,6 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_svg/flutter_html_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -13,6 +14,7 @@ class DetailEventView extends GetView<DetailEventController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: Container(
@@ -164,40 +166,50 @@ class DetailEventView extends GetView<DetailEventController> {
                     }
                   }
                 }),
-                Obx(
-                  () => SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (controller.userData['level_name'] != "Platinum") {
                         if (controller.selectedPaket.value == "") {
-                          Get.snackbar(
-                            "Gagal",
+                          notifHelper.show(
                             "Mohon pilih paket terlebih dahulu",
-                            colorText: Colors.white,
-                            backgroundColor: Colors.pink,
+                            type: 0,
                           );
                           return;
                         }
+                      }
+                      if (controller.selectedPaket.value == "Free") {
+                        Get.toNamed(
+                          "/tryout-event-free-payment",
+                          arguments: controller.dataEvent,
+                        );
+                      } else {
                         Get.toNamed(
                           "/tryout-event-payment",
                           arguments: controller.uuid,
                         );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal.shade300,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal.shade300,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      child:
-                          controller.userData.isNotEmpty
-                              ? controller.userData['level_name'] != "Platinum"
-                                  ? Text("Daftar Sekarang")
-                                  : Text("Klaim")
-                              : Skeletonizer(child: Text("Loading")),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
+                    child: Obx(() {
+                      if (controller.loading.value == true) {
+                        return Skeletonizer(child: Text("Loading.."));
+                      } else {
+                        if (controller.userData['level_name'] != "Platinum") {
+                          return Text("Daftar Sekarang");
+                        } else {
+                          return Text("Klaim");
+                        }
+                      }
+                    }),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -206,7 +218,7 @@ class DetailEventView extends GetView<DetailEventController> {
                 ),
                 InkWell(
                   onTap: () {
-                    Get.toNamed("/upgrade-akun");
+                    Get.offNamed("/upgrade-akun");
                   },
                   child: Text(
                     "Upgrade ke platinum sekarang!",

@@ -73,12 +73,8 @@ import '../modules/panduan_tryout/views/panduan_tryout_view.dart';
 import '../modules/panduan_tryout_harian/bindings/panduan_tryout_harian_binding.dart';
 import '../modules/panduan_tryout_harian/views/panduan_tryout_harian_view.dart';
 import '../modules/paymentCheckout/bindings/payment_checkout_binding.dart';
-import '../modules/paymentCheckout/bindings/payment_checkout_binding.dart';
-import '../modules/paymentCheckout/views/payment_checkout_view.dart';
 import '../modules/paymentCheckout/views/payment_checkout_view.dart';
 import '../modules/paymentDetail/bindings/payment_detail_binding.dart';
-import '../modules/paymentDetail/bindings/payment_detail_binding.dart';
-import '../modules/paymentDetail/views/payment_detail_view.dart';
 import '../modules/paymentDetail/views/payment_detail_view.dart';
 import '../modules/paymentWhislist/bindings/payment_whislist_binding.dart';
 import '../modules/paymentWhislist/views/payment_whislist_view.dart';
@@ -132,6 +128,8 @@ import '../modules/tryout/bindings/tryout_binding.dart';
 import '../modules/tryout/views/tryout_view.dart';
 import '../modules/tryout_checkout/bindings/tryout_checkout_binding.dart';
 import '../modules/tryout_checkout/views/tryout_checkout_view.dart';
+import '../modules/tryout_event_free_payment/bindings/tryout_event_free_payment_binding.dart';
+import '../modules/tryout_event_free_payment/views/tryout_event_free_payment_view.dart';
 import '../modules/tryout_event_payment/bindings/tryout_event_payment_binding.dart';
 import '../modules/tryout_event_payment/views/tryout_event_payment_view.dart';
 import '../modules/tryout_harian/bindings/tryout_harian_binding.dart';
@@ -523,6 +521,11 @@ class AppPages {
       name: _Paths.CHECKOUT_GAGAL,
       page: () => const CheckoutGagalView(),
       binding: CheckoutGagalBinding(),
+    ),
+    GetPage(
+      name: _Paths.TRYOUT_EVENT_FREE_PAYMENT,
+      page: () => const TryoutEventFreePaymentView(),
+      binding: TryoutEventFreePaymentBinding(),
     ),
   ];
 }

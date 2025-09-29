@@ -3,11 +3,14 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/paymentTracsactionWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/Components/widgets/skeletonizerWidget.dart';
 import 'package:idcpns_mobile/app/modules/transaction/controllers/transaction_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TransactionView extends GetView<TransactionController> {
   const TransactionView({super.key});
@@ -20,14 +23,14 @@ class TransactionView extends GetView<TransactionController> {
         canPop: false, // false = cegah pop otomatis
         onPopInvoked: (didPop) async {
           if (didPop) return;
-          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 3});
+          Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
         },
         child: Scaffold(
           backgroundColor: Colors.white,
           appBar: secondaryAppBar(
             "Transaksi",
             onBack: () {
-              Get.toNamed(Routes.HOME, arguments: {'initialIndex': 3});
+              Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
             },
           ),
           body: SafeArea(
@@ -50,11 +53,12 @@ class TransactionView extends GetView<TransactionController> {
 
                               return GestureDetector(
                                 onTap: () {
+                                  controller.isloading.value = true;
                                   controller.selectedOption.value = option;
 
                                   // Tentukan status untuk API
                                   String status = "";
-                                  if (option == "Sukses") status = "SUCCESS";
+                                  if (option == "Sukses") status = "PAID";
                                   if (option == "Menunggu Pembayaran")
                                     status = "PENDING";
                                   if (option == "Gagal") status = "FAILED";
@@ -180,17 +184,45 @@ class TransactionView extends GetView<TransactionController> {
                   child: Obx(() {
                     final allData = controller.transactions['data'] ?? [];
 
-                    if (allData.isEmpty) {
+                    // default: semua data
+                    List filteredData = allData;
+
+                    if (controller.endDateController.text.isNotEmpty) {
+                      final endDate = DateFormat(
+                        "dd/MM/yyyy",
+                      ).parse(controller.endDateController.text);
+
+                      filteredData =
+                          allData.where((item) {
+                            final tanggalStr =
+                                item['tanggal']; // "2025-09-25 14:38:16"
+                            final tanggal = DateFormat(
+                              "yyyy-MM-dd HH:mm:ss",
+                            ).parse(tanggalStr);
+
+                            // cek: tanggal <= endDate (hari terakhir juga masuk)
+                            return tanggal.isBefore(
+                                  endDate.add(const Duration(days: 1)),
+                                ) ||
+                                tanggal.isAtSameMomentAs(endDate);
+                          }).toList();
+                    }
+
+                    print("xxx ${filteredData.toString()}");
+
+                    if (filteredData.isEmpty ||
+                        controller.isloading.value == true) {
                       return SkeletonListWidget<dynamic>(
                         data: [],
-                        skeletonDuration: Duration(seconds: 5),
+                        skeletonDuration: const Duration(seconds: 5),
                         skeletonCount: 5,
                         emptyMessage: "Tidak ada transaksi ditemukan",
                         emptySvgAsset: "assets/empty_transactions.svg",
-                        itemBuilder: (_) => SizedBox.shrink(),
+                        itemBuilder: (_) => const SizedBox.shrink(),
                       );
                     }
-                    return _buildTransactionList(allData);
+
+                    return _buildTransactionList(filteredData);
                   }),
                 ),
               ],
@@ -228,7 +260,7 @@ Widget _buildTransactionList(List<dynamic> filtered) {
     padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
     itemCount: filtered.length + 1, // ⬅️ +1 untuk pagination
     separatorBuilder: (_, i) => SizedBox(height: 12),
-    itemBuilder: (_, i) {
+    itemBuilder: (context, i) {
       if (i == filtered.length) {
         return Column(
           children: [
@@ -250,7 +282,74 @@ Widget _buildTransactionList(List<dynamic> filtered) {
       final trx = filtered[i];
       return GestureDetector(
         onTap: () {
-          Get.toNamed(Routes.INVOICE, arguments: trx['id']);
+          trx['status'] == 'PENDING'
+              ? showPaymentSheet(
+                context,
+                onCancel: () {
+                  showPaymentSheet2(
+                    context,
+                    onCancel: () {
+                      controller.deleteTransaction(id: trx['id'].toString());
+                    },
+                    onPay: () async {
+                      try {
+                        if (trx.containsKey('invoice_url') &&
+                            trx['invoice_url'] != null) {
+                          final String url = trx['invoice_url'];
+                          final uri = Uri.parse(url);
+
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(
+                              uri,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            debugPrint("Tidak bisa buka link: $url");
+                          }
+                        }
+                      } catch (e) {
+                        debugPrint("Error saat buka link: $e");
+                      }
+
+                      // Tetap lanjut ke halaman checkout
+                      Get.offNamed(
+                        Routes.PAYMENT_CHECKOUT,
+                        arguments: [
+                          trx['payment_id'],
+                          trx['tanggal_kadaluarsa'],
+                        ],
+                      );
+                    },
+                  );
+                },
+                onPay: () async {
+                  try {
+                    if (trx.containsKey('invoice_url') &&
+                        trx['invoice_url'] != null) {
+                      final String url = trx['invoice_url'];
+                      final uri = Uri.parse(url);
+
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      } else {
+                        debugPrint("Tidak bisa buka link: $url");
+                      }
+                    }
+                  } catch (e) {
+                    debugPrint("Error saat buka link: $e");
+                  }
+                  print("ccx ${trx['id'].toString()}");
+                  // Tetap lanjut ke halaman checkout
+                  Get.offNamed(
+                    Routes.PAYMENT_CHECKOUT,
+                    arguments: [trx['payment_id'], trx['tanggal_kadaluarsa']],
+                  );
+                },
+              )
+              : Get.toNamed(Routes.INVOICE, arguments: trx['id']);
         },
         child: Container(
           decoration: BoxDecoration(
@@ -437,6 +536,8 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                       controller: controller.endDateController,
                       readOnly: true,
                       decoration: InputDecoration(
+                        hintText: "Pilih Tanggal",
+                        suffixIcon: Icon(Icons.calendar_today),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(6),
                           borderSide: BorderSide(color: Colors.grey.shade400),
@@ -446,7 +547,40 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                           vertical: 8,
                         ),
                       ),
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            controller.endDateController.text =
+                                "${pickedDate.day.toString().padLeft(2, '0')}/"
+                                "${pickedDate.month.toString().padLeft(2, '0')}/"
+                                "${pickedDate.year}";
+                          });
+                        }
+                        print(
+                          "xxx ${controller.endDateController.text.toString()}",
+                        );
+                      },
                     ),
+                    // TextField(
+                    //   controller: controller.endDateController,
+                    //   // readOnly: true,
+                    //   decoration: InputDecoration(
+                    //     border: OutlineInputBorder(
+                    //       borderRadius: BorderRadius.circular(6),
+                    //       borderSide: BorderSide(color: Colors.grey.shade400),
+                    //     ),
+                    //     contentPadding: EdgeInsets.symmetric(
+                    //       horizontal: 12,
+                    //       vertical: 8,
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: 16),
 
                     // Row tombol Reset + Cari
@@ -456,6 +590,7 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                           child: OutlinedButton(
                             onPressed: () {
                               controller.startDateController.clear();
+                              controller.endDateController.clear();
                               final today = DateTime.now();
                               controller.endDateController.text =
                                   "${today.day.toString().padLeft(2, '0')}/"
@@ -488,11 +623,7 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              controller.getTransaction(
-                                page: controller.currentPage.value,
-                                date: controller.startDateController.text,
-                                status: controller.status.value,
-                              );
+                              controller.getDate();
                               Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(

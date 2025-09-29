@@ -20,7 +20,7 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
       onPopInvoked: (didPop) {
         if (!didPop) {
           // Saat tombol back ditekan
-          Get.toNamed(Routes.AFFILIATE);
+          Get.offNamed(Routes.AFFILIATE);
         }
       },
       child: Scaffold(
@@ -28,18 +28,20 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
         appBar: secondaryAppBar(
           "Mutasi Saldo",
           onBack: () {
-            Get.back();
+            Get.offNamed(Routes.AFFILIATE);
           },
         ),
         body: SafeArea(
           child: Obx(() {
+            final data = controller.mutasiSaldoData['data'];
+
             return SingleChildScrollView(
               child: Padding(
                 padding: AppStyle.screenPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Search box
+                    // 🔎 Search box
                     SearchRowButton(
                       controller: controller.searchController,
                       onSearch: () {
@@ -52,108 +54,70 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
 
                     SizedBox(height: 30),
 
-                    // Card Rincian Komisi
-                    Card(
-                      color: Colors.white,
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    // 📋 Isi konten → judul ikut sembunyi kalau kosong
+                    if (data != null && data.isNotEmpty) ...[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Mutasi Saldo",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+
+                          Column(
+                            children: [
+                              for (var i = 0; i < data.length; i++)
+                                buildbalanceTransfer(
+                                  number: i + 1,
+                                  date: data[i]['tanggal'] ?? '',
+                                  price:
+                                      formatRupiah(data[i]['nominal']) ?? 'Rp0',
+                                  status: _getStatus(data[i]['status']),
+                                  statusColor: _getStatusColor(
+                                    data[i]['status'],
+                                  ),
+                                ),
+                            ],
+                          ),
+
+                          SizedBox(height: 20),
+
+                          ReusablePagination(
+                            nextPage: controller.nextPage,
+                            prevPage: controller.prevPage,
+                            currentPage: controller.currentPage,
+                            totalPage: controller.totalPage,
+                            goToPage: controller.goToPage,
+                          ),
+                        ],
                       ),
-                      child: Padding(
+                    ] else
+                      Padding(
                         padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Mutasi Saldo",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                "assets/emptyArchiveIcon.svg",
+                                height: 150,
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child:
-                                  controller.mutasiSaldoData['data'] == null ||
-                                          controller
-                                              .mutasiSaldoData['data']
-                                              .isEmpty
-                                      ? Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            SvgPicture.asset(
-                                              "assets/emptyArchiveIcon.svg", // ilustrasi kosong
-                                              height: 100,
-                                            ),
-                                            SizedBox(height: 8),
-                                            Text(
-                                              "Tidak ada transaksi",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                      : Column(
-                                        children: [
-                                          Column(
-                                            children: [
-                                              for (
-                                                var i = 0;
-                                                i <
-                                                    controller
-                                                        .mutasiSaldoData['data']
-                                                        .length;
-                                                i++
-                                              )
-                                                buildbalanceTransfer(
-                                                  number: i + 1,
-                                                  date:
-                                                      controller
-                                                          .mutasiSaldoData['data'][i]['tanggal'] ??
-                                                      '',
-                                                  price:
-                                                      formatRupiah(
-                                                        controller
-                                                            .mutasiSaldoData['data'][i]['nominal'],
-                                                      ) ??
-                                                      'Rp0',
-                                                  status: _getStatus(
-                                                    controller
-                                                        .mutasiSaldoData['data'][i]['status'],
-                                                  ),
-                                                  statusColor: _getStatusColor(
-                                                    controller
-                                                        .mutasiSaldoData['data'][i]['status'],
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 20),
-                                          Visibility(
-                                            visible:
-                                                controller
-                                                    .mutasiSaldoData
-                                                    .isNotEmpty,
-                                            child: ReusablePagination(
-                                              nextPage: controller.nextPage,
-                                              prevPage: controller.prevPage,
-                                              currentPage:
-                                                  controller.currentPage,
-                                              totalPage: controller.totalPage,
-                                              goToPage: controller.goToPage,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                            ),
-                          ],
+                              SizedBox(height: 8),
+                              Text(
+                                "Tidak ada transaksi",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -174,18 +138,12 @@ Widget buildbalanceTransfer({
 }) {
   return Container(
     padding: EdgeInsets.all(16.0),
-    margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 4.0),
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.1),
-          spreadRadius: 1,
-          blurRadius: 5,
-          offset: Offset(0, 3),
-        ),
-      ],
+      border: Border.all(
+        color: Colors.teal, // ✅ border teal
+      ),
     ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

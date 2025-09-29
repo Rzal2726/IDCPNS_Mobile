@@ -20,7 +20,7 @@ class CommisionDetailView extends GetView<CommisionDetailController> {
       onPopInvoked: (didPop) {
         if (!didPop) {
           // Saat tombol back ditekan
-          Get.toNamed(Routes.AFFILIATE);
+          Get.offNamed(Routes.AFFILIATE);
         }
       },
       child: Scaffold(
@@ -28,143 +28,109 @@ class CommisionDetailView extends GetView<CommisionDetailController> {
         appBar: secondaryAppBar(
           "Rincian Komisi",
           onBack: () {
-            Get.toNamed(Routes.AFFILIATE);
+            Get.offNamed(Routes.AFFILIATE);
           },
         ),
         body: SafeArea(
           child: Obx(() {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: AppStyle.screenPadding,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Search box
-                    SearchRowButton(
-                      controller: controller.searchController,
-                      onSearch: () {
-                        controller.getRincianKomisi(
-                          search: controller.searchController.text,
-                        );
-                      },
-                      hintText: "Cari",
-                    ),
-                    SizedBox(height: 30),
+            final data = controller.komisiDetailData['data'];
 
-                    // Card Rincian Komisi
-                    Card(
-                      color: Colors.white,
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Rincian Komisi",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 🔎 Search tetap di atas
+                Padding(
+                  padding: AppStyle.screenPadding,
+                  child: SearchRowButton(
+                    controller: controller.searchController,
+                    onSearch: () {
+                      controller.getRincianKomisi(
+                        search: controller.searchController.text,
+                      );
+                    },
+                    hintText: "Cari",
+                  ),
+                ),
+                SizedBox(height: 20),
+
+                // 📋 Isi konten
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(16),
+                    child:
+                        (data == null || data.isEmpty)
+                            ? Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/emptyArchiveIcon.svg",
+                                    height: 150,
+                                  ),
+                                  SizedBox(height: 12),
+                                  Text(
+                                    "Tidak ada transaksi",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20),
-                              child:
-                                  controller.komisiDetailData['data'] == null ||
-                                          controller
-                                              .komisiDetailData['data']
-                                              .isEmpty
-                                      ? Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            SvgPicture.asset(
-                                              "assets/emptyArchiveIcon.svg", // ilustrasi kosong
-                                              height: 100,
-                                            ),
-                                            SizedBox(height: 8),
-                                            Text(
-                                              "Tidak ada transaksi",
-                                              style: TextStyle(
-                                                color: Colors.grey,
+                            )
+                            : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Rincian Komisi",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                Expanded(
+                                  child: ListView(
+                                    children: [
+                                      for (var i = 0; i < data.length; i++)
+                                        if (data[i]['user'] != null)
+                                          buildRincianKomisi(
+                                            number: i + 1,
+                                            name:
+                                                data[i]['user_name'].toString(),
+                                            date: data[i]['tanggal'] ?? '',
+                                            price: formatRupiah(
+                                              hitungKomisiDetail(
+                                                amount: data[i]['amount'] ?? 0,
+                                                amountAdmin:
+                                                    data[i]['amount_admin'] ??
+                                                    0,
+                                                amountDiskon:
+                                                    data[i]['amount_diskon'] ??
+                                                    0,
+                                                persen:
+                                                    data[i]['user']?['komisi_afiliasi'] ??
+                                                    0,
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                      : Column(
-                                        children: [
-                                          for (
-                                            var i = 0;
-                                            i <
-                                                controller
-                                                    .komisiDetailData['data']
-                                                    .length;
-                                            i++
-                                          )
-                                            if (controller
-                                                    .komisiDetailData['data'][i]['user'] !=
-                                                null)
-                                              buildRincianKomisi(
-                                                number: i + 1,
-                                                name:
-                                                    controller
-                                                        .komisiDetailData['data'][i]['user_name']
-                                                        .toString(),
-                                                date:
-                                                    controller
-                                                        .komisiDetailData['data'][i]['tanggal'] ??
-                                                    '',
-                                                price: formatRupiah(
-                                                  hitungKomisiDetail(
-                                                    amount:
-                                                        controller
-                                                            .komisiDetailData['data'][i]['amount'] ??
-                                                        0,
-                                                    amountAdmin:
-                                                        controller
-                                                            .komisiDetailData['data'][i]['amount_admin'] ??
-                                                        0,
-                                                    amountDiskon:
-                                                        controller
-                                                            .komisiDetailData['data'][i]['amount_diskon'] ??
-                                                        0,
-                                                    persen:
-                                                        controller
-                                                            .komisiDetailData['data'][i]['user']?['komisi_afiliasi'] ??
-                                                        0,
-                                                  ),
-                                                ),
-                                              ),
-                                          SizedBox(height: 20),
-                                          Visibility(
-                                            visible:
-                                                controller
-                                                    .komisiDetailData
-                                                    .isNotEmpty,
-                                            child: ReusablePagination(
-                                              nextPage: controller.nextPage,
-                                              prevPage: controller.prevPage,
-                                              currentPage:
-                                                  controller.currentPage,
-                                              totalPage: controller.totalPage,
-                                              goToPage: controller.goToPage,
                                             ),
                                           ),
-                                        ],
+                                      SizedBox(height: 20),
+                                      ReusablePagination(
+                                        nextPage: controller.nextPage,
+                                        prevPage: controller.prevPage,
+                                        currentPage: controller.currentPage,
+                                        totalPage: controller.totalPage,
+                                        goToPage: controller.goToPage,
                                       ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             );
           }),
         ),
@@ -181,18 +147,12 @@ Widget buildRincianKomisi({
 }) {
   return Container(
     padding: EdgeInsets.all(16.0),
-    margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 4.0),
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.1),
-          spreadRadius: 1,
-          blurRadius: 5,
-          offset: Offset(0, 3),
-        ),
-      ],
+      border: Border.all(
+        color: Colors.teal, // ✅ border teal
+      ),
     ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start, // rata kiri horizontal

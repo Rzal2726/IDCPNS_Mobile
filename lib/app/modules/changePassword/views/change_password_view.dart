@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
-import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/change_password_controller.dart';
@@ -11,172 +11,179 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
   const ChangePasswordView({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: secondaryAppBar(
-        "Kata Sandi",
-        onBack: () {
-          Get.back();
-        },
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: AppStyle.screenPadding,
-          child: Align(
-            alignment: Alignment.topCenter, // posisikan card di atas tengah
-            child: Card(
-              color: Colors.white,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Ubah Kata Sandi",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
+    return PopScope(
+      canPop: false, // false = cegah pop otomatis
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: secondaryAppBar(
+          "Ubah kata sandi",
+          onBack: () {
+            Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+          },
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: AppStyle.screenPadding,
+            child: Align(
+              alignment: Alignment.topCenter, // posisikan card di atas tengah
+              child: Card(
+                color: Colors.white,
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Ubah password",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 16),
+                      SizedBox(height: 16),
 
-                    // Kata Sandi Lama
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Obx(
-                          () => TextField(
-                            controller: controller.oldPasswordController,
-                            obscureText: controller.isOldPasswordHidden.value,
-                            decoration: InputDecoration(
-                              labelText: "Kata Sandi Lama",
-                              labelStyle: TextStyle(color: Colors.black),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              isDense: true,
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  controller.isOldPasswordHidden.value
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                  color: Colors.grey,
+                      // Kata Sandi Lama
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Obx(
+                            () => TextField(
+                              controller: controller.oldPasswordController,
+                              obscureText: controller.isOldPasswordHidden.value,
+                              decoration: InputDecoration(
+                                labelText: "Password lama",
+                                labelStyle: TextStyle(color: Colors.black),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8.0),
                                 ),
-                                onPressed: controller.toggleOldPassword,
+                                isDense: true,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    controller.isOldPasswordHidden.value
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: Colors.grey,
+                                  ),
+                                  onPressed: controller.toggleOldPassword,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 16),
-                        Obx(
-                          () => TextField(
-                            controller: controller.newPasswordController,
-                            obscureText: controller.isNewPasswordHidden.value,
-                            decoration: InputDecoration(
-                              labelStyle: TextStyle(color: Colors.black),
-                              labelText: "Kata Sandi Baru",
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              isDense: true,
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  color: Colors.grey,
-                                  controller.isNewPasswordHidden.value
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
+                          SizedBox(height: 16),
+                          Obx(
+                            () => TextField(
+                              controller: controller.newPasswordController,
+                              obscureText: controller.isNewPasswordHidden.value,
+                              decoration: InputDecoration(
+                                labelStyle: TextStyle(color: Colors.black),
+                                labelText: "password baru",
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8.0),
                                 ),
-                                onPressed: controller.toggleNewPassword,
+                                isDense: true,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    color: Colors.grey,
+                                    controller.isNewPasswordHidden.value
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
+                                  onPressed: controller.toggleNewPassword,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 16),
-                        Obx(
-                          () => TextField(
-                            controller: controller.confirmPasswordController,
-                            obscureText:
-                                controller.isConfirmPasswordHidden.value,
-                            decoration: InputDecoration(
-                              labelStyle: TextStyle(color: Colors.black),
-                              labelText: "Konfirmasi Kata Sandi Baru",
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              isDense: true,
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  color: Colors.grey,
-                                  controller.isConfirmPasswordHidden.value
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
+                          SizedBox(height: 16),
+                          Obx(
+                            () => TextField(
+                              controller: controller.confirmPasswordController,
+                              obscureText:
+                                  controller.isConfirmPasswordHidden.value,
+                              decoration: InputDecoration(
+                                labelStyle: TextStyle(color: Colors.black),
+                                labelText: "Konfirmasi password baru",
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8.0),
                                 ),
-                                onPressed: controller.toggleConfirmPassword,
+                                isDense: true,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    color: Colors.grey,
+                                    controller.isConfirmPasswordHidden.value
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
+                                  onPressed: controller.toggleConfirmPassword,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
+                        ],
+                      ),
+                      SizedBox(height: 20),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        OutlinedButton(
-                          onPressed: () => Get.back(),
-                          style: OutlinedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                6,
-                              ), // sudut sedikit membulat
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          OutlinedButton(
+                            onPressed: () => Get.back(),
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  6,
+                                ), // sudut sedikit membulat
+                              ),
+                              side: BorderSide(
+                                color: Colors.teal, // warna outline teal
+                                width: 1.5, // ketebalan outline
+                              ),
                             ),
-                            side: BorderSide(
-                              color: Colors.teal, // warna outline teal
-                              width: 1.5, // ketebalan outline
-                            ),
-                          ),
-                          child: Text(
-                            "Batal",
-                            style: TextStyle(
-                              color: Colors.teal,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        ElevatedButton(
-                          onPressed: controller.changePassword,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                6,
-                              ), // sudut sedikit membulat
+                            child: Text(
+                              "Batal",
+                              style: TextStyle(
+                                color: Colors.teal,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          child: Text(
-                            "Simpan",
-                            style: TextStyle(color: Colors.white),
+                          SizedBox(width: 12),
+                          ElevatedButton(
+                            onPressed: controller.changePassword,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  6,
+                                ), // sudut sedikit membulat
+                              ),
+                            ),
+                            child: Text(
+                              "Simpan",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

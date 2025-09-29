@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -79,7 +80,7 @@ class SplashController extends GetxController {
       // Ambil pesan dari response
       print("asda ${result.toString()}");
       String errorMessage = result['message'] ?? "Email atau Password invalid.";
-      Get.snackbar("Error", errorMessage);
+      notifHelper.show(errorMessage, type: 0);
       return false;
     }
   }

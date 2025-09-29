@@ -7,7 +7,8 @@ import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class PaymentCheckoutController extends GetxController {
   final _restClient = RestClient();
-  var uuid = Get.arguments;
+  var uuid = Get.arguments[0];
+  var expired = Get.arguments[1];
   Timer? _paymentTimer;
   RxList<String> option = ["ATM", "MBanking"].obs;
   RxString selectedOption = "ATM".obs;
@@ -33,6 +34,8 @@ class PaymentCheckoutController extends GetxController {
 
   @override
   void onClose() {
+    _paymentTimer?.cancel();
+    _paymentTimer = null;
     super.onClose();
   }
 
@@ -41,7 +44,7 @@ class PaymentCheckoutController extends GetxController {
     _paymentTimer?.cancel();
 
     // Jalankan timer periodic setiap 5 detik
-    _paymentTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _paymentTimer = Timer.periodic(Duration(seconds: 5), (timer) {
       fetchDetailPayment();
       fetchServerTime();
     });
@@ -92,14 +95,12 @@ class PaymentCheckoutController extends GetxController {
     "Konfirmasi transaksi hingga selesai",
   ];
 
-  void cekStatus() {
-    Get.snackbar("Pembayaran", "Cek status pembayaran (dummy)");
-  }
+  void cekStatus() {}
 
   void fetchDetailPayment() async {
     // Ambil data transaksi dari controller sebelumnya
     final response = await _restClient.getData(
-      url: baseUrl + apiGetPaymentDetail + "/" + uuid,
+      url: baseUrl + apiGetPaymentDetail + "/" + uuid.toString(),
     );
 
     // Ambil data dari response, pakai Map aja

@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:idcpns_mobile/app/providers/exceptions.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class RestClient {
   Dio dio = Dio();
-
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
   // BaseApiService() : dio = Dio(options);
 
   Future<RestClient> init() async {
@@ -180,7 +183,7 @@ class RestClient {
   _processResponse(response) {
     if (response == null) {
       // ignore: avoid_print
-      return print("Something went wrong");
+      return print("Something went wrong1");
     }
     switch (response.statusCode) {
       case 200:
@@ -192,26 +195,33 @@ class RestClient {
       case 400:
         var message = jsonDecode(response.toString())["message"];
         // showPopup("Error", message);
+        print("xxcode1");
         throw ClientException(message: message, response: response.data);
       case 401:
         var message = jsonDecode(response.toString())["message"];
+        print("xxcode2");
         if (message == 'Token Expired') {
+          print("xxcode2.1");
           return ClientException(message: message, response: response.data);
         }
         // showPopup("Error", message);
         throw message;
       case 404:
         var message = jsonDecode(response.toString())["message"];
+        print("xxcode3");
         // showPopup("Error", message);
         throw message;
       case 500:
         var message = jsonDecode(response.toString())["message"];
+        print("xxcode4");
         if (message == 'Server Error') {
+          print("xxcode4.1");
           return ClientException(message: message, response: response.data);
         }
         // showPopup("Error", "Server Error");
-        throw ServerException(message: "Something went wrong");
+        throw ServerException(message: "Something went wrong2");
       case 504:
+        print("xxcode5");
         // showPopup("Error", "Server Down");
         throw ServerException(message: "Server went down");
       default:
@@ -220,21 +230,20 @@ class RestClient {
         // showPopup("Error", message);
         throw HttpException(
           statusCode: response.statusCode,
-          message: "Something went wrong",
+          message: "Something went wrong3",
         );
     }
   }
 
   _dioException(DioException dioErr) {
     switch (dioErr.type) {
-      // case DioExceptionType.response:
-      //   throw _processResponse(dioErr.response);
       case DioExceptionType.sendTimeout:
-        throw "Something went wrong";
+        throw "Something went wrong4";
       case DioExceptionType.receiveTimeout:
-        throw "Something went wrong";
+        throw "Something went wrong5";
       default:
-        throw "Something went wrong";
+        print("Something went wrong6");
+        break;
     }
   }
 }

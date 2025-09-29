@@ -1,26 +1,17 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 class InvoiceController extends GetxController {
   final _restClient = RestClient();
   RxMap notifData = {}.obs;
-  RxString buyer = "Nawan Tutu".obs;
-  RxString invoiceNumber = "INV/20250702/UPG/1/597039".obs;
-  RxString transactionDate = "2025-07-02 14:55:10".obs;
-  RxString status = "Sukses".obs;
-  RxList items =
-      [
-        {"name": "Platinum 1 Bulan", "expired": "2025-08-02 14:55:43"},
-        {"name": "Bonus Platinum SKD CPNS", "expired": "2025-08-02 14:55:43"},
-      ].obs;
-  RxInt adminFee = 4440.obs;
-  RxInt discount = 0.obs;
-  RxInt total = 133440.obs;
-
-  final count = 0.obs;
+  final box = GetStorage();
   @override
-  void onInit() {
+  void onInit() async {
+    await initializeDateFormatting('id_ID', null); // <-- tambahin ini
     getData();
     super.onInit();
   }
@@ -36,31 +27,49 @@ class InvoiceController extends GetxController {
   }
 
   Future<void> getData() async {
+    print("Xxxc ${Get.arguments}");
     try {
       final url = await baseUrl + apiGetTransaction;
 
       final result = await _restClient.postData(url: url);
 
       if (result["status"] == "success") {
-        var id = Get.arguments;
+        var id = Get.arguments.toString();
 
-        // pastikan result['data'] berupa list
         var data = result['data']['data'] as List;
 
-        // cari data pertama yang id-nya sesuai dengan argument
+        // 1️⃣ Cari berdasarkan id dulu
         var found = data.firstWhere(
-          (item) => item['id'] == id,
-          orElse: () => null, // biar gak error kalau ga ketemu
+          (item) => item['id'].toString() == id,
+          orElse: () => null,
+        );
+
+        // 2️⃣ Kalau gak ketemu, baru cari berdasarkan uuid
+        found ??= data.firstWhere(
+          (item) => item['uuid'].toString() == id,
+          orElse: () => null,
         );
 
         if (found != null) {
           notifData.value = found;
+          print("✅ Ketemu data: ${notifData['uuid']}");
         } else {
-          print("Data dengan id $id tidak ditemukan");
+          print("❌ Data dengan id/uuid $id tidak ditemukan");
         }
       }
     } catch (e) {
       print("Error polling email verification: $e");
+    }
+  }
+
+  String formatTanggal(String? tanggalStr) {
+    if (tanggalStr == null || tanggalStr.isEmpty) return "-";
+    try {
+      DateTime date = DateTime.parse(tanggalStr);
+      // Format: 26 September 2025, 11:15
+      return DateFormat("dd MMMM yyyy, HH:mm", "id_ID").format(date);
+    } catch (e) {
+      return tanggalStr; // fallback kalau gagal parse
     }
   }
 }

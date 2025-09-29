@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' as dio;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
@@ -8,6 +9,7 @@ import 'package:idcpns_mobile/app/modules/lengkapiBiodata/controllers/lengkapi_b
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class MyAccountController extends GetxController {
   final _restClient = RestClient();
@@ -60,8 +62,7 @@ class MyAccountController extends GetxController {
     super.onClose();
   }
 
-  // nanti buat function ambil data API
-
+  // nanti buat function ambil data API7
   void simpanData() {
     postProfile();
   }
@@ -74,7 +75,25 @@ class MyAccountController extends GetxController {
     );
 
     if (file != null) {
-      newProfile.value = file.path; // ganti fotoProfile di tampilan sementara
+      // buka cropper setelah file dipilih
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: file.path,
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1), // kotak
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Edit Foto',
+            toolbarColor: Colors.teal,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true, // biar fix kotak
+          ),
+          IOSUiSettings(title: 'Edit Foto', aspectRatioLockEnabled: true),
+        ],
+      );
+
+      if (croppedFile != null) {
+        newProfile.value = croppedFile.path; // simpan hasil crop
+      }
     }
   }
 
