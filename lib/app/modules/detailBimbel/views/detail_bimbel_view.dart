@@ -170,11 +170,11 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
                     '${data['gambar']}',
-                    width: double.infinity,
-                    height: 300,
-                    fit: BoxFit.cover,
+                    width: double.infinity, // lebar tetap full
+                    fit: BoxFit.cover, // ini bisa diubah sesuai kebutuhan
                   ),
                 ),
+
                 SizedBox(height: 16),
 
                 // Judul
@@ -449,77 +449,60 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                     SizedBox(height: 12),
 
                     // Konten Tab
-                    IndexedStack(
-                      index: controller.currentIndex.value,
-                      children: [
-                        // Case 0
-                        // SizedBox(
-                        //   height:
-                        //       MediaQuery.of(
-                        //         context,
-                        //       ).size.height, // batas tinggi = layar penuh
-                        //   child:
-                        // ),
-                        SingleChildScrollView(
-                          child: Html(data: data['deskripsi_pc']),
-                        ),
-                        // Case 1
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height,
-                          child: Column(
-                            children: [
-                              // List + pagination jadi satu scroll
-                              Expanded(
-                                child: ListView.builder(
-                                  itemCount:
-                                      controller.getPaginatedData().length +
-                                      1, // +1 buat pagination
-                                  itemBuilder: (context, index) {
-                                    if (index <
-                                        controller.getPaginatedData().length) {
-                                      final item =
-                                          controller.getPaginatedData()[index];
-                                      return pertemuanCardBuilder(
-                                        hari: item["hari"] ?? "",
-                                        tanggal: item["tanggal"] ?? "",
-                                        jam: item["jam"] ?? "",
-                                        regulerTitle: item["regulerTitle"],
-                                        regulerDesc: item["regulerDesc"],
-                                        extendedTitle: item["extendedTitle"],
-                                        extendedDesc: item["extendedDesc"],
-                                        extendedPlatinumTitle:
-                                            item["extendedPlatinumTitle"],
-                                        extendedPlatinumDesc:
-                                            item["extendedPlatinumDesc"],
-                                      );
-                                    } else {
-                                      // item terakhir = pagination
-                                      return Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 16,
-                                        ),
-                                        child: ReusablePagination(
-                                          currentPage: controller.currentPage,
-                                          totalPage: controller.totalPage,
-                                          goToPage: controller.goToPage,
-                                          prevPage: controller.prevPage,
-                                          nextPage: controller.nextPage,
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                    Obx(() {
+                      final currentIndex = controller.currentIndex.value;
 
-                        // Case 2
-                        SingleChildScrollView(
-                          child: Html(data: data['faq_pc']),
-                        ),
-                      ],
-                    ),
+                      Widget currentChild;
+                      switch (currentIndex) {
+                        case 0:
+                          currentChild = Html(data: data['deskripsi_pc']);
+                          break;
+                        case 1:
+                          currentChild = SizedBox(
+                            width: double.infinity,
+                            child: Column(
+                              children: [
+                                ...controller.getPaginatedData().map((item) {
+                                  return pertemuanCardBuilder(
+                                    hari: item["hari"] ?? "",
+                                    tanggal: item["tanggal"] ?? "",
+                                    jam: item["jam"] ?? "",
+                                    regulerTitle: item["regulerTitle"],
+                                    regulerDesc: item["regulerDesc"],
+                                    extendedTitle: item["extendedTitle"],
+                                    extendedDesc: item["extendedDesc"],
+                                    extendedPlatinumTitle:
+                                        item["extendedPlatinumTitle"],
+                                    extendedPlatinumDesc:
+                                        item["extendedPlatinumDesc"],
+                                  );
+                                }).toList(),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  child: ReusablePagination(
+                                    currentPage: controller.currentPage,
+                                    totalPage: controller.totalPage,
+                                    goToPage: controller.goToPage,
+                                    prevPage: controller.prevPage,
+                                    nextPage: controller.nextPage,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                          break;
+                        case 2:
+                          currentChild = Html(data: data['faq_pc']);
+                          break;
+                        default:
+                          currentChild = SizedBox();
+                      }
+
+                      return AnimatedSwitcher(
+                        duration: Duration(milliseconds: 300),
+                        child: currentChild,
+                      );
+                    }),
                   ],
                 ),
               ],

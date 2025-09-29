@@ -20,7 +20,7 @@ class PaymentDetailController extends GetxController {
   final selectedPaketPerCard = <int, Map<String, dynamic>>{}.obs;
 
   // daftar opsi sub
-
+  RxString biayaAdminRaw = "".obs;
   RxString ovoNumber = "".obs;
   RxInt paymentMethodId = 0.obs;
   RxString paymentMethod = "".obs;
@@ -195,6 +195,8 @@ class PaymentDetailController extends GetxController {
 
       biayaAdmin.value =
           (totalSebelumPromo * persen / 100).round(); // hasil rupiah
+
+      print("czc ${(totalSebelumPromo * persen / 100).round()}");
     } else {
       // Langsung pakai nominal
       biayaAdmin.value = int.tryParse(biayaAdminRaw) ?? 0;
@@ -274,7 +276,7 @@ class PaymentDetailController extends GetxController {
 
     if (result["status"] == "success") {
       final data = result['data'];
-      print("Xxxc ${result["data"].toString()}");
+      print("Xxxc ${result["data"]['tanggal_kadaluarsa'].toString()}");
       // pindah halaman checkout dulu
       Get.offNamed(
         Routes.PAYMENT_CHECKOUT,

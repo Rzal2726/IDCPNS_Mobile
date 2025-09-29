@@ -132,6 +132,9 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                                             // langsung hapus promo code dan reset amountPromo
                                             controller.promoController.clear();
                                             controller.promoAmount.value = 0;
+                                            controller.updateBiayaAdmin(
+                                              controller.biayaAdminRaw.value,
+                                            );
                                           },
                                           child: Container(
                                             padding: EdgeInsets.all(4),
@@ -534,7 +537,10 @@ Widget _buildRadioOption(
                               "harga_fix": hargaFix,
                             });
                             print(
-                              "xxx ${controller.selectedPaketPerCard.toString()}",
+                              "biayaAd ${controller.biayaAdminRaw.toString()}",
+                            );
+                            controller.updateBiayaAdmin(
+                              controller.biayaAdminRaw.value,
                             );
                           }
                         },
@@ -629,6 +635,8 @@ void showPaymentBottomSheet(BuildContext context) {
                                       controller.updateBiayaAdmin(
                                         method['biaya_admin'],
                                       );
+                                      controller.biayaAdminRaw.value =
+                                          method['biaya_admin'];
                                       controller.ovoNumber.value = "";
                                       controller.ovoController.clear();
                                       controller.paymentMethod.value =

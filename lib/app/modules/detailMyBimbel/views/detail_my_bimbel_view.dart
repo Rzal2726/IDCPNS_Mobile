@@ -98,12 +98,28 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                             // Progress Bar (mirip card tryout)
                             Builder(
                               builder: (context) {
-                                final totalDays =
-                                    data['bimbel']?['total_day'] ??
-                                    1; // pastikan ga 0 biar ga error
-                                final remainingDays =
-                                    data['bimbel']?['reamining_day'] ?? 0;
-                                final progress = (remainingDays / totalDays)
+                                // Parse tanggal dari string
+                                final startDate = DateTime.tryParse(
+                                  data['startdate'] ?? '',
+                                );
+                                final endDate = DateTime.tryParse(
+                                  data['expireddate'] ?? '',
+                                );
+                                final now = DateTime.now();
+
+                                int totalDays = 1;
+                                int remainingDays = 0;
+
+                                if (startDate != null && endDate != null) {
+                                  totalDays =
+                                      endDate.difference(startDate).inDays;
+                                  remainingDays =
+                                      endDate.difference(now).inDays;
+                                }
+
+                                // Pastikan minimal 0 biar progress bar ga kebalik
+                                final progress = (remainingDays /
+                                        (totalDays == 0 ? 1 : totalDays))
                                     .clamp(0.0, 1.0);
 
                                 return Column(
@@ -386,9 +402,11 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                   SizedBox(height: 16),
 
                   // ================== PLATINUM INFO ==================
-                  controller.platinumZone.value == true
+                  controller.levelName.toLowerCase() == "basic"
+                      ? const SizedBox.shrink() // kalau basic, tidak tampil
+                      : controller.platinumZone.value
                       ? Container(
-                        padding: EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: Colors.teal.shade50,
                           borderRadius: BorderRadius.circular(8),
@@ -398,27 +416,25 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                           text: TextSpan(
                             text:
                                 'Anda terdaftar dalam program Platinum Zone, ayo manfaatkan fitur-fiturnya ',
-                            style: TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.black),
                             children: [
                               TextSpan(
                                 text: 'disini',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.teal,
                                   decoration: TextDecoration.underline,
                                 ),
                                 recognizer:
                                     TapGestureRecognizer()
-                                      ..onTap = () {
-                                        Get.toNamed(
-                                          Routes.PLATINUM_ZONE,
-                                        ); // ganti dengan rute kamu
-                                      },
+                                      ..onTap =
+                                          () =>
+                                              Get.toNamed(Routes.PLATINUM_ZONE),
                               ),
                             ],
                           ),
                         ),
                       )
-                      : SizedBox(),
+                      : const SizedBox(),
                   SizedBox(height: 16),
 
                   // ================== PERINGKAT ==================
@@ -611,10 +627,11 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                             Expanded(
                                               child: ElevatedButton.icon(
                                                 onPressed:
-                                                    (item['has_pretest'] ==
-                                                                false &&
-                                                            item['can_pretest'] ==
-                                                                true)
+                                                    (1 == 1)
+                                                        // (item['has_pretest'] ==
+                                                        //             false &&
+                                                        //         item['can_pretest'] ==
+                                                        //             true)
                                                         ? () {
                                                           print(
                                                             "xxxv ${item['has_pretest']} dan ${item['can_pretest'].toString()}",
@@ -1132,7 +1149,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                         );
                         return;
                       }
-                      Get.offNamed(
+                      Get.toNamed(
                         Routes.PAYMENT_DETAIL,
                         arguments: [
                           controller.selectedPaket.value,

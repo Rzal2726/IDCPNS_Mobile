@@ -58,6 +58,7 @@ class LoginController extends GetxController {
       final user = result['data']["user"];
 
       box.write("token", result['data']["access_token"]);
+      box.write("levelName", user["level_name"]);
       box.write("name", user["name"]);
       box.write("afiCode", user["kode_afiliasi"]);
       box.write("afiAgree", user["is_afiliasi_agree"]);
@@ -130,6 +131,7 @@ class LoginController extends GetxController {
       final user = data["user"];
 
       box.write("token", data["access_token"]);
+      box.write("levelName", user["level_name"]);
       box.write("name", user["name"]);
       box.write("afiCode", user["kode_afiliasi"] ?? "");
       box.write("afiAgree", user["is_afiliasi_agree"]);

@@ -325,6 +325,7 @@ class PretestView extends GetView<PretestController> {
             }
 
             final soal = controller.soalList[controller.currentQuestion.value];
+
             return SingleChildScrollView(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -434,24 +435,37 @@ class PretestView extends GetView<PretestController> {
                                                                           ? Colors
                                                                               .teal
                                                                               .shade100
+                                                                          : controller.isEmptyQuest(
+                                                                            soal,
+                                                                          )
+                                                                          ? Colors
+                                                                              .grey
+                                                                              .shade300
                                                                           : Colors
                                                                               .white,
+
                                                                   foregroundColor:
                                                                       Colors
                                                                           .black,
+
                                                                   shape: RoundedRectangleBorder(
                                                                     side: BorderSide(
                                                                       color:
-                                                                          Colors
-                                                                              .grey,
+                                                                          controller.currentQuestion.value ==
+                                                                                  index
+                                                                              ? Colors
+                                                                                  .teal // <- warna border kalau ini soal aktif
+                                                                              : Colors.grey, // <- default
+                                                                      width: 2,
                                                                     ),
                                                                     borderRadius:
                                                                         BorderRadius.circular(
                                                                           8,
                                                                         ),
                                                                   ),
+
                                                                   padding:
-                                                                      EdgeInsets.symmetric(
+                                                                      const EdgeInsets.symmetric(
                                                                         horizontal:
                                                                             12,
                                                                         vertical:
@@ -459,15 +473,35 @@ class PretestView extends GetView<PretestController> {
                                                                       ),
                                                                 ),
                                                                 onPressed: () {
+                                                                  // Mark soal lama dulu
+                                                                  final currentSoal =
+                                                                      controller
+                                                                          .soalList[controller
+                                                                          .currentQuestion
+                                                                          .value];
+                                                                  if (!controller
+                                                                          .checkMark(
+                                                                            currentSoal,
+                                                                          ) &&
+                                                                      !controller
+                                                                          .checkAnswer(
+                                                                            currentSoal['id'],
+                                                                          )) {
+                                                                    controller
+                                                                        .markEmpty(
+                                                                          currentSoal,
+                                                                        );
+                                                                  }
+
+                                                                  // Pindah ke soal baru
                                                                   controller
                                                                       .currentQuestion
                                                                       .value = index;
                                                                   controller.startQuestion(
                                                                     controller
-                                                                        .soalList[controller
-                                                                        .currentQuestion
-                                                                        .value]['id'],
+                                                                        .soalList[index]['id'],
                                                                   );
+
                                                                   Navigator.pop(
                                                                     context,
                                                                   );
@@ -498,12 +532,24 @@ class PretestView extends GetView<PretestController> {
                             children: [
                               // Tombol Back
                               IconButton(
-                                onPressed:
-                                    controller.currentQuestion.value > 0
-                                        ? () {
-                                          controller.currentQuestion.value--;
-                                        }
-                                        : null,
+                                onPressed: () {
+                                  if (controller.currentQuestion.value > 0) {
+                                    controller.currentQuestion.value--;
+
+                                    // Ambil soal setelah pindah halaman
+                                    int questionNumber =
+                                        controller.currentPage.value;
+
+                                    // Kalau soal sebelumnya gak di-mark & gak dijawab, tandai kosong
+                                    if (!controller.checkMark(soal) &&
+                                        !controller.checkAnswer(
+                                          questionNumber,
+                                        )) {
+                                      controller.markEmpty(soal);
+                                    }
+                                  }
+                                },
+
                                 icon: Icon(Icons.arrow_back_ios),
                               ),
 
@@ -538,7 +584,7 @@ class PretestView extends GetView<PretestController> {
                                                     .soalList[questionNumber -
                                                     1]['id'],
                                               )
-                                              ? Color.fromARGB(
+                                              ? const Color.fromARGB(
                                                 255,
                                                 208,
                                                 255,
@@ -549,7 +595,14 @@ class PretestView extends GetView<PretestController> {
                                                       .value ==
                                                   questionNumber - 1
                                               ? Colors.green.shade100
+                                              : controller.isEmptyQuest(
+                                                controller
+                                                    .soalList[questionNumber -
+                                                    1],
+                                              )
+                                              ? Colors.grey.shade300
                                               : Colors.white,
+
                                       foregroundColor: Colors.black,
                                       shape: RoundedRectangleBorder(
                                         side: BorderSide(
@@ -570,6 +623,14 @@ class PretestView extends GetView<PretestController> {
                                             .currentQuestion
                                             .value]['id'],
                                       );
+
+                                      // Kalau soal sebelumnya gak di-mark & gak dijawab, tandai kosong
+                                      if (!controller.checkMark(soal) &&
+                                          !controller.checkAnswer(
+                                            questionNumber,
+                                          )) {
+                                        controller.markEmpty(soal);
+                                      }
                                     },
                                     child: Text(questionNumber.toString()),
                                   ),
@@ -578,13 +639,18 @@ class PretestView extends GetView<PretestController> {
 
                               // Tombol Next
                               IconButton(
-                                onPressed:
-                                    (controller.currentQuestion.value + 1) <
-                                            controller.soalList.length
-                                        ? () {
-                                          controller.currentQuestion.value++;
-                                        }
-                                        : null,
+                                onPressed: () {
+                                  (controller.currentQuestion.value + 1) <
+                                          controller.soalList.length
+                                      ? controller.currentQuestion.value++
+                                      : null;
+                                  int questionNumber =
+                                      controller.currentPage.value;
+                                  if (!controller.checkMark(soal) &&
+                                      !controller.checkAnswer(questionNumber)) {
+                                    controller.markEmpty(soal);
+                                  }
+                                },
                                 icon: Icon(Icons.arrow_forward_ios),
                               ),
                             ],
@@ -900,86 +966,94 @@ void showLaporSoalModal(
     ),
     context: context,
     builder: (context) {
-      return Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header modal
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Laporkan Soal",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              Divider(height: 1),
-              SizedBox(height: 12),
-              Text(
-                "Silahkan isi form di bawah untuk melaporkan soal:",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 16),
-              TextField(
-                controller: controller.laporanController,
-                maxLines: 6,
-                decoration: InputDecoration(
-                  hintText: "Isi laporan...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  contentPadding: EdgeInsets.all(12),
+      return SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header modal
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Laporkan Soal",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
+                Divider(height: 1),
+                SizedBox(height: 12),
+                Text(
+                  "Silahkan isi form di bawah untuk melaporkan soal:",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 16),
+                TextField(
+                  controller: controller.laporanController,
+                  maxLines: 6,
+                  decoration: InputDecoration(
+                    hintText: "Isi laporan...",
+                    border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  onPressed: () {
-                    if (controller.laporanController.text.isEmpty) {
-                      notifHelper.show(
-                        "Mohon isi laporan terlebih dahulu",
-                        type: 0,
-                      );
-                      return;
-                    }
-
-                    controller.sendLaporSoal(
-                      questionId: soal['id'],
-                      laporan: controller.laporanController.text,
-                      context: context,
-                    );
-
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    "Kirim Laporan",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    contentPadding: EdgeInsets.all(12),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    onPressed: () {
+                      if (controller.laporanController.text.isEmpty) {
+                        notifHelper.show(
+                          "Mohon isi laporan terlebih dahulu",
+                          type: 0,
+                        );
+                        return;
+                      }
+
+                      controller.sendLaporSoal(
+                        questionId: soal['id'],
+                        laporan: controller.laporanController.text,
+                        context: context,
+                      );
+
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "Kirim Laporan",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );

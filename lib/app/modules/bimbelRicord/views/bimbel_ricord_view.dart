@@ -3,10 +3,12 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/modules/bimbelRicord/controllers/bimbel_ricord_controller.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class BimbelRecordView extends GetView<BimbelRecordController> {
@@ -166,7 +168,6 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
                               itemBuilder: (context, index) {
                                 final item = controller.rekamanList[index];
                                 final jadwal = item['jadwal_tanggal'] ?? {};
-
                                 return Container(
                                   margin: EdgeInsets.only(bottom: 12),
                                   padding: EdgeInsets.all(16),
@@ -243,16 +244,102 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
                                           ),
                                         ),
                                         onPressed:
-                                            item['url'] != null
+                                            (item['url'] != null &&
+                                                    DateTime.tryParse(
+                                                          item['tanggal'],
+                                                        ) !=
+                                                        null &&
+                                                    (DateTime.parse(
+                                                          item['tanggal'],
+                                                        ).isBefore(
+                                                          DateTime.now(),
+                                                        ) ||
+                                                        DateTime.parse(
+                                                          item['tanggal'],
+                                                        ).isAtSameMomentAs(
+                                                          DateTime.now(),
+                                                        )))
                                                 ? () =>
                                                     controller.tontonVideo(item)
                                                 : null,
+
                                         icon: Icon(
                                           Icons.play_circle_fill,
                                           color: Colors.white,
                                         ),
                                         label: Text(
                                           "Tonton",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                      SizedBox(height: 12),
+                                      ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.teal,
+                                          minimumSize: Size(
+                                            double.infinity,
+                                            40,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                        ),
+                                        onPressed:
+                                            (item['attachments'] != null &&
+                                                    item['attachments']
+                                                        .isNotEmpty &&
+                                                    DateTime.tryParse(
+                                                          item['tanggal'],
+                                                        ) !=
+                                                        null &&
+                                                    (DateTime.parse(
+                                                          item['tanggal'],
+                                                        ).isBefore(
+                                                          DateTime.now(),
+                                                        ) ||
+                                                        DateTime.parse(
+                                                          item['tanggal'],
+                                                        ).isAtSameMomentAs(
+                                                          DateTime.now(),
+                                                        )))
+                                                ? () async {
+                                                  final url =
+                                                      item['attachments'][0]['attachment'];
+                                                  if (url != null &&
+                                                      url
+                                                          .toString()
+                                                          .isNotEmpty) {
+                                                    final uri = Uri.tryParse(
+                                                      url,
+                                                    );
+                                                    if (uri != null &&
+                                                        await canLaunchUrl(
+                                                          uri,
+                                                        )) {
+                                                      await launchUrl(
+                                                        uri,
+                                                        mode:
+                                                            LaunchMode
+                                                                .externalApplication,
+                                                      );
+                                                    } else {
+                                                      notifHelper.show(
+                                                        "Tidak bisa membuka URL",
+                                                        type: 0,
+                                                      );
+                                                    }
+                                                  }
+                                                }
+                                                : null,
+
+                                        icon: Icon(
+                                          Icons.file_copy,
+                                          color: Colors.white,
+                                        ),
+                                        label: Text(
+                                          "Download lampiran",
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),

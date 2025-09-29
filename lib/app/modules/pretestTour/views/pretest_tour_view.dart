@@ -90,7 +90,7 @@ class PretestTourView extends GetView<PretestTourController> {
           backgroundColor: Colors.white,
           elevation: 0,
           scrolledUnderElevation: 0,
-          title: Text("Panduan Tryout"),
+          title: Text("Panduan pretest"),
           actions: [
             Stack(
               children: [
@@ -216,6 +216,7 @@ class PretestTourView extends GetView<PretestTourController> {
                       SizedBox(height: 24),
 
                       ListView.builder(
+                        key: controller.optionKey,
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: controller.opsi.length,

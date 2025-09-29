@@ -15,6 +15,8 @@ class PretestController extends GetxController {
   final restClient = RestClient();
   // total waktu dalam detik
   late int totalSeconds;
+  // di controller
+  var visited = <int, bool>{}.obs; // simpan status soal yg sudah pernah dibuka
 
   // reactive sisa waktu
   RxInt remainingSeconds = 0.obs;
@@ -33,6 +35,7 @@ class PretestController extends GetxController {
   RxMap<String, dynamic> bimbelData = <String, dynamic>{}.obs;
   RxList<Map<String, dynamic>> soalList = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> markedList = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> emptyList = <Map<String, dynamic>>[].obs;
   RxString timeStamp = "".obs;
   RxInt currentQuestion = 0.obs;
   RxMap<int, dynamic> selectedAnswers = <int, dynamic>{}.obs;
@@ -115,9 +118,10 @@ class PretestController extends GetxController {
     required BuildContext context,
   }) async {
     final payload = {
-      "bimbel_question_id": questionId.toString(),
+      "pretest_soal_id": questionId.toString(),
       "laporan": laporan,
     };
+    print("xxc ${payload.toString()}");
     final response = await restClient.postData(
       url: baseUrl + apiLaporPretestSoal,
       payload: payload,
@@ -138,13 +142,25 @@ class PretestController extends GetxController {
         "bimbel_event_id": bimbelUuid,
         "items": selectedAnswersList,
       };
-      print("xxx ${payload}");
+
+      final response = await restClient.postData(
+        url: baseUrl + apiSubmitPretest,
+        payload: payload,
+      );
+
       stop();
 
-      Get.offAllNamed(
-        Routes.PRETEST_RESULT,
-        arguments: {"uuid": uuid, "bimbelUuid": bimbelUuid},
-      );
+      if (response['status'] == 'success') {
+        Get.offAllNamed(
+          Routes.PRETEST_RESULT,
+          arguments: {"uuid": uuid, "bimbelUuid": bimbelUuid},
+        );
+      } else {
+        notifHelper.show(
+          response['message'] ?? "Gagal mengirim jawaban",
+          type: 0,
+        );
+      }
     } catch (e) {
       notifHelper.show("Tidak dapat mengirim jawaban", type: 0);
     }
@@ -255,6 +271,8 @@ class PretestController extends GetxController {
 
   String get formattedTime {
     final duration = Duration(seconds: remainingSeconds.value);
+    // final duration = Duration(seconds: 500);
+
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
@@ -272,8 +290,16 @@ class PretestController extends GetxController {
     print(markedList.length);
   }
 
+  void markEmpty(Map<String, dynamic> soal) {
+    emptyList.add(soal);
+  }
+
   bool checkMark(Map<String, dynamic> soal) {
     return markedList.contains(soal);
+  }
+
+  bool isEmptyQuest(Map<String, dynamic> soal) {
+    return emptyList.contains(soal);
   }
 
   bool checkAnswer(int id) {
