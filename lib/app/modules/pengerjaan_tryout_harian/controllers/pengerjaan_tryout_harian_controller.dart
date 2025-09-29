@@ -1,9 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
-
 
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PengerjaanTryoutHarianController extends GetxController {
   late final String tryoutUuid;
-  late dynamic localStorage;
+  late SharedPreferences localStorage;
   final laporanController = TextEditingController();
   final restClient = RestClient();
   // total waktu dalam detik
@@ -72,6 +72,32 @@ class PengerjaanTryoutHarianController extends GetxController {
       startCountdown(tryoutData['waktu_pengerjaan']);
     }
     uuid.value = tryoutData['uuid'];
+    if (localStorage.getString("soal_uuid") == uuid.value) {
+      final prevJawaban = jsonDecode(
+        localStorage.getString("selected_answer_list")!,
+      );
+      final prevAnswers = jsonDecode(
+        localStorage.getString("selected_answer")!,
+      );
+
+      // Convert List<dynamic> → List<Map<String, dynamic>>
+      final parsedList =
+          (prevJawaban as List)
+              .map((item) => Map<String, dynamic>.from(item))
+              .toList();
+
+      // Assign ke RxList supaya reaktif
+      selectedAnswersList.assignAll(parsedList);
+
+      // Convert Map<String, dynamic> → RxMap<int, dynamic>
+      selectedAnswers.assignAll(
+        (prevAnswers as Map<String, dynamic>).map(
+          (key, value) => MapEntry(int.parse(key), value),
+        ),
+      );
+    }
+
+    localStorage.setString("soal_uuid", uuid.value);
     print("Target Instansi: ${localStorage.getString('instansi')}");
     print("Target Jabatan: ${localStorage.getString('jabatan')}");
   }
@@ -151,6 +177,11 @@ class PengerjaanTryoutHarianController extends GetxController {
         payload: payload,
       );
       stop();
+
+      localStorage.remove("selected_answer_list");
+      localStorage.remove("selected_answer");
+      localStorage.remove("soal_uuid");
+      localStorage.remove("sisa_durasi");
       Get.offAllNamed("/hasil-tryout-harian", arguments: uuid.value);
     } catch (e) {
       Get.snackbar(
@@ -200,6 +231,15 @@ class PengerjaanTryoutHarianController extends GetxController {
       });
     }
     initialTimer = DateTime.now();
+    final normalMap = selectedAnswers.map(
+      (key, value) => MapEntry(key.toString(), value),
+    );
+
+    localStorage.setString("selected_answer", jsonEncode(normalMap));
+    localStorage.setString(
+      "selected_answer_list",
+      jsonEncode(selectedAnswersList),
+    );
 
     print("Jawaban terbaru: $selectedAnswersList");
     print("durasi: ${diff}");
@@ -248,17 +288,29 @@ class PengerjaanTryoutHarianController extends GetxController {
     totalSeconds = minutes * 60;
     remainingSeconds.value = totalSeconds;
 
+    // Jika ada data lama, pakai sisa waktu dari localStorage
+    if (localStorage.getString("soal_uuid") == uuid.value) {
+      remainingSeconds.value =
+          localStorage.getInt("sisa_durasi") ?? totalSeconds;
+    }
+
     _timer?.cancel(); // reset timer kalau ada yg jalan
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (remainingSeconds.value > 0) {
         remainingSeconds.value--;
+
+        // Simpan sisa durasi setiap detik
+        localStorage.setInt("sisa_durasi", remainingSeconds.value);
       } else {
         // Hentikan timer
         timer.cancel();
 
         // Pastikan waktu tidak negatif
         remainingSeconds.value = 0;
+
+        // Hapus sisa durasi dari localStorage (opsional)
+        localStorage.remove("sisa_durasi");
 
         // Stop tracking waktu soal terakhir
         stop();

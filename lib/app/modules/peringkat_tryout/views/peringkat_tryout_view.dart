@@ -627,6 +627,7 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                   child: ListView.builder(
                                     shrinkWrap: true,
                                     scrollDirection: Axis.vertical,
+                                    physics: NeverScrollableScrollPhysics(),
                                     itemCount: controller.listPeringkat.length,
                                     itemBuilder: (context, index) {
                                       final data =
@@ -859,12 +860,14 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                   width: 64,
                   child: _badge(color: Colors.blueAccent, text: num),
                 ),
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.black87,
+                Expanded(
+                  child: Text(
+                    name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.black87,
+                    ),
                   ),
                 ),
               ],
@@ -877,16 +880,20 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
             // Lokasi
             Row(
               children: [
-                Text(
-                  provisi,
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
+                Expanded(
+                  child: Text(
+                    provisi,
+                    style: const TextStyle(fontSize: 14, color: Colors.black54),
+                  ),
                 ),
                 const SizedBox(width: 6),
                 const Icon(Icons.circle, color: Colors.grey, size: 8),
                 const SizedBox(width: 6),
-                Text(
-                  kota,
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
+                Expanded(
+                  child: Text(
+                    kota,
+                    style: const TextStyle(fontSize: 14, color: Colors.black54),
+                  ),
                 ),
               ],
             ),

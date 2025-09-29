@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html_svg/flutter_html_svg.dart';
 
 import 'package:get/get.dart';
-import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -128,61 +128,76 @@ class DetailEventView extends GetView<DetailEventController> {
                 }),
 
                 SizedBox(height: 16),
-                Text(
-                  "Jenis Paket",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+
                 Obx(() {
                   if (controller.loading.value) {
                     return Skeletonizer(
                       child: _buildRadioOption("Premmium", "0", "1", true),
                     );
                   } else {
-                    return Column(
-                      children: [
-                        _buildRadioOption(
-                          "Gratis ${controller.dataEvent["free_access"] ? "" : "(Sudah Berakhir)"}",
-                          "0",
-                          "Free",
-                          controller.dataEvent["free_access"],
-                        ),
-                        _buildRadioOption(
-                          "Premium",
-                          controller.formatCurrency(
-                            controller.dataEvent["harga_fix"].toString(),
+                    if (controller.userData['level_name'] != "Platinum") {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Jenis Paket",
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          controller.dataEvent["uuid"],
-                          true,
-                        ),
-                      ],
-                    );
+                          _buildRadioOption(
+                            "Gratis ${controller.dataEvent["free_access"] ? "" : "(Sudah Berakhir)"}",
+                            "0",
+                            "Free",
+                            controller.dataEvent["free_access"],
+                          ),
+                          _buildRadioOption(
+                            "Premium",
+                            controller.formatCurrency(
+                              controller.dataEvent["harga_fix"].toString(),
+                            ),
+                            controller.dataEvent["uuid"],
+                            true,
+                          ),
+                        ],
+                      );
+                    } else {
+                      return SizedBox();
+                    }
                   }
                 }),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (controller.selectedPaket.value == "") {
-                        notifHelper.show(
-                          "Mohon pilih paket terlebih dahulu",
-                          type: 0,
+                Obx(
+                  () => SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (controller.selectedPaket.value == "") {
+                          Get.snackbar(
+                            "Gagal",
+                            "Mohon pilih paket terlebih dahulu",
+                            colorText: Colors.white,
+                            backgroundColor: Colors.pink,
+                          );
+                          return;
+                        }
+                        Get.toNamed(
+                          "/tryout-event-payment",
+                          arguments: controller.uuid,
                         );
-                        return;
-                      }
-                      Get.toNamed(
-                        "/tryout-event-payment",
-                        arguments: controller.uuid,
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal.shade300,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal.shade300,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child:
+                          controller.userData.isNotEmpty
+                              ? controller.userData['level_name'] != "Platinum"
+                                  ? Text("Daftar Sekarang")
+                                  : Text("Klaim")
+                              : Skeletonizer(child: Text("Loading")),
                     ),
-                    child: Text("Daftar Sekarang"),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -346,7 +361,13 @@ class DetailEventView extends GetView<DetailEventController> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Html(
-        data: isi,
+        data: isi.replaceAll(
+          "!#RangeDateTryout",
+          controller.formatDate(
+            controller.dataEvent['startdate'].toString(),
+            controller.dataEvent['enddate'].toString(),
+          ),
+        ),
         style: {
           ".mt-3": Style(margin: Margins.only(top: 12)),
           ".p-4": Style(padding: HtmlPaddings.all(16)),
@@ -354,7 +375,9 @@ class DetailEventView extends GetView<DetailEventController> {
           ".text-lg": Style(fontSize: FontSize(18)),
           ".font-bold": Style(fontWeight: FontWeight.bold),
           ".text-muted-700": Style(color: Colors.grey.shade700),
+          "svg": Style(width: Width(24), verticalAlign: VerticalAlign.middle),
         },
+        extensions: [SvgHtmlExtension()],
       ),
     );
   }

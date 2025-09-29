@@ -12,7 +12,7 @@ buildscript {
 extra.apply {
     set("compileSdkVersion", 35)
     set("targetSdkVersion", 35)
-    set("minSdkVersion", 21)
+    set("minSdkVersion", 24)
 }
 
 allprojects {

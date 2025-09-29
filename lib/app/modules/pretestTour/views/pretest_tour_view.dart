@@ -90,7 +90,7 @@ class PretestTourView extends GetView<PretestTourController> {
           backgroundColor: Colors.white,
           elevation: 0,
           scrolledUnderElevation: 0,
-          title: Text("Panduan bimbel"),
+          title: Text("Panduan pretest"),
           actions: [
             Stack(
               children: [

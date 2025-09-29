@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
@@ -46,6 +48,10 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
         if (!didPop) {
           bool canExit = await _onWillPop(context);
           if (canExit) {
+            controller.localStorage.remove("selected_answer_list");
+            controller.localStorage.remove("selected_answer");
+            controller.localStorage.remove("soal_uuid");
+            controller.localStorage.remove("sisa_durasi");
             Get.back(); // keluar manual
           }
         }
@@ -963,6 +969,23 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                               .currentQuestion
                                               .value] =
                                           val;
+                                      final normalMap = controller
+                                          .selectedAnswers
+                                          .map(
+                                            (key, value) =>
+                                                MapEntry(key.toString(), value),
+                                          );
+
+                                      controller.localStorage.setString(
+                                        "selected_answer",
+                                        jsonEncode(normalMap),
+                                      );
+                                      controller.localStorage.setString(
+                                        "selected_answer_list",
+                                        jsonEncode(
+                                          controller.selectedAnswersList,
+                                        ),
+                                      );
                                     },
                                     title: Row(
                                       crossAxisAlignment:

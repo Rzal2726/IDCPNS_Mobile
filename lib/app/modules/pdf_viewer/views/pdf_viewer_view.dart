@@ -11,6 +11,7 @@ class PdfViewerView extends GetView<PdfViewerController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('E-Book', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,

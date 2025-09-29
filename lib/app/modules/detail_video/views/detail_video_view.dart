@@ -7,8 +7,7 @@ import 'package:idcpns_mobile/app/modules/notification/views/notification_view.d
 import 'package:rich_editor/rich_editor.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import '../controllers/detail_video_controller.dart';
 
 class DetailVideoView extends GetView<DetailVideoController> {
@@ -24,65 +23,71 @@ class DetailVideoView extends GetView<DetailVideoController> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(25),
-                  spreadRadius: 1,
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: AppBar(
-              automaticallyImplyLeading: false,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  Get.back(result: "refresh");
-                },
-              ),
-              backgroundColor: Colors.white,
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              title: Text("Detail Video"),
-              actions: [
-                Stack(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.notifications_rounded,
-                        color: Colors.teal,
-                      ),
-                      onPressed: () {
-                        // ✅ Best practice: use a function for navigation
-                        Get.to(() => NotificationView());
-                      },
-                    ),
-                    Positioned(
-                      right: 10,
-                      top: 10,
-                      child: Container(
-                        padding: EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
+        appBar:
+            MediaQuery.of(context).orientation == Orientation.landscape
+                ? null
+                : PreferredSize(
+                  preferredSize: const Size.fromHeight(60),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(25),
+                          spreadRadius: 1,
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
                         ),
-                        child: Text(
-                          '4',
-                          style: TextStyle(color: Colors.white, fontSize: 10),
-                        ),
-                      ),
+                      ],
                     ),
-                  ],
+                    child: AppBar(
+                      automaticallyImplyLeading: false,
+                      leading: IconButton(
+                        icon: Icon(Icons.arrow_back),
+                        onPressed: () {
+                          Get.back(result: "refresh");
+                        },
+                      ),
+                      backgroundColor: Colors.white,
+                      elevation: 0,
+                      scrolledUnderElevation: 0,
+                      title: Text("Detail Video"),
+                      actions: [
+                        Stack(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.notifications_rounded,
+                                color: Colors.teal,
+                              ),
+                              onPressed: () {
+                                // ✅ Best practice: use a function for navigation
+                                Get.to(() => NotificationView());
+                              },
+                            ),
+                            Positioned(
+                              right: 10,
+                              top: 10,
+                              child: Container(
+                                padding: EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  '4',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Container(
@@ -105,26 +110,11 @@ class DetailVideoView extends GetView<DetailVideoController> {
                               );
                             } else {
                               if (controller.videoData['isyoutube'] == 1) {
-                                return YoutubePlayerBuilder(
-                                  player: YoutubePlayer(
-                                    controller: controller.ytController,
-                                    showVideoProgressIndicator: true,
-                                    progressIndicatorColor: Colors.amber,
-                                    progressColors: const ProgressBarColors(
-                                      playedColor: Colors.amber,
-                                      handleColor: Colors.amberAccent,
-                                    ),
-                                    onReady: () {
-                                      debugPrint('Player is ready.');
-                                    },
-                                  ),
+                                return YoutubePlayerScaffold(
+                                  controller: controller.ytController,
+                                  aspectRatio: 16 / 9,
                                   builder: (context, player) {
-                                    return Column(
-                                      children: [
-                                        // ✅ Player otomatis fullscreen jika user klik tombol fullscreen
-                                        player,
-                                      ],
-                                    );
+                                    return Column(children: [player]);
                                   },
                                 );
                               } else {
@@ -253,6 +243,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                     TextButton(
                                       onPressed: () {
                                         showModalBottomSheet(
+                                          backgroundColor: Colors.white,
                                           context: context,
                                           builder: (context) {
                                             return SafeArea(
@@ -294,8 +285,9 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                                                     "${attachment['judul']}.pdf",
                                                                   );
                                                                 },
-                                                                child: Text(
-                                                                  "Unduh Lampiran",
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .download,
                                                                 ),
                                                               ),
                                                             ],
@@ -1677,6 +1669,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
                         },
                       );
                       controller.playVideo();
+                      controller.isNote.value = false;
                     },
 
                     child: const Text(

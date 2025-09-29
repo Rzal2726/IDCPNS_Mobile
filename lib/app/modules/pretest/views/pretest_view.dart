@@ -325,7 +325,7 @@ class PretestView extends GetView<PretestController> {
             }
 
             final soal = controller.soalList[controller.currentQuestion.value];
-            print("xxx ${soal['id']}");
+
             return SingleChildScrollView(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -435,24 +435,37 @@ class PretestView extends GetView<PretestController> {
                                                                           ? Colors
                                                                               .teal
                                                                               .shade100
+                                                                          : controller.isEmptyQuest(
+                                                                            soal,
+                                                                          )
+                                                                          ? Colors
+                                                                              .grey
+                                                                              .shade300
                                                                           : Colors
                                                                               .white,
+
                                                                   foregroundColor:
                                                                       Colors
                                                                           .black,
+
                                                                   shape: RoundedRectangleBorder(
                                                                     side: BorderSide(
                                                                       color:
-                                                                          Colors
-                                                                              .grey,
+                                                                          controller.currentQuestion.value ==
+                                                                                  index
+                                                                              ? Colors
+                                                                                  .teal // <- warna border kalau ini soal aktif
+                                                                              : Colors.grey, // <- default
+                                                                      width: 2,
                                                                     ),
                                                                     borderRadius:
                                                                         BorderRadius.circular(
                                                                           8,
                                                                         ),
                                                                   ),
+
                                                                   padding:
-                                                                      EdgeInsets.symmetric(
+                                                                      const EdgeInsets.symmetric(
                                                                         horizontal:
                                                                             12,
                                                                         vertical:
@@ -460,15 +473,35 @@ class PretestView extends GetView<PretestController> {
                                                                       ),
                                                                 ),
                                                                 onPressed: () {
+                                                                  // Mark soal lama dulu
+                                                                  final currentSoal =
+                                                                      controller
+                                                                          .soalList[controller
+                                                                          .currentQuestion
+                                                                          .value];
+                                                                  if (!controller
+                                                                          .checkMark(
+                                                                            currentSoal,
+                                                                          ) &&
+                                                                      !controller
+                                                                          .checkAnswer(
+                                                                            currentSoal['id'],
+                                                                          )) {
+                                                                    controller
+                                                                        .markEmpty(
+                                                                          currentSoal,
+                                                                        );
+                                                                  }
+
+                                                                  // Pindah ke soal baru
                                                                   controller
                                                                       .currentQuestion
                                                                       .value = index;
                                                                   controller.startQuestion(
                                                                     controller
-                                                                        .soalList[controller
-                                                                        .currentQuestion
-                                                                        .value]['id'],
+                                                                        .soalList[index]['id'],
                                                                   );
+
                                                                   Navigator.pop(
                                                                     context,
                                                                   );
@@ -499,12 +532,24 @@ class PretestView extends GetView<PretestController> {
                             children: [
                               // Tombol Back
                               IconButton(
-                                onPressed:
-                                    controller.currentQuestion.value > 0
-                                        ? () {
-                                          controller.currentQuestion.value--;
-                                        }
-                                        : null,
+                                onPressed: () {
+                                  if (controller.currentQuestion.value > 0) {
+                                    controller.currentQuestion.value--;
+
+                                    // Ambil soal setelah pindah halaman
+                                    int questionNumber =
+                                        controller.currentPage.value;
+
+                                    // Kalau soal sebelumnya gak di-mark & gak dijawab, tandai kosong
+                                    if (!controller.checkMark(soal) &&
+                                        !controller.checkAnswer(
+                                          questionNumber,
+                                        )) {
+                                      controller.markEmpty(soal);
+                                    }
+                                  }
+                                },
+
                                 icon: Icon(Icons.arrow_back_ios),
                               ),
 
@@ -539,7 +584,7 @@ class PretestView extends GetView<PretestController> {
                                                     .soalList[questionNumber -
                                                     1]['id'],
                                               )
-                                              ? Color.fromARGB(
+                                              ? const Color.fromARGB(
                                                 255,
                                                 208,
                                                 255,
@@ -550,7 +595,14 @@ class PretestView extends GetView<PretestController> {
                                                       .value ==
                                                   questionNumber - 1
                                               ? Colors.green.shade100
+                                              : controller.isEmptyQuest(
+                                                controller
+                                                    .soalList[questionNumber -
+                                                    1],
+                                              )
+                                              ? Colors.grey.shade300
                                               : Colors.white,
+
                                       foregroundColor: Colors.black,
                                       shape: RoundedRectangleBorder(
                                         side: BorderSide(
@@ -571,6 +623,14 @@ class PretestView extends GetView<PretestController> {
                                             .currentQuestion
                                             .value]['id'],
                                       );
+
+                                      // Kalau soal sebelumnya gak di-mark & gak dijawab, tandai kosong
+                                      if (!controller.checkMark(soal) &&
+                                          !controller.checkAnswer(
+                                            questionNumber,
+                                          )) {
+                                        controller.markEmpty(soal);
+                                      }
                                     },
                                     child: Text(questionNumber.toString()),
                                   ),
@@ -579,13 +639,18 @@ class PretestView extends GetView<PretestController> {
 
                               // Tombol Next
                               IconButton(
-                                onPressed:
-                                    (controller.currentQuestion.value + 1) <
-                                            controller.soalList.length
-                                        ? () {
-                                          controller.currentQuestion.value++;
-                                        }
-                                        : null,
+                                onPressed: () {
+                                  (controller.currentQuestion.value + 1) <
+                                          controller.soalList.length
+                                      ? controller.currentQuestion.value++
+                                      : null;
+                                  int questionNumber =
+                                      controller.currentPage.value;
+                                  if (!controller.checkMark(soal) &&
+                                      !controller.checkAnswer(questionNumber)) {
+                                    controller.markEmpty(soal);
+                                  }
+                                },
                                 icon: Icon(Icons.arrow_forward_ios),
                               ),
                             ],

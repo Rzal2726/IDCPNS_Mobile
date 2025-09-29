@@ -10,6 +10,7 @@ class DetailEventController extends GetxController {
   final restClient = RestClient();
   late String uuid;
   RxMap<String, dynamic> dataEvent = <String, dynamic>{}.obs;
+  RxMap<String, dynamic> userData = <String, dynamic>{}.obs;
   RxString selectedPaket = "".obs;
   RxString selectedOption = "Detail".obs;
   RxList<String> option = ['Detail', 'FAQ'].obs;
@@ -18,6 +19,7 @@ class DetailEventController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
     initEvent();
     checkMaintenance();
   }
@@ -36,6 +38,7 @@ class DetailEventController extends GetxController {
     loading.value = true;
     uuid = await Get.arguments;
     await getEvent();
+    await getUserData();
     loading.value = false;
   }
 
@@ -47,6 +50,12 @@ class DetailEventController extends GetxController {
     dataEvent.assignAll(data);
   }
 
+  Future<void> getUserData() async {
+    final response = await restClient.getData(url: baseUrl + apiGetUser);
+    Map<String, dynamic> data = Map<String, dynamic>.from(response['data']);
+    userData.assignAll(data);
+  }
+
   String formatCurrency(dynamic number) {
     var customFormatter = NumberFormat.currency(
       locale: 'id_ID',
@@ -55,6 +64,18 @@ class DetailEventController extends GetxController {
     );
     var formattedValue = customFormatter.format(int.parse(number));
     return formattedValue.toString();
+  }
+
+  String formatDate(String start, String end) {
+    String rawDate = start;
+    DateTime dateTime = DateTime.parse(rawDate);
+    String rawDateend = end;
+    DateTime dateTimeend = DateTime.parse(rawDateend);
+
+    String formattedDate = DateFormat("dd MMMM yyyy").format(dateTime);
+    String formattedDateend = DateFormat("dd MMMM yyyy").format(dateTimeend);
+
+    return "$formattedDate - $formattedDateend";
   }
 
   Future<void> checkMaintenance() async {

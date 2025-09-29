@@ -252,8 +252,8 @@ class CheckoutUpgradeAkunView extends GetView<CheckoutUpgradeAkunController> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () {
+                      controller.fetchDetailPayment();
                       showModalBottomSheet(
-                        useSafeArea: false,
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(
@@ -269,187 +269,219 @@ class CheckoutUpgradeAkunView extends GetView<CheckoutUpgradeAkunController> {
                         builder: (ctx) {
                           return Obx(
                             () => SafeArea(
-                              child: Container(
-                                padding: EdgeInsets.all(16),
-
-                                child: Column(
-                                  spacing: 16,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Cek Status Pembayaran",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                              child: SingleChildScrollView(
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                  child: Column(
+                                    spacing: 16,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Cek Status Pembayaran",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          icon: Icon(Icons.close),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "No Invoice:",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                          IconButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            icon: Icon(Icons.close),
                                           ),
-                                        ),
-                                        controller.paymentDetails.isEmpty
-                                            ? Skeletonizer(
-                                              enabled: true,
-                                              child: Container(
-                                                child: Text(
-                                                  "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
+                                        ],
+                                      ),
+                                      SingleChildScrollView(
+                                        child: Column(
+                                          spacing: 16,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "No Invoice:",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
-                                              ),
-                                            )
-                                            : Container(
-                                              child: Text(
                                                 controller
-                                                    .paymentDetails['no_order'],
-                                                style: TextStyle(),
-                                              ),
-                                            ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Nama Produk:",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-
-                                        controller.paymentDetails.isEmpty
-                                            ? Skeletonizer(
-                                              enabled: true,
-                                              child: Container(
-                                                child: Text(
-                                                  "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
-                                                ),
-                                              ),
-                                            )
-                                            : Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children:
-                                                  controller
-                                                      .paymentDetails['payment_details']
-                                                      .map<Widget>(
-                                                        (item) => Container(
-                                                          width: 240,
-                                                          child: Text(
-                                                            textAlign:
-                                                                TextAlign.end,
-                                                            item['item_name'],
-                                                            style: TextStyle(),
-                                                          ),
+                                                        .paymentDetails
+                                                        .isEmpty
+                                                    ? Skeletonizer(
+                                                      enabled: true,
+                                                      child: Container(
+                                                        child: Text(
+                                                          "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
                                                         ),
-                                                      )
-                                                      .toList(),
+                                                      ),
+                                                    )
+                                                    : Container(
+                                                      child: Text(
+                                                        controller
+                                                            .paymentDetails['no_order'],
+                                                        style: TextStyle(),
+                                                      ),
+                                                    ),
+                                              ],
                                             ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Total Harga:",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "Nama Produk:",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+
+                                                controller
+                                                        .paymentDetails
+                                                        .isEmpty
+                                                    ? Skeletonizer(
+                                                      enabled: true,
+                                                      child: Container(
+                                                        child: Text(
+                                                          "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
+                                                        ),
+                                                      ),
+                                                    )
+                                                    : Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .end,
+                                                      children:
+                                                          controller
+                                                              .paymentDetails['payment_details']
+                                                              .map<Widget>(
+                                                                (
+                                                                  item,
+                                                                ) => Container(
+                                                                  width: 240,
+                                                                  child: Text(
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .end,
+                                                                    item['item_name'],
+                                                                    style:
+                                                                        TextStyle(),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                              .toList(),
+                                                    ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "Total Harga:",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                controller
+                                                        .paymentDetails
+                                                        .isEmpty
+                                                    ? Skeletonizer(
+                                                      enabled: true,
+                                                      child: Container(
+                                                        child: Text(
+                                                          "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
+                                                        ),
+                                                      ),
+                                                    )
+                                                    : Container(
+                                                      child: Text(
+                                                        controller.formatCurrency(
+                                                          controller
+                                                              .paymentDetails['amount'],
+                                                        ),
+                                                        style: TextStyle(),
+                                                      ),
+                                                    ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "Status:",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                controller
+                                                        .paymentDetails
+                                                        .isEmpty
+                                                    ? Skeletonizer(
+                                                      enabled: true,
+                                                      child: Container(
+                                                        child: Text(
+                                                          "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
+                                                        ),
+                                                      ),
+                                                    )
+                                                    : Text(
+                                                      controller
+                                                          .paymentDetails['status'],
+                                                      style: TextStyle(),
+                                                    ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              width: double.infinity,
+
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  elevation: 0,
+                                                  backgroundColor: Colors.white,
+                                                  foregroundColor:
+                                                      Colors.teal.shade300,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                    side: BorderSide(
+                                                      color:
+                                                          Colors
+                                                              .teal
+                                                              .shade300, // ganti warna border
+                                                      width: 1.5,
+                                                    ),
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                      ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(ctx);
+                                                },
+                                                child: Center(
+                                                  child: Text("Tutup"),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        controller.paymentDetails.isEmpty
-                                            ? Skeletonizer(
-                                              enabled: true,
-                                              child: Container(
-                                                child: Text(
-                                                  "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
-                                                ),
-                                              ),
-                                            )
-                                            : Container(
-                                              child: Text(
-                                                controller.formatCurrency(
-                                                  controller
-                                                      .paymentDetails['amount'],
-                                                ),
-                                                style: TextStyle(),
-                                              ),
-                                            ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Status:",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        controller.paymentDetails.isEmpty
-                                            ? Skeletonizer(
-                                              enabled: true,
-                                              child: Container(
-                                                child: Text(
-                                                  "Lorem Ipsum Odor, Lorem ipsum dolor, Ini Tutorial ATM",
-                                                ),
-                                              ),
-                                            )
-                                            : Text(
-                                              controller
-                                                  .paymentDetails['status'],
-                                              style: TextStyle(),
-                                            ),
-                                      ],
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.symmetric(
-                                        horizontal: 32,
                                       ),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          elevation: 0,
-                                          backgroundColor: Colors.white,
-                                          foregroundColor: Colors.teal.shade300,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            side: BorderSide(
-                                              color:
-                                                  Colors
-                                                      .teal
-                                                      .shade300, // ganti warna border
-                                              width: 1.5,
-                                            ),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pop(ctx);
-                                        },
-                                        child: Center(child: Text("Tutup")),
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

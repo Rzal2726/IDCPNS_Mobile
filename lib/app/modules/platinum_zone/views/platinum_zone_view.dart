@@ -31,40 +31,37 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Obx(() {
-        if (controller.loading.value) {
-          return Skeletonizer(
-            child: Container(
-              margin: const EdgeInsets.all(32),
-              child: Column(
-                spacing: 8,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(width: double.infinity, child: _expireCard()),
-                  const SizedBox(height: 16),
-                  _menuCard(
-                    imageurl: "assets/video_series.png",
-                    title: "Video Series",
-                    routeName: "/video-series",
-                    bgColor: const Color.fromARGB(255, 255, 222, 211),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        return Stack(
-          children: [
-            // ✅ Bungkus konten utama dengan IgnorePointer
-            IgnorePointer(
-              ignoring: false,
+      body: RefreshIndicator(
+        onRefresh: () => controller.init(),
+        child: Obx(() {
+          if (controller.loading.value) {
+            return Skeletonizer(
               child: Container(
+                margin: const EdgeInsets.all(32),
                 child: Column(
-                  spacing: 8,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(width: double.infinity, child: _expireCard()),
+                    const SizedBox(height: 16),
+                    _menuCard(
+                      imageurl: "assets/video_series.png",
+                      title: "Video Series",
+                      routeName: "/video-series",
+                      bgColor: const Color.fromARGB(255, 255, 222, 211),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return Stack(
+            children: [
+              // Menu utama yang bisa di-scroll
+              IgnorePointer(
+                ignoring: controller.userData['level_name'] == "Basic",
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   children: [
                     SizedBox(width: double.infinity, child: _expireCard()),
                     _menuCard(
@@ -94,51 +91,54 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
                   ],
                 ),
               ),
-            ),
 
-            // ✅ Overlay muncul saat akun belum upgrade
-            if (controller.userData['level_name'] == "Basic")
-              Positioned.fill(
-                child: Container(
-                  color: Colors.black.withOpacity(0.5),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Upgrade akun untuk mengakses platinum zone",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
+              // Overlay untuk user Basic
+              if (controller.userData['level_name'] == "Basic")
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.5),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Upgrade akun untuk mengakses platinum zone",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          onPressed: () {
-                            Get.toNamed('/upgrade-akun');
-                          },
-                          child: const Text(
-                            "Upgrade Akun",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.amber,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                            onPressed: () {
+                              Get.toNamed('/upgrade-akun');
+                            },
+                            child: const Text(
+                              "Upgrade Akun",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
-        );
-      }),
+            ],
+          );
+        }),
+      ),
     );
   }
 

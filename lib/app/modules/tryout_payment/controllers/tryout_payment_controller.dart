@@ -317,6 +317,7 @@ class TryoutPaymentController extends GetxController {
     harga.value += data['harga_fix'];
     itemsId.add(data['id']);
     initHarga();
+    countAdmin();
   }
 
   void removeTryout(Map<String, dynamic> data) {
@@ -324,6 +325,7 @@ class TryoutPaymentController extends GetxController {
     harga.value -= data['harga_fix'];
     itemsId.remove(data['id']);
     initHarga();
+    countAdmin();
   }
 
   void initHarga() {

@@ -60,7 +60,7 @@ class TryoutView extends GetView<TryoutController> {
                 // Tryout Saya box
                 InkWell(
                   onTap: () {
-                    Get.offNamed("/tryout-saya");
+                    Get.toNamed("/tryout-saya");
                   },
                   child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 16),
@@ -417,22 +417,24 @@ class TryoutView extends GetView<TryoutController> {
                   );
                 }),
                 SizedBox(height: 16),
-                Visibility(
-                  visible: (controller.eventTryout.length ?? 0) > 1,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.swipe, size: 16, color: Colors.black38),
-                      SizedBox(width: 4),
-                      Text(
-                        "Geser untuk lihat lainnya",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black38,
-                          fontStyle: FontStyle.italic,
+                Obx(
+                  () => Visibility(
+                    visible: (controller.eventTryout.length ?? 0) > 1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.swipe, size: 16, color: Colors.black38),
+                        SizedBox(width: 4),
+                        Text(
+                          "Geser untuk lihat lainnya",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black38,
+                            fontStyle: FontStyle.italic,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -469,16 +471,15 @@ class TryoutView extends GetView<TryoutController> {
                         // Judul di atas
                         Center(
                           child: Row(
-                            spacing: 16,
+                            spacing: 8,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SizedBox(width: 1),
                               const Text(
                                 "Rekomendasi Khusus Buat Kamu",
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -515,6 +516,33 @@ class TryoutView extends GetView<TryoutController> {
                                 context,
                               );
                             },
+                          ),
+                        ),
+                        Obx(
+                          () => Visibility(
+                            visible:
+                                (controller.paketTryoutRecommendation.length ??
+                                    0) >
+                                1,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  Icons.swipe,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  "Geser untuk lihat lainnya",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -1112,6 +1140,8 @@ class TryoutView extends GetView<TryoutController> {
                         children: [
                           Text(
                             title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
