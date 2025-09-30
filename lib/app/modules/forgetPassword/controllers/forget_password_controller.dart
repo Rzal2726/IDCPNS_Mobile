@@ -27,27 +27,28 @@ class ForgetPasswordController extends GetxController {
       final result = await _restClient.postData(url: url, payload: payload);
 
       String? errorMsg;
+      String? successMsg;
 
-      // Cek kalau ada field "status" dengan value "error"
-      if (result["status"] == "error") {
+      // ✅ cek boolean, bukan string
+      if (result["success"] != true) {
         final messages = result["messages"];
         if (messages != null &&
             messages["email"] != null &&
             messages["email"].isNotEmpty) {
           errorMsg = messages["email"][0];
         } else {
-          errorMsg = "Terjadi kesalahan.";
+          errorMsg = result["message"] ?? "Terjadi kesalahan.";
         }
-      }
-      // Cek kalau response punya key "message" (contoh kasus 404)
-      else if (result["message"] != null) {
-        errorMsg = result["message"];
+      } else {
+        successMsg = result["message"];
       }
 
       if (errorMsg != null) {
         notifHelper.show(errorMsg, type: 0);
       } else {
-        // Jika sukses
+        if (successMsg != null) {
+          notifHelper.show(successMsg, type: 1);
+        }
         showEmailSentBottomSheet(context);
       }
     } catch (e) {

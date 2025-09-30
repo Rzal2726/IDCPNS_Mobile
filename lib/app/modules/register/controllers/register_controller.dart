@@ -215,6 +215,9 @@ class RegisterController extends GetxController {
                 : (result["message"]?['password'] != null &&
                     (result["message"]?['password'] as List).isNotEmpty)
                 ? result["message"]['password'][0]
+                : (result["message"]?['user_afiliator'] != null &&
+                    (result["message"]?['user_afiliator'] as List).isNotEmpty)
+                ? result["message"]['user_afiliator'][0]
                 : "Terjadi kesalahan";
         notifHelper.show(msg, type: 0);
       }
