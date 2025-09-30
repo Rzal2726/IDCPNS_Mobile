@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
@@ -11,6 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 class PaymentDetailController extends GetxController {
   var uuid = Get.arguments[0];
   var hargaFix = Get.arguments[1];
+  final box = GetStorage();
   RxString subPaketName = "".obs;
   RxMap<int, String> selectedSub = <int, String>{}.obs;
   RxMap<int, bool> checked = <int, bool>{}.obs;
@@ -153,7 +155,7 @@ class PaymentDetailController extends GetxController {
   }
 
   Future<void> getApplyCode() async {
-    final url = await baseUrl + apiApplyBimbelVoucherCode;
+    final url = await baseUrl + apiApplyWishListVoucherCode;
     var payload = {
       "kode_promo": promoController.text,
       "amount": getTotalHargaFix(),
@@ -170,37 +172,68 @@ class PaymentDetailController extends GetxController {
       kodePromo.value = promoController.text;
       promoAmount.value = result['data']['nominal'];
       promoCodeName.value = result['data']['voucher_code'];
-      promoController.clear();
-
-      notifHelper.show(
-        "Kode promo berhasil diterapkan: +${formatRupiah(promoAmount.value)}",
-        type: 1,
-      );
     } else {
+      promoController.clear();
       notifHelper.show(result["message"] ?? "Terjadi kesalahan", type: 0);
     }
   }
 
-  void updateBiayaAdmin(String biayaAdminRaw) {
+  int calculateBiayaAdmin(String biayaAdminRaw) {
+    // Hitung total paket
     final totalPaket = selectedPaketPerCard.values
         .map((paket) => (paket["harga_fix"] ?? 0) as int)
         .fold(0, (total, harga) => total + harga);
 
     final totalSebelumPromo = baseHarga.value + totalPaket;
 
+    int adminNominal = 0;
+
+    // Hitung biaya admin dulu
     if (biayaAdminRaw.endsWith('%')) {
-      // Hitung persen dari total sebelum promo
       final persen =
           double.tryParse(biayaAdminRaw.replaceAll('%', '').trim()) ?? 0.0;
-
-      biayaAdmin.value =
-          (totalSebelumPromo * persen / 100).round(); // hasil rupiah
-
-      print("czc ${(totalSebelumPromo * persen / 100).round()}");
+      adminNominal = (totalSebelumPromo * persen / 100).round();
     } else {
-      // Langsung pakai nominal
-      biayaAdmin.value = int.tryParse(biayaAdminRaw) ?? 0;
+      adminNominal = int.tryParse(biayaAdminRaw) ?? 0;
     }
+
+    // Ambil PPN dari local storage
+    final ppnPercent = double.tryParse(box.read("ppn") ?? "0") ?? 0.0;
+
+    // Total biaya admin termasuk PPN
+    final adminDenganPpn = (adminNominal * (1 + ppnPercent / 100)).round();
+
+    // Return nilainya
+    return adminDenganPpn;
+  }
+
+  void updateBiayaAdmin(String biayaAdminRaw) {
+    // Hitung total paket
+    final totalPaket = selectedPaketPerCard.values
+        .map((paket) => (paket["harga_fix"] ?? 0) as int)
+        .fold(0, (total, harga) => total + harga);
+
+    final totalSebelumPromo = baseHarga.value + totalPaket;
+
+    int adminNominal = 0;
+
+    // Hitung biaya admin dulu
+    if (biayaAdminRaw.endsWith('%')) {
+      final persen =
+          double.tryParse(biayaAdminRaw.replaceAll('%', '').trim()) ?? 0.0;
+      adminNominal = (totalSebelumPromo * persen / 100).round();
+    } else {
+      adminNominal = int.tryParse(biayaAdminRaw) ?? 0;
+    }
+
+    // Ambil PPN dari local storage
+    final ppnPercent = double.tryParse(box.read("ppn") ?? "0") ?? 0.0;
+
+    // Total biaya admin termasuk PPN
+    final adminDenganPpn = (adminNominal * (1 + ppnPercent / 100)).round();
+
+    // Masukkan ke RxInt
+    biayaAdmin.value = adminDenganPpn;
   }
 
   void clearPaymentSelection() {

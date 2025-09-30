@@ -90,7 +90,15 @@ class RegisterController extends GetxController {
       box.write("idUser", user["id"]);
       box.write("email", user["email"]);
       box.write("photoProfile", user['profile_image_url'] ?? "");
+      final ppnConfig = (data["sysconf"] as List).firstWhere(
+        (item) => item["sysconf"] == "PPN",
+        orElse: () => {"valueconf": null},
+      );
 
+      if (ppnConfig["valueconf"] != null) {
+        box.write("ppn", ppnConfig["valueconf"]);
+        print("PPN disimpan: ${ppnConfig["valueconf"]}");
+      }
       isLoading.value = false;
       notifHelper.show("Register berhasil", type: 1);
       Get.toNamed(Routes.LENGKAPI_BIODATA);
@@ -193,7 +201,15 @@ class RegisterController extends GetxController {
         box.write("email", user["email"]);
         box.write("password", password);
         box.write("isEmailVerified", user["is_email_verified"] ?? false);
+        final ppnConfig = (data["sysconf"] as List).firstWhere(
+          (item) => item["sysconf"] == "PPN",
+          orElse: () => {"valueconf": null},
+        );
 
+        if (ppnConfig["valueconf"] != null) {
+          box.write("ppn", ppnConfig["valueconf"]);
+          print("PPN disimpan: ${ppnConfig["valueconf"]}");
+        }
         // Reset form biar kosong lagi
         nameController.clear();
         regEmailController.clear();

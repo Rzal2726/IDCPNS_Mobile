@@ -67,7 +67,15 @@ class LoginController extends GetxController {
       box.write("password", password);
       box.write("photoProfile", user['profile_image_url']);
       box.write("isEmailVerified", user["is_email_verified"] ?? false);
+      final ppnConfig = (result["data"]["sysconf"] as List).firstWhere(
+        (item) => item["sysconf"] == "PPN",
+        orElse: () => {"valueconf": null},
+      );
 
+      if (ppnConfig["valueconf"] != null) {
+        box.write("ppn", ppnConfig["valueconf"]);
+        print("PPN disimpan: ${ppnConfig["valueconf"]}");
+      }
       emailController.clear();
       passwordController.clear();
 
@@ -129,7 +137,6 @@ class LoginController extends GetxController {
     if (result["error"] == false) {
       final data = result["data"];
       final user = data["user"];
-
       box.write("token", data["access_token"]);
       box.write("levelName", user["level_name"]);
       box.write("name", user["name"]);
@@ -138,7 +145,15 @@ class LoginController extends GetxController {
       box.write("idUser", user["id"]);
       box.write("email", user["email"]);
       box.write("photoProfile", user['profile_image_url'] ?? "");
+      final ppnConfig = (data["sysconf"] as List).firstWhere(
+        (item) => item["sysconf"] == "PPN",
+        orElse: () => {"valueconf": null},
+      );
 
+      if (ppnConfig["valueconf"] != null) {
+        box.write("ppn", ppnConfig["valueconf"]);
+        print("PPN disimpan: ${ppnConfig["valueconf"]}");
+      }
       // notifHelper.show("Login berhasil!", type: 1);
 
       if (user["is_email_verified"] == true) {

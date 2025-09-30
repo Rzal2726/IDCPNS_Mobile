@@ -196,7 +196,11 @@ class LoginView extends GetView<LoginController> {
               ),
               SizedBox(height: 16),
               OutlinedButton(
-                onPressed: () => Get.toNamed(Routes.REGISTER),
+                onPressed: () {
+                  controller.emailController.clear();
+                  controller.passwordController.clear();
+                  Get.toNamed(Routes.REGISTER);
+                },
                 style: OutlinedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   side: BorderSide(color: Colors.teal, width: 2),

@@ -1176,9 +1176,14 @@ Widget _buildHelpContainer({
 }) {
   return Expanded(
     child: SizedBox(
-      height: 220, // tinggi tetap
+      height: 155, // tinggi tetap
       child: Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(
+          16,
+          16,
+          16,
+          8,
+        ), // 🔥 kasih space bawah dikit (8px)
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),
@@ -1188,52 +1193,58 @@ Widget _buildHelpContainer({
               color: Colors.grey.withOpacity(0.2),
               spreadRadius: 1,
               blurRadius: 5,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 8),
-            Expanded(
-              child: Text(
-                description,
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-                overflow: TextOverflow.fade,
-                maxLines: 4, // biar gak terlalu panjang
-                softWrap: true,
-              ),
-            ),
-            SizedBox(height: 16),
-            Divider(color: Colors.grey[400], height: 1),
-            SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: onPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF16A085),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 12.0),
-                ),
-                child: Text(
-                  buttonText,
-                  style: TextStyle(
-                    color: Colors.white,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  description,
+                  style: const TextStyle(fontSize: 14, color: Colors.black54),
+                  overflow: TextOverflow.fade,
+                  maxLines: 4,
+                  softWrap: true,
+                ),
+                Divider(color: Colors.grey[400], height: 1),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: 4,
+              ), // 🔥 kasih jarak 4px sebelum border bawah
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: onPressed,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF16A085),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  ),
+                  child: Text(
+                    buttonText,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

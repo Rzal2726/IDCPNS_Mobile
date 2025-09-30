@@ -65,7 +65,15 @@ class SplashController extends GetxController {
       box.write("email", user["email"]);
       box.write("password", password); // simpan password kembali
       box.write("photoProfile", user['profile_image_url']);
+      final ppnConfig = (data["sysconf"] as List).firstWhere(
+        (item) => item["sysconf"] == "PPN",
+        orElse: () => {"valueconf": null},
+      );
 
+      if (ppnConfig["valueconf"] != null) {
+        box.write("ppn", ppnConfig["valueconf"]);
+        print("PPN disimpan: ${ppnConfig["valueconf"]}");
+      }
       if (user["is_email_verified"] == true) {
         if (user['user_status_id'] == 2) {
           Get.offNamed(Routes.LENGKAPI_BIODATA);

@@ -165,55 +165,98 @@ class NotificationView extends GetView<NotificationController> {
                   ),
 
                   SizedBox(height: 8),
-                  Skeletonizer(
-                    enabled: controller.notifData.isEmpty,
-                    child: Column(
-                      children: [
-                        if (controller.notifData.isNotEmpty)
-                          Column(
-                            children:
-                                controller.notifData.any((d) => d['read'] == 0)
-                                    ? [
-                                      for (var data in controller.notifData)
-                                        if (data['read'] == 0)
-                                          _buildNotificationItem(
-                                            '${data['title']}',
-                                            '${data['created_at']}',
-                                            0,
-                                            data['id'],
-                                            data['parameter'] ?? "",
-                                            data['description'],
-                                            data['orderId']?.toString() ?? "",
-                                          ),
-                                    ]
-                                    : [
-                                      Center(
-                                        child: Text(
-                                          "Tidak ada pesan baru",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey[600],
-                                            fontStyle: FontStyle.italic,
-                                          ),
-                                        ),
+                  FutureBuilder(
+                    future: Future.delayed(Duration(seconds: 5)),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState != ConnectionState.done) {
+                        // Skeleton placeholder selama 5 detik
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: 5,
+                          itemBuilder:
+                              (context, index) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                  horizontal: 16.0,
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.shade300,
+                                        blurRadius: 4,
+                                        offset: Offset(0, 2),
                                       ),
                                     ],
-                          ),
-
-                        // placeholder dummy kalau kosong
-                        if (controller.notifData.isEmpty)
-                          for (int i = 0; i < 5; i++)
-                            _buildNotificationItem(
-                              '••••••••••••',
-                              '••••••',
-                              0,
-                              0,
-                              "",
-                              '••••••••••••••••••',
-                              '',
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 20,
+                                        width: 120,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      SizedBox(height: 7),
+                                      Container(
+                                        height: 16,
+                                        width: 180,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      SizedBox(height: 7),
+                                      Container(
+                                        height: 14,
+                                        width: 140,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                        );
+                      } else {
+                        // Setelah 5 detik, tampilkan notifikasi asli atau teks kosong
+                        final unreadData =
+                            controller.notifData
+                                .where((d) => d['read'] == 0)
+                                .toList();
+                        if (unreadData.isNotEmpty) {
+                          return Column(
+                            children: [
+                              for (var data in unreadData)
+                                _buildNotificationItem(
+                                  '${data['title']}',
+                                  '${data['created_at']}',
+                                  0,
+                                  data['id'],
+                                  data['parameter'] ?? "",
+                                  data['description'],
+                                  data['orderId']?.toString() ?? "",
+                                ),
+                            ],
+                          );
+                        } else {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                              child: Text(
+                                "Tidak ada pesan baru",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
                             ),
-                      ],
-                    ),
+                          );
+                        }
+                      }
+                    },
                   ),
                   SizedBox(height: 16),
                   Divider(color: Colors.grey),
@@ -259,35 +302,98 @@ class NotificationView extends GetView<NotificationController> {
                     ],
                   ),
                   SizedBox(height: 8),
-                  Column(
-                    children:
-                        controller.notifData.any((d) => d['read'] == 1)
-                            ? [
-                              for (var data in controller.notifData)
-                                if (data['read'] == 1)
-                                  _buildNotificationItem(
-                                    '${data['title']}',
-                                    '${data['created_at']}',
-                                    1,
-                                    data['id'],
-                                    data['parameter'] ?? "",
-                                    data['description'],
-                                    data['orderId']?.toString() ?? "",
+                  FutureBuilder(
+                    future: Future.delayed(Duration(seconds: 5)),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState != ConnectionState.done) {
+                        // Skeleton placeholder selama 5 detik
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: 3, // jumlah skeleton
+                          itemBuilder:
+                              (context, index) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                  horizontal: 16.0,
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.shade300,
+                                        blurRadius: 4,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
-                            ]
-                            : [
-                              Center(
-                                child: Text(
-                                  "Tidak ada pesan yang sudah dibaca",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[600],
-                                    fontStyle: FontStyle.italic,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 20,
+                                        width: 120,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      SizedBox(height: 7),
+                                      Container(
+                                        height: 16,
+                                        width: 180,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      SizedBox(height: 7),
+                                      Container(
+                                        height: 14,
+                                        width: 140,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 20),
+                        );
+                      } else {
+                        // Setelah 5 detik, tampilkan data asli atau teks jika kosong
+                        final readData =
+                            controller.notifData
+                                .where((d) => d['read'] == 1)
+                                .toList();
+                        if (readData.isNotEmpty) {
+                          return Column(
+                            children: [
+                              for (var data in readData)
+                                _buildNotificationItem(
+                                  '${data['title']}',
+                                  '${data['created_at']}',
+                                  1,
+                                  data['id'],
+                                  data['parameter'] ?? "",
+                                  data['description'],
+                                  data['orderId']?.toString() ?? "",
+                                ),
                             ],
+                          );
+                        } else {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                              child: Text(
+                                "Tidak ada pesan yang sudah dibaca",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
                   ),
                 ],
               ),

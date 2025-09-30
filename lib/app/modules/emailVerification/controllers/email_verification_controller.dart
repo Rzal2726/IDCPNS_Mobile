@@ -84,6 +84,9 @@ class EmailVerificationController extends GetxController {
       otpController.clear();
       Get.toNamed(Routes.LOGIN);
     } else {
+      // OTP gagal → kosongkan field
+      otpController.clear();
+
       notifHelper.show(result["message"], type: 0);
     }
 

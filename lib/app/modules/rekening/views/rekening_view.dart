@@ -1,3 +1,4 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -88,20 +89,46 @@ class RekeningView extends GetView<RekeningController> {
                           Text('Bank', style: TextStyle(color: Colors.black)),
                           SizedBox(height: 4),
                           Obx(() {
-                            return DropdownButtonFormField<String>(
-                              value:
+                            return DropdownSearch<String>(
+                              items: (String? filter, LoadProps? props) {
+                                // filter optional, bisa search
+                                return controller.bankList
+                                    .where(
+                                      (bank) =>
+                                          filter == null ||
+                                          bank['name'].toLowerCase().contains(
+                                            filter.toLowerCase(),
+                                          ),
+                                    )
+                                    .map<String>(
+                                      (bank) => bank['name'].toString(),
+                                    )
+                                    .toList();
+                              },
+                              selectedItem:
                                   controller.selectedBankName.value.isEmpty
                                       ? null
                                       : controller.selectedBankName.value,
-                              items:
-                                  controller.bankList
-                                      .map(
-                                        (bank) => DropdownMenuItem<String>(
-                                          value: bank['name'],
-                                          child: Text(bank['name']),
-                                        ),
-                                      )
-                                      .toList(),
+                              itemAsString: (String name) => name,
+                              popupProps: const PopupProps.menu(
+                                showSearchBox: true, // aktifkan search box
+                                fit: FlexFit.loose,
+                              ),
+                              decoratorProps: DropDownDecoratorProps(
+                                decoration: InputDecoration(
+                                  labelText: "Bank",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(5),
+                                    ), // radius 5
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 10,
+                                  ),
+                                  isDense: true,
+                                ),
+                              ),
                               onChanged: (value) {
                                 if (value != null) {
                                   controller.selectedBankName.value = value;
@@ -115,13 +142,6 @@ class RekeningView extends GetView<RekeningController> {
                                   print(controller.bankId.value);
                                 }
                               },
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                ),
-                              ),
-                              hint: Text('Pilih Bank'),
                             );
                           }),
                           SizedBox(height: 16),

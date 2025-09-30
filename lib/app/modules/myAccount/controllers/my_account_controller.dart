@@ -99,36 +99,50 @@ class MyAccountController extends GetxController {
 
   Future<void> getUser() async {
     try {
-      final url = await baseUrl + apiGetUser;
-
+      final url = baseUrl + apiGetUser;
       final result = await _restClient.getData(url: url);
-      print("emailnnyaa ${result.toString()}");
-      if (result["status"] == "success") {
-        var data = result['data'];
-        namaLengkapController.text = data['name'];
-        emailController.text = data['email'];
-        hpController.text = data["no_hp"];
-        waController.text = data["no_wa"];
-        kabupatenController.text = "Bandung";
-        referensiId.value = data['menu_category']['id'];
-        pendidikanId.value = data['pendidikan_id'];
-        sosmedId.value = data['referensi_id'];
-        await getPendidikan(id: data['pendidikan_id'].toString());
-        await getRreferensi(id: data['referensi_id'].toString());
-        await getProvince(id: data['provinsi_id'].toString());
-        await getKabupaten(
-          id: data['provinsi_id'].toString(),
-          selectedId: int.parse(data['kotakab_id'].toString()),
-        );
-        fotoProfile.value = data['profile_image_url'];
-        provinsiId.value = data['provinsi_id'];
-        kabupatenId.value = data['kotakab_id'];
-        tanggalLahir.value = data["tanggal_lahir"];
-        jenisKelamin.value = data["jenis_kelamin"];
+
+      if (result is! Map || result['status'] != 'success') {
+        return;
       }
-    } catch (e) {
-      print("Error polling email verification: $e");
-    }
+
+      final data = result['data'] as Map<String, dynamic>?;
+      if (data == null) return;
+
+      namaLengkapController.text = (data['name'] ?? '').toString();
+      emailController.text = (data['email'] ?? '').toString();
+      hpController.text = (data['no_hp'] ?? '').toString();
+      waController.text = (data['no_wa'] ?? '').toString();
+      kabupatenController.text = "Bandung";
+
+      tanggalLahir.value = (data['tanggal_lahir'] ?? '').toString();
+      jenisKelamin.value = (data['jenis_kelamin'] ?? '').toString();
+
+      int toInt(Object? v) => v is int ? v : int.tryParse('${v ?? ''}') ?? 0;
+
+      final mc = data['menu_category'];
+      provinsiId.value = toInt(data['provinsi_id']);
+      print("xxxvvv ${provinsiId.toString()}");
+      kabupatenId.value = toInt(data['kotakab_id']);
+      pendidikanId.value = toInt(data['pendidikan_id']);
+      sosmedId.value = toInt(data['referensi_id']);
+      referensiId.value = mc is Map ? toInt(mc['id']) : 0;
+      fotoProfile.value = data['profile_image_url'] ?? "";
+
+      if (pendidikanId.value != 0) {
+        await getPendidikan(id: pendidikanId.value.toString());
+      }
+      if (sosmedId.value != 0) {
+        await getRreferensi(id: sosmedId.value.toString());
+      }
+      if (provinsiId.value != 0) {
+        await getProvince(id: provinsiId.value.toString());
+        await getKabupaten(
+          id: provinsiId.value.toString(),
+          selectedId: kabupatenId.value,
+        );
+      }
+    } catch (_) {}
   }
 
   Future<void> postProfile() async {

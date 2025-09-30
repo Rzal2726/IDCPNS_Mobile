@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -173,13 +174,18 @@ class MyAccountView extends GetView<MyAccountController> {
                     // Tanggal Lahir
                     Obx(
                       () => TextField(
+                        controller: TextEditingController(
+                          text:
+                              controller.tanggalLahir.value.isEmpty
+                                  ? null
+                                  : controller
+                                      .tanggalLahir
+                                      .value, // <-- isi langsung dari database
+                        ),
                         readOnly: true,
                         decoration: InputDecoration(
                           labelText: "Tanggal Lahir",
-                          hintText:
-                              controller.tanggalLahir.value.isEmpty
-                                  ? "Pilih tanggal"
-                                  : controller.tanggalLahir.value,
+                          hintText: "Pilih tanggal", // hanya jadi placeholder
                           border: OutlineInputBorder(),
                           isDense: true,
                           floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -188,7 +194,12 @@ class MyAccountView extends GetView<MyAccountController> {
                         onTap: () async {
                           final picked = await showDatePicker(
                             context: context,
-                            initialDate: DateTime(2000),
+                            initialDate:
+                                controller.tanggalLahir.value.isNotEmpty
+                                    ? DateTime.parse(
+                                      controller.tanggalLahir.value,
+                                    ) // kalau ada data, jadikan default
+                                    : DateTime(2000), // fallback
                             firstDate: DateTime(1950),
                             lastDate: DateTime.now(),
                           );
@@ -202,29 +213,39 @@ class MyAccountView extends GetView<MyAccountController> {
                     SizedBox(height: 30),
 
                     // Jenis Kelamin
-                    DropdownButtonFormField<String>(
-                      value:
+                    DropdownSearch<String>(
+                      items: (String? filter, LoadProps? props) {
+                        // return key "L" / "P"
+                        return controller.jenisKelaminMap.keys.toList();
+                      },
+                      selectedItem:
                           controller.jenisKelamin.value.isEmpty
                               ? null
-                              : controller
-                                  .jenisKelamin
-                                  .value, // tetap pakai "L" atau "P"
-                      decoration: InputDecoration(
-                        labelText: "Jenis Kelamin",
-                        border: OutlineInputBorder(),
-                        isDense: true,
+                              : controller.jenisKelamin.value,
+                      itemAsString: (String kode) {
+                        // tampilkan value map (Laki-laki / Perempuan)
+                        return controller.jenisKelaminMap[kode] ?? '';
+                      },
+                      popupProps: PopupProps.dialog(
+                        showSearchBox:
+                            false, // ga perlu search box, datanya dikit
+                        fit: FlexFit.loose,
+                        dialogProps: DialogProps(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                       ),
-                      items:
-                          controller.jenisKelaminMap.entries
-                              .map(
-                                (entry) => DropdownMenuItem<String>(
-                                  value: entry.key, // "L" / "P"
-                                  child: Text(
-                                    entry.value,
-                                  ), // "Laki-laki" / "Perempuan"
-                                ),
-                              )
-                              .toList(),
+                      decoratorProps: DropDownDecoratorProps(
+                        decoration: InputDecoration(
+                          labelText: "Jenis Kelamin",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          isDense: true,
+                        ),
+                      ),
                       onChanged: (value) {
                         controller.jenisKelamin.value = value ?? '';
                       },
@@ -235,27 +256,51 @@ class MyAccountView extends GetView<MyAccountController> {
                     Obx(() {
                       return Column(
                         children: [
-                          DropdownButtonFormField<int>(
-                            value:
+                          DropdownSearch<int>(
+                            items: (String? filter, LoadProps? props) {
+                              // return list of id provinsi
+                              return controller.provinceData
+                                  .map<int>((data) => data['id'] as int)
+                                  .toList();
+                            },
+                            selectedItem:
                                 controller.provinsiId.value == 0
                                     ? null
                                     : controller.provinsiId.value,
-                            decoration: const InputDecoration(
-                              labelText: "Provinsi",
-                              border: OutlineInputBorder(),
-                              isDense: true,
+                            itemAsString: (int id) {
+                              // tampilkan nama provinsi sesuai id
+                              final prov = controller.provinceData.firstWhere(
+                                (data) => data['id'] == id,
+                                orElse: () => {'nama': ''},
+                              );
+                              return prov['nama'].toString();
+                            },
+                            popupProps: PopupProps.dialog(
+                              showSearchBox: true,
+                              searchFieldProps: TextFieldProps(
+                                decoration: InputDecoration(
+                                  labelText: 'Cari Provinsi',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                              ),
+                              dialogProps: DialogProps(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
                             ),
-                            items:
-                                controller.provinceData
-                                    .map(
-                                      (item) => DropdownMenuItem<int>(
-                                        value: item['id'], // id sebagai value
-                                        child: Text(
-                                          item['nama'],
-                                        ), // nama sebagai tampilan
-                                      ),
-                                    )
-                                    .toList(),
+                            decoratorProps: DropDownDecoratorProps(
+                              decoration: InputDecoration(
+                                labelText: "Provinsi",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                isDense: true,
+                              ),
+                            ),
                             onChanged: (value) {
                               if (value != null) {
                                 controller.provinsiId.value = value;
@@ -269,34 +314,53 @@ class MyAccountView extends GetView<MyAccountController> {
                             },
                           ),
                           SizedBox(height: 30),
-                          DropdownButtonFormField<int>(
-                            value:
+                          DropdownSearch<int>(
+                            items: (String? filter, LoadProps? props) {
+                              // return list of id kabupaten
+                              return controller.kabupatenData
+                                  .map<int>((data) => data['id'] as int)
+                                  .toList();
+                            },
+                            selectedItem:
                                 controller.kabupatenId.value == 0
                                     ? null
                                     : controller.kabupatenId.value,
-                            decoration: const InputDecoration(
-                              labelText: "Kabupaten",
-                              border: OutlineInputBorder(),
-                              isDense: true,
+                            itemAsString: (int id) {
+                              // tampilkan nama kabupaten sesuai id
+                              final kab = controller.kabupatenData.firstWhere(
+                                (data) => data['id'] == id,
+                                orElse: () => {'nama': ''},
+                              );
+                              return kab['nama'].toString();
+                            },
+                            popupProps: PopupProps.dialog(
+                              showSearchBox: true,
+                              searchFieldProps: TextFieldProps(
+                                decoration: InputDecoration(
+                                  labelText: 'Cari Kabupaten',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                              ),
+                              dialogProps: DialogProps(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
                             ),
-                            items:
-                                controller.kabupatenData
-                                    .map(
-                                      (item) => DropdownMenuItem<int>(
-                                        value:
-                                            item['id'], // <- id kabupaten (int)
-                                        child: Text(
-                                          item['nama'],
-                                        ), // <- pakai 'nama' sesuai JSON
-                                      ),
-                                    )
-                                    .toList(),
-                            onChanged:
-                                controller.kabupatenData.isNotEmpty
-                                    ? (value) =>
-                                        controller.kabupatenId.value =
-                                            value ?? 0
-                                    : null,
+                            decoratorProps: DropDownDecoratorProps(
+                              decoration: InputDecoration(
+                                labelText: "Kabupaten",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                            ),
+                            onChanged: (value) {
+                              controller.kabupatenId.value = value ?? 0;
+                            },
                           ),
                         ],
                       );
@@ -306,27 +370,51 @@ class MyAccountView extends GetView<MyAccountController> {
 
                     // Pendidikan
                     Obx(
-                      () => DropdownButtonFormField<int>(
-                        value:
+                      () => DropdownSearch<int>(
+                        items: (String? filter, LoadProps? props) {
+                          // return list id pendidikan
+                          return controller.pendidikanData
+                              .map<int>((data) => data['id'] as int)
+                              .toList();
+                        },
+                        selectedItem:
                             controller.pendidikanId.value == 0
                                 ? null
                                 : controller.pendidikanId.value,
-                        decoration: const InputDecoration(
-                          labelText: "Pendidikan",
-                          border: OutlineInputBorder(),
-                          isDense: true,
+                        itemAsString: (int id) {
+                          // tampilkan nama pendidikan sesuai id
+                          final item = controller.pendidikanData.firstWhere(
+                            (data) => data['id'] == id,
+                            orElse: () => {'pendidikan': ''},
+                          );
+                          return item['pendidikan'].toString();
+                        },
+                        popupProps: PopupProps.dialog(
+                          showSearchBox: true, // bisa cari pendidikan
+                          searchFieldProps: TextFieldProps(
+                            decoration: InputDecoration(
+                              labelText: 'Cari Pendidikan',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          ),
+                          dialogProps: DialogProps(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
-                        items:
-                            controller.pendidikanData
-                                .map(
-                                  (item) => DropdownMenuItem<int>(
-                                    value: item['id'], // simpan id pendidikan
-                                    child: Text(
-                                      item['pendidikan'],
-                                    ), // tampilkan nama pendidikan
-                                  ),
-                                )
-                                .toList(),
+                        decoratorProps: DropDownDecoratorProps(
+                          decoration: InputDecoration(
+                            labelText: "Pendidikan",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            isDense: true,
+                          ),
+                        ),
                         onChanged: (value) {
                           controller.pendidikanId.value = value ?? 0;
                         },
@@ -334,84 +422,94 @@ class MyAccountView extends GetView<MyAccountController> {
                     ),
 
                     SizedBox(height: 30),
-
-                    // Darimana Mengetahui
-                    // Obx(
-                    //   () => DropdownButtonFormField<String>(
-                    //     value:
-                    //         controller.sumberInfo.value.isEmpty
-                    //             ? null
-                    //             : controller.sumberInfo.value,
-                    //     decoration: InputDecoration(
-                    //       labelText: "Darimana Anda Mengetahui IDCPNS",
-                    //       border: OutlineInputBorder(),
-                    //       isDense: true,
-                    //     ),
-                    //     items: [
-                    //       DropdownMenuItem(
-                    //         value: "Instagram",
-                    //         child: Text("Instagram"),
-                    //       ),
-                    //       DropdownMenuItem(value: "Teman", child: Text("Teman")),
-                    //     ],
-                    //     onChanged:
-                    //         (value) => controller.sumberInfo.value = value ?? '',
-                    //   ),
-                    // ),
                     Obx(
-                      () => DropdownButtonFormField<int>(
-                        value:
+                      () => DropdownSearch<int>(
+                        items: (String? filter, LoadProps? props) {
+                          // return list id sosmed
+                          return controller.sosmedData
+                              .map<int>((data) => data['id'] as int)
+                              .toList();
+                        },
+                        selectedItem:
                             controller.sosmedId.value == 0
                                 ? null
                                 : controller.sosmedId.value,
-                        decoration: InputDecoration(
-                          labelText: "Darimana Anda Mengetahui IDCPNS",
-                          border: OutlineInputBorder(),
-                          isDense: true,
+                        itemAsString: (int id) {
+                          // tampilkan referensi sesuai id
+                          final item = controller.sosmedData.firstWhere(
+                            (data) => data['id'] == id,
+                            orElse: () => {'referensi': ''},
+                          );
+                          return item['referensi'].toString();
+                        },
+                        popupProps: const PopupProps.menu(
+                          showSearchBox:
+                              false, // ga perlu search kalau datanya pendek
+                          fit:
+                              FlexFit
+                                  .loose, // biar height auto sesuai jumlah item
                         ),
-                        items:
-                            controller.sosmedData
-                                .map(
-                                  (item) => DropdownMenuItem<int>(
-                                    value: item['id'], // pakai id sebagai value
-                                    child: Text(
-                                      item['referensi'],
-                                    ), // tampilannya nama
-                                  ),
-                                )
-                                .toList(),
-                        onChanged:
-                            (value) => controller.sosmedId.value = value ?? 0,
+                        decoratorProps: DropDownDecoratorProps(
+                          decoration: InputDecoration(
+                            labelText: "Darimana Anda Mengetahui IDCPNS",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                            ),
+                            isDense: true,
+                          ),
+                        ),
+                        onChanged: (value) {
+                          controller.sosmedId.value = value ?? 0;
+                        },
                       ),
                     ),
+
                     SizedBox(height: 30),
 
                     // Preferensi Belajar
                     Obx(
-                      () => DropdownButtonFormField<int>(
-                        value:
+                      () => DropdownSearch<int>(
+                        items: (String? filter, LoadProps? props) {
+                          // return list id preferensi belajar
+                          return controller.referensiData
+                              .map<int>((data) => data['id'] as int)
+                              .toList();
+                        },
+                        selectedItem:
                             controller.referensiId.value == 0
                                 ? null
                                 : controller.referensiId.value,
-                        decoration: InputDecoration(
-                          labelText: "Preferensi Belajar",
-                          border: OutlineInputBorder(),
-                          isDense: true,
+                        itemAsString: (int id) {
+                          // tampilkan nama menu sesuai id
+                          final item = controller.referensiData.firstWhere(
+                            (data) => data['id'] == id,
+                            orElse: () => {'menu': ''},
+                          );
+                          return item['menu'].toString();
+                        },
+                        popupProps: const PopupProps.menu(
+                          showSearchBox:
+                              false, // datanya sedikit, ga perlu search
+                          fit:
+                              FlexFit
+                                  .loose, // biar tinggi dropdown ngikut jumlah item
                         ),
-                        items:
-                            controller.referensiData
-                                .map(
-                                  (item) => DropdownMenuItem<int>(
-                                    value: item['id'], // pakai id sebagai value
-                                    child: Text(
-                                      item['menu'],
-                                    ), // tampilannya nama
-                                  ),
-                                )
-                                .toList(),
-                        onChanged:
-                            (value) =>
-                                controller.referensiId.value = value ?? 0,
+                        decoratorProps: DropDownDecoratorProps(
+                          decoration: InputDecoration(
+                            labelText: "Preferensi Belajar",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                            ),
+                            isDense: true,
+                          ),
+                        ),
+                        onChanged: (value) {
+                          controller.referensiId.value = value ?? 0;
+                        },
                       ),
                     ),
 
@@ -426,7 +524,7 @@ class MyAccountView extends GetView<MyAccountController> {
                           backgroundColor: Colors.teal,
                           padding: EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
                         child: Text(

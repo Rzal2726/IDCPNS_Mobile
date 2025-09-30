@@ -493,6 +493,7 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                     SizedBox(height: 12),
 
                     // Tanggal Mulai
+                    // Tanggal Mulai
                     Text("Tanggal Mulai"),
                     SizedBox(height: 4),
                     TextField(
@@ -527,9 +528,10 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                         }
                       },
                     ),
+
                     SizedBox(height: 12),
 
-                    // Tanggal Selesai (tidak bisa diedit)
+                    // Tanggal Selesai
                     Text("Tanggal Selesai"),
                     SizedBox(height: 4),
                     TextField(
@@ -548,12 +550,29 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                         ),
                       ),
                       onTap: () async {
+                        // Ambil nilai tanggal mulai
+                        DateTime? startDate;
+                        if (controller.startDateController.text.isNotEmpty) {
+                          List<String> parts = controller
+                              .startDateController
+                              .text
+                              .split("/");
+                          startDate = DateTime(
+                            int.parse(parts[2]), // year
+                            int.parse(parts[1]), // month
+                            int.parse(parts[0]), // day
+                          );
+                        }
+
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
+                          initialDate: startDate ?? DateTime.now(),
+                          firstDate:
+                              startDate ??
+                              DateTime(2000), // ⬅️ minimal = tanggal mulai
                           lastDate: DateTime(2100),
                         );
+
                         if (pickedDate != null) {
                           setState(() {
                             controller.endDateController.text =
@@ -562,25 +581,11 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                                 "${pickedDate.year}";
                           });
                         }
-                        print(
-                          "xxx ${controller.endDateController.text.toString()}",
-                        );
+
+                        print("xxx ${controller.endDateController.text}");
                       },
                     ),
-                    // TextField(
-                    //   controller: controller.endDateController,
-                    //   // readOnly: true,
-                    //   decoration: InputDecoration(
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(6),
-                    //       borderSide: BorderSide(color: Colors.grey.shade400),
-                    //     ),
-                    //     contentPadding: EdgeInsets.symmetric(
-                    //       horizontal: 12,
-                    //       vertical: 8,
-                    //     ),
-                    //   ),
-                    // ),
+
                     SizedBox(height: 16),
 
                     // Row tombol Reset + Cari

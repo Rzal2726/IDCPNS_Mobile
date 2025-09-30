@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
@@ -135,6 +136,9 @@ class DetailBimbelController extends GetxController
       if (result["status"] == "success") {
         isCheklist.value = true;
         getCheckWhislist();
+
+        // notif sukses
+        notifHelper.show("Berhasil menambahkan ke wishlist", type: 1);
       }
     } catch (e) {
       print("Error: $e");
@@ -151,6 +155,9 @@ class DetailBimbelController extends GetxController
       if (result["status"] == "success") {
         isCheklist.value = false;
         getCheckWhislist();
+
+        // notif sukses
+        notifHelper.show("Berhasil menghapus dari wishlist", type: 1);
       }
     } catch (e) {
       print("Error: $e");

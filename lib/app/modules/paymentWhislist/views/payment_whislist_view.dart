@@ -111,10 +111,16 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                               onTap: () {
                                                 controller.selectedPaketPerCard
                                                     .remove(data['id']);
-                                                controller.promoController
-                                                    .clear();
-                                                controller.promoAmount.value =
-                                                    0;
+                                                if (controller
+                                                            .promoController
+                                                            .text !=
+                                                        "" &&
+                                                    controller
+                                                            .getTotalHargaFix() !=
+                                                        0) {
+                                                  controller.getApplyCode();
+                                                }
+
                                                 controller.updateBiayaAdmin(
                                                   controller
                                                       .biayaAdminRaw
@@ -171,80 +177,28 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                       Column(
                         children: [
                           for (var data in listTryout)
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              child: Container(
-                                padding: EdgeInsets.all(12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // HEADER
-                                    Row(
+                            Container(
+                              padding: EdgeInsets.only(right: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // HEADER
+
+                                  // GANTI RADIO → CHECKBOX
+                                  Obx(() {
+                                    final isSelected = controller
+                                        .selectedPaketPerCard
+                                        .containsKey(data['id']);
+
+                                    // ✅ Auto-centang kalau belum ada yang dipilih
+
+                                    return Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Expanded(
-                                          child: Text(
-                                            data['productDetail']?['formasi'] ??
-                                                '',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            softWrap: true,
-                                            overflow: TextOverflow.visible,
-                                            maxLines: null,
-                                          ),
-                                        ),
-                                        Obx(() {
-                                          final isSelected = controller
-                                              .selectedPaketPerCard
-                                              .containsKey(data['id']);
-                                          print("xxx ${isSelected}");
-                                          return Visibility(
-                                            visible: isSelected,
-                                            maintainSize: true,
-                                            maintainAnimation: true,
-                                            maintainState: true,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                controller.selectedPaketPerCard
-                                                    .remove(data['id']);
-                                                controller.promoController
-                                                    .clear();
-                                                controller.promoAmount.value =
-                                                    0;
-                                                controller.updateBiayaAdmin(
-                                                  controller
-                                                      .biayaAdminRaw
-                                                      .value,
-                                                );
-                                              },
-                                              child: Icon(
-                                                Icons.cancel,
-                                                size: 20,
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                      ],
-                                    ),
-                                    SizedBox(height: 8),
-
-                                    // GANTI RADIO → CHECKBOX
-                                    Obx(() {
-                                      final isSelected = controller
-                                          .selectedPaketPerCard
-                                          .containsKey(data['id']);
-
-                                      // ✅ Auto-centang kalau belum ada yang dipilih
-
-                                      return Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
+                                          // <-- ini supaya text bisa wrap
+                                          child: Row(
                                             children: [
                                               Checkbox(
                                                 value: isSelected,
@@ -265,12 +219,17 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                     controller
                                                         .selectedPaketPerCard
                                                         .remove(data['id']);
-                                                    controller.promoController
-                                                        .clear();
-                                                    controller
-                                                        .promoAmount
-                                                        .value = 0;
                                                   }
+                                                  if (controller
+                                                              .promoController
+                                                              .text !=
+                                                          "" &&
+                                                      controller
+                                                              .getTotalHargaFix() !=
+                                                          0) {
+                                                    controller.getApplyCode();
+                                                  }
+
                                                   controller.updateBiayaAdmin(
                                                     controller
                                                         .biayaAdminRaw
@@ -278,29 +237,36 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                   );
                                                 },
                                               ),
-                                              Text(
-                                                '${data['productDetail']?['formasi'] ?? ''}',
-                                                style: TextStyle(fontSize: 14),
-                                                softWrap: true,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
+                                              Expanded(
+                                                // <-- ini juga supaya text wrap
+                                                child: Text(
+                                                  '${data['productDetail']?['formasi'] ?? ''}',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                  ),
+                                                  softWrap: true,
+                                                  maxLines:
+                                                      2, // maksimal 2 baris
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               ),
                                             ],
                                           ),
-                                          Text(
-                                            formatRupiah(
-                                              data['productDetail']?['harga_fix'],
-                                            ),
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                                        ),
+                                        Text(
+                                          formatRupiah(
+                                            data['productDetail']?['harga_fix'],
                                           ),
-                                        ],
-                                      );
-                                    }),
-                                  ],
-                                ),
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }),
+                                ],
                               ),
                             ),
                         ],
@@ -417,6 +383,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                             controller.kodePromo.value.isNotEmpty
                                 ? GestureDetector(
                                   onTap: () {
+                                    controller.promoController.clear();
                                     controller.kodePromo.value = '';
                                     controller.promoAmount.value = 0;
                                   },
@@ -627,6 +594,11 @@ Widget _buildRadioOption(
                       "id": value, // id paket
                       "harga_fix": hargaFix,
                     });
+                    if (controller.promoController.text != "" &&
+                        controller.getTotalHargaFix() != 0) {
+                      controller.getApplyCode();
+                    }
+
                     controller.updateBiayaAdmin(controller.biayaAdminRaw.value);
                   }
                 },
@@ -721,13 +693,13 @@ void showPaymentBottomSheet(BuildContext context) {
                                     for (var method
                                         in data['xendit_payment_method'])
                                       Container(
-                                        width: 140,
+                                        width: 160,
                                         margin: EdgeInsets.only(right: 12),
                                         child: paymentItem(
                                           svgPath: method['image_url'],
                                           title: method['name'],
                                           subtitle:
-                                              "Biaya Admin: ${method['biaya_admin']}",
+                                              "Biaya Admin: ${formatRupiah(controller.calculateBiayaAdmin(method['biaya_admin']))}",
                                           onTap: () {
                                             Get.back();
                                             print(
@@ -800,21 +772,58 @@ Widget paymentItem({
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 60, // kasih lebar fix biar rata
-            height: 60, // kasih tinggi fix biar rata
-            child: Center(
-              child: SvgPicture.network(
-                svgPath,
-                fit: BoxFit.contain,
-                placeholderBuilder:
-                    (context) => const SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
+            width: 160,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: Center(
+                    child: SvgPicture.network(
+                      svgPath,
+                      fit: BoxFit.contain,
+                      placeholderBuilder:
+                          (context) => const SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: Center(
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
                     ),
-              ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // Standarkan tinggi title
+                SizedBox(
+                  height: 36, // misal cukup untuk 2 baris
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 4),
+
+                // Standarkan tinggi subtitle
+                SizedBox(
+                  height: 30, // misal cukup untuk 2 baris
+                  child: Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ),
           SizedBox(height: 8),
