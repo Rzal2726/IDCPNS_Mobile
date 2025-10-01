@@ -5,6 +5,7 @@ import 'package:flutter_html_svg/flutter_html_svg.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 
 import '../controllers/detail_event_controller.dart';
 
@@ -71,7 +72,7 @@ class DetailEventView extends GetView<DetailEventController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Obx(() {
-                  if (controller.loading.value == true) {
+                  if (controller.loading.value) {
                     return Skeletonizer(child: Image.asset("assets/logo.png"));
                   } else {
                     if (controller.dataEvent.isEmpty) {
@@ -79,7 +80,21 @@ class DetailEventView extends GetView<DetailEventController> {
                     } else {
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.network(controller.dataEvent['gambar']),
+                        child: Image.network(
+                          controller.dataEvent['gambar'],
+                          loadingBuilder: (
+                            BuildContext context,
+                            Widget child,
+                            ImageChunkEvent? loadingProgress,
+                          ) {
+                            if (loadingProgress == null) {
+                              return child; // Image is fully loaded, display the image
+                            }
+                            return Skeletonizer(
+                              child: Image.asset("assets/logo.png"),
+                            );
+                          },
+                        ),
                       );
                     }
                   }
@@ -181,7 +196,7 @@ class DetailEventView extends GetView<DetailEventController> {
                       if (controller.selectedPaket.value == "Free") {
                         Get.toNamed(
                           "/tryout-event-free-payment",
-                          arguments: controller.dataEvent,
+                          arguments: controller.uuid,
                         );
                       } else {
                         Get.toNamed(

@@ -20,10 +20,7 @@ class TermConditonsView extends GetView<TermConditonsController> {
         leading: TextButton.icon(
           onPressed: () => Get.back(),
           icon: Icon(Icons.arrow_back, color: Colors.lightBlue),
-          label: Text(
-            "Kembali",
-            style: TextStyle(color: Colors.lightBlue, fontSize: 20),
-          ),
+          label: Text("Kembali", style: TextStyle(color: Colors.lightBlue)),
           style: TextButton.styleFrom(
             padding: EdgeInsets.only(left: 8), // biar rapih di kiri
           ),

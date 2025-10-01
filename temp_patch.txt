@@ -1,0 +1,435 @@
+Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(25),
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: AppBar(
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            backgroundColor: Colors.white,
+            title: const Text('Rincian Pembayaran'),
+            centerTitle: false,
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 16,
+                  children: [
+                    const Text(
+                      "Checkout Event Tryout",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Row(
+                      spacing: 4,
+                      children: [
+                        Icon(Icons.check_box, color: Colors.teal),
+                        Container(
+                          width: 240,
+                          child: Obx(
+                            () =>
+                                controller.dataTryout['name'] != null
+                                    ? Text(controller.dataTryout['name'])
+                                    : Skeletonizer(
+                                      enabled: true,
+                                      child: Text("Judul Tryout"),
+                                    ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const Text(
+                      "Metode Pembayaran",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Obx(
+                      () => InkWell(
+                        onTap:
+                            () => showModalBottomSheet(
+                              barrierLabel: "Metode Pembayaran",
+                              backgroundColor: Colors.white,
+                              context: context,
+                              builder: (context) {
+                                return _metodePembayaran(context);
+                              },
+                            ),
+                        child:
+                            controller.selectedPaymentMethod.isEmpty
+                                ? _menuTile(
+                                  leading: Icon(
+                                    Icons.payments,
+                                    color: Colors.teal,
+                                  ),
+                                  iconColor: Colors.teal,
+                                  text: "Pilih Pembayaran",
+                                )
+                                : _menuTile(
+                                  leading: SvgPicture.network(
+                                    height: 28,
+                                    controller
+                                        .selectedPaymentMethod['image_url'],
+                                  ),
+                                  iconColor: Colors.teal,
+                                  text:
+                                      controller.ovoNumber.value.length <= 0
+                                          ? controller
+                                              .selectedPaymentMethod['name']
+                                          : "+62 ${controller.ovoNumber.value}",
+                                ),
+                      ),
+                    ),
+                    const Text(
+                      "Kode promo",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Obx(() {
+                      return controller.diskon.value > 0
+                          ? Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap:
+                                    () => showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.white,
+                                      builder:
+                                          (_) => SafeArea(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
+                                              ),
+                                              child: SingleChildScrollView(
+                                                child: _kodePromo(context),
+                                              ),
+                                            ),
+                                          ),
+                                    ),
+                                child: _voucherTile(
+                                  leading: Icon(
+                                    Icons.redeem,
+                                    color: Colors.orange,
+                                  ),
+                                  iconColor: Colors.orange,
+                                  text: controller.promoCode.value,
+                                ),
+                              ),
+                              Row(
+                                spacing: 4,
+                                children: [
+                                  Icon(Icons.check_circle, color: Colors.teal),
+                                  Text(
+                                    "Kode promo berhasil digunakan",
+                                    style: TextStyle(
+                                      color: Colors.teal,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )
+                          : InkWell(
+                            onTap:
+                                () => showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true, // 🚀 penting
+                                  backgroundColor: Colors.white,
+                                  builder: (context) {
+                                    return SafeArea(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          bottom:
+                                              MediaQuery.of(
+                                                context,
+                                              ).viewInsets.bottom,
+                                        ),
+                                        child: SingleChildScrollView(
+                                          child: _kodePromo(context),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+
+                            child: _voucherTile(
+                              leading: Icon(Icons.redeem, color: Colors.orange),
+                              iconColor: Colors.orange,
+                              text: "Gunakan Kode Promo",
+                            ),
+                          );
+                    }),
+
+                    const Text(
+                      "Rincian Pesanan",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Obx(
+                      () => Row(
+                        children: [
+                          Text("Harga"),
+                          Spacer(),
+                          Text(
+                            controller
+                                .formatCurrency(
+                                  controller.harga.value.toString(),
+                                )
+                                .toString(),
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Obx(() {
+                      return controller.biayaAdmin.value > 0.0
+                          ? Row(
+                            children: [
+                              Text("Biaya Admin"),
+                              Spacer(),
+                              Text(
+                                controller.formatCurrency(
+                                  controller.biayaAdmin.value.toString(),
+                                ),
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          )
+                          : SizedBox();
+                    }),
+                    Obx(() {
+                      return controller.diskon.value > 0.0
+                          ? Row(
+                            children: [
+                              Text(
+                                "Diskon",
+                                style: TextStyle(
+                                  color: Colors.teal,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Spacer(),
+                              Text(
+                                "-${controller.formatCurrency(controller.diskon.value.toString())}",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal,
+                                ),
+                              ),
+                            ],
+                          )
+                          : SizedBox();
+                    }),
+                    Obx(
+                      () => Row(
+                        children: [
+                          Text(
+                            "Total Harga",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Spacer(),
+                          Text(
+                            controller.formatCurrency(
+                              controller.totalHarga.value.toString(),
+                            ),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Obx(
+                      () => SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Colors.teal.shade300,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(
+                                color: Colors.teal.shade300,
+                                width: 1.5,
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          onPressed: () {
+                            controller.createPayment();
+                          },
+                          child:
+                              controller.loading['bayar'] == false
+                                  ? Text("Bayar Sekarang")
+                                  : Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+=======
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: CustomAppBar(
+        leftType: AppBarLeftType.backWithTitle,
+        title: 'Upload Persyaratan',
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Paket Event Tryout Gratis",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      "Persyaratan",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    RichText(
+                      text: TextSpan(
+                        style: TextStyle(color: Colors.black, fontSize: 12),
+                        children: [
+                          const TextSpan(text: "Follow Account Instagram Berikut : "),
+                          TextSpan(
+                            text: "@IDCPNS & @belajarpppk",
+                            style: TextStyle(color: Colors.teal),
+                            // Add gesture recognizer if needed
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    RichText(
+                      text: TextSpan(
+                        style: TextStyle(color: Colors.black, fontSize: 12),
+                        children: [
+                          const TextSpan(text: "Comment dan Tag 5 Teman Kamu di : "),
+                          TextSpan(
+                            text: "Postingan Ini",
+                            style: TextStyle(color: Colors.teal),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    RichText(
+                      text: TextSpan(
+                        style: TextStyle(color: Colors.black, fontSize: 12),
+                        children: [
+                          const TextSpan(text: "Upload/Repost ke Story Instagram Kamu : "),
+                          TextSpan(
+                            text: "Postingan Ini",
+                            style: TextStyle(color: Colors.teal),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      "Upload Bukti Persyaratan",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _uploadButton("Follow Account Instagram Berikut : @IDCPNS & @belajarpppk"),
+                    const SizedBox(height: 8),
+                    _uploadButton("Comment dan Tag 5 Teman Kamu di : Postingan Ini"),
+                    const SizedBox(height: 8),
+                    _uploadButton("Upload/Repost ke Story Instagram Kamu : Postingan Ini"),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: () {
+                          // TODO: Implement submit action
+                        },
+                        child: const Text("Kirim"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }

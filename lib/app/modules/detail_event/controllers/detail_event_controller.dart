@@ -35,7 +35,6 @@ class DetailEventController extends GetxController {
   }
 
   Future<void> initEvent() async {
-    loading.value = true;
     uuid = await Get.arguments;
     await getEvent();
     await getUserData();

@@ -32,6 +32,7 @@ const String apiGetTryoutEvent = "v1/tryout/event";
 const String apiGetTryoutPaket = "v1/tryout/formasi";
 const String apiGetDetailTryoutPaket = "v1/tryout/formasi/";
 const String apiGetDetailTryoutEvent = "v1/tryout/event/";
+const String apiPersyaratanUploadTryoutEvent = "v1/tryout/persyaratan/upload";
 const String apiGetOtherTryout = "v1/tryout/other-formasi";
 const String apiGetTryoutSaya = "v1/tryout/me/list";
 const String apiGetDetailTryoutSaya = "v1/tryout/me/detail/";
