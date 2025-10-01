@@ -40,6 +40,7 @@ class MyAccountController extends GetxController {
   RxList referensiData = [].obs;
   RxList kabupatenData = [].obs;
   RxList sosmedData = [].obs;
+  RxBool isLoading = true.obs;
 
   @override
   void onInit() {
@@ -98,6 +99,8 @@ class MyAccountController extends GetxController {
   }
 
   Future<void> getUser() async {
+    int toInt(Object? v) => v is int ? v : int.tryParse('${v ?? ''}') ?? 0;
+    isLoading.value = true;
     try {
       final url = baseUrl + apiGetUser;
       final result = await _restClient.getData(url: url);
@@ -108,7 +111,7 @@ class MyAccountController extends GetxController {
 
       final data = result['data'] as Map<String, dynamic>?;
       if (data == null) return;
-
+      final mc = data['menu_category'];
       namaLengkapController.text = (data['name'] ?? '').toString();
       emailController.text = (data['email'] ?? '').toString();
       hpController.text = (data['no_hp'] ?? '').toString();
@@ -117,17 +120,14 @@ class MyAccountController extends GetxController {
 
       tanggalLahir.value = (data['tanggal_lahir'] ?? '').toString();
       jenisKelamin.value = (data['jenis_kelamin'] ?? '').toString();
-
-      int toInt(Object? v) => v is int ? v : int.tryParse('${v ?? ''}') ?? 0;
-
-      final mc = data['menu_category'];
-      provinsiId.value = toInt(data['provinsi_id']);
-      print("xxxvvv ${provinsiId.toString()}");
-      kabupatenId.value = toInt(data['kotakab_id']);
       pendidikanId.value = toInt(data['pendidikan_id']);
       sosmedId.value = toInt(data['referensi_id']);
       referensiId.value = mc is Map ? toInt(mc['id']) : 0;
       fotoProfile.value = data['profile_image_url'] ?? "";
+
+      provinsiId.value = toInt(data['provinsi_id']);
+      print("xxxvvv ${provinsiId.toString()}");
+      kabupatenId.value = toInt(data['kotakab_id']);
 
       if (pendidikanId.value != 0) {
         await getPendidikan(id: pendidikanId.value.toString());
@@ -143,6 +143,7 @@ class MyAccountController extends GetxController {
         );
       }
     } catch (_) {}
+    isLoading.value = false;
   }
 
   Future<void> postProfile() async {
