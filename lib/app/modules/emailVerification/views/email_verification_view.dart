@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pinput/pinput.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
@@ -14,6 +15,25 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
   const EmailVerificationView({super.key});
   @override
   Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 56,
+      textStyle: TextStyle(
+        fontSize: 20,
+        color: Color.fromRGBO(30, 60, 87, 1),
+        fontWeight: FontWeight.w600,
+      ),
+      decoration: BoxDecoration(
+        border: Border.all(color: Color.fromRGBO(234, 239, 243, 1)),
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
+
+    final focusedPinTheme = defaultPinTheme.copyDecorationWith(
+      border: Border.all(color: Colors.teal),
+      borderRadius: BorderRadius.circular(8),
+    );
+
     return PopScope(
       canPop: false, // biar gak pop default
       onPopInvoked: (didPop) {
@@ -26,7 +46,7 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: basicAppBarWithoutNotif(
-          "verifikasi akun",
+          "Verifikasi akun",
           onBack: () {
             Get.offAllNamed(Routes.LOGIN);
             controller.otpController.clear();
@@ -50,7 +70,7 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
                           // Judul
                           Text(
                             "Segera Verifikasi Email Anda",
-                            textAlign: TextAlign.left,
+                            textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 30),
                           ),
 
@@ -106,60 +126,33 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
                               children: [
                                 // TextField
                                 Expanded(
-                                  child: TextField(
-                                    controller: controller.otpController,
-                                    keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
-                                      hintText: "Masukkan kode OTP",
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                        borderSide: BorderSide(
-                                          color: Colors.teal,
-                                        ),
+                                  child: Directionality(
+                                    textDirection: TextDirection.ltr,
+                                    child: Pinput(
+                                      length: 6,
+                                      enableInteractiveSelection: true,
+                                      defaultPinTheme: defaultPinTheme,
+                                      focusedPinTheme: focusedPinTheme,
+                                      separatorBuilder:
+                                          (index) => const SizedBox(width: 8),
+                                      hapticFeedbackType:
+                                          HapticFeedbackType.lightImpact,
+                                      onCompleted: (pin) {
+                                        controller.sendOtp(pin);
+                                      },
+                                      cursor: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                              bottom: 9,
+                                            ),
+                                            width: 22,
+                                            height: 1,
+                                          ),
+                                        ],
                                       ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                        borderSide: BorderSide(
-                                          color: Colors.teal,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                        borderSide: BorderSide(
-                                          color: Colors.teal,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                                SizedBox(width: 8),
-
-                                // Tombol Kirim
-                                ElevatedButton(
-                                  onPressed: () {
-                                    controller.sendOtp(); // fungsi kirim OTP
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.teal,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 14,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    "Kirim",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -168,6 +161,17 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
                           ),
 
                           SizedBox(height: 16),
+
+                          Obx(() {
+                            return controller.isLoading.value
+                                ? Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.teal,
+                                  ),
+                                )
+                                : SizedBox();
+                          }),
                         ],
                       ),
                       SizedBox(height: 24),
@@ -198,7 +202,7 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
                               ),
                             ),
                             child: Text(
-                              "Kirim Ulang Email",
+                              "Kirim Ulang OTP",
                               style: TextStyle(
                                 color:
                                     controller.isButtonEnabled.value

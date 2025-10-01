@@ -68,14 +68,11 @@ class EmailVerificationController extends GetxController {
     isLoading.value = false;
   }
 
-  Future<void> sendOtp() async {
+  Future<void> sendOtp(String otp) async {
     isLoading.value = true;
 
     final url = baseUrl + apiSendOtp;
-    final payload = {
-      "otp_code": otpController.text,
-      "email": box.read("email"),
-    };
+    final payload = {"otp_code": otp, "email": box.read("email")};
 
     final result = await _restClient.postData(url: url, payload: payload);
 

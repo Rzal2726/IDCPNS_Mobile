@@ -150,12 +150,12 @@ class RegisterController extends GetxController {
     }
 
     if (password.isEmpty) {
-      notifHelper.show("Kata sandi tidak boleh kosong!", type: 0);
+      notifHelper.show("Password tidak boleh kosong!", type: 0);
       return;
     }
 
     if (password != confirmPassword) {
-      notifHelper.show("Konfirmasi kata sandi tidak cocok!", type: 0);
+      notifHelper.show("Konfirmasi password tidak cocok!", type: 0);
       return;
     }
     if (kodeAfiliator != null && kodeAfiliator.isNotEmpty) {
@@ -231,8 +231,8 @@ class RegisterController extends GetxController {
                 : (result["message"]?['password'] != null &&
                     (result["message"]?['password'] as List).isNotEmpty)
                 ? result["message"]['password'][0]
-                : (result["message"]?['user_afiliator'] != null &&
-                    (result["message"]?['user_afiliator'] as List).isNotEmpty)
+                : result["message"]?['user_afiliator'] != null &&
+                    (result["message"]?['user_afiliator'] as List).isNotEmpty
                 ? result["message"]['user_afiliator'][0]
                 : "Terjadi kesalahan";
         notifHelper.show(msg, type: 0);

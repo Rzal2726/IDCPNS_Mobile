@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:idcpns_mobile/app/modules/tryout_event_free_payment/controllers/tryout_event_free_payment_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 
 class TryoutEventFreePaymentView
     extends GetView<TryoutEventFreePaymentController> {
@@ -12,70 +13,10 @@ class TryoutEventFreePaymentView
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(25),
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 1,
-            scrolledUnderElevation: 0,
-            title: const Text(
-              "Upload Persyaratan",
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () => Get.back(),
-            ),
-            actions: [
-              Stack(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.notifications_none,
-                      color: Colors.teal,
-                    ),
-                    onPressed: () {
-                      Get.to(() => const NotificationView());
-                    },
-                  ),
-                  Positioned(
-                    right: 8,
-                    top: 8,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Text(
-                        '9+',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+      appBar: CustomAppBar(
+        leftType: AppBarLeftType.backWithTitle,
+        title: 'Upload Persyaratan',
+        showNotifIcon: true,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -197,15 +138,28 @@ class TryoutEventFreePaymentView
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           onPressed: () {
-                            // aksi kirim
+                            if (controller.loading.value) {
+                              return;
+                            }
+                            controller.uploadPersyaratan();
                           },
-                          child: const Text(
-                            "Kirim",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+
+                          child: Obx(() {
+                            return controller.loading.value
+                                ? Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                                : Text(
+                                  "Kirim",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                );
+                          }),
                         ),
                       ),
                     ],
@@ -279,11 +233,11 @@ class TryoutEventFreePaymentView
           onPressed: () {
             controller.pickImage(type);
           },
-          icon: const Icon(Icons.upload, color: Colors.black),
-          label: const Text("Browse", style: TextStyle(color: Colors.black)),
+          icon: const Icon(Icons.upload, color: Colors.teal),
+          label: const Text("Browse", style: TextStyle(color: Colors.teal)),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-            side: const BorderSide(color: Colors.grey),
+            side: const BorderSide(color: Colors.teal),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),
@@ -304,11 +258,53 @@ class TryoutEventFreePaymentView
               break;
           }
           return path.isNotEmpty
-              ? Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  'Selected: ${path.split('/').last}',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ? Container(
+                margin: EdgeInsets.only(top: 8),
+                padding: EdgeInsets.all(8),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey, // Border color
+                    // width: 3.0, // Border width
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    10.0,
+                  ), // Optional: Rounded corners
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      spacing: 8,
+                      children: [
+                        Icon(Icons.image, color: Colors.teal, size: 24.0),
+                        Text(
+                          path.split('/').last,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        switch (type) {
+                          case 'follow':
+                            controller.followImagePath.value = '';
+                            break;
+                          case 'comment':
+                            controller.commentImagePath.value = '';
+                            break;
+                          case 'repost':
+                            controller.repostImagePath.value = '';
+                            break;
+                        }
+                      },
+                      icon: Icon(Icons.delete, color: Colors.red),
+                    ),
+                  ],
                 ),
               )
               : const SizedBox.shrink();
@@ -317,3 +313,13 @@ class TryoutEventFreePaymentView
     );
   }
 }
+
+// return path.isNotEmpty
+//               ? Padding(
+//                 padding: const EdgeInsets.only(top: 8),
+//                 child: Text(
+//                   'Selected: ${path.split('/').last}',
+//                   style: const TextStyle(fontSize: 12, color: Colors.grey),
+//                 ),
+//               )
+//               : const SizedBox.shrink();
