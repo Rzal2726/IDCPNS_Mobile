@@ -65,7 +65,8 @@ class PaymentCheckoutController extends GetxController {
       url: baseUrl + apiEnhaSimulateTransaction,
       payload: payload,
     );
-
+    _paymentTimer?.cancel();
+    _paymentTimer = null;
     print('Data: ${response}');
     Get.offNamed("/pembayaran-berhasil");
   }
@@ -104,8 +105,6 @@ class PaymentCheckoutController extends GetxController {
     "Konfirmasi transaksi hingga selesai",
   ];
 
-  void cekStatus() {}
-
   void fetchDetailPayment() async {
     // Ambil data transaksi dari controller sebelumnya
     final response = await _restClient.getData(
@@ -131,6 +130,8 @@ class PaymentCheckoutController extends GetxController {
           Get.offAllNamed(Routes.BIMBEL);
         }
       } else {
+        _paymentTimer?.cancel();
+        _paymentTimer = null;
         Get.offNamed(Routes.PEMBAYARAN_BERHASIL);
         print("Sudah Dibayar");
       }

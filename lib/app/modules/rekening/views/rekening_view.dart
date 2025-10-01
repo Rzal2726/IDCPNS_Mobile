@@ -91,14 +91,15 @@ class RekeningView extends GetView<RekeningController> {
                           Obx(() {
                             return DropdownSearch<String>(
                               items: (String? filter, LoadProps? props) {
-                                // filter optional, bisa search
+                                // bisa di-search berdasarkan name
                                 return controller.bankList
                                     .where(
                                       (bank) =>
                                           filter == null ||
-                                          bank['name'].toLowerCase().contains(
-                                            filter.toLowerCase(),
-                                          ),
+                                          bank['name']
+                                              .toString()
+                                              .toLowerCase()
+                                              .contains(filter.toLowerCase()),
                                     )
                                     .map<String>(
                                       (bank) => bank['name'].toString(),
@@ -110,13 +111,20 @@ class RekeningView extends GetView<RekeningController> {
                                       ? null
                                       : controller.selectedBankName.value,
                               itemAsString: (String name) => name,
-                              popupProps: const PopupProps.menu(
-                                showSearchBox: true, // aktifkan search box
+                              popupProps: PopupProps.dialog(
+                                showSearchBox: true, // ✅ tetap bisa search
                                 fit: FlexFit.loose,
+                                dialogProps: DialogProps(
+                                  backgroundColor: Colors.white, // latar putih
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
                               ),
                               decoratorProps: DropDownDecoratorProps(
                                 decoration: InputDecoration(
                                   labelText: "Bank",
+                                  hintText: "Pilih Bank",
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(5),
@@ -133,7 +141,7 @@ class RekeningView extends GetView<RekeningController> {
                                 if (value != null) {
                                   controller.selectedBankName.value = value;
 
-                                  // ambil id sesuai nama yang dipilih
+                                  // cari id sesuai nama
                                   final selected = controller.bankList
                                       .firstWhere(
                                         (bank) => bank['name'] == value,

@@ -88,7 +88,8 @@ class SplashController extends GetxController {
     } else {
       // Ambil pesan dari response
       print("asda ${result.toString()}");
-      String errorMessage = result['message'] ?? "Email atau Password invalid.";
+      String errorMessage =
+          result['message'] ?? "Email atau Kata sandi invalid.";
       notifHelper.show(errorMessage, type: 0);
       return false;
     }

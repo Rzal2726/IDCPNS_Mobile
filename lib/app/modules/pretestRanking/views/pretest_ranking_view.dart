@@ -22,7 +22,7 @@ class PretestRankingView extends GetView<PretestRankingController> {
       body: SafeArea(
         child: Obx(() {
           return SingleChildScrollView(
-            padding: AppStyle.screenPadding,
+            padding: AppStyle.sreenPaddingHome,
             child: Container(
               padding: EdgeInsets.all(15),
               decoration: BoxDecoration(
@@ -90,6 +90,7 @@ class PretestRankingView extends GetView<PretestRankingController> {
                               child: Column(
                                 children: List.generate(3, (index) {
                                   return Container(
+                                    width: double.infinity,
                                     margin: EdgeInsets.only(bottom: 20),
                                     padding: EdgeInsets.all(14),
                                     decoration: BoxDecoration(

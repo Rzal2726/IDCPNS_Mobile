@@ -139,23 +139,18 @@ class TransactionView extends GetView<TransactionController> {
 
                 // ===== HEADER RIWAYAT + FILTER =====
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.end, // ⬅️ bikin tombol menempel kanan
                     children: [
-                      Text(
-                        'Riwayat Transaksi',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Spacer(),
                       InkWell(
                         borderRadius: BorderRadius.circular(8),
                         onTap: () {
                           showTransactionFilterBottomSheet(context);
                         },
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               'Filter',
@@ -494,6 +489,7 @@ void showTransactionFilterBottomSheet(BuildContext context) {
 
                     // Tanggal Mulai
                     // Tanggal Mulai
+                    // Tanggal Mulai
                     Text("Tanggal Mulai"),
                     SizedBox(height: 4),
                     TextField(
@@ -537,8 +533,16 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                     TextField(
                       controller: controller.endDateController,
                       readOnly: true,
+                      enabled:
+                          controller
+                              .startDateController
+                              .text
+                              .isNotEmpty, // ⬅️ disable jika start date kosong
                       decoration: InputDecoration(
-                        hintText: "Pilih Tanggal",
+                        hintText:
+                            controller.startDateController.text.isEmpty
+                                ? "Pilih tanggal mulai dulu"
+                                : "Pilih Tanggal",
                         suffixIcon: Icon(Icons.calendar_today),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(6),
@@ -550,26 +554,21 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                         ),
                       ),
                       onTap: () async {
-                        // Ambil nilai tanggal mulai
-                        DateTime? startDate;
-                        if (controller.startDateController.text.isNotEmpty) {
-                          List<String> parts = controller
-                              .startDateController
-                              .text
-                              .split("/");
-                          startDate = DateTime(
-                            int.parse(parts[2]), // year
-                            int.parse(parts[1]), // month
-                            int.parse(parts[0]), // day
-                          );
-                        }
+                        if (controller.startDateController.text.isEmpty) return;
+
+                        // Ambil tanggal mulai
+                        List<String> parts = controller.startDateController.text
+                            .split("/");
+                        DateTime startDate = DateTime(
+                          int.parse(parts[2]),
+                          int.parse(parts[1]),
+                          int.parse(parts[0]),
+                        );
 
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
-                          initialDate: startDate ?? DateTime.now(),
-                          firstDate:
-                              startDate ??
-                              DateTime(2000), // ⬅️ minimal = tanggal mulai
+                          initialDate: startDate,
+                          firstDate: startDate, // minimal tanggal mulai
                           lastDate: DateTime(2100),
                         );
 
@@ -581,8 +580,6 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                                 "${pickedDate.year}";
                           });
                         }
-
-                        print("xxx ${controller.endDateController.text}");
                       },
                     ),
 

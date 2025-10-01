@@ -59,27 +59,8 @@ class CommisionDetailView extends GetView<CommisionDetailController> {
                     width: double.infinity,
                     padding: EdgeInsets.all(16),
                     child:
-                        (data == null || data.isEmpty)
-                            ? Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/emptyArchiveIcon.svg",
-                                    height: 150,
-                                  ),
-                                  SizedBox(height: 12),
-                                  Text(
-                                    "Tidak ada transaksi",
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                            : Column(
+                        data != null && data.isNotEmpty
+                            ? Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
@@ -91,42 +72,122 @@ class CommisionDetailView extends GetView<CommisionDetailController> {
                                 ),
                                 SizedBox(height: 20),
                                 Expanded(
-                                  child: ListView(
-                                    children: [
-                                      for (var i = 0; i < data.length; i++)
-                                        if (data[i]['user'] != null)
-                                          buildRincianKomisi(
-                                            number: i + 1,
-                                            name:
-                                                data[i]['user_name'].toString(),
-                                            date: data[i]['tanggal'] ?? '',
-                                            price: formatRupiah(
-                                              hitungKomisiDetail(
-                                                amount: data[i]['amount'] ?? 0,
-                                                amountAdmin:
-                                                    data[i]['amount_admin'] ??
-                                                    0,
-                                                amountDiskon:
-                                                    data[i]['amount_diskon'] ??
-                                                    0,
-                                                persen:
-                                                    data[i]['user']?['komisi_afiliasi'] ??
-                                                    0,
-                                              ),
-                                            ),
+                                  child: ListView.builder(
+                                    itemCount: data.length,
+                                    itemBuilder: (context, i) {
+                                      var item = data[i];
+                                      if (item['user'] == null)
+                                        return SizedBox.shrink();
+
+                                      return buildRincianKomisi(
+                                        number: i + 1,
+                                        name: item['user_name'].toString(),
+                                        date: item['tanggal'] ?? '',
+                                        price: formatRupiah(
+                                          hitungKomisiDetail(
+                                            amount: item['amount'] ?? 0,
+                                            amountAdmin:
+                                                item['amount_admin'] ?? 0,
+                                            amountDiskon:
+                                                item['amount_diskon'] ?? 0,
+                                            persen:
+                                                item['user']?['komisi_afiliasi'] ??
+                                                0,
                                           ),
-                                      SizedBox(height: 20),
-                                      ReusablePagination(
-                                        nextPage: controller.nextPage,
-                                        prevPage: controller.prevPage,
-                                        currentPage: controller.currentPage,
-                                        totalPage: controller.totalPage,
-                                        goToPage: controller.goToPage,
-                                      ),
-                                    ],
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
+                                SizedBox(height: 20),
+                                ReusablePagination(
+                                  nextPage: controller.nextPage,
+                                  prevPage: controller.prevPage,
+                                  currentPage: controller.currentPage,
+                                  totalPage: controller.totalPage,
+                                  goToPage: controller.goToPage,
+                                ),
                               ],
+                            )
+                            : FutureBuilder(
+                              future: Future.delayed(Duration(seconds: 5)),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState !=
+                                    ConnectionState.done) {
+                                  // Skeleton selama 5 detik
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: 3,
+                                    itemBuilder:
+                                        (context, index) => Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: 8.0,
+                                            horizontal: 16.0,
+                                          ),
+                                          child: Container(
+                                            padding: EdgeInsets.all(14),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey.shade300,
+                                                  blurRadius: 4,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  height: 20,
+                                                  width: 100,
+                                                  color: Colors.grey.shade300,
+                                                ),
+                                                SizedBox(height: 7),
+                                                Container(
+                                                  height: 16,
+                                                  width: 160,
+                                                  color: Colors.grey.shade300,
+                                                ),
+                                                SizedBox(height: 7),
+                                                Container(
+                                                  height: 14,
+                                                  width: 120,
+                                                  color: Colors.grey.shade300,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                  );
+                                } else {
+                                  // Data tetap kosong → tampil empty message
+                                  return Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SvgPicture.asset(
+                                          "assets/emptyArchiveIcon.svg",
+                                          height: 150,
+                                        ),
+                                        SizedBox(height: 12),
+                                        Text(
+                                          "Tidak ada transaksi",
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              },
                             ),
                   ),
                 ),

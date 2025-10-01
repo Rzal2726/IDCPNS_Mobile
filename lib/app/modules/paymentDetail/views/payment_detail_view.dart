@@ -174,24 +174,23 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                                                 (e) => e['is_purchase'] == true,
                                               );
 
-                                          // skip paket yang lebih murah dari paket yang sudah dibeli
+                                          // skip paket yang lebih murah dari paket pertama yang sudah dibeli
                                           if (firstPurchasedIndex != -1 &&
                                               i < firstPurchasedIndex) {
                                             return SizedBox.shrink();
                                           }
 
-                                          // harga yang ditampilkan dikurangi harga paket yang sudah dibeli
+                                          // skip paket yang sudah dibeli
+                                          if (subData['is_purchase'] == true) {
+                                            return SizedBox.shrink();
+                                          }
+
+                                          // hitung harga tampil
                                           final hargaTampil =
-                                              (firstPurchasedIndex != -1 &&
-                                                      i > firstPurchasedIndex)
+                                              (firstPurchasedIndex != -1)
                                                   ? subData['harga_fix'] -
                                                       data['bimbel_list'][firstPurchasedIndex]['harga_fix']
                                                   : subData['harga_fix'];
-
-                                          // disable jika paket sudah dibeli
-                                          final isDisabled =
-                                              (firstPurchasedIndex != -1 &&
-                                                  i == firstPurchasedIndex);
 
                                           return _buildRadioOption(
                                             subData['name'], // title
@@ -200,7 +199,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                                             hargaTampil, // hargaFix
                                             controller,
                                             isDisabled:
-                                                isDisabled, // disable jika sudah dibeli
+                                                false, // semua yang tampil bisa diinteraksi
                                           );
                                         },
                                       ),
@@ -381,64 +380,83 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
-                          Text(
-                            "${formatRupiah(controller.getTotalHargaFix())}",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          controller.isLoadingHarga.value
+                              ? Container(
+                                width: 60,
+                                height: 16,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade300,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              )
+                              : Text(
+                                "${formatRupiah(controller.getTotalHargaFix())}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                         ],
                       ),
-                      SizedBox(height: 6),
-                      if (controller.biayaAdmin != 0)
-                        Column(
+
+                      if (controller.biayaAdmin.value != 0)
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "Biaya admin",
-                                    style: TextStyle(fontSize: 14),
+                            Expanded(
+                              child: Text(
+                                "Biaya admin",
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ),
+                            controller.isLoadingHarga.value
+                                ? Container(
+                                  width: 60,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
-                                ),
-                                Text(
+                                )
+                                : Text(
                                   "${formatRupiah(controller.biayaAdmin.value)}",
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ],
-                            ),
-                            SizedBox(height: 6),
                           ],
                         ),
 
-                      if (controller.promoAmount != 0)
-                        Column(
+                      if (controller.promoAmount.value != 0)
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "Diskon",
-                                    style: TextStyle(fontSize: 14),
+                            Expanded(
+                              child: Text(
+                                "Diskon",
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ),
+                            controller.isLoadingHarga.value
+                                ? Container(
+                                  width: 60,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
-                                ),
-                                Text(
+                                )
+                                : Text(
                                   "${formatRupiah(controller.promoAmount.value)}",
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ],
-                            ),
-                            SizedBox(height: 6),
                           ],
                         ),
+                      SizedBox(height: 6),
 
+                      // Total Harga
                       Row(
                         children: [
                           Expanded(
@@ -447,18 +465,26 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
-                          Text(
-                            "${formatRupiah((controller.getTotalHargaFix() + controller.biayaAdmin.value - controller.promoAmount.value))}",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          controller.isLoadingHarga.value
+                              ? Container(
+                                width: 60,
+                                height: 16,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade300,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              )
+                              : Text(
+                                "${formatRupiah(controller.getTotalHargaFix() + controller.biayaAdmin.value - controller.promoAmount.value)}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                         ],
                       ),
                     ],
                   ),
-
                   SizedBox(height: 20),
 
                   // Tombol Bayar

@@ -185,6 +185,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                     // Jenis Kelamin
                     DropdownSearch<String>(
                       items: (String? filter, LoadProps? props) {
+                        // return key "L" / "P"
                         return controller.jenisKelaminMap.keys.toList();
                       },
                       selectedItem:
@@ -192,17 +193,17 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                               ? null
                               : controller.jenisKelamin.value,
                       itemAsString: (String kode) {
+                        // tampilkan value map (Laki-laki / Perempuan)
                         return controller.jenisKelaminMap[kode] ?? '';
                       },
                       popupProps: PopupProps.dialog(
-                        showSearchBox: false, // tanpa search box
+                        showSearchBox:
+                            false, // ga perlu search box, datanya dikit
                         fit: FlexFit.loose,
                         dialogProps: DialogProps(
-                          backgroundColor: Colors.white, // putih bersih
+                          backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              12,
-                            ), // biar cantik
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       ),
@@ -210,7 +211,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                         decoration: InputDecoration(
                           labelText: "Jenis Kelamin",
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                           isDense: true,
                         ),
@@ -224,113 +225,126 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                     // Provinsi & Kabupaten (dependent)
                     Column(
                       children: [
-                        DropdownSearch<int>(
-                          items: (String? filter, LoadProps? props) {
-                            return controller.provinceData
-                                .map<int>((data) => data['id'] as int)
-                                .toList();
-                          },
-                          selectedItem:
-                              controller.provinsiId.value == 0
-                                  ? null
-                                  : controller.provinsiId.value,
-                          itemAsString: (int id) {
-                            final prov = controller.provinceData.firstWhere(
-                              (data) => data['id'] == id,
-                              orElse: () => {'nama': ''},
-                            );
-                            return prov['nama'].toString();
-                          },
-                          popupProps: PopupProps.dialog(
-                            showSearchBox:
-                                true, // provinsi banyak, jadi butuh search
-                            fit: FlexFit.loose,
-                            dialogProps: DialogProps(
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  12,
-                                ), // biar manis
-                              ),
-                            ),
-                          ),
-                          decoratorProps: DropDownDecoratorProps(
-                            decoration: InputDecoration(
-                              labelText: "Provinsi",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5),
+                        Obx(
+                          () => DropdownSearch<int>(
+                            items: (String? filter, LoadProps? props) {
+                              return controller.provinceData
+                                  .map<int>((data) => data['id'] as int)
+                                  .toList();
+                            },
+                            selectedItem:
+                                controller.provinsiId.value == 0
+                                    ? null
+                                    : controller.provinsiId.value,
+                            itemAsString: (int id) {
+                              final prov = controller.provinceData.firstWhere(
+                                (data) => data['id'] == id,
+                                orElse: () => {'nama': ''},
+                              );
+                              return prov['nama'].toString();
+                            },
+                            popupProps: PopupProps.dialog(
+                              showSearchBox: true,
+                              searchFieldProps: TextFieldProps(
+                                cursorColor: Colors.blue,
+                                decoration: const InputDecoration(
+                                  hintText: "Cari provinsi...",
+                                  border: OutlineInputBorder(),
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 12,
+                                  ),
                                 ),
                               ),
-                              isDense: true,
+                              fit: FlexFit.loose,
+                              dialogProps: DialogProps(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
                             ),
+                            decoratorProps: DropDownDecoratorProps(
+                              decoration: InputDecoration(
+                                labelText: "Provinsi",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                isDense: true,
+                              ),
+                            ),
+                            onChanged: (value) {
+                              if (value != null) {
+                                controller.provinsiId.value = value;
+                                controller.kabupatenId.value = 0;
+                                controller.kabupatenData.clear();
+                                controller.getKabupaten(id: value);
+                              }
+                            },
                           ),
-                          onChanged: (value) {
-                            if (value != null) {
-                              controller.provinsiId.value = value;
-
-                              controller.kabupatenId.value = 0;
-                              controller.kabupatenData.clear();
-
-                              controller.getKabupaten(id: value);
-                            }
-                          },
                         ),
                         SizedBox(height: 30),
-                        DropdownSearch<int>(
-                          items: (String? filter, LoadProps? props) {
-                            return controller.kabupatenData
-                                .map<int>((data) => data['id'] as int)
-                                .toList();
-                          },
-                          selectedItem:
-                              controller.kabupatenId.value == 0
-                                  ? null
-                                  : controller.kabupatenId.value,
-                          itemAsString: (int id) {
-                            final kab = controller.kabupatenData.firstWhere(
-                              (data) => data['id'] == id,
-                              orElse: () => {'nama': ''},
-                            );
-                            return kab['nama'].toString();
-                          },
-                          popupProps: PopupProps.dialog(
-                            showSearchBox:
-                                true, // kabupaten juga banyak, jadi enable search
-                            fit: FlexFit.loose,
-                            dialogProps: DialogProps(
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                          decoratorProps: DropDownDecoratorProps(
-                            decoration: InputDecoration(
-                              labelText: "Kabupaten",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5),
+                        Obx(
+                          () => DropdownSearch<int>(
+                            items: (String? filter, LoadProps? props) {
+                              return controller.kabupatenData
+                                  .map<int>((data) => data['id'] as int)
+                                  .toList();
+                            },
+                            selectedItem:
+                                controller.kabupatenId.value == 0
+                                    ? null
+                                    : controller.kabupatenId.value,
+                            itemAsString: (int id) {
+                              final kab = controller.kabupatenData.firstWhere(
+                                (data) => data['id'] == id,
+                                orElse: () => {'nama': ''},
+                              );
+                              return kab['nama'].toString();
+                            },
+                            popupProps: PopupProps.dialog(
+                              showSearchBox: true, // aktifkan search box
+                              searchFieldProps: TextFieldProps(
+                                cursorColor: Colors.blue,
+                                decoration: const InputDecoration(
+                                  hintText: "Cari kabupaten...",
+                                  border: OutlineInputBorder(),
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 12,
+                                  ),
                                 ),
                               ),
-                              isDense: true,
+                              fit: FlexFit.loose,
+                              dialogProps: DialogProps(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
                             ),
+                            decoratorProps: DropDownDecoratorProps(
+                              decoration: InputDecoration(
+                                labelText: "Kabupaten",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                isDense: true,
+                              ),
+                            ),
+                            onChanged: (value) {
+                              controller.kabupatenId.value = value ?? 0;
+                            },
                           ),
-                          onChanged:
-                              controller.kabupatenData.isNotEmpty
-                                  ? (value) =>
-                                      controller.kabupatenId.value = value ?? 0
-                                  : null,
                         ),
                       ],
                     ),
                     SizedBox(height: 30),
-
-                    // Pendidikan
-                    // Pendidikan
-                    // Pendidikan
                     DropdownSearch<int>(
                       items: (String? filter, LoadProps? props) {
+                        // return list id pendidikan
                         return controller.pendidikanData
                             .map<int>((data) => data['id'] as int)
                             .toList();
@@ -340,6 +354,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                               ? null
                               : controller.pendidikanId.value,
                       itemAsString: (int id) {
+                        // tampilkan nama pendidikan sesuai id
                         final item = controller.pendidikanData.firstWhere(
                           (data) => data['id'] == id,
                           orElse: () => {'pendidikan': ''},
@@ -347,24 +362,19 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                         return item['pendidikan'].toString();
                       },
                       popupProps: PopupProps.dialog(
-                        showSearchBox:
-                            true, // search akan tampil di dalam dialog popup (tengah layar)
-                        fit: FlexFit.loose,
+                        showSearchBox: true, // bisa cari pendidikan
+                        searchFieldProps: TextFieldProps(
+                          decoration: InputDecoration(
+                            labelText: 'Cari Pendidikan',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                        ),
                         dialogProps: DialogProps(
                           backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        searchFieldProps: TextFieldProps(
-                          textAlign: TextAlign.center, // teks search di tengah
-                          decoration: InputDecoration(
-                            hintText: "Cari Pendidikan...",
-                            hintStyle: TextStyle(color: Colors.grey),
-                            contentPadding: EdgeInsets.symmetric(vertical: 10),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
                           ),
                         ),
                       ),
@@ -372,7 +382,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                         decoration: InputDecoration(
                           labelText: "Pendidikan",
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                           isDense: true,
                         ),
@@ -386,6 +396,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                     // Sosmed
                     DropdownSearch<int>(
                       items: (String? filter, LoadProps? props) {
+                        // return list id sosmed
                         return controller.sosmedData
                             .map<int>((data) => data['id'] as int)
                             .toList();
@@ -395,6 +406,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                               ? null
                               : controller.sosmedId.value,
                       itemAsString: (int id) {
+                        // tampilkan referensi sesuai id
                         final item = controller.sosmedData.firstWhere(
                           (data) => data['id'] == id,
                           orElse: () => {'referensi': ''},
@@ -402,14 +414,12 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                         return item['referensi'].toString();
                       },
                       popupProps: PopupProps.dialog(
-                        showSearchBox: false, // Sosmed ga usah pake search
+                        showSearchBox: false, // tetap false karena data sedikit
                         fit: FlexFit.loose,
                         dialogProps: DialogProps(
                           backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              12,
-                            ), // biar manis
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       ),
@@ -417,9 +427,13 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                         decoration: InputDecoration(
                           labelText: "Darimana Anda Mengetahui IDCPNS",
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                           isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 12,
+                          ),
                         ),
                       ),
                       onChanged: (value) {
@@ -431,6 +445,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                     // Preferensi Belajar
                     DropdownSearch<int>(
                       items: (String? filter, LoadProps? props) {
+                        // return list id preferensi belajar
                         return controller.referensiData
                             .map<int>((data) => data['id'] as int)
                             .toList();
@@ -440,6 +455,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                               ? null
                               : controller.referensiId.value,
                       itemAsString: (int id) {
+                        // tampilkan nama menu sesuai id
                         final item = controller.referensiData.firstWhere(
                           (data) => data['id'] == id,
                           orElse: () => {'menu': ''},
@@ -447,8 +463,9 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                         return item['menu'].toString();
                       },
                       popupProps: PopupProps.dialog(
-                        showSearchBox: false, // ga perlu search
-                        fit: FlexFit.loose,
+                        showSearchBox:
+                            false, // datanya sedikit, tidak perlu search
+                        fit: FlexFit.loose, // height mengikuti jumlah item
                         dialogProps: DialogProps(
                           backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
@@ -460,9 +477,13 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                         decoration: InputDecoration(
                           labelText: "Preferensi Belajar",
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                           isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 12,
+                          ),
                         ),
                       ),
                       onChanged: (value) {

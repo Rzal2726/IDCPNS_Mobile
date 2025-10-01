@@ -10,6 +10,7 @@ import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../controllers/detail_bimbel_controller.dart';
 
@@ -213,176 +214,197 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                     ),
                   ],
                 ),
-                SizedBox(height: 25),
 
                 // Jenis Paket
-                Text(
-                  'Jenis Paket',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
                 Column(
                   children: [
-                    for (int i = 0; i < data['bimbel'].length; i++)
-                      Obx(() {
-                        final subData = data['bimbel'][i];
-
-                        // filter paket yang sedang ditampilkan
-                        if (!(subData['is_showing'] ?? false)) {
-                          return SizedBox.shrink();
-                        }
-
-                        // index paket pertama yang sudah dibeli
-                        final firstPurchasedIndex = data['bimbel'].indexWhere(
-                          (e) => e['is_purchase'] == true,
-                        );
-
-                        // skip paket yang lebih murah dari paket yang sudah dibeli
-                        if (firstPurchasedIndex != -1 &&
-                            i < firstPurchasedIndex) {
-                          return SizedBox.shrink();
-                        }
-
-                        // harga yang ditampilkan dikurangi harga paket yang sudah dibeli
-                        final hargaTampil = controller.hitungHargaTampil(
-                          subData,
-                          i,
-                          data['bimbel'],
-                        );
-
-                        // disable jika paket sudah dibeli
-                        final isDisabled =
-                            (firstPurchasedIndex != -1 &&
-                                i == firstPurchasedIndex);
-                        print("xxx ${subData['uuid'].toString()}");
-                        return _buildRadioOption(
-                          subData['name'], // title
-                          formatRupiah(subData['harga']), // harga lama
-                          hargaTampil.toString(), // harga baru
-                          subData['uuid'], // value radio
-                          controller, // controller
-                          isDisabled: isDisabled, // disable jika sudah dibeli
-                        );
-                      }),
-                  ],
-                ),
-
-                SizedBox(height: 16),
-                Row(
-                  children: [
-                    // Tombol Wishlist
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed:
-                            controller.isLoadingButton.value
-                                ? null
-                                : () {
-                                  if (controller.isCheklist == true) {
-                                    controller.getDeleteWhisList();
-                                  } else {
-                                    controller.getAddWhislist();
-                                  }
-                                },
-                        style: OutlinedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.teal.shade300,
-                          side: BorderSide(
-                            color: Colors.teal.shade300,
-                            width: 1.5,
+                    if (!(data['bimbel'].any(
+                      (b) => b['is_showing'] == true,
+                    ))) ...[
+                      SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity, // Lebar penuh
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Get.toNamed(
+                              Routes.MY_BIMBEL,
+                            ); // arah ke halaman Bimbel user
+                          },
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Colors.teal.shade300,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                          child: Text(
+                            'Bimbel Saya',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
-                        child:
-                            controller.isLoadingButton.value
-                                ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      controller.isCheklist == true
-                                          ? Colors
-                                              .white // kalau tombol teal, loading putih biar keliatan
-                                          : Colors
-                                              .teal
-                                              .shade300, // kalau tombol putih, loading teal biar keliatan
-                                    ),
-                                  ),
-                                )
-                                : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      controller.isCheklist == true
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color:
-                                          controller.isCheklist == true
-                                              ? Colors.teal
-                                              : Colors.teal.shade300,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      controller.isCheklist == true
-                                          ? 'Hapus Wishlist'
-                                          : 'Tambah Wishlist',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.teal.shade300,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
+                      ),
+                    ] else ...[
+                      SizedBox(height: 25),
+                      Text(
+                        'Jenis Paket',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          for (int i = 0; i < data['bimbel'].length; i++)
+                            Obx(() {
+                              var subData = data['bimbel'][i];
+
+                              // skip paket yang tidak sedang ditampilkan
+                              if (!(subData['is_showing'] ?? false))
+                                return SizedBox.shrink();
+
+                              // skip paket yang sudah dibeli
+                              if (subData['is_purchase'] == true)
+                                return SizedBox.shrink();
+
+                              // hitung harga tampil
+                              var hargaTampil = controller.hitungHargaTampil(
+                                subData,
+                                i,
+                                data['bimbel'],
+                              );
+
+                              return _buildRadioOption(
+                                subData['name'], // title
+                                formatRupiah(subData['harga']), // harga lama
+                                hargaTampil.toString(), // harga baru
+                                subData['uuid'], // value radio
+                                controller, // controller
+                                isDisabled:
+                                    false, // karena sudah disaring yang dibeli
+                              );
+                            }),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+                      Row(
+                        children: [
+                          // Tombol Wishlist
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed:
+                                  controller.isLoadingButton.value
+                                      ? null
+                                      : () {
+                                        if (controller.isCheklist == true) {
+                                          controller.getDeleteWhisList();
+                                        } else {
+                                          controller.getAddWhislist();
+                                        }
+                                      },
+                              style: OutlinedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.teal.shade300,
+                                side: BorderSide(
+                                  color: Colors.teal.shade300,
+                                  width: 1.5,
                                 ),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-
-                    // Tombol Daftar
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (controller.selectedPaket.value == "") {
-                            notifHelper.show(
-                              "Silakan pilih paket terlebih dahulu.",
-                              type: 0,
-                            );
-                            return;
-                          }
-                          print(
-                            "Xxxb ${controller.selectedPaket.toString()} dan ${controller.hargaFix.toString()}",
-                          );
-                          Get.offNamed(
-                            Routes.PAYMENT_DETAIL,
-                            arguments: [
-                              controller.selectedPaket.value,
-                              controller.hargaFix.value,
-                            ],
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.teal.shade300,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child:
+                                  controller.isLoadingButton.value
+                                      ? SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                controller.isCheklist == true
+                                                    ? Colors.white
+                                                    : Colors.teal.shade300,
+                                              ),
+                                        ),
+                                      )
+                                      : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            controller.isCheklist == true
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color:
+                                                controller.isCheklist == true
+                                                    ? Colors.teal
+                                                    : Colors.teal.shade300,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            controller.isCheklist == true
+                                                ? 'Hapus Wishlist'
+                                                : 'Tambah Wishlist',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.teal.shade300,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          'Daftar',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                          SizedBox(width: 8),
+                          // Tombol Daftar
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (controller.selectedPaket.value == "") {
+                                  notifHelper.show(
+                                    "Silakan pilih paket terlebih dahulu.",
+                                    type: 0,
+                                  );
+                                  return;
+                                }
+                                Get.offNamed(
+                                  Routes.PAYMENT_DETAIL,
+                                  arguments: [
+                                    controller.selectedPaket.value,
+                                    controller.hargaFix.value,
+                                  ],
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Colors.teal.shade300,
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                'Daftar',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ),
+                    ],
                   ],
                 ),
                 SizedBox(height: 16),

@@ -405,6 +405,41 @@ class MyAccountView extends GetView<MyAccountController> {
                                           );
                                       return prov['nama'].toString();
                                     },
+                                    popupProps: PopupProps.dialog(
+                                      showSearchBox: true,
+                                      searchFieldProps: TextFieldProps(
+                                        cursorColor: Colors.blue,
+                                        decoration: const InputDecoration(
+                                          hintText: "Cari provinsi...",
+                                          border: OutlineInputBorder(),
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 12,
+                                          ),
+                                        ),
+                                      ),
+                                      fit: FlexFit.loose,
+                                      dialogProps: DialogProps(
+                                        backgroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    decoratorProps: DropDownDecoratorProps(
+                                      decoration: InputDecoration(
+                                        labelText: "Provinsi",
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                        ),
+                                        isDense: true,
+                                      ),
+                                    ),
                                     onChanged: (value) {
                                       if (value != null) {
                                         controller.provinsiId.value = value;
@@ -435,6 +470,42 @@ class MyAccountView extends GetView<MyAccountController> {
                                           );
                                       return kab['nama'].toString();
                                     },
+                                    popupProps: PopupProps.dialog(
+                                      showSearchBox:
+                                          true, // aktifkan search box
+                                      searchFieldProps: TextFieldProps(
+                                        cursorColor: Colors.blue,
+                                        decoration: const InputDecoration(
+                                          hintText: "Cari kabupaten...",
+                                          border: OutlineInputBorder(),
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 12,
+                                          ),
+                                        ),
+                                      ),
+                                      fit: FlexFit.loose,
+                                      dialogProps: DialogProps(
+                                        backgroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    decoratorProps: DropDownDecoratorProps(
+                                      decoration: InputDecoration(
+                                        labelText: "Kabupaten",
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                        ),
+                                        isDense: true,
+                                      ),
+                                    ),
                                     onChanged: (value) {
                                       controller.kabupatenId.value = value ?? 0;
                                     },
@@ -514,23 +585,29 @@ class MyAccountView extends GetView<MyAccountController> {
                                   );
                                   return item['referensi'].toString();
                                 },
-                                popupProps: const PopupProps.menu(
+                                popupProps: PopupProps.dialog(
                                   showSearchBox:
-                                      false, // ga perlu search kalau datanya pendek
-                                  fit:
-                                      FlexFit
-                                          .loose, // biar height auto sesuai jumlah item
+                                      false, // tetap false karena data sedikit
+                                  fit: FlexFit.loose,
+                                  dialogProps: DialogProps(
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
                                 ),
                                 decoratorProps: DropDownDecoratorProps(
                                   decoration: InputDecoration(
                                     labelText:
                                         "Darimana Anda Mengetahui IDCPNS",
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(5),
-                                      ),
+                                      borderRadius: BorderRadius.circular(5),
                                     ),
                                     isDense: true,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 12,
+                                    ),
                                   ),
                                 ),
                                 onChanged: (value) {
@@ -561,22 +638,30 @@ class MyAccountView extends GetView<MyAccountController> {
                                       );
                                   return item['menu'].toString();
                                 },
-                                popupProps: const PopupProps.menu(
+                                popupProps: PopupProps.dialog(
                                   showSearchBox:
-                                      false, // datanya sedikit, ga perlu search
+                                      false, // datanya sedikit, tidak perlu search
                                   fit:
                                       FlexFit
-                                          .loose, // biar tinggi dropdown ngikut jumlah item
+                                          .loose, // height mengikuti jumlah item
+                                  dialogProps: DialogProps(
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
                                 ),
                                 decoratorProps: DropDownDecoratorProps(
                                   decoration: InputDecoration(
                                     labelText: "Preferensi Belajar",
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(5),
-                                      ),
+                                      borderRadius: BorderRadius.circular(5),
                                     ),
                                     isDense: true,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 12,
+                                    ),
                                   ),
                                 ),
                                 onChanged: (value) {

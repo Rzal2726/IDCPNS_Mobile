@@ -51,7 +51,6 @@ class BimbelView extends GetView<BimbelController> {
                   Get.toNamed(Routes.MY_BIMBEL);
                 },
                 child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
                     color: Colors.teal.shade50,
@@ -94,7 +93,7 @@ class BimbelView extends GetView<BimbelController> {
                 ),
               ),
 
-              SizedBox(height: 50),
+              SizedBox(height: 20),
 
               // Header Paket Bimbel
               Text('Paket Bimbel', style: AppStyle.style17Bold),
@@ -118,7 +117,7 @@ class BimbelView extends GetView<BimbelController> {
                 hintText: 'Apa yang ingin Anda cari?',
               ),
 
-              SizedBox(height: 50),
+              SizedBox(height: 20),
 
               // Filter (right)
               Align(
@@ -137,7 +136,7 @@ class BimbelView extends GetView<BimbelController> {
                 ),
               ),
 
-              SizedBox(height: 30),
+              SizedBox(height: 20),
 
               // List paket (mirip style gambar)
               Obx(() {
@@ -150,10 +149,7 @@ class BimbelView extends GetView<BimbelController> {
                     itemBuilder: (context, index) {
                       final paket = controller.bimbelData[index];
                       return Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 8.0,
-                          horizontal: 16.0,
-                        ),
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
                         child: _cardPaketBimbel(
                           image: paket['gambar'] ?? '',
                           title: paket['name'] ?? '',

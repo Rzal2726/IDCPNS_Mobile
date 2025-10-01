@@ -34,6 +34,9 @@ class PaymentDetailController extends GetxController {
   RxInt biayaAdmin = 0.obs;
   RxInt parentId = 0.obs;
   RxBool isLoading = false.obs;
+  RxBool isLoadingHarga =
+      false.obs; // default true kalau mau skeleton muncul awal
+
   // untuk state radio pilihan (sub bimbel)
 
   @override
@@ -103,7 +106,7 @@ class PaymentDetailController extends GetxController {
     // cek status dulu, kalau success lanjut
     if (result["status"] == "success") {
       bimbelData.value = result["data"];
-      parentId.value = result['data']['bimbel_parent_id'];
+      parentId.value = result['data']['id'];
       baseHarga.value = hargaFix;
       final parent = result["data"]['bimbel_parent'];
       if (parent != null) {
@@ -155,7 +158,9 @@ class PaymentDetailController extends GetxController {
   }
 
   Future<void> getApplyCode() async {
-    final url = await baseUrl + apiApplyWishListVoucherCode;
+    isLoadingHarga.value = true; // mulai loading
+
+    final url = baseUrl + apiApplyWishListVoucherCode;
     var payload = {
       "kode_promo": promoController.text,
       "amount": getTotalHargaFix(),
@@ -165,6 +170,7 @@ class PaymentDetailController extends GetxController {
 
     if (result == null) {
       notifHelper.show("Terjadi kesalahan jaringan", type: 0);
+      isLoadingHarga.value = false;
       return;
     }
 
@@ -176,6 +182,8 @@ class PaymentDetailController extends GetxController {
       promoController.clear();
       notifHelper.show(result["message"] ?? "Terjadi kesalahan", type: 0);
     }
+
+    isLoadingHarga.value = false; // selesai loading
   }
 
   int calculateBiayaAdmin(String biayaAdminRaw) {
@@ -185,26 +193,27 @@ class PaymentDetailController extends GetxController {
         .fold(0, (total, harga) => total + harga);
 
     final totalSebelumPromo = baseHarga.value + totalPaket;
-
-    int adminNominal = 0;
-
-    // Hitung biaya admin dulu
+    double adminNominal = 0;
+    print(
+      "xxxcc ${totalSebelumPromo.toString()} dam ${biayaAdminRaw.toString()}",
+    );
+    // Hitung biaya admin
     if (biayaAdminRaw.endsWith('%')) {
       final persen =
           double.tryParse(biayaAdminRaw.replaceAll('%', '').trim()) ?? 0.0;
-      adminNominal = (totalSebelumPromo * persen / 100).round();
+      adminNominal = totalSebelumPromo * persen / 100;
     } else {
-      adminNominal = int.tryParse(biayaAdminRaw) ?? 0;
+      adminNominal = double.tryParse(biayaAdminRaw) ?? 0.0;
     }
-
+    print("xxcx ${adminNominal.toString()}");
     // Ambil PPN dari local storage
     final ppnPercent = double.tryParse(box.read("ppn") ?? "0") ?? 0.0;
-
+    print("xxc ${ppnPercent.toString()}");
     // Total biaya admin termasuk PPN
-    final adminDenganPpn = (adminNominal * (1 + ppnPercent / 100)).round();
-
-    // Return nilainya
-    return adminDenganPpn;
+    final totalAdmin = adminNominal * (1 + ppnPercent / 100);
+    print("vddf ${totalAdmin.toString()}");
+    // Return dibulatkan ke bawah
+    return totalAdmin.floor();
   }
 
   void updateBiayaAdmin(String biayaAdminRaw) {
@@ -215,25 +224,25 @@ class PaymentDetailController extends GetxController {
 
     final totalSebelumPromo = baseHarga.value + totalPaket;
 
-    int adminNominal = 0;
+    double adminNominal = 0;
 
     // Hitung biaya admin dulu
     if (biayaAdminRaw.endsWith('%')) {
       final persen =
           double.tryParse(biayaAdminRaw.replaceAll('%', '').trim()) ?? 0.0;
-      adminNominal = (totalSebelumPromo * persen / 100).round();
+      adminNominal = totalSebelumPromo * persen / 100;
     } else {
-      adminNominal = int.tryParse(biayaAdminRaw) ?? 0;
+      adminNominal = double.tryParse(biayaAdminRaw) ?? 0.0;
     }
 
     // Ambil PPN dari local storage
     final ppnPercent = double.tryParse(box.read("ppn") ?? "0") ?? 0.0;
 
     // Total biaya admin termasuk PPN
-    final adminDenganPpn = (adminNominal * (1 + ppnPercent / 100)).round();
+    final adminDenganPpn = adminNominal * (1 + ppnPercent / 100);
 
-    // Masukkan ke RxInt
-    biayaAdmin.value = adminDenganPpn;
+    // Masukkan ke RxInt dengan floor
+    biayaAdmin.value = adminDenganPpn.floor();
   }
 
   void clearPaymentSelection() {

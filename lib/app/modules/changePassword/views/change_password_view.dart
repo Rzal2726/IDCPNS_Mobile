@@ -43,7 +43,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Ubah password",
+                        "Ubah kata sandi",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,

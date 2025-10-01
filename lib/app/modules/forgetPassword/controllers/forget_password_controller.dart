@@ -91,7 +91,7 @@ void showEmailSentBottomSheet(BuildContext context) {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "Silakan periksa kotak masuk Anda untuk email permintaan reset password.",
+                    "Silakan periksa kotak masuk Anda untuk email permintaan reset kata sandi.",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                   ),

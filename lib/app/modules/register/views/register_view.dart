@@ -80,7 +80,7 @@ class RegisterView extends GetView<RegisterController> {
                 // Password
                 RichText(
                   text: TextSpan(
-                    text: "Password ",
+                    text: "Kata sandi ",
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
@@ -117,7 +117,7 @@ class RegisterView extends GetView<RegisterController> {
                 // Konfirmasi Password
                 RichText(
                   text: TextSpan(
-                    text: "Konfirmasi Password ",
+                    text: "Konfirmasi Kata sandi ",
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
@@ -135,7 +135,7 @@ class RegisterView extends GetView<RegisterController> {
                     obscureText: !controller.isConfirmPasswordVisible.value,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     decoration: _inputDecoration(
-                      "Masukkan konfirmasi password",
+                      "Masukkan konfirmasi kata sandi",
                     ).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(

@@ -1176,7 +1176,7 @@ Widget _buildHelpContainer({
 }) {
   return Expanded(
     child: SizedBox(
-      height: 155, // tinggi tetap
+      height: 180, // tinggi tetap
       child: Container(
         padding: const EdgeInsets.fromLTRB(
           16,
@@ -1206,7 +1206,7 @@ Widget _buildHelpContainer({
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
@@ -1216,18 +1216,18 @@ Widget _buildHelpContainer({
                 ),
                 Text(
                   description,
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
                   overflow: TextOverflow.fade,
                   maxLines: 4,
                   softWrap: true,
                 ),
-                Divider(color: Colors.grey[400], height: 1),
               ],
             ),
+            SizedBox(height: 10),
+            Divider(color: Colors.grey[400], height: 1),
+            SizedBox(height: 10), //
             Padding(
-              padding: const EdgeInsets.only(
-                bottom: 4,
-              ), // 🔥 kasih jarak 4px sebelum border bawah
+              padding: const EdgeInsets.only(bottom: 4), // jarak bawah tipis
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

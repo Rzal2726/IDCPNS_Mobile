@@ -37,7 +37,7 @@ class LoginController extends GetxController {
     }
 
     if (password.isEmpty) {
-      notifHelper.show("Password tidak boleh kosong!", type: 0);
+      notifHelper.show("Kata sandi tidak boleh kosong!", type: 0);
       return;
     }
 
@@ -91,7 +91,15 @@ class LoginController extends GetxController {
         Get.toNamed(Routes.EMAIL_VERIFICATION);
       }
     } else {
-      String errorMessage = result['message'] ?? "Email atau Password invalid.";
+      String errorMessage =
+          result['message'] ?? "Email atau kata sandi invalid.";
+
+      if (result['messages'] != null && result['messages'] is Map) {
+        final messages = result['messages'] as Map;
+
+        errorMessage = messages.values.expand((e) => e).join("\n");
+      }
+
       notifHelper.show(errorMessage, type: 0);
     }
 

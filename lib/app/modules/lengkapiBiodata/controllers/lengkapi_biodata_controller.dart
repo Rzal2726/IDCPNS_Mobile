@@ -8,6 +8,7 @@ import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:file_selector/file_selector.dart';
 
@@ -75,7 +76,25 @@ class LengkapiBiodataController extends GetxController {
     );
 
     if (file != null) {
-      newProfile.value = file.path; // ganti fotoProfile di tampilan sementara
+      // buka cropper setelah file dipilih
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: file.path,
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1), // kotak
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Edit Foto',
+            toolbarColor: Colors.teal,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true, // biar fix kotak
+          ),
+          IOSUiSettings(title: 'Edit Foto', aspectRatioLockEnabled: true),
+        ],
+      );
+
+      if (croppedFile != null) {
+        newProfile.value = croppedFile.path; // simpan hasil crop
+      }
     }
   }
 

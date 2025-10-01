@@ -33,6 +33,7 @@ class PaymentWhislistController extends GetxController {
   RxMap<int, String> selectedSub = <int, String>{}.obs;
   RxBool isLoading = true.obs;
   RxBool isLoadingButton = false.obs;
+  RxBool isLoadingHarga = false.obs;
   @override
   void onInit() {
     super.onInit();
@@ -156,8 +157,9 @@ class PaymentWhislistController extends GetxController {
   }
 
   Future<void> getApplyCode() async {
-    final url = await baseUrl + apiApplyWishListVoucherCode;
-    print("xxccv ${getTotalHargaFix()}");
+    isLoadingHarga.value = true; // mulai loading
+
+    final url = baseUrl + apiApplyWishListVoucherCode;
     var payload = {
       "kode_promo": promoController.text,
       "amount": getTotalHargaFix(),
@@ -167,20 +169,20 @@ class PaymentWhislistController extends GetxController {
 
     if (result == null) {
       notifHelper.show("Terjadi kesalahan jaringan", type: 0);
+      isLoadingHarga.value = false;
       return;
     }
 
     if (result["status"] == "success") {
-      // jika sukses
       kodePromo.value = promoController.text;
       promoAmount.value = result['data']['nominal'];
       promoCodeName.value = result['data']['voucher_code'];
     } else {
       promoController.clear();
-      kodePromo.value = '';
-      promoAmount.value = 0;
-      notifHelper.show((result["message"] ?? "Terjadi kesalahan"), type: 0);
+      notifHelper.show(result["message"] ?? "Terjadi kesalahan", type: 0);
     }
+
+    isLoadingHarga.value = false; // selesai loading
   }
 
   void clearPaymentSelection() {
@@ -201,26 +203,27 @@ class PaymentWhislistController extends GetxController {
         .fold(0, (total, harga) => total + harga);
 
     final totalSebelumPromo = baseHarga.value + totalPaket;
-
-    int adminNominal = 0;
-
-    // Hitung biaya admin dulu
+    double adminNominal = 0;
+    print(
+      "xxxcc ${totalSebelumPromo.toString()} dam ${biayaAdminRaw.toString()}",
+    );
+    // Hitung biaya admin
     if (biayaAdminRaw.endsWith('%')) {
       final persen =
           double.tryParse(biayaAdminRaw.replaceAll('%', '').trim()) ?? 0.0;
-      adminNominal = (totalSebelumPromo * persen / 100).round();
+      adminNominal = totalSebelumPromo * persen / 100;
     } else {
-      adminNominal = int.tryParse(biayaAdminRaw) ?? 0;
+      adminNominal = double.tryParse(biayaAdminRaw) ?? 0.0;
     }
-
+    print("xxcx ${adminNominal.toString()}");
     // Ambil PPN dari local storage
     final ppnPercent = double.tryParse(box.read("ppn") ?? "0") ?? 0.0;
-
+    print("xxc ${ppnPercent.toString()}");
     // Total biaya admin termasuk PPN
-    final adminDenganPpn = (adminNominal * (1 + ppnPercent / 100)).round();
-
-    // Return nilainya
-    return adminDenganPpn;
+    final totalAdmin = adminNominal * (1 + ppnPercent / 100);
+    print("vddf ${totalAdmin.toString()}");
+    // Return dibulatkan ke bawah
+    return totalAdmin.floor();
   }
 
   void updateBiayaAdmin(String biayaAdminRaw) {
@@ -231,25 +234,25 @@ class PaymentWhislistController extends GetxController {
 
     final totalSebelumPromo = baseHarga.value + totalPaket;
 
-    int adminNominal = 0;
+    double adminNominal = 0;
 
     // Hitung biaya admin dulu
     if (biayaAdminRaw.endsWith('%')) {
       final persen =
           double.tryParse(biayaAdminRaw.replaceAll('%', '').trim()) ?? 0.0;
-      adminNominal = (totalSebelumPromo * persen / 100).round();
+      adminNominal = totalSebelumPromo * persen / 100;
     } else {
-      adminNominal = int.tryParse(biayaAdminRaw) ?? 0;
+      adminNominal = double.tryParse(biayaAdminRaw) ?? 0.0;
     }
 
     // Ambil PPN dari local storage
     final ppnPercent = double.tryParse(box.read("ppn") ?? "0") ?? 0.0;
 
     // Total biaya admin termasuk PPN
-    final adminDenganPpn = (adminNominal * (1 + ppnPercent / 100)).round();
+    final adminDenganPpn = adminNominal * (1 + ppnPercent / 100);
 
-    // Masukkan ke RxInt
-    biayaAdmin.value = adminDenganPpn;
+    // Masukkan ke RxInt dengan floor
+    biayaAdmin.value = adminDenganPpn.floor();
   }
 
   int getTotalHargaFix() {
@@ -300,7 +303,10 @@ class PaymentWhislistController extends GetxController {
       final data = result['data'];
 
       // Pindah halaman dulu
-      Get.offNamed(Routes.PAYMENT_CHECKOUT, arguments: data['payment_id']);
+      Get.offNamed(
+        Routes.PAYMENT_CHECKOUT,
+        arguments: [data['payment_id'], data['tanggal_kadaluarsa']],
+      );
 
       // Cek apakah ada invoice_url
       if (data.containsKey('invoice_url') && data['invoice_url'] != null) {

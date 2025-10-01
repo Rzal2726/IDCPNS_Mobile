@@ -22,7 +22,7 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
       canPop: false,
       onPopInvoked: (didPop) {
         if (!didPop) {
-          Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
+          Get.back();
         }
       },
       child: Scaffold(
@@ -43,7 +43,7 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
             child: basicAppBarWithoutNotif(
               "Checkout pembayaran",
               onBack: () {
-                Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
+                Get.back();
               },
             ),
           ),
@@ -598,9 +598,9 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
 }
 
 Widget buildCountdown(int seconds) {
-  final controller = Get.put(PaymentCheckoutController());
+  // final controller = Get.put(PaymentCheckoutController());
   int countdownSeconds = seconds; // default fallback
-  var expired = controller.expired;
+  var expired = Get.arguments[1];
   if (expired != null) {
     try {
       final expireDate = DateTime.parse(expired);

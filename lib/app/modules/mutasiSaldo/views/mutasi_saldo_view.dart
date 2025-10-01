@@ -54,70 +54,118 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
 
                     SizedBox(height: 30),
 
-                    // 📋 Isi konten → judul ikut sembunyi kalau kosong
-                    if (data != null && data.isNotEmpty) ...[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Mutasi Saldo",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                    // 📋 Konten → skeleton / data / empty
+                    FutureBuilder(
+                      future: Future.delayed(Duration(seconds: 5)),
+                      builder: (context, snapshot) {
+                        // ⏳ Skeleton loading selama 5 detik
+                        if (snapshot.connectionState != ConnectionState.done) {
+                          return Column(
+                            children: List.generate(
+                              3,
+                              (index) => Container(
+                                margin: EdgeInsets.only(bottom: 16),
+                                padding: EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade300,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: double.infinity, // ✅ full width
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      height: 16,
+                                      width: double.infinity, // ✅ full width
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      height: 14,
+                                      width: double.infinity, // ✅ full width
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 10),
+                          );
+                        }
 
-                          Column(
+                        // ✅ Data tersedia
+                        if (data != null && data.isNotEmpty) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              for (var i = 0; i < data.length; i++)
-                                buildbalanceTransfer(
-                                  number: i + 1,
-                                  date: data[i]['tanggal'] ?? '',
-                                  price:
-                                      formatRupiah(data[i]['nominal']) ?? 'Rp0',
-                                  status: _getStatus(data[i]['status']),
-                                  statusColor: _getStatusColor(
-                                    data[i]['status'],
+                              SizedBox(height: 10),
+
+                              Column(
+                                children: List.generate(
+                                  data.length,
+                                  (i) => buildbalanceTransfer(
+                                    number: i + 1,
+                                    date: data[i]['tanggal'] ?? '',
+                                    price:
+                                        formatRupiah(data[i]['nominal']) ??
+                                        'Rp0',
+                                    status: _getStatus(data[i]['status']),
+                                    statusColor: _getStatusColor(
+                                      data[i]['status'],
+                                    ),
                                   ),
                                 ),
-                            ],
-                          ),
-
-                          SizedBox(height: 20),
-
-                          ReusablePagination(
-                            nextPage: controller.nextPage,
-                            prevPage: controller.prevPage,
-                            currentPage: controller.currentPage,
-                            totalPage: controller.totalPage,
-                            goToPage: controller.goToPage,
-                          ),
-                        ],
-                      ),
-                    ] else
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                "assets/emptyArchiveIcon.svg",
-                                height: 150,
                               ),
-                              SizedBox(height: 8),
-                              Text(
-                                "Tidak ada transaksi",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 15,
+
+                              SizedBox(height: 20),
+
+                              ReusablePagination(
+                                nextPage: controller.nextPage,
+                                prevPage: controller.prevPage,
+                                currentPage: controller.currentPage,
+                                totalPage: controller.totalPage,
+                                goToPage: controller.goToPage,
+                              ),
+                            ],
+                          );
+                        }
+
+                        // ❌ Data kosong → tampilkan empty state
+                        return Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/emptyArchiveIcon.svg",
+                                  height: 150,
                                 ),
-                              ),
-                            ],
+                                SizedBox(height: 8),
+                                Text(
+                                  "Tidak ada transaksi",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),

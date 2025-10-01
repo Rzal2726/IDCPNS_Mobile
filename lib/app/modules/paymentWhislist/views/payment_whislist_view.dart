@@ -235,6 +235,9 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                         .biayaAdminRaw
                                                         .value,
                                                   );
+                                                  print(
+                                                    "ccc ${controller.promoAmount.value}",
+                                                  );
                                                 },
                                               ),
                                               Expanded(
@@ -436,63 +439,85 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                 style: TextStyle(fontSize: 14),
                               ),
                             ),
-                            Text(
-                              "${formatRupiah(controller.getTotalHargaFix())}",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            controller.isLoadingHarga.value
+                                ? Container(
+                                  width: 60,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                )
+                                : Text(
+                                  "${formatRupiah(controller.getTotalHargaFix())}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                            SizedBox(height: 6),
                           ],
                         ),
-                        SizedBox(height: 6),
+
                         if (controller.biayaAdmin.value != 0)
-                          Column(
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      "Biaya admin",
-                                      style: TextStyle(fontSize: 14),
+                              Expanded(
+                                child: Text(
+                                  "Biaya admin",
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ),
+                              controller.isLoadingHarga.value
+                                  ? Container(
+                                    width: 60,
+                                    height: 16,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade300,
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
-                                  ),
-                                  Text(
+                                  )
+                                  : Text(
                                     "${formatRupiah(controller.biayaAdmin.value)}",
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ],
-                              ),
                               SizedBox(height: 6),
                             ],
                           ),
-                        if (controller.promoAmount != 0)
-                          Column(
+
+                        if (controller.promoAmount.value != 0)
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      "Diskon",
-                                      style: TextStyle(fontSize: 14),
+                              Expanded(
+                                child: Text(
+                                  "Diskon",
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ),
+                              controller.isLoadingHarga.value
+                                  ? Container(
+                                    width: 60,
+                                    height: 16,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade300,
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
-                                  ),
-                                  Text(
+                                  )
+                                  : Text(
                                     "${formatRupiah(controller.promoAmount.value)}",
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ],
-                              ),
                               SizedBox(height: 6),
                             ],
                           ),
 
+                        // Total Harga
                         Row(
                           children: [
                             Expanded(
@@ -501,13 +526,22 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                 style: TextStyle(fontSize: 14),
                               ),
                             ),
-                            Text(
-                              "${formatRupiah((controller.getTotalHargaFix() + controller.biayaAdmin.value - controller.promoAmount.value))}",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            controller.isLoadingHarga.value
+                                ? Container(
+                                  width: 60,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                )
+                                : Text(
+                                  "${formatRupiah(controller.getTotalHargaFix() + controller.biayaAdmin.value - controller.promoAmount.value)}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                           ],
                         ),
                       ],

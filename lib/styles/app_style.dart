@@ -7,7 +7,7 @@ class AppStyle {
   );
   static const EdgeInsets sreenPaddingHome = EdgeInsets.symmetric(
     horizontal: 16,
-    vertical: 40,
+    vertical: 20,
   );
   static const EdgeInsets contentPadding = EdgeInsets.all(12);
 

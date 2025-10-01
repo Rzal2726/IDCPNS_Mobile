@@ -1,3 +1,4 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -100,37 +101,54 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                         SizedBox(height: 16),
                         Text('Rekening', style: TextStyle(color: Colors.black)),
                         SizedBox(height: 5),
-                        DropdownButtonFormField<int>(
-                          value:
+                        DropdownSearch<int>(
+                          items: (String? filter, LoadProps? props) {
+                            // return list of id dari bankList
+                            return controller.bankList
+                                .map<int>((item) => item['id'] as int)
+                                .toList();
+                          },
+                          selectedItem:
                               controller.rekeningId.value == 0
                                   ? null
                                   : controller.rekeningId.value,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                            ),
-                            hintText: 'Pilih Rekening',
-                          ),
-                          items:
-                              controller.bankList
-                                  .map(
-                                    (item) => DropdownMenuItem<int>(
-                                      value: item['id'], // pake id biar unik
-                                      child: Text(
-                                        "${item['bank_name']} - ${item['no_rekening']}",
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                          onChanged: (value) {
+                          itemAsString: (int id) {
                             final selected = controller.bankList.firstWhere(
-                              (item) => item['id'] == value,
+                              (item) => item['id'] == id,
+                              orElse: () => {},
                             );
-                            controller.rekeningId.value = selected['id'];
-                            controller.rekeningNum.value =
-                                selected['no_rekening'];
+                            return selected.isNotEmpty
+                                ? "${selected['bank_name']} - ${selected['no_rekening']}"
+                                : '';
+                          },
+                          popupProps: PopupProps.dialog(
+                            fit: FlexFit.loose,
+                            dialogProps: DialogProps(
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                          decoratorProps: DropDownDecoratorProps(
+                            decoration: InputDecoration(
+                              labelText: "Rekening",
+                              hintText: "Pilih Rekening",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              isDense: true,
+                            ),
+                          ),
+                          onChanged: (value) {
+                            if (value != null) {
+                              final selected = controller.bankList.firstWhere(
+                                (item) => item['id'] == value,
+                              );
+                              controller.rekeningId.value = selected['id'];
+                              controller.rekeningNum.value =
+                                  selected['no_rekening'];
+                            }
                           },
                         ),
 

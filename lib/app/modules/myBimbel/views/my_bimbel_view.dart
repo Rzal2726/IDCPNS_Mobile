@@ -35,7 +35,7 @@ class MyBimbelView extends GetView<MyBimbelController> {
             final data = (controller.listBimbel['data'] as List?) ?? [];
 
             return Padding(
-              padding: AppStyle.screenPadding,
+              padding: AppStyle.sreenPaddingHome,
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
