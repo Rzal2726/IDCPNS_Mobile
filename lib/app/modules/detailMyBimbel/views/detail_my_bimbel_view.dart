@@ -66,7 +66,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20,
                                     ),
-                                    maxLines: 1,
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -430,17 +430,9 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                 ),
                                 recognizer:
                                     TapGestureRecognizer()
-                                      ..onTap = () {
-                                        (Get.find<HomeController>())
-                                            .changeBottomBar(3);
-                                        (Get.find<HomeController>())
-                                            .currentIndex
-                                            .value = 3;
-                                        Get.offNamed(
-                                          Routes.HOME,
-                                          arguments: {'initialIndex': 3},
-                                        );
-                                      },
+                                      ..onTap =
+                                          () =>
+                                              Get.toNamed(Routes.PLATINUM_ZONE),
                               ),
                             ],
                           ),

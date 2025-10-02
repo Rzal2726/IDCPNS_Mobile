@@ -464,8 +464,8 @@ class NotificationView extends GetView<NotificationController> {
 
         // Dropdown filter
         Flexible(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 100),
+          child: UnconstrainedBox(
+            alignment: Alignment.centerLeft,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
               decoration: BoxDecoration(
@@ -474,7 +474,7 @@ class NotificationView extends GetView<NotificationController> {
               ),
               child: Obx(() {
                 return DropdownButton<String>(
-                  isExpanded: true,
+                  // isExpanded: true,
                   value: controller.selectedFilter.value,
                   underline: SizedBox(),
                   items: [

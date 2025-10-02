@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 
 import 'package:get/get.dart';
@@ -16,11 +17,9 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text("Rincian Pembayaran", style: AppStyle.appBarTitle),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60),
+        child: secondaryAppBar("Rincian Pembayaran"),
       ),
       body: SafeArea(
         child: Obx(() {
@@ -43,14 +42,14 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Judul
-                  Text("Checkout Paket Bimbel", style: AppStyle.styleW900),
+                  Text("Checkout Paket Bimbel", style: AppStyle.style17Bold),
                   SizedBox(height: 16),
                   // Bimbel Section
                   controller.bimbelData.isNotEmpty
                       ? Text(
                         controller.bimbelData['bimbel_parent']['name'],
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       )
@@ -59,7 +58,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                         child: Text(
                           "Judul Bimbel",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -83,140 +82,132 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                       }),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 16),
                   Text(
                     "Bimbel Lainnya",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
 
                   Column(
                     children: [
                       for (var data in controller.otherBimbelData)
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.0),
-                          child: Container(
-                            padding: EdgeInsets.all(12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Header row (title + X)
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      data['name'] ?? '',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      softWrap: true,
-                                      overflow: TextOverflow.visible,
-                                      maxLines: 2,
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Header row (title + X)
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    data['name'] ?? '',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    Obx(() {
-                                      final isSelected = controller
-                                          .selectedPaketPerCard
-                                          .containsKey(data['id']);
-                                      return Visibility(
-                                        visible: isSelected,
-                                        maintainSize: true,
-                                        maintainAnimation: true,
-                                        maintainState: true,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            // hapus paket dari selected
-                                            controller.selectedPaketPerCard
-                                                .remove(data['id']);
+                                    softWrap: true,
+                                    overflow: TextOverflow.visible,
+                                    maxLines: 2,
+                                  ),
+                                  Obx(() {
+                                    final isSelected = controller
+                                        .selectedPaketPerCard
+                                        .containsKey(data['id']);
+                                    return Visibility(
+                                      visible: isSelected,
+                                      maintainSize: true,
+                                      maintainAnimation: true,
+                                      maintainState: true,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          // hapus paket dari selected
+                                          controller.selectedPaketPerCard
+                                              .remove(data['id']);
 
-                                            // langsung hapus promo code dan reset amountPromo
-                                            if (controller
-                                                    .promoController
-                                                    .text !=
-                                                "") {
-                                              controller.getApplyCode();
-                                            }
-                                            controller.updateBiayaAdmin(
-                                              controller.biayaAdminRaw.value,
-                                            );
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(4),
-                                            child: Icon(
-                                              Icons.cancel,
-                                              size: 20,
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  ],
-                                ),
-
-                                SizedBox(height: 8),
-
-                                Column(
-                                  children: [
-                                    for (
-                                      var i = 0;
-                                      i < data['bimbel_list'].length;
-                                      i++
-                                    )
-                                      Builder(
-                                        builder: (_) {
-                                          final subData =
-                                              data['bimbel_list'][i];
-
-                                          // index paket pertama yang sudah dibeli
-                                          final firstPurchasedIndex =
-                                              data['bimbel_list'].indexWhere(
-                                                (e) => e['is_purchase'] == true,
-                                              );
-
-                                          // skip paket yang lebih murah dari paket pertama yang sudah dibeli
-                                          if (firstPurchasedIndex != -1 &&
-                                              i < firstPurchasedIndex) {
-                                            return SizedBox.shrink();
+                                          // langsung hapus promo code dan reset amountPromo
+                                          if (controller.promoController.text !=
+                                              "") {
+                                            controller.getApplyCode();
                                           }
-
-                                          // skip paket yang sudah dibeli
-                                          if (subData['is_purchase'] == true) {
-                                            return SizedBox.shrink();
-                                          }
-
-                                          // hitung harga tampil
-                                          final hargaTampil =
-                                              (firstPurchasedIndex != -1)
-                                                  ? subData['harga_fix'] -
-                                                      data['bimbel_list'][firstPurchasedIndex]['harga_fix']
-                                                  : subData['harga_fix'];
-
-                                          return _buildRadioOption(
-                                            subData['name'], // title
-                                            subData['id'], // paketId
-                                            data['id'], // parentId
-                                            hargaTampil, // hargaFix
-                                            controller,
-                                            isDisabled:
-                                                false, // semua yang tampil bisa diinteraksi
+                                          controller.updateBiayaAdmin(
+                                            controller.biayaAdminRaw.value,
                                           );
                                         },
+                                        child: Container(
+                                          padding: EdgeInsets.all(4),
+                                          child: Icon(
+                                            Icons.cancel,
+                                            size: 20,
+                                            color: Colors.red,
+                                          ),
+                                        ),
                                       ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                    );
+                                  }),
+                                ],
+                              ),
+
+                              SizedBox(height: 8),
+
+                              Column(
+                                children: [
+                                  for (
+                                    var i = 0;
+                                    i < data['bimbel_list'].length;
+                                    i++
+                                  )
+                                    Builder(
+                                      builder: (_) {
+                                        final subData = data['bimbel_list'][i];
+
+                                        // index paket pertama yang sudah dibeli
+                                        final firstPurchasedIndex =
+                                            data['bimbel_list'].indexWhere(
+                                              (e) => e['is_purchase'] == true,
+                                            );
+
+                                        // skip paket yang lebih murah dari paket pertama yang sudah dibeli
+                                        if (firstPurchasedIndex != -1 &&
+                                            i < firstPurchasedIndex) {
+                                          return SizedBox.shrink();
+                                        }
+
+                                        // skip paket yang sudah dibeli
+                                        if (subData['is_purchase'] == true) {
+                                          return SizedBox.shrink();
+                                        }
+
+                                        // hitung harga tampil
+                                        final hargaTampil =
+                                            (firstPurchasedIndex != -1)
+                                                ? subData['harga_fix'] -
+                                                    data['bimbel_list'][firstPurchasedIndex]['harga_fix']
+                                                : subData['harga_fix'];
+
+                                        return _buildRadioOption(
+                                          subData['name'], // title
+                                          subData['id'], // paketId
+                                          data['id'], // parentId
+                                          hargaTampil, // hargaFix
+                                          controller,
+                                          isDisabled:
+                                              false, // semua yang tampil bisa diinteraksi
+                                        );
+                                      },
+                                    ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                     ],
                   ),
-                  SizedBox(height: 20),
 
                   // Paket Lainnya
-                  SizedBox(height: 15),
                   Divider(height: 1),
-                  SizedBox(height: 15),
+                  SizedBox(height: 20),
 
                   // Metode Pembayaran
                   // Metode Pembayaran
@@ -399,62 +390,73 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                         ],
                       ),
 
+                      SizedBox(height: 6),
+
                       if (controller.biayaAdmin.value != 0)
-                        Row(
+                        Column(
                           children: [
-                            Expanded(
-                              child: Text(
-                                "Biaya admin",
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ),
-                            controller.isLoadingHarga.value
-                                ? Container(
-                                  width: 60,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                )
-                                : Text(
-                                  "${formatRupiah(controller.biayaAdmin.value)}",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Biaya admin",
+                                    style: TextStyle(fontSize: 14),
                                   ),
                                 ),
+                                controller.isLoadingHarga.value
+                                    ? Container(
+                                      width: 60,
+                                      height: 16,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    )
+                                    : Text(
+                                      "${formatRupiah(controller.biayaAdmin.value)}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                              ],
+                            ),
+                            SizedBox(height: 6),
                           ],
                         ),
 
                       if (controller.promoAmount.value != 0)
-                        Row(
+                        Column(
                           children: [
-                            Expanded(
-                              child: Text(
-                                "Diskon",
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ),
-                            controller.isLoadingHarga.value
-                                ? Container(
-                                  width: 60,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                )
-                                : Text(
-                                  "${formatRupiah(controller.promoAmount.value)}",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Diskon",
+                                    style: TextStyle(fontSize: 14),
                                   ),
                                 ),
+                                controller.isLoadingHarga.value
+                                    ? Container(
+                                      width: 60,
+                                      height: 16,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    )
+                                    : Text(
+                                      "${formatRupiah(controller.promoAmount.value)}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                              ],
+                            ),
+                            SizedBox(height: 6),
                           ],
                         ),
-                      SizedBox(height: 6),
 
                       // Total Harga
                       Row(
@@ -671,12 +673,16 @@ void showPaymentBottomSheet(BuildContext context) {
                                     in data['xendit_payment_method'])
                                   Container(
                                     width: 160,
-                                    margin: const EdgeInsets.only(right: 12),
+                                    margin: const EdgeInsets.only(right: 10),
                                     child: paymentItem(
                                       svgPath: method['image_url'],
                                       title: method['name'],
-                                      subtitle:
-                                          "Biaya Admin: ${formatRupiah(controller.calculateBiayaAdmin(method['biaya_admin']))}",
+                                      subtitle: "Biaya Admin",
+                                      adminPrice: formatRupiah(
+                                        controller.calculateBiayaAdmin(
+                                          method['biaya_admin'],
+                                        ),
+                                      ),
                                       onTap: () {
                                         Get.back();
                                         controller.updateBiayaAdmin(
@@ -735,6 +741,7 @@ Widget paymentItem({
   required String title,
   required String subtitle,
   required VoidCallback onTap,
+  required String adminPrice,
 }) {
   return GestureDetector(
     onTap: onTap,
@@ -788,6 +795,14 @@ Widget paymentItem({
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  adminPrice,
                   style: const TextStyle(fontSize: 12, color: Colors.grey),
                   textAlign: TextAlign.center,
                   maxLines: 2,
@@ -856,7 +871,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
                                   inputFormatters: [UpperCaseTextFormatter()],
                                   decoration: InputDecoration(
                                     hintText:
-                                        "CARI", // hintText juga bisa kamu bikin kapital manual
+                                        "Masukkan Kode Promo disini", // hintText juga bisa kamu bikin kapital manual
                                     contentPadding: EdgeInsets.symmetric(
                                       horizontal: 12,
                                       vertical: 10,

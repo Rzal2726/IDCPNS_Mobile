@@ -55,7 +55,10 @@ class DetailMyBimbelController extends GetxController {
       if (result["status"] == "success") {
         bimbelData.value = result['data'];
         getDetailBimbel(id: result['data']['bimbel']['bimbel_parent']['uuid']);
-        jadwalKelas.value = result['data']['bimbel']['events'];
+        jadwalKelas.value =
+            (result['data']['bimbel']['events'] as List)
+                .where((e) => e['is_running'] == false)
+                .toList();
         jadwalKelasIsRunning.value =
             (result['data']['bimbel']['events'] as List)
                 .where((e) => e['is_running'] == true)

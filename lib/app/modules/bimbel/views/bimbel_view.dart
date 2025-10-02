@@ -316,7 +316,7 @@ class BimbelView extends GetView<BimbelController> {
                     Text(
                       title,
                       style: TextStyle(
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         fontSize: 15,
                       ),
                       maxLines: 2,
