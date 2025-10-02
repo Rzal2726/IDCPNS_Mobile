@@ -600,7 +600,9 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
 Widget buildCountdown(int seconds) {
   // final controller = Get.put(PaymentCheckoutController());
   int countdownSeconds = seconds; // default fallback
-  var expired = Get.arguments[1] ?? "";
+  final args = Get.arguments as List?;
+  final expired = (args != null && args.length > 1) ? args[1] as String : "";
+
   if (expired != null) {
     try {
       final expireDate = DateTime.parse(expired);

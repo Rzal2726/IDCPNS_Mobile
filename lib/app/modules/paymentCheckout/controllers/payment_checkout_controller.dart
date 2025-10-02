@@ -27,7 +27,7 @@ class PaymentCheckoutController extends GetxController {
       expired = args[1];
       print("uuidx $uuid dan $expired");
     } else {
-      print("⚠️ Get.arguments kosong atau tidak sesuai format");
+      print("Get.arguments kosong atau tidak sesuai format");
     }
     checkMaintenance();
     fetchDetailPayment();

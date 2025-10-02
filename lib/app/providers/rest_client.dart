@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:idcpns_mobile/app/Components/widgets/unauthenticatedDialog.dart';
 import 'package:idcpns_mobile/app/providers/exceptions.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
@@ -79,11 +80,49 @@ class RestClient {
       dio.options.headers.addAll(headers ?? {});
 
       // Gunakan cancelToken saat memanggil dio.get
-      var response = await dio.get(url, cancelToken: cancelToken);
+      var response = await dio.get(
+        url,
+        cancelToken: cancelToken,
+        options: Options(
+          headers: {"Accept": "application/json"},
+          validateStatus: (status) => true, // semua status dianggap valid
+        ),
+      );
+
+      print("status: ${response.statusCode}");
+      print("data: ${response.data}");
+
+      print("xxxccc ${response.data}");
+      // ✅ cek unauthorized
+      if (response.statusCode == 401 &&
+          response.data is Map &&
+          response.data['message'] == "Unauthenticated.") {
+        Get.dialog(
+          UnauthenticatedDialog(
+            onLogout: () async {
+              try {
+                await _googleSignIn.disconnect();
+                await _googleSignIn.signOut();
+                print(
+                  'Google logout berhasil / atau tidak ada session Google.',
+                );
+              } catch (e) {
+                print(
+                  'Tidak ada akun Google yang sedang login atau sudah logout: $e',
+                );
+              }
+              Get.offAllNamed(Routes.LOGIN);
+            },
+          ),
+          barrierDismissible: false,
+          barrierColor: Colors.transparent,
+        );
+      }
 
       return _processResponse(response);
-    } on DioException catch (DioException) {
-      throw _dioException(DioException);
+    } on DioException catch (e) {
+      print("xxxcc ${e.toString()}");
+      throw _dioException(e);
     } on SocketException catch (_) {
       if (kDebugMode) {
         print('not connected');
@@ -110,15 +149,40 @@ class RestClient {
       var response = await dio.post(
         url,
         data: payload ?? {},
-        options: Options(
-          validateStatus: (status) => true, // semua status dianggap valid
-        ),
+        options: Options(headers: {"Accept": "application/json"}),
       );
 
-      // kembalikan data JSON apapun statusnya
+      print("status: ${response.statusCode}");
+      print("data: ${response.data}");
+
+      // ✅ cek unauthorized
+      if (response.statusCode == 401 &&
+          response.data is Map &&
+          response.data['message'] == "Unauthenticated.") {
+        Get.dialog(
+          UnauthenticatedDialog(
+            onLogout: () async {
+              try {
+                await _googleSignIn.disconnect();
+                await _googleSignIn.signOut();
+                print(
+                  'Google logout berhasil / atau tidak ada session Google.',
+                );
+              } catch (e) {
+                print(
+                  'Tidak ada akun Google yang sedang login atau sudah logout: $e',
+                );
+              }
+              Get.offAllNamed(Routes.LOGIN);
+            },
+          ),
+          barrierDismissible: false,
+          barrierColor: Colors.transparent,
+        );
+      }
+
       return response.data;
     } on DioException catch (e) {
-      // tangkap DioException dan ambil response.data jika ada
       if (e.response != null) {
         return e.response!.data;
       } else {
@@ -146,11 +210,42 @@ class RestClient {
       if (headers != null) {
         dio.options.headers.addAll(headers);
       }
-      var response = await dio.patch(url, data: payload ?? {});
+
+      var response = await dio.patch(
+        url,
+        data: payload ?? {},
+        options: Options(headers: {"Accept": "application/json"}),
+      );
+
+      // ✅ cek unauthorized
+      if (response.statusCode == 401 &&
+          response.data is Map &&
+          response.data['message'] == "Unauthenticated.") {
+        Get.dialog(
+          UnauthenticatedDialog(
+            onLogout: () async {
+              try {
+                await _googleSignIn.disconnect();
+                await _googleSignIn.signOut();
+                print(
+                  'Google logout berhasil / atau tidak ada session Google.',
+                );
+              } catch (e) {
+                print(
+                  'Tidak ada akun Google yang sedang login atau sudah logout: $e',
+                );
+              }
+              Get.offAllNamed(Routes.LOGIN);
+            },
+          ),
+          barrierDismissible: false,
+          barrierColor: Colors.transparent,
+        );
+      }
 
       return _processResponse(response);
-    } on DioException catch (DioException) {
-      throw _dioException(DioException);
+    } on DioException catch (e) {
+      throw _dioException(e);
     } catch (e) {
       rethrow;
     }
@@ -166,15 +261,98 @@ class RestClient {
     if (url == null) {
       return;
     }
+
     try {
       if (headers != null) {
         dio.options.headers.addAll(headers);
       }
-      var response = await dio.delete(url, data: payload ?? {});
+
+      var response = await dio.delete(
+        url,
+        data: payload ?? {},
+        options: Options(headers: {"Accept": "application/json"}),
+      );
+
+      // ✅ cek unauthenticated langsung di sini
+      if (response.statusCode == 401 &&
+          response.data is Map &&
+          response.data['message'] == "Unauthenticated.") {
+        Get.dialog(
+          AlertDialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: Row(
+              children: const [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.orange,
+                  size: 28,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  "Peringatan",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+            content: const Text(
+              "Akun ini terhubung dengan device lain.\n\n"
+              "Untuk melanjutkan, silakan login kembali.",
+              style: TextStyle(
+                fontSize: 15,
+                height: 1.4,
+                color: Colors.black54,
+              ),
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+                onPressed: () async {
+                  try {
+                    await _googleSignIn.disconnect();
+                    await _googleSignIn.signOut();
+                    print(
+                      'Google logout berhasil / atau tidak ada session Google.',
+                    );
+                  } catch (e) {
+                    print('Tidak ada akun Google yang sedang login: $e');
+                  }
+                  Get.offAllNamed(Routes.LOGIN);
+                },
+                child: const Text(
+                  "OK",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          barrierDismissible: false,
+          barrierColor: Colors.transparent,
+        );
+      }
 
       return _processResponse(response);
-    } on DioException catch (DioException) {
-      throw _dioException(DioException);
+    } on DioException catch (e) {
+      throw _dioException(e);
     } catch (e) {
       rethrow;
     }
@@ -242,7 +420,7 @@ class RestClient {
       case DioExceptionType.receiveTimeout:
         throw "Something went wrong5";
       default:
-        print("Something went wrong6");
+        print("Something went wrong6 ${dioErr.toString()}");
         break;
     }
   }
