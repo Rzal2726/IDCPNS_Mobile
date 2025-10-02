@@ -100,12 +100,15 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                             Builder(
                               builder: (context) {
                                 // Parse tanggal dari string
-                                final startDate = DateTime.tryParse(
-                                  data['startdate'] ?? '',
-                                );
-                                final endDate = DateTime.tryParse(
-                                  data['expireddate'] ?? '',
-                                );
+                                final startDate =
+                                    DateTime.parse(
+                                      data['created_at'],
+                                    ).toLocal();
+                                final endDate =
+                                    DateTime.parse(
+                                      data['expireddate'],
+                                    ).toLocal();
+
                                 final now = DateTime.now();
 
                                 int totalDays = 1;

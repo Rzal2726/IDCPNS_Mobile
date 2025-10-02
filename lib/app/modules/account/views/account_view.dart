@@ -6,6 +6,7 @@ import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/account_controller.dart';
 
@@ -89,23 +90,41 @@ class AccountView extends GetView<AccountController> {
                                   ),
                                   decoration: BoxDecoration(
                                     color:
-                                        controller.levelName.toLowerCase() ==
-                                                "basic"
-                                            ? Colors.grey[300]
-                                            : Colors.teal,
+                                        (controller.levelName != null &&
+                                                controller
+                                                    .levelName!
+                                                    .isNotEmpty)
+                                            ? (controller.levelName!
+                                                        .toLowerCase() ==
+                                                    "basic"
+                                                ? Colors.grey[300]
+                                                : Colors.teal)
+                                            : Colors
+                                                .grey[200], // warna skeleton
                                     borderRadius: BorderRadius.circular(4),
                                   ),
-                                  child: Text(
-                                    "${controller.levelName}",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color:
-                                          controller.levelName.toLowerCase() ==
-                                                  "basic"
-                                              ? Colors.black87
-                                              : Colors.white,
-                                    ),
-                                  ),
+                                  child:
+                                      (controller.levelName != null &&
+                                              controller.levelName!.isNotEmpty)
+                                          ? Text(
+                                            "${controller.levelName}",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color:
+                                                  controller.levelName!
+                                                              .toLowerCase() ==
+                                                          "basic"
+                                                      ? Colors.black87
+                                                      : Colors.white,
+                                            ),
+                                          )
+                                          : Container(
+                                            width: 50, // lebar skeleton
+                                            height: 15,
+                                            color:
+                                                Colors
+                                                    .grey[400], // warna skeleton
+                                          ),
                                 ),
                                 SizedBox(width: 6),
                                 InkWell(
@@ -124,13 +143,27 @@ class AccountView extends GetView<AccountController> {
                               ],
                             ),
                             SizedBox(height: 6),
-                            Text(
-                              "${controller.nameUser}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                fontSize: 20,
-                              ),
-                            ),
+
+                            controller.nameUser != null &&
+                                    controller.nameUser!.isNotEmpty
+                                ? Text(
+                                  "${controller.nameUser}",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 20,
+                                  ),
+                                )
+                                : Skeletonizer(
+                                  child: Container(
+                                    width:
+                                        120, // lebar placeholder sesuai perkiraan nama
+                                    height: 24, // tinggi sesuai fontSize
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                ),
 
                             SizedBox(height: 6),
                             Row(
@@ -220,7 +253,9 @@ class AccountView extends GetView<AccountController> {
                         icon: Icons.logout,
                         title: "Keluar",
                         onTap: () {
-                          controller.logoutAkun();
+                          controller.isLoggingOut == true
+                              ? null
+                              : controller.logoutAkun();
                         },
                       ),
 

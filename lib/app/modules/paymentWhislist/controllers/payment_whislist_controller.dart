@@ -34,9 +34,11 @@ class PaymentWhislistController extends GetxController {
   RxBool isLoading = true.obs;
   RxBool isLoadingButton = false.obs;
   RxBool isLoadingHarga = false.obs;
+  RxInt afiFromStorage = 0.obs;
   @override
   void onInit() {
-    super.onInit();
+    getPromoCodeFromStorage();
+
     getData();
     getPaymentData();
     super.onInit();
@@ -68,6 +70,20 @@ class PaymentWhislistController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  void getPromoCodeFromStorage() {
+    afiFromStorage.value = 1;
+    // baca dari box, kalau null atau kosong, default ke ""
+    String storedValue = box.read('userAfi') ?? "";
+
+    // kalau kosong string, pakai ""
+    if (storedValue.isEmpty) storedValue = "";
+
+    // set text ke TextEditingController
+    promoController.text = storedValue;
+
+    getApplyCode();
   }
 
   void pilihPaket(int parentId, Map<String, dynamic> paket) {
@@ -179,9 +195,10 @@ class PaymentWhislistController extends GetxController {
       promoCodeName.value = result['data']['voucher_code'];
     } else {
       promoController.clear();
-      notifHelper.show(result["message"] ?? "Terjadi kesalahan", type: 0);
+      if (afiFromStorage.value != 1)
+        notifHelper.show(result["message"] ?? "Terjadi kesalahan", type: 0);
     }
-
+    afiFromStorage.value = 0;
     isLoadingHarga.value = false; // selesai loading
   }
 

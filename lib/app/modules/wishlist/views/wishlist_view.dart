@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -55,7 +56,12 @@ class WishlistView extends GetView<WishlistController> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Get.toNamed(Routes.PAYMENT_WHISLIST);
+                          if (controller.whistlistData['data'] != null &&
+                              controller.whistlistData['data']!.isNotEmpty) {
+                            Get.toNamed(Routes.PAYMENT_WHISLIST);
+                          } else {
+                            null;
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.teal,

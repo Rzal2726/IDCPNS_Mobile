@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,7 +16,7 @@ class AccountController extends GetxController {
   RxString photoProfile = "".obs;
   RxString levelName = "".obs;
   RxString nameUser = "".obs;
-
+  RxBool isLoggingOut = false.obs;
   RxInt saldo = 0.obs;
 
   @override
@@ -35,6 +37,7 @@ class AccountController extends GetxController {
   }
 
   Future<void> logoutAkun() async {
+    isLoggingOut.value = true;
     try {
       await box.erase();
 
@@ -51,6 +54,7 @@ class AccountController extends GetxController {
     } catch (error) {
       print('Error saat logout: $error');
     }
+    isLoggingOut.value = false;
   }
 
   /// Fungsi logout aman

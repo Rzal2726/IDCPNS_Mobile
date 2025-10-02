@@ -85,6 +85,7 @@ class RegisterController extends GetxController {
       box.write("token", data["access_token"]);
       box.write("levelName", user["level_name"]);
       box.write("name", user["name"]);
+      box.write("userAfi", user["user_afiliator"]);
       box.write("afiCode", user["kode_afiliasi"] ?? "");
       box.write("afiAgree", user["is_afiliasi_agree"]);
       box.write("idUser", user["id"]);
@@ -195,6 +196,7 @@ class RegisterController extends GetxController {
         box.write("token", data["access_token"]);
         box.write("levelName", user["level_name"]);
         box.write("name", user["name"]);
+        box.write("userAfi", user["user_afiliator"]);
         box.write("afiCode", user["kode_afiliasi"]);
         box.write("afiAgree", user["is_afiliasi_agree"]);
         box.write("idUser", user["id"]);

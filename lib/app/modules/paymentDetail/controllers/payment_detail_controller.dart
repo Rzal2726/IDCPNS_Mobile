@@ -36,12 +36,13 @@ class PaymentDetailController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isLoadingHarga =
       false.obs; // default true kalau mau skeleton muncul awal
+  RxInt afiFromStorage = 0.obs;
 
   // untuk state radio pilihan (sub bimbel)
 
   @override
   void onInit() {
-    super.onInit();
+    getPromoCodeFromStorage();
     getData();
     getPaymentData();
     super.onInit();
@@ -61,7 +62,7 @@ class PaymentDetailController extends GetxController {
   // contoh: simpan status checkbox di list
 
   var metodePembayaran = "".obs;
-  var kodePromo = "".obs;
+  RxString kodePromo = "".obs;
   RxString wishListFirstProduct = "".obs;
   final count = 0.obs;
 
@@ -83,6 +84,21 @@ class PaymentDetailController extends GetxController {
 
   void pilihMetode(String metode) {
     metodePembayaran.value = metode.replaceAll('_', ' ');
+  }
+
+  void getPromoCodeFromStorage() {
+    afiFromStorage.value = 1;
+
+    // baca dari box, kalau null atau kosong, default ke ""
+    String storedValue = box.read('userAfi') ?? "";
+
+    // kalau kosong string, pakai ""
+    if (storedValue.isEmpty) storedValue = "";
+
+    // set text ke TextEditingController
+    promoController.text = storedValue;
+
+    getApplyCode();
   }
 
   Future<void> bayarSekarang() async {
@@ -180,7 +196,8 @@ class PaymentDetailController extends GetxController {
       promoCodeName.value = result['data']['voucher_code'];
     } else {
       promoController.clear();
-      notifHelper.show(result["message"] ?? "Terjadi kesalahan", type: 0);
+      if (afiFromStorage.value != 1)
+        notifHelper.show(result["message"] ?? "Terjadi kesalahan", type: 0);
     }
 
     isLoadingHarga.value = false; // selesai loading

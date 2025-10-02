@@ -57,6 +57,7 @@ class SplashController extends GetxController {
       final user = data["user"];
 
       box.write("token", data["access_token"]);
+      box.write("userAfi", user["user_afiliator"]);
       box.write("levelName", user["level_name"]);
       box.write("name", user["name"]);
       box.write("afiCode", user["kode_afiliasi"]);
