@@ -30,9 +30,15 @@ class DashboardView extends GetView<DashboardController> {
       canPop: false, // biar kita yang kontrol back nya
       onPopInvoked: (didPop) async {
         if (!didPop) {
-          final keluar = await showExitDialog(context);
-          if (keluar) {
-            SystemNavigator.pop(); // keluar dari aplikasi
+          final homeC = Get.find<HomeController>();
+          if (homeC.currentIndex.value == 0) {
+            final keluar = await showExitDialog(context);
+            if (keluar) {
+              SystemNavigator.pop();
+            }
+          } else {
+            homeC.changeBottomBar(0);
+            homeC.currentIndex.value = 0;
           }
         }
       },

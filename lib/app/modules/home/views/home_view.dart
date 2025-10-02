@@ -40,6 +40,7 @@ class HomeView extends GetView<HomeController> {
             currentIndex: controller.tabIndex.value,
             onTap: (index) {
               controller.changeBottomBar(index);
+              controller.currentIndex.value = index;
             },
             items: [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),

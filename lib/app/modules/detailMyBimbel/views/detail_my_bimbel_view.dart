@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -426,9 +427,17 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                 ),
                                 recognizer:
                                     TapGestureRecognizer()
-                                      ..onTap =
-                                          () =>
-                                              Get.toNamed(Routes.PLATINUM_ZONE),
+                                      ..onTap = () {
+                                        (Get.find<HomeController>())
+                                            .changeBottomBar(3);
+                                        (Get.find<HomeController>())
+                                            .currentIndex
+                                            .value = 3;
+                                        Get.offNamed(
+                                          Routes.HOME,
+                                          arguments: {'initialIndex': 3},
+                                        );
+                                      },
                               ),
                             ],
                           ),
