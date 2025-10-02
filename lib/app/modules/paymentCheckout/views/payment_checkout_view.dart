@@ -29,23 +29,11 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
         backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
-          child: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(25),
-                  spreadRadius: 1,
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: basicAppBarWithoutNotif(
-              "Checkout pembayaran",
-              onBack: () {
-                Get.back();
-              },
-            ),
+          child: secondaryAppBar(
+            "Checkout pembayaran",
+            onBack: () {
+              Get.offNamed(Routes.TRANSACTION);
+            },
           ),
         ),
         body: SafeArea(

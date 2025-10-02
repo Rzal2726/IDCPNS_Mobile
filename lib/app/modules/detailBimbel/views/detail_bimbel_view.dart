@@ -217,6 +217,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
 
                 // Jenis Paket
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (!(data['bimbel'].any(
                       (b) => b['is_showing'] == true,
@@ -252,6 +253,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                       SizedBox(height: 25),
                       Text(
                         'Jenis Paket',
+                        textAlign: TextAlign.start,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -328,9 +330,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                                           strokeWidth: 2,
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
-                                                controller.isCheklist == true
-                                                    ? Colors.white
-                                                    : Colors.teal.shade300,
+                                                Colors.teal.shade300,
                                               ),
                                         ),
                                       )
@@ -376,7 +376,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                                   );
                                   return;
                                 }
-                                Get.offNamed(
+                                Get.toNamed(
                                   Routes.PAYMENT_DETAIL,
                                   arguments: [
                                     controller.selectedPaket.value,

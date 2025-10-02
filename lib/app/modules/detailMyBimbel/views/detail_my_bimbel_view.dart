@@ -65,7 +65,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20,
                                     ),
-                                    maxLines: 1,
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -100,7 +100,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                               builder: (context) {
                                 // Parse tanggal dari string
                                 final startDate = DateTime.tryParse(
-                                  data['startdate'] ?? '',
+                                  data['created_at'] ?? '',
                                 );
                                 final endDate = DateTime.tryParse(
                                   data['expireddate'] ?? '',
@@ -528,287 +528,271 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
 
                   // ================== KELAS HARI INI ==================
                   controller.jadwalKelasIsRunning.isNotEmpty
-                      ? Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade200,
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
+                      ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Kelas Hari Ini',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Kelas Hari Ini',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            ...controller.jadwalKelasIsRunning
-                                .map(
-                                  (item) => Container(
-                                    margin: EdgeInsets.only(bottom: 12),
-                                    padding: EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Colors.grey.shade300,
-                                      ),
+                          ),
+                          SizedBox(height: 10),
+                          ...controller.jadwalKelasIsRunning
+                              .map(
+                                (item) => Container(
+                                  margin: EdgeInsets.only(bottom: 12),
+                                  padding: EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: Colors.grey.shade300,
                                     ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          item['judul']!,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item['judul']!,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      SizedBox(height: 12),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Text(
+                                                "Hari",
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              Text(
+                                                item['jadwal_tanggal']['hari']!,
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                        SizedBox(height: 12),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  "Hari",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
+                                          Column(
+                                            children: [
+                                              Text(
+                                                "Tanggal",
+                                                style: TextStyle(
+                                                  color: Colors.grey,
                                                 ),
-                                                Text(
-                                                  item['jadwal_tanggal']['hari']!,
+                                              ),
+                                              Text(
+                                                item['jadwal_tanggal']['tanggal']!,
+                                              ),
+                                            ],
+                                          ),
+                                          Column(
+                                            children: [
+                                              Text(
+                                                "Jam",
+                                                style: TextStyle(
+                                                  color: Colors.grey,
                                                 ),
-                                              ],
-                                            ),
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  "Tanggal",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  item['jadwal_tanggal']['tanggal']!,
-                                                ),
-                                              ],
-                                            ),
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  "Jam",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  item['jadwal_tanggal']['jam']!,
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                                              ),
+                                              Text(
+                                                item['jadwal_tanggal']['jam']!,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
 
-                                        SizedBox(height: 12),
+                                      SizedBox(height: 12),
 
-                                        // Tombol Pretest + Buka Kelas (inline)
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: ElevatedButton.icon(
-                                                onPressed:
+                                      // Tombol Pretest + Buka Kelas (inline)
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              onPressed:
+                                                  (item['has_pretest'] ==
+                                                              false &&
+                                                          item['can_pretest'] ==
+                                                              true)
+                                                      ? () {
+                                                        print(
+                                                          "xxxv ${item['has_pretest']} dan ${item['can_pretest'].toString()}",
+                                                        );
+                                                        Get.toNamed(
+                                                          Routes.PRETEST_DETAIL,
+                                                          arguments: {
+                                                            "item": item,
+                                                            "uuidParent":
+                                                                controller
+                                                                    .bimbelData['uuid'],
+                                                          },
+                                                        );
+                                                        print(
+                                                          "xxx ${item.toString()}",
+                                                        );
+                                                      }
+                                                      : null, // null = tombol disabled
+
+                                              icon: Icon(
+                                                Icons.assignment,
+                                                size: 18,
+                                                color:
                                                     (item['has_pretest'] ==
                                                                 false &&
                                                             item['can_pretest'] ==
                                                                 true)
-                                                        ? () {
-                                                          print(
-                                                            "xxxv ${item['has_pretest']} dan ${item['can_pretest'].toString()}",
-                                                          );
-                                                          Get.toNamed(
-                                                            Routes
-                                                                .PRETEST_DETAIL,
-                                                            arguments: {
-                                                              "item": item,
-                                                              "uuidParent":
-                                                                  controller
-                                                                      .bimbelData['uuid'],
-                                                            },
-                                                          );
-                                                          print(
-                                                            "xxx ${item.toString()}",
-                                                          );
-                                                        }
-                                                        : null, // null = tombol disabled
-
-                                                icon: Icon(
-                                                  Icons.assignment,
-                                                  size: 18,
+                                                        ? Colors
+                                                            .white // icon putih kalau aktif
+                                                        : Colors
+                                                            .grey
+                                                            .shade600, // icon abu kalau disable
+                                              ),
+                                              label: Text(
+                                                'Pretest',
+                                                style: TextStyle(
                                                   color:
                                                       (item['has_pretest'] ==
                                                                   false &&
                                                               item['can_pretest'] ==
                                                                   true)
                                                           ? Colors
-                                                              .white // icon putih kalau aktif
+                                                              .white // teks putih kalau aktif
                                                           : Colors
                                                               .grey
-                                                              .shade600, // icon abu kalau disable
+                                                              .shade600, // teks abu kalau disable
                                                 ),
-                                                label: Text(
-                                                  'Pretest',
-                                                  style: TextStyle(
-                                                    color:
-                                                        (item['has_pretest'] ==
-                                                                    false &&
-                                                                item['can_pretest'] ==
-                                                                    true)
-                                                            ? Colors
-                                                                .white // teks putih kalau aktif
-                                                            : Colors
-                                                                .grey
-                                                                .shade600, // teks abu kalau disable
-                                                  ),
-                                                ),
-                                                style: ElevatedButton.styleFrom(
-                                                  elevation: 0,
-                                                  backgroundColor:
+                                              ),
+                                              style: ElevatedButton.styleFrom(
+                                                elevation: 0,
+                                                backgroundColor:
+                                                    (item['has_pretest'] ==
+                                                                false &&
+                                                            item['can_pretest'] ==
+                                                                true)
+                                                        ? Colors
+                                                            .amber // kuning kalau aktif
+                                                        : Colors
+                                                            .grey
+                                                            .shade300, // abu-abu kalau disable
+                                                side: BorderSide(
+                                                  color:
                                                       (item['has_pretest'] ==
                                                                   false &&
                                                               item['can_pretest'] ==
                                                                   true)
                                                           ? Colors
-                                                              .amber // kuning kalau aktif
+                                                              .amber
+                                                              .shade700
                                                           : Colors
                                                               .grey
-                                                              .shade300, // abu-abu kalau disable
-                                                  side: BorderSide(
-                                                    color:
-                                                        (item['has_pretest'] ==
-                                                                    false &&
-                                                                item['can_pretest'] ==
-                                                                    true)
-                                                            ? Colors
-                                                                .amber
-                                                                .shade700
-                                                            : Colors
-                                                                .grey
-                                                                .shade300,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          6,
-                                                        ),
-                                                  ),
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 12,
-                                                  ),
-                                                  minimumSize: Size(0, 40),
+                                                              .shade300,
                                                 ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                ),
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 8,
+                                                ),
+                                                minimumSize: Size(0, 40),
                                               ),
                                             ),
+                                          ),
 
-                                            SizedBox(width: 8),
-                                            Expanded(
-                                              child: ElevatedButton.icon(
-                                                onPressed:
+                                          SizedBox(width: 8),
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              onPressed:
+                                                  (item['url'] != null &&
+                                                          item['url']
+                                                              .toString()
+                                                              .isNotEmpty)
+                                                      ? () async {
+                                                        final url =
+                                                            item['url']
+                                                                .toString();
+                                                        if (await canLaunchUrl(
+                                                          Uri.parse(url),
+                                                        )) {
+                                                          await launchUrl(
+                                                            Uri.parse(url),
+                                                            mode:
+                                                                LaunchMode
+                                                                    .externalApplication,
+                                                          );
+                                                        }
+                                                      }
+                                                      : null, // disable kalau url null/kosong
+                                              icon: Icon(
+                                                Icons.video_call,
+                                                size: 18,
+                                                color:
                                                     (item['url'] != null &&
                                                             item['url']
                                                                 .toString()
                                                                 .isNotEmpty)
-                                                        ? () async {
-                                                          final url =
-                                                              item['url']
-                                                                  .toString();
-                                                          if (await canLaunchUrl(
-                                                            Uri.parse(url),
-                                                          )) {
-                                                            await launchUrl(
-                                                              Uri.parse(url),
-                                                              mode:
-                                                                  LaunchMode
-                                                                      .externalApplication,
-                                                            );
-                                                          }
-                                                        }
-                                                        : null, // disable kalau url null/kosong
-                                                icon: Icon(
-                                                  Icons.video_call,
-                                                  size: 18,
+                                                        ? Colors
+                                                            .white // icon putih kalau aktif
+                                                        : Colors
+                                                            .grey
+                                                            .shade700, // icon abu kalau disable
+                                              ),
+                                              label: Text(
+                                                'Buka Kelas',
+                                                style: TextStyle(
                                                   color:
                                                       (item['url'] != null &&
                                                               item['url']
                                                                   .toString()
                                                                   .isNotEmpty)
                                                           ? Colors
-                                                              .white // icon putih kalau aktif
+                                                              .white // teks putih kalau aktif
                                                           : Colors
                                                               .grey
-                                                              .shade700, // icon abu kalau disable
-                                                ),
-                                                label: Text(
-                                                  'Buka Kelas',
-                                                  style: TextStyle(
-                                                    color:
-                                                        (item['url'] != null &&
-                                                                item['url']
-                                                                    .toString()
-                                                                    .isNotEmpty)
-                                                            ? Colors
-                                                                .white // teks putih kalau aktif
-                                                            : Colors
-                                                                .grey
-                                                                .shade700, // teks abu kalau disable
-                                                  ),
-                                                ),
-                                                style: ElevatedButton.styleFrom(
-                                                  elevation: 0,
-                                                  backgroundColor:
-                                                      (item['url'] != null &&
-                                                              item['url']
-                                                                  .toString()
-                                                                  .isNotEmpty)
-                                                          ? Colors
-                                                              .teal // aktif
-                                                          : Colors
-                                                              .grey
-                                                              .shade100, // non-aktif
-                                                  side: BorderSide(
-                                                    color: Colors.grey.shade300,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          6,
-                                                        ),
-                                                  ),
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 12,
-                                                  ),
-                                                  minimumSize: Size(0, 40),
+                                                              .shade700, // teks abu kalau disable
                                                 ),
                                               ),
+                                              style: ElevatedButton.styleFrom(
+                                                elevation: 0,
+                                                backgroundColor:
+                                                    (item['url'] != null &&
+                                                            item['url']
+                                                                .toString()
+                                                                .isNotEmpty)
+                                                        ? Colors
+                                                            .teal // aktif
+                                                        : Colors
+                                                            .grey
+                                                            .shade100, // non-aktif
+                                                side: BorderSide(
+                                                  color: Colors.grey.shade300,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                ),
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 8,
+                                                ),
+                                                minimumSize: Size(0, 40),
+                                              ),
                                             ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                )
-                                .toList(),
-                          ],
-                        ),
+                                ),
+                              )
+                              .toList(),
+                        ],
                       )
                       : SizedBox.shrink(), // kalau kosong, widget ini ga muncul
 
@@ -942,7 +926,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(6),
                                     ),
-                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    padding: EdgeInsets.symmetric(vertical: 8),
                                     minimumSize: Size(0, 40),
                                   ),
                                 ),
@@ -1018,7 +1002,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(6),
                                     ),
-                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    padding: EdgeInsets.symmetric(vertical: 8),
                                     minimumSize: Size(0, 40),
                                   ),
                                 ),

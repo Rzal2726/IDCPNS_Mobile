@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 Widget buildTryoutCard({
   required String status,
-  Color statusColor = Colors.amber,
   required String title,
   required String dateRange,
   required String period,
@@ -13,7 +12,10 @@ Widget buildTryoutCard({
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: Colors.teal.shade50,
+      color:
+          status == 'Sedang Berlangsung'
+              ? Colors.teal.shade50
+              : Colors.grey.shade300,
       borderRadius: BorderRadius.circular(12),
     ),
     child: Column(
@@ -23,7 +25,7 @@ Widget buildTryoutCard({
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: statusColor,
+            color: status == 'Sedang Berlangsung' ? Colors.amber : Colors.red,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(

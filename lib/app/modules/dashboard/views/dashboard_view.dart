@@ -139,236 +139,241 @@ class DashboardView extends GetView<DashboardController> {
                       ? Column(
                         children: [
                           for (var data in controller.bimbelRemainder)
-                            Container(
-                              padding: AppStyle.screenPadding,
-                              margin: EdgeInsets.only(bottom: 12),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Pengingat Bimbel",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Pengingat Bimbel",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Divider(
+                                  thickness: 0.2,
+                                  color:
+                                      Colors
+                                          .grey, // bisa diganti kalau mau lebih soft
+                                ),
+                                SizedBox(height: 30),
+                                Container(
+                                  padding: EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: Colors.grey.shade300,
                                     ),
                                   ),
-                                  SizedBox(height: 8),
-                                  Container(
-                                    padding: EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Colors.grey.shade300,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        data['bimbel_parent_name'] ?? '-',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 10,
+                                        ),
                                       ),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          data['bimbel_parent_name'] ?? '-',
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 10,
+                                      SizedBox(height: 5),
+                                      // Judul
+                                      Text(
+                                        data['judul'] ?? '-',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      SizedBox(height: 12),
+                                      // Hari, Tanggal, Jam
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Text(
+                                                "Hari",
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              Text(
+                                                data['jadwal_tanggal']['hari'] ??
+                                                    '-',
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                        SizedBox(height: 5),
-                                        // Judul
-                                        Text(
-                                          data['judul'] ?? '-',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                                          Column(
+                                            children: [
+                                              Text(
+                                                "Tanggal",
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              Text(
+                                                data['jadwal_tanggal']['tanggal'] ??
+                                                    '-',
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                        SizedBox(height: 12),
-                                        // Hari, Tanggal, Jam
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  "Hari",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
+                                          Column(
+                                            children: [
+                                              Text(
+                                                "Jam",
+                                                style: TextStyle(
+                                                  color: Colors.grey,
                                                 ),
-                                                Text(
-                                                  data['jadwal_tanggal']['hari'] ??
-                                                      '-',
-                                                ),
-                                              ],
-                                            ),
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  "Tanggal",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  data['jadwal_tanggal']['tanggal'] ??
-                                                      '-',
-                                                ),
-                                              ],
-                                            ),
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  "Jam",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  data['jadwal_tanggal']['jam'] ??
-                                                      '-',
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 12),
-                                        // Tombol Pretest + Buka Kelas
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: ElevatedButton.icon(
-                                                onPressed:
-                                                    (data['has_pretest'] ==
-                                                            false)
-                                                        ? () async {
-                                                          final uuid =
-                                                              data['uuid']
-                                                                  ?.toString() ??
-                                                              '';
-                                                          final eventUuid =
-                                                              data['event_uuid']
-                                                                  ?.toString() ??
-                                                              '';
+                                              ),
+                                              Text(
+                                                data['jadwal_tanggal']['jam'] ??
+                                                    '-',
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 12),
+                                      // Tombol Pretest + Buka Kelas
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              onPressed:
+                                                  (data['has_pretest'] == false)
+                                                      ? () async {
+                                                        final uuid =
+                                                            data['uuid']
+                                                                ?.toString() ??
+                                                            '';
+                                                        final eventUuid =
+                                                            data['event_uuid']
+                                                                ?.toString() ??
+                                                            '';
 
-                                                          if (uuid.isEmpty ||
-                                                              eventUuid
-                                                                  .isEmpty) {
+                                                        if (uuid.isEmpty ||
+                                                            eventUuid.isEmpty) {
+                                                          notifHelper.show(
+                                                            'Data tidak lengkap',
+                                                            type: 0,
+                                                          );
+                                                          return;
+                                                        }
+
+                                                        // optional: tampilkan loading sementara nge-fetch
+                                                        Get.dialog(
+                                                          Center(
+                                                            child:
+                                                                CircularProgressIndicator(),
+                                                          ),
+                                                          barrierDismissible:
+                                                              false,
+                                                        );
+
+                                                        try {
+                                                          final detail =
+                                                              await controller
+                                                                  .getDetailBimbel(
+                                                                    uuid: uuid,
+                                                                    eventUuid:
+                                                                        eventUuid,
+                                                                  );
+
+                                                          // tutup loading
+                                                          if (Get.isDialogOpen ??
+                                                              false)
+                                                            Get.back();
+
+                                                          if (detail == null) {
                                                             notifHelper.show(
-                                                              'Data tidak lengkap',
+                                                              'Detail pretest tidak ditemukan',
                                                               type: 0,
                                                             );
                                                             return;
                                                           }
 
-                                                          // optional: tampilkan loading sementara nge-fetch
-                                                          Get.dialog(
-                                                            Center(
-                                                              child:
-                                                                  CircularProgressIndicator(),
-                                                            ),
-                                                            barrierDismissible:
-                                                                false,
+                                                          Get.toNamed(
+                                                            Routes
+                                                                .PRETEST_DETAIL,
+                                                            arguments: {
+                                                              'item': detail,
+                                                              'uuidParent':
+                                                                  uuid,
+                                                            },
                                                           );
-
-                                                          try {
-                                                            final detail =
-                                                                await controller
-                                                                    .getDetailBimbel(
-                                                                      uuid:
-                                                                          uuid,
-                                                                      eventUuid:
-                                                                          eventUuid,
-                                                                    );
-
-                                                            // tutup loading
-                                                            if (Get.isDialogOpen ??
-                                                                false)
-                                                              Get.back();
-
-                                                            if (detail ==
-                                                                null) {
-                                                              notifHelper.show(
-                                                                'Detail pretest tidak ditemukan',
-                                                                type: 0,
-                                                              );
-                                                              return;
-                                                            }
-
-                                                            Get.toNamed(
-                                                              Routes
-                                                                  .PRETEST_DETAIL,
-                                                              arguments: {
-                                                                'item': detail,
-                                                                'uuidParent':
-                                                                    uuid,
-                                                              },
-                                                            );
-                                                          } catch (e) {
-                                                            if (Get.isDialogOpen ??
-                                                                false)
-                                                              Get.back();
-                                                            notifHelper.show(
-                                                              'Terjadi kesalahan',
-                                                              type: 0,
-                                                            );
-                                                          }
+                                                        } catch (e) {
+                                                          if (Get.isDialogOpen ??
+                                                              false)
+                                                            Get.back();
+                                                          notifHelper.show(
+                                                            'Terjadi kesalahan',
+                                                            type: 0,
+                                                          );
                                                         }
-                                                        : null,
+                                                      }
+                                                      : null,
 
-                                                icon: Icon(
-                                                  Icons.assignment,
-                                                  size: 18,
+                                              icon: Icon(
+                                                Icons.assignment,
+                                                size: 18,
+                                              ),
+                                              label: Text('Pretest'),
+                                              style: ElevatedButton.styleFrom(
+                                                elevation: 0,
+                                                backgroundColor: Colors.amber,
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
                                                 ),
-                                                label: Text('Pretest'),
-                                                style: ElevatedButton.styleFrom(
-                                                  elevation: 0,
-                                                  backgroundColor: Colors.amber,
-                                                  foregroundColor: Colors.white,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          6,
-                                                        ),
-                                                  ),
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 12,
-                                                  ),
-                                                  minimumSize: Size(0, 40),
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 8,
                                                 ),
+                                                minimumSize: Size(0, 40),
                                               ),
                                             ),
-                                            SizedBox(width: 8),
-                                            Expanded(
-                                              child: ElevatedButton.icon(
-                                                onPressed:
+                                          ),
+                                          SizedBox(width: 8),
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              onPressed:
+                                                  (data['url'] != null &&
+                                                          data['url']
+                                                              .toString()
+                                                              .isNotEmpty)
+                                                      ? () async {
+                                                        final url =
+                                                            data['url']
+                                                                .toString();
+                                                        if (await canLaunchUrl(
+                                                          Uri.parse(url),
+                                                        )) {
+                                                          await launchUrl(
+                                                            Uri.parse(url),
+                                                            mode:
+                                                                LaunchMode
+                                                                    .externalApplication,
+                                                          );
+                                                        }
+                                                      }
+                                                      : null, // tombol disable kalau url null/kosong
+                                              icon: Icon(
+                                                Icons.computer,
+                                                size: 18,
+                                                color:
                                                     (data['url'] != null &&
                                                             data['url']
                                                                 .toString()
                                                                 .isNotEmpty)
-                                                        ? () async {
-                                                          final url =
-                                                              data['url']
-                                                                  .toString();
-                                                          if (await canLaunchUrl(
-                                                            Uri.parse(url),
-                                                          )) {
-                                                            await launchUrl(
-                                                              Uri.parse(url),
-                                                              mode:
-                                                                  LaunchMode
-                                                                      .externalApplication,
-                                                            );
-                                                          }
-                                                        }
-                                                        : null, // tombol disable kalau url null/kosong
-                                                icon: Icon(
-                                                  Icons.computer,
-                                                  size: 18,
+                                                        ? Colors.white
+                                                        : Colors.grey.shade600,
+                                              ),
+                                              label: Text(
+                                                'Buka Kelas',
+                                                style: TextStyle(
                                                   color:
                                                       (data['url'] != null &&
                                                               data['url']
@@ -379,65 +384,48 @@ class DashboardView extends GetView<DashboardController> {
                                                               .grey
                                                               .shade600,
                                                 ),
-                                                label: Text(
-                                                  'Buka Kelas',
-                                                  style: TextStyle(
-                                                    color:
-                                                        (data['url'] != null &&
-                                                                data['url']
-                                                                    .toString()
-                                                                    .isNotEmpty)
-                                                            ? Colors.white
-                                                            : Colors
-                                                                .grey
-                                                                .shade600,
-                                                  ),
-                                                ),
-                                                style: ElevatedButton.styleFrom(
-                                                  elevation: 0,
-                                                  backgroundColor:
+                                              ),
+                                              style: ElevatedButton.styleFrom(
+                                                elevation: 0,
+                                                backgroundColor:
+                                                    (data['url'] != null &&
+                                                            data['url']
+                                                                .toString()
+                                                                .isNotEmpty)
+                                                        ? Colors
+                                                            .teal // aktif
+                                                        : Colors
+                                                            .grey
+                                                            .shade300, // non-aktif
+                                                side: BorderSide(
+                                                  color:
                                                       (data['url'] != null &&
                                                               data['url']
                                                                   .toString()
                                                                   .isNotEmpty)
-                                                          ? Colors
-                                                              .teal // aktif
+                                                          ? Colors.teal.shade700
                                                           : Colors
                                                               .grey
-                                                              .shade300, // non-aktif
-                                                  side: BorderSide(
-                                                    color:
-                                                        (data['url'] != null &&
-                                                                data['url']
-                                                                    .toString()
-                                                                    .isNotEmpty)
-                                                            ? Colors
-                                                                .teal
-                                                                .shade700
-                                                            : Colors
-                                                                .grey
-                                                                .shade300,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          6,
-                                                        ),
-                                                  ),
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 12,
-                                                  ),
-                                                  minimumSize: Size(0, 40),
+                                                              .shade300,
                                                 ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                ),
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 8,
+                                                ),
+                                                minimumSize: Size(0, 40),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                SizedBox(height: 50),
+                              ],
                             ),
                         ],
                       )
@@ -862,186 +850,177 @@ class DashboardView extends GetView<DashboardController> {
 
                   SizedBox(height: 50),
 
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Judul dan deskripsi
-                        Text(
-                          'Event Tryout Gratis',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Judul dan deskripsi
+                      Text(
+                        'Event Tryout Gratis',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          style: TextStyle(color: Colors.grey),
-                          'Ikuti event tryout dari rekomendasi kita untuk anda!',
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ), // kasih jarak biar gak terlalu nempel
-                        Divider(
-                          thickness: 0.2,
-                          color:
-                              Colors.grey, // bisa diganti kalau mau lebih soft
-                        ),
-                        SizedBox(height: 30),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        style: TextStyle(color: Colors.grey),
+                        'Ikuti tryout akbar gratis bersama ribuan peserta lainnya.',
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ), // kasih jarak biar gak terlalu nempel
+                      Divider(
+                        thickness: 0.2,
+                        color: Colors.grey, // bisa diganti kalau mau lebih soft
+                      ),
+                      SizedBox(height: 20),
 
-                        // Search field
-                        Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.teal, width: 1.5),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: TextField(
-                            controller: controller.tryoutSearch,
-                            onChanged: (value) {
-                              controller.filterTryout(
-                                query: controller.tryoutSearch.text,
-                              );
-                            },
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 15.0,
-                              ), // Sesuaikan nilai vertical
-                              hintText: 'Cari',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              border: InputBorder.none,
-                              suffixIcon: Icon(
-                                Icons.search,
-                                color: Colors.black,
-                              ),
-                            ),
+                      // Search field
+                      Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.teal, width: 1.5),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: TextField(
+                          controller: controller.tryoutSearch,
+                          onChanged: (value) {
+                            controller.filterTryout(
+                              query: controller.tryoutSearch.text,
+                            );
+                          },
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 15.0,
+                            ), // Sesuaikan nilai vertical
+                            hintText: 'Cari',
+                            hintStyle: TextStyle(color: Colors.grey),
+                            border: InputBorder.none,
+                            suffixIcon: Icon(Icons.search, color: Colors.black),
                           ),
                         ),
-                        SizedBox(height: 30),
-                        // Tombol Filter
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              showFilterCategoryBottomSheet(context);
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor:
-                                  Colors.teal, // Mengatur warna teks dan ikon
-                            ),
-                            child: Row(
-                              mainAxisSize:
-                                  MainAxisSize
-                                      .min, // Agar Row tidak mengambil lebar penuh
+                      ),
+                      SizedBox(height: 10),
+                      // Tombol Filter
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            showFilterCategoryBottomSheet(context);
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor:
+                                Colors.teal, // Mengatur warna teks dan ikon
+                          ),
+                          child: Row(
+                            mainAxisSize:
+                                MainAxisSize
+                                    .min, // Agar Row tidak mengambil lebar penuh
+                            children: [
+                              Text('Filter', style: TextStyle(fontSize: 16)),
+                              SizedBox(
+                                width: 4,
+                              ), // Memberikan jarak antara teks dan ikon
+                              Icon(Icons.keyboard_arrow_down),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      controller.tryoutEventFilterData.isEmpty
+                          ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text('Filter', style: TextStyle(fontSize: 16)),
-                                SizedBox(
-                                  width: 4,
-                                ), // Memberikan jarak antara teks dan ikon
-                                Icon(Icons.keyboard_arrow_down),
+                                SvgPicture.asset(
+                                  "assets/emptyArchiveIcon.svg",
+                                  width: 140, // atur lebar
+                                  height: 140, // atur tinggi
+                                ),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  'Belum Ada Event Berlangsung',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                const SizedBox(height: 50),
                               ],
                             ),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        controller.tryoutEventFilterData.isEmpty
-                            ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/emptyArchiveIcon.svg",
-                                    width: 140, // atur lebar
-                                    height: 140, // atur tinggi
-                                  ),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    'Belum Ada Event Berlangsung',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 50),
-                                ],
-                              ),
-                            )
-                            : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Scrollable Row
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      for (var data
-                                          in controller.tryoutEventFilterData)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 12,
-                                          ),
-                                          child: SizedBox(
-                                            width:
-                                                280, // biar card rapi & konsisten
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                Get.toNamed(
-                                                  Routes.DETAIL_EVENT,
-                                                  arguments: data['uuid'],
-                                                );
-                                              },
-                                              child: buildTryoutCard(
-                                                status: data['label_text'],
-                                                title: data['name'],
-                                                dateRange:
-                                                    data['range_date_string'],
-                                                period: data['periode_text'],
-                                              ),
+                          )
+                          : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Scrollable Row
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: Row(
+                                  children: [
+                                    for (var data
+                                        in controller.tryoutEventFilterData)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 12,
+                                        ),
+                                        child: SizedBox(
+                                          width:
+                                              300, // biar card rapi & konsisten
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Get.toNamed(
+                                                Routes.DETAIL_EVENT,
+                                                arguments: data['uuid'],
+                                              );
+                                            },
+                                            child: buildTryoutCard(
+                                              status: data['label_text'],
+                                              title: data['name'],
+                                              dateRange:
+                                                  data['range_date_string'],
+                                              period: data['periode_text'],
                                             ),
                                           ),
                                         ),
-                                    ],
-                                  ),
+                                      ),
+                                  ],
                                 ),
-                                const SizedBox(height: 10),
-                                // Indikasi scroll
-                                Visibility(
-                                  visible:
-                                      (controller
-                                              .tryoutEventFilterData
-                                              ?.length ??
-                                          0) >
-                                      1,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Icon(
-                                        Icons.swipe,
-                                        size: 16,
+                              ),
+                              const SizedBox(height: 10),
+                              // Indikasi scroll
+                              Visibility(
+                                visible:
+                                    (controller.tryoutEventFilterData?.length ??
+                                        0) >
+                                    1,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.swipe,
+                                      size: 16,
+                                      color: Colors.black38,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      "Geser untuk lihat lainnya",
+                                      style: TextStyle(
+                                        fontSize: 12,
                                         color: Colors.black38,
+                                        fontStyle: FontStyle.italic,
                                       ),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        "Geser untuk lihat lainnya",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.black38,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                      ],
-                    ),
+                              ),
+                            ],
+                          ),
+                    ],
                   ),
                   SizedBox(height: 50),
                   Column(
@@ -1132,29 +1111,31 @@ class DashboardView extends GetView<DashboardController> {
                         color: Colors.grey, // bisa diganti kalau mau lebih soft
                       ),
                       SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildHelpContainer(
-                            title: 'Hubungi Kami',
-                            description:
-                                'Punya pertanyaan atau bantuan? Silahkan hubungi kami.',
-                            buttonText: 'Hubungi Kami',
-                            onPressed: () {
-                              controller.launchWhatsApp();
-                            },
-                          ),
-                          SizedBox(width: 16),
-                          _buildHelpContainer(
-                            title: 'Panduan',
-                            description:
-                                'Pengguna baru? Silahkan baca panduan terlebih dahulu.',
-                            buttonText: 'Panduan',
-                            onPressed: () {
-                              controller.launchHelp();
-                            },
-                          ),
-                        ],
+                      IntrinsicHeight(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildHelpContainer(
+                              title: 'Hubungi Kami',
+                              description:
+                                  'Punya pertanyaan atau bantuan? Silahkan hubungi kami. ',
+                              buttonText: 'Hubungi Kami',
+                              onPressed: () {
+                                controller.launchWhatsApp();
+                              },
+                            ),
+                            SizedBox(width: 16),
+                            _buildHelpContainer(
+                              title: 'Panduan',
+                              description:
+                                  'Pengguna baru? Silahkan baca panduan terlebih dahulu.',
+                              buttonText: 'Panduan',
+                              onPressed: () {
+                                controller.launchHelp();
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -1175,82 +1156,77 @@ Widget _buildHelpContainer({
   required VoidCallback onPressed,
 }) {
   return Expanded(
-    child: SizedBox(
-      height: 180, // tinggi tetap
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(
-          16,
-          16,
-          16,
-          8,
-        ), // 🔥 kasih space bawah dikit (8px)
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          border: Border.all(color: Colors.grey.shade300, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
+    child: Container(
+      padding: const EdgeInsets.fromLTRB(
+        16,
+        16,
+        16,
+        8,
+      ), // 🔥 kasih space bawah dikit (8px)
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                description,
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+                softWrap: true,
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Divider(color: Colors.grey[400], height: 1),
+          SizedBox(height: 10), //
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4), // jarak bawah tipis
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: onPressed,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF16A085),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                ),
+                child: Text(
+                  buttonText,
+                  style: const TextStyle(
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  description,
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                  overflow: TextOverflow.fade,
-                  maxLines: 4,
-                  softWrap: true,
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Divider(color: Colors.grey[400], height: 1),
-            SizedBox(height: 10), //
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4), // jarak bawah tipis
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: onPressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF16A085),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  ),
-                  child: Text(
-                    buttonText,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     ),
   );
