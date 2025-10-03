@@ -46,340 +46,347 @@ class DashboardView extends GetView<DashboardController> {
         appBar: basicAppBar(),
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: Obx(() {
-            var data = controller.tryoutRecomHomeData;
-            var recoData = controller.recomenData;
-            return SingleChildScrollView(
-              padding: AppStyle.sreenPaddingHome,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Highlight Section
-                  Text(
-                    'Highlight',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
-                  Divider(
-                    thickness: 0.2,
-                    color: Colors.grey, // bisa diganti kalau mau lebih soft
-                  ),
-                  SizedBox(height: 10),
-                  SizedBox(
-                    height: 150, // tinggi carousel
-                    width: double.infinity,
-                    child: CarouselSlider(
-                      options: CarouselOptions(
-                        autoPlay: true,
-                        autoPlayInterval: Duration(seconds: 5),
-                        autoPlayAnimationDuration: Duration(milliseconds: 1000),
-                        enlargeCenterPage: true,
-                        viewportFraction: 1,
+          child: RefreshIndicator(
+            backgroundColor: Colors.white,
+            onRefresh: () => controller.initScreen(),
+            child: Obx(() {
+              var data = controller.tryoutRecomHomeData;
+              var recoData = controller.recomenData;
+              return SingleChildScrollView(
+                padding: AppStyle.sreenPaddingHome,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Highlight Section
+                    Text(
+                      'Highlight',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                      items: [
-                        for (var banner in controller.bannerData)
-                          GestureDetector(
-                            onTap: () async {
-                              final url = banner['link']!;
-                              final uri = Uri.parse(url);
-                              if (await canLaunchUrl(uri)) {
-                                await launchUrl(
-                                  uri,
-                                  mode: LaunchMode.externalApplication,
-                                );
-                              }
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Skeletonizer(
-                                enabled:
-                                    banner['gambar'] == null ||
-                                    banner['gambar']!.isEmpty,
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return Image.network(
-                                      banner['gambar']!,
-                                      // opsional, agar image sesuai height
-                                      fit: BoxFit.cover, // biar menutupi area
-                                      loadingBuilder: (
-                                        context,
-                                        child,
-                                        loadingProgress,
-                                      ) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value:
-                                                loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                    : null,
-                                          ),
-                                        );
-                                      },
-                                      errorBuilder: (
-                                        context,
-                                        error,
-                                        stackTrace,
-                                      ) {
-                                        return Center(
-                                          child: Icon(Icons.broken_image),
-                                        );
-                                      },
+                    ),
+                    SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
+                    Divider(
+                      thickness: 0.2,
+                      color: Colors.grey, // bisa diganti kalau mau lebih soft
+                    ),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      height: 150, // tinggi carousel
+                      width: double.infinity,
+                      child: CarouselSlider(
+                        options: CarouselOptions(
+                          autoPlay: true,
+                          autoPlayInterval: Duration(seconds: 5),
+                          autoPlayAnimationDuration: Duration(
+                            milliseconds: 1000,
+                          ),
+                          enlargeCenterPage: true,
+                          viewportFraction: 1,
+                        ),
+                        items: [
+                          for (var banner in controller.bannerData)
+                            GestureDetector(
+                              onTap: () async {
+                                final url = banner['link_mobile']!;
+                                if (banner['is_url'] == "1") {
+                                  final uri = Uri.parse(url);
+                                  if (await canLaunchUrl(uri)) {
+                                    await launchUrl(
+                                      uri,
+                                      mode: LaunchMode.externalApplication,
                                     );
-                                  },
+                                  }
+                                } else {
+                                  Get.toNamed(url, arguments: banner['params']);
+                                }
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Skeletonizer(
+                                  enabled:
+                                      banner['gambar'] == null ||
+                                      banner['gambar']!.isEmpty,
+                                  child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return Image.network(
+                                        banner['gambar']!,
+                                        // opsional, agar image sesuai height
+                                        fit: BoxFit.cover, // biar menutupi area
+                                        loadingBuilder: (
+                                          context,
+                                          child,
+                                          loadingProgress,
+                                        ) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value:
+                                                  loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
+                                            ),
+                                          );
+                                        },
+                                        errorBuilder: (
+                                          context,
+                                          error,
+                                          stackTrace,
+                                        ) {
+                                          return Center(
+                                            child: Icon(Icons.broken_image),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 50),
-                  controller.bimbelRemainder.isNotEmpty
-                      ? Column(
-                        children: [
-                          for (var data in controller.bimbelRemainder)
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Pengingat Bimbel",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Divider(
-                                  thickness: 0.2,
-                                  color:
-                                      Colors
-                                          .grey, // bisa diganti kalau mau lebih soft
-                                ),
-                                SizedBox(height: 30),
-                                Container(
-                                  padding: EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: Colors.grey.shade300,
+                    SizedBox(height: 50),
+                    controller.bimbelRemainder.isNotEmpty
+                        ? Column(
+                          children: [
+                            for (var data in controller.bimbelRemainder)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Pengingat Bimbel",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        data['bimbel_parent_name'] ?? '-',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 10,
+                                  SizedBox(height: 8),
+                                  Divider(
+                                    thickness: 0.2,
+                                    color:
+                                        Colors
+                                            .grey, // bisa diganti kalau mau lebih soft
+                                  ),
+                                  SizedBox(height: 30),
+                                  Container(
+                                    padding: EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          data['bimbel_parent_name'] ?? '-',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 10,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      // Judul
-                                      Text(
-                                        data['judul'] ?? '-',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
+                                        SizedBox(height: 5),
+                                        // Judul
+                                        Text(
+                                          data['judul'] ?? '-',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 12),
-                                      // Hari, Tanggal, Jam
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Text(
-                                                "Hari",
-                                                style: TextStyle(
-                                                  color: Colors.grey,
+                                        SizedBox(height: 12),
+                                        // Hari, Tanggal, Jam
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  "Hari",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
                                                 ),
-                                              ),
-                                              Text(
-                                                data['jadwal_tanggal']['hari'] ??
-                                                    '-',
-                                              ),
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              Text(
-                                                "Tanggal",
-                                                style: TextStyle(
-                                                  color: Colors.grey,
+                                                Text(
+                                                  data['jadwal_tanggal']['hari'] ??
+                                                      '-',
                                                 ),
-                                              ),
-                                              Text(
-                                                data['jadwal_tanggal']['tanggal'] ??
-                                                    '-',
-                                              ),
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              Text(
-                                                "Jam",
-                                                style: TextStyle(
-                                                  color: Colors.grey,
+                                              ],
+                                            ),
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  "Tanggal",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
                                                 ),
-                                              ),
-                                              Text(
-                                                data['jadwal_tanggal']['jam'] ??
-                                                    '-',
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 12),
-                                      // Tombol Pretest + Buka Kelas
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: ElevatedButton.icon(
-                                              onPressed:
-                                                  (data['has_pretest'] == false)
-                                                      ? () async {
-                                                        final uuid =
-                                                            data['uuid']
-                                                                ?.toString() ??
-                                                            '';
-                                                        final eventUuid =
-                                                            data['event_uuid']
-                                                                ?.toString() ??
-                                                            '';
+                                                Text(
+                                                  data['jadwal_tanggal']['tanggal'] ??
+                                                      '-',
+                                                ),
+                                              ],
+                                            ),
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  "Jam",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  data['jadwal_tanggal']['jam'] ??
+                                                      '-',
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 12),
+                                        // Tombol Pretest + Buka Kelas
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: ElevatedButton.icon(
+                                                onPressed:
+                                                    (data['has_pretest'] ==
+                                                            false)
+                                                        ? () async {
+                                                          final uuid =
+                                                              data['uuid']
+                                                                  ?.toString() ??
+                                                              '';
+                                                          final eventUuid =
+                                                              data['event_uuid']
+                                                                  ?.toString() ??
+                                                              '';
 
-                                                        if (uuid.isEmpty ||
-                                                            eventUuid.isEmpty) {
-                                                          notifHelper.show(
-                                                            'Data tidak lengkap',
-                                                            type: 0,
-                                                          );
-                                                          return;
-                                                        }
-
-                                                        // optional: tampilkan loading sementara nge-fetch
-                                                        Get.dialog(
-                                                          Center(
-                                                            child:
-                                                                CircularProgressIndicator(),
-                                                          ),
-                                                          barrierDismissible:
-                                                              false,
-                                                        );
-
-                                                        try {
-                                                          final detail =
-                                                              await controller
-                                                                  .getDetailBimbel(
-                                                                    uuid: uuid,
-                                                                    eventUuid:
-                                                                        eventUuid,
-                                                                  );
-
-                                                          // tutup loading
-                                                          if (Get.isDialogOpen ??
-                                                              false)
-                                                            Get.back();
-
-                                                          if (detail == null) {
+                                                          if (uuid.isEmpty ||
+                                                              eventUuid
+                                                                  .isEmpty) {
                                                             notifHelper.show(
-                                                              'Detail pretest tidak ditemukan',
+                                                              'Data tidak lengkap',
                                                               type: 0,
                                                             );
                                                             return;
                                                           }
 
-                                                          Get.toNamed(
-                                                            Routes
-                                                                .PRETEST_DETAIL,
-                                                            arguments: {
-                                                              'item': detail,
-                                                              'uuidParent':
-                                                                  uuid,
-                                                            },
+                                                          // optional: tampilkan loading sementara nge-fetch
+                                                          Get.dialog(
+                                                            Center(
+                                                              child:
+                                                                  CircularProgressIndicator(),
+                                                            ),
+                                                            barrierDismissible:
+                                                                false,
                                                           );
-                                                        } catch (e) {
-                                                          if (Get.isDialogOpen ??
-                                                              false)
-                                                            Get.back();
-                                                          notifHelper.show(
-                                                            'Terjadi kesalahan',
-                                                            type: 0,
-                                                          );
-                                                        }
-                                                      }
-                                                      : null,
 
-                                              icon: Icon(
-                                                Icons.assignment,
-                                                size: 18,
-                                              ),
-                                              label: Text('Pretest'),
-                                              style: ElevatedButton.styleFrom(
-                                                elevation: 0,
-                                                backgroundColor: Colors.amber,
-                                                foregroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
+                                                          try {
+                                                            final detail =
+                                                                await controller
+                                                                    .getDetailBimbel(
+                                                                      uuid:
+                                                                          uuid,
+                                                                      eventUuid:
+                                                                          eventUuid,
+                                                                    );
+
+                                                            // tutup loading
+                                                            if (Get.isDialogOpen ??
+                                                                false)
+                                                              Get.back();
+
+                                                            if (detail ==
+                                                                null) {
+                                                              notifHelper.show(
+                                                                'Detail pretest tidak ditemukan',
+                                                                type: 0,
+                                                              );
+                                                              return;
+                                                            }
+
+                                                            Get.toNamed(
+                                                              Routes
+                                                                  .PRETEST_DETAIL,
+                                                              arguments: {
+                                                                'item': detail,
+                                                                'uuidParent':
+                                                                    uuid,
+                                                              },
+                                                            );
+                                                          } catch (e) {
+                                                            if (Get.isDialogOpen ??
+                                                                false)
+                                                              Get.back();
+                                                            notifHelper.show(
+                                                              'Terjadi kesalahan',
+                                                              type: 0,
+                                                            );
+                                                          }
+                                                        }
+                                                        : null,
+
+                                                icon: Icon(
+                                                  Icons.assignment,
+                                                  size: 18,
                                                 ),
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: 8,
+                                                label: Text('Pretest'),
+                                                style: ElevatedButton.styleFrom(
+                                                  elevation: 0,
+                                                  backgroundColor: Colors.amber,
+                                                  foregroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          6,
+                                                        ),
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 8,
+                                                  ),
+                                                  minimumSize: Size(0, 40),
                                                 ),
-                                                minimumSize: Size(0, 40),
                                               ),
                                             ),
-                                          ),
-                                          SizedBox(width: 8),
-                                          Expanded(
-                                            child: ElevatedButton.icon(
-                                              onPressed:
-                                                  (data['url'] != null &&
-                                                          data['url']
-                                                              .toString()
-                                                              .isNotEmpty)
-                                                      ? () async {
-                                                        final url =
-                                                            data['url']
-                                                                .toString();
-                                                        if (await canLaunchUrl(
-                                                          Uri.parse(url),
-                                                        )) {
-                                                          await launchUrl(
-                                                            Uri.parse(url),
-                                                            mode:
-                                                                LaunchMode
-                                                                    .externalApplication,
-                                                          );
-                                                        }
-                                                      }
-                                                      : null, // tombol disable kalau url null/kosong
-                                              icon: Icon(
-                                                Icons.computer,
-                                                size: 18,
-                                                color:
+                                            SizedBox(width: 8),
+                                            Expanded(
+                                              child: ElevatedButton.icon(
+                                                onPressed:
                                                     (data['url'] != null &&
                                                             data['url']
                                                                 .toString()
                                                                 .isNotEmpty)
-                                                        ? Colors.white
-                                                        : Colors.grey.shade600,
-                                              ),
-                                              label: Text(
-                                                'Buka Kelas',
-                                                style: TextStyle(
+                                                        ? () async {
+                                                          final url =
+                                                              data['url']
+                                                                  .toString();
+                                                          if (await canLaunchUrl(
+                                                            Uri.parse(url),
+                                                          )) {
+                                                            await launchUrl(
+                                                              Uri.parse(url),
+                                                              mode:
+                                                                  LaunchMode
+                                                                      .externalApplication,
+                                                            );
+                                                          }
+                                                        }
+                                                        : null, // tombol disable kalau url null/kosong
+                                                icon: Icon(
+                                                  Icons.computer,
+                                                  size: 18,
                                                   color:
                                                       (data['url'] != null &&
                                                               data['url']
@@ -390,765 +397,815 @@ class DashboardView extends GetView<DashboardController> {
                                                               .grey
                                                               .shade600,
                                                 ),
-                                              ),
-                                              style: ElevatedButton.styleFrom(
-                                                elevation: 0,
-                                                backgroundColor:
-                                                    (data['url'] != null &&
-                                                            data['url']
-                                                                .toString()
-                                                                .isNotEmpty)
-                                                        ? Colors
-                                                            .teal // aktif
-                                                        : Colors
-                                                            .grey
-                                                            .shade300, // non-aktif
-                                                side: BorderSide(
-                                                  color:
+                                                label: Text(
+                                                  'Buka Kelas',
+                                                  style: TextStyle(
+                                                    color:
+                                                        (data['url'] != null &&
+                                                                data['url']
+                                                                    .toString()
+                                                                    .isNotEmpty)
+                                                            ? Colors.white
+                                                            : Colors
+                                                                .grey
+                                                                .shade600,
+                                                  ),
+                                                ),
+                                                style: ElevatedButton.styleFrom(
+                                                  elevation: 0,
+                                                  backgroundColor:
                                                       (data['url'] != null &&
                                                               data['url']
                                                                   .toString()
                                                                   .isNotEmpty)
-                                                          ? Colors.teal.shade700
+                                                          ? Colors
+                                                              .teal // aktif
                                                           : Colors
                                                               .grey
-                                                              .shade300,
+                                                              .shade300, // non-aktif
+                                                  side: BorderSide(
+                                                    color:
+                                                        (data['url'] != null &&
+                                                                data['url']
+                                                                    .toString()
+                                                                    .isNotEmpty)
+                                                            ? Colors
+                                                                .teal
+                                                                .shade700
+                                                            : Colors
+                                                                .grey
+                                                                .shade300,
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          6,
+                                                        ),
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 8,
+                                                  ),
+                                                  minimumSize: Size(0, 40),
                                                 ),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 50),
+                                ],
+                              ),
+                          ],
+                        )
+                        : SizedBox.shrink(),
+
+                    // Pilih Layanan
+                    Text(
+                      'Pilih Layanan',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text('Pilih layanan yang cocok sebagai teman belajar kamu'),
+                    SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
+                    Divider(
+                      thickness: 0.2,
+                      color: Colors.grey, // bisa diganti kalau mau lebih soft
+                    ),
+                    SizedBox(height: 30),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              (Get.find<HomeController>()).changeBottomBar(
+                                1,
+                              ); // Get.toNamed(Routes.TRYOUT); // ganti dengan route kamu
+                            },
+                            child: _buildServiceCard(
+                              'assets/tryoutHomeIcon.svg',
+                              'Tryout',
+                              Colors.teal,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 20),
+
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              (Get.find<HomeController>()).changeBottomBar(2);
+                            },
+                            child: _buildServiceCard(
+                              'assets/bimbelHomeIcon.svg',
+                              'Bimbel',
+                              Colors.teal,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              (Get.find<HomeController>()).changeBottomBar(3);
+                            },
+                            child: _buildServiceCard(
+                              'assets/platinumHomeIcon.svg',
+                              'Platinum',
+                              Colors.orange,
+                              badge: 'Baru',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 50),
+
+                    // Pilih Kategori
+                    Text(
+                      'Pilih Kategori',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      style: TextStyle(color: Colors.grey),
+                      'Pilih kategori yang cocok sebagai teman belajar kamu',
+                    ),
+                    SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
+                    Divider(
+                      thickness: 0.2,
+                      color: Colors.grey, // bisa diganti kalau mau lebih soft
+                    ),
+                    SizedBox(height: 30),
+
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey[300]!),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 6,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Skeletonizer(
+                        enabled:
+                            controller
+                                .kategoriData
+                                .isEmpty, // aktifkan skeleton kalau data kosong
+                        child: GridView.count(
+                          crossAxisCount: 3,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          children:
+                              controller.kategoriData.isEmpty
+                                  ? List.generate(
+                                    6, // jumlah placeholder skeleton
+                                    (index) => Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  )
+                                  : [
+                                    for (
+                                      int i = 0;
+                                      i < controller.kategoriData.length;
+                                      i++
+                                    )
+                                      _buildCategoryItem(
+                                        controller.kategoriData[i]['menu'],
+                                        controller.kategoriData[i]['logo'],
+                                        controller.kategoriData[i]['id']
+                                            .toString(),
+                                      ),
+                                  ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 50),
+
+                    Obx(() {
+                      if (recoData.isEmpty) {
+                        return Skeletonizer(
+                          child: Text(
+                            'Rekomendasi Penunjang Program ${recoData['menu']}',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Text(
+                          'Rekomendasi Penunjang Program ${recoData['menu']}',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }
+                    }),
+                    SizedBox(height: 4),
+                    Text(
+                      style: TextStyle(color: Colors.grey),
+                      'Pilihan utama kami untuk anda',
+                    ),
+                    SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
+                    Divider(
+                      thickness: 0.2,
+                      color: Colors.grey, // bisa diganti kalau mau lebih soft
+                    ),
+                    SizedBox(height: 30),
+                    recoData['tryout_formasi'] != null
+                        ? Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Get.toNamed(
+                                  Routes.DETAIL_TRYOUT,
+                                  arguments: recoData['tryout_formasi']["uuid"],
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(25),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.grey[300]!),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 6,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Center(
+                                      child: Container(
+                                        height: 180,
+                                        width: 240,
+                                        child: Image.network(
+                                          '${recoData['tryout_formasi']['gambar']}',
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Area gambar dengan background dan icon dummy
+                                    SizedBox(height: 16),
+                                    // Judul "Platinum"
+                                    Text(
+                                      '${recoData['tryout_formasi']['formasi']}',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+
+                                    // Deskripsi
+                                    Text(
+                                      'Siap bersaing bersama ribuan peserta seleksi Rekrutmen Bersama ${recoData['menu']} lainnya! Ayo persiapkan diri kamu untuk seleksi ${recoData['menu']} selanjutnya dari sekarang dengan mengikuti ${recoData['tryout_formasi']['formasi']} dari ${recoData['menu']} ini.',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(height: 16),
+
+                                    // Harga coret
+                                    Text(
+                                      formatRupiah(
+                                        controller
+                                            .recomenData['tryout_formasi']['harga'],
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationColor: Colors.grey,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    // Harga utama
+                                    Text(
+                                      formatRupiah(
+                                        controller
+                                            .recomenData['tryout_formasi']['harga_fix'],
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 10),
+                          ],
+                        )
+                        : SizedBox.shrink(),
+
+                    recoData['bimbel_parent'] != null
+                        ? GestureDetector(
+                          onTap: () {
+                            Get.toNamed(
+                              Routes.DETAIL_BIMBEL,
+                              arguments: recoData['bimbel_parent']['uuid'],
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(25),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.grey[300]!),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 6,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Center(
+                                      child: Container(
+                                        height: 180,
+                                        width: 240,
+                                        child: Image.network(
+                                          '${recoData['bimbel_parent']['gambar']}',
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Area gambar dengan background dan icon dummy
+                                    SizedBox(height: 16),
+                                    // Judul "Platinum"
+                                    Text(
+                                      '${recoData['bimbel_parent']['name']}',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+
+                                    // Deskripsi
+                                    Text(
+                                      'Siap bersaing bersama ribuan peserta seleksi Rekrutmen Bersama ${recoData['menu']} lainnya! Ayo persiapkan diri kamu untuk seleksi ${recoData['menu']} selanjutnya dari sekarang dengan mengikuti ${recoData['bimbel_parent']['formasi']} dari ${recoData['menu']} ini.',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(height: 16),
+
+                                    // Harga coret
+                                    Text(
+                                      "${formatRupiah(recoData['bimbel_parent']['price_list']['harga_terendah'])} - ${formatRupiah(recoData['bimbel_parent']['price_list']['harga_tertinggi'])}",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationColor: Colors.grey,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    // Harga utama
+                                    Text(
+                                      "${formatRupiah(recoData['bimbel_parent']['price_list']['harga_fix_terendah'])} - ${formatRupiah(recoData['bimbel_parent']['price_list']['harga_fix_tertinggi'])}",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          ),
+                        )
+                        : SizedBox.shrink(),
+                    recoData['upgrade'] != null
+                        ? GestureDetector(
+                          onTap: () {
+                            Get.toNamed(Routes.UPGRADE_AKUN);
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(25),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.grey[300]!),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 6,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Center(
+                                      child: Container(
+                                        height: 180,
+                                        width: 240,
+                                        child:
+                                            recoData['upgrade']['gambar'] ==
+                                                    null
+                                                ? Image.asset(
+                                                  'assets/squareLogo.png',
+                                                )
+                                                : Image.network(
+                                                  '${recoData['upgrade']['gambar']}',
                                                 ),
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: 8,
-                                                ),
-                                                minimumSize: Size(0, 40),
+                                      ),
+                                    ),
+
+                                    // Area gambar dengan background dan icon dummy
+                                    SizedBox(height: 16),
+                                    // Judul "Platinum"
+                                    Text(
+                                      '${recoData['upgrade']['name']}',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+
+                                    // Deskripsi
+                                    Text(
+                                      'Upgrade jenis akun Anda menjadi Platinum dan dapatkan berbagai macam fitur unggulan seperti Video Series, E-book, Tryout Harian, dan Webinar yang dapat meningkatkan persiapan kamu lebih optimal lagi.',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    SizedBox(height: 16),
+
+                                    // Harga coret
+                                    Text(
+                                      "${formatRupiah(recoData['upgrade']['price_list']['harga_terendah'])} - ${formatRupiah(recoData['upgrade']['price_list']['harga_tertinggi'])}",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationColor: Colors.grey,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    // Harga utama
+                                    Text(
+                                      "${formatRupiah(recoData['upgrade']['price_list']['harga_fix_terendah'])} - ${formatRupiah(recoData['upgrade']['price_list']['harga_fix_tertinggi'])}",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          ),
+                        )
+                        : SizedBox.shrink(),
+
+                    SizedBox(height: 50),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Judul dan deskripsi
+                        Text(
+                          'Event Tryout Gratis',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          style: TextStyle(color: Colors.grey),
+                          'Ikuti tryout akbar gratis bersama ribuan peserta lainnya.',
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ), // kasih jarak biar gak terlalu nempel
+                        Divider(
+                          thickness: 0.2,
+                          color:
+                              Colors.grey, // bisa diganti kalau mau lebih soft
+                        ),
+                        SizedBox(height: 20),
+
+                        // Search field
+                        Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.teal, width: 1.5),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: TextField(
+                            controller: controller.tryoutSearch,
+                            onChanged: (value) {
+                              controller.filterTryout(
+                                query: controller.tryoutSearch.text,
+                              );
+                            },
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 15.0,
+                              ), // Sesuaikan nilai vertical
+                              hintText: 'Cari',
+                              hintStyle: TextStyle(color: Colors.grey),
+                              border: InputBorder.none,
+                              suffixIcon: Icon(
+                                Icons.search,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        // Tombol Filter
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              showFilterCategoryBottomSheet(context);
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor:
+                                  Colors.teal, // Mengatur warna teks dan ikon
+                            ),
+                            child: Row(
+                              mainAxisSize:
+                                  MainAxisSize
+                                      .min, // Agar Row tidak mengambil lebar penuh
+                              children: [
+                                Text('Filter', style: TextStyle(fontSize: 16)),
+                                SizedBox(
+                                  width: 4,
+                                ), // Memberikan jarak antara teks dan ikon
+                                Icon(Icons.keyboard_arrow_down),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        controller.tryoutEventFilterData.isEmpty
+                            ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/emptyArchiveIcon.svg",
+                                    width: 140, // atur lebar
+                                    height: 140, // atur tinggi
+                                  ),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    'Belum Ada Event Berlangsung',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 50),
+                                ],
+                              ),
+                            )
+                            : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Scrollable Row
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: [
+                                      for (var data
+                                          in controller.tryoutEventFilterData)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            right: 12,
+                                          ),
+                                          child: SizedBox(
+                                            width:
+                                                300, // biar card rapi & konsisten
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Get.toNamed(
+                                                  Routes.DETAIL_EVENT,
+                                                  arguments: data['uuid'],
+                                                );
+                                              },
+                                              child: buildTryoutCard(
+                                                status: data['label_text'],
+                                                title: data['name'],
+                                                dateRange:
+                                                    data['range_date_string'],
+                                                period: data['periode_text'],
                                               ),
                                             ),
                                           ),
-                                        ],
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                // Indikasi scroll
+                                Visibility(
+                                  visible:
+                                      (controller
+                                              .tryoutEventFilterData
+                                              ?.length ??
+                                          0) >
+                                      1,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Icon(
+                                        Icons.swipe,
+                                        size: 16,
+                                        color: Colors.black38,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        "Geser untuk lihat lainnya",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.black38,
+                                          fontStyle: FontStyle.italic,
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 50),
                               ],
                             ),
-                        ],
-                      )
-                      : SizedBox.shrink(),
-
-                  // Pilih Layanan
-                  Text(
-                    'Pilih Layanan',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 4),
-                  Text('Pilih layanan yang cocok sebagai teman belajar kamu'),
-                  SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
-                  Divider(
-                    thickness: 0.2,
-                    color: Colors.grey, // bisa diganti kalau mau lebih soft
-                  ),
-                  SizedBox(height: 30),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            (Get.find<HomeController>()).changeBottomBar(
-                              1,
-                            ); // Get.toNamed(Routes.TRYOUT); // ganti dengan route kamu
-                          },
-                          child: _buildServiceCard(
-                            'assets/tryoutHomeIcon.svg',
-                            'Tryout',
-                            Colors.teal,
+                      ],
+                    ),
+                    SizedBox(height: 50),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Rekomendasi Tryout',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      SizedBox(width: 20),
-
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            (Get.find<HomeController>()).changeBottomBar(2);
-                          },
-                          child: _buildServiceCard(
-                            'assets/bimbelHomeIcon.svg',
-                            'Bimbel',
-                            Colors.teal,
-                          ),
+                        Text(
+                          'Ikuti event tryout dari rekomendasi kita untuk anda!',
+                          style: TextStyle(color: Colors.grey),
                         ),
-                      ),
-                      SizedBox(width: 20),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            (Get.find<HomeController>()).changeBottomBar(3);
-                          },
-                          child: _buildServiceCard(
-                            'assets/platinumHomeIcon.svg',
-                            'Platinum',
-                            Colors.orange,
-                            badge: 'Baru',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 50),
-
-                  // Pilih Kategori
-                  Text(
-                    'Pilih Kategori',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    style: TextStyle(color: Colors.grey),
-                    'Pilih kategori yang cocok sebagai teman belajar kamu',
-                  ),
-                  SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
-                  Divider(
-                    thickness: 0.2,
-                    color: Colors.grey, // bisa diganti kalau mau lebih soft
-                  ),
-                  SizedBox(height: 30),
-
-                  Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey[300]!),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 6,
-                          offset: Offset(0, 3),
+                        SizedBox(
+                          height: 8,
+                        ), // kasih jarak biar gak terlalu nempel
+                        Divider(
+                          thickness: 0.2,
+                          color:
+                              Colors.grey, // bisa diganti kalau mau lebih soft
                         ),
                       ],
                     ),
-                    child: Skeletonizer(
-                      enabled:
-                          controller
-                              .kategoriData
-                              .isEmpty, // aktifkan skeleton kalau data kosong
-                      child: GridView.count(
-                        crossAxisCount: 3,
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        mainAxisSpacing: 16,
-                        crossAxisSpacing: 16,
-                        children:
-                            controller.kategoriData.isEmpty
-                                ? List.generate(
-                                  6, // jumlah placeholder skeleton
-                                  (index) => Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade300,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                )
-                                : [
-                                  for (
-                                    int i = 0;
-                                    i < controller.kategoriData.length;
-                                    i++
-                                  )
-                                    _buildCategoryItem(
-                                      controller.kategoriData[i]['menu'],
-                                      controller.kategoriData[i]['logo'],
-                                      controller.kategoriData[i]['id']
-                                          .toString(),
-                                    ),
-                                ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 50),
 
-                  Text(
-                    'Rekomendasi Penunjang Program ${recoData['menu']}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    style: TextStyle(color: Colors.grey),
-                    'Pilihan utama kami untuk anda',
-                  ),
-                  SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
-                  Divider(
-                    thickness: 0.2,
-                    color: Colors.grey, // bisa diganti kalau mau lebih soft
-                  ),
-                  SizedBox(height: 30),
-                  recoData['tryout_formasi'] != null
-                      ? Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Get.toNamed(
-                                Routes.DETAIL_TRYOUT,
-                                arguments: recoData["uuid"],
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(25),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.grey[300]!),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Center(
-                                    child: Container(
-                                      height: 180,
-                                      width: 240,
-                                      child: Image.network(
-                                        '${recoData['tryout_formasi']['gambar']}',
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Area gambar dengan background dan icon dummy
-                                  SizedBox(height: 16),
-                                  // Judul "Platinum"
-                                  Text(
-                                    '${recoData['tryout_formasi']['formasi']}',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
-
-                                  // Deskripsi
-                                  Text(
-                                    'Siap bersaing bersama ribuan peserta seleksi Rekrutmen Bersama ${recoData['menu']} lainnya! Ayo persiapkan diri kamu untuk seleksi ${recoData['menu']} selanjutnya dari sekarang dengan mengikuti ${recoData['tryout_formasi']['formasi']} dari ${recoData['menu']} ini.',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  SizedBox(height: 16),
-
-                                  // Harga coret
-                                  Text(
-                                    formatRupiah(
-                                      controller
-                                          .recomenData['tryout_formasi']['harga'],
-                                    ),
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
-                                      decoration: TextDecoration.lineThrough,
-                                      decorationColor: Colors.grey,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  // Harga utama
-                                  Text(
-                                    formatRupiah(
-                                      controller
-                                          .recomenData['tryout_formasi']['harga_fix'],
-                                    ),
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(height: 10),
-                        ],
-                      )
-                      : SizedBox.shrink(),
-
-                  recoData['bimbel_parent'] != null
-                      ? GestureDetector(
-                        onTap: () {
-                          Get.toNamed(
-                            Routes.DETAIL_BIMBEL,
-                            arguments: recoData['bimbel_parent']['uuid'],
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(25),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.grey[300]!),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Center(
-                                    child: Container(
-                                      height: 180,
-                                      width: 240,
-                                      child: Image.network(
-                                        '${recoData['bimbel_parent']['gambar']}',
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Area gambar dengan background dan icon dummy
-                                  SizedBox(height: 16),
-                                  // Judul "Platinum"
-                                  Text(
-                                    '${recoData['bimbel_parent']['name']}',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
-
-                                  // Deskripsi
-                                  Text(
-                                    'Siap bersaing bersama ribuan peserta seleksi Rekrutmen Bersama ${recoData['menu']} lainnya! Ayo persiapkan diri kamu untuk seleksi ${recoData['menu']} selanjutnya dari sekarang dengan mengikuti ${recoData['bimbel_parent']['formasi']} dari ${recoData['menu']} ini.',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  SizedBox(height: 16),
-
-                                  // Harga coret
-                                  Text(
-                                    "${formatRupiah(recoData['bimbel_parent']['price_list']['harga_terendah'])} - ${formatRupiah(recoData['bimbel_parent']['price_list']['harga_tertinggi'])}",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
-                                      decoration: TextDecoration.lineThrough,
-                                      decorationColor: Colors.grey,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  // Harga utama
-                                  Text(
-                                    "${formatRupiah(recoData['bimbel_parent']['price_list']['harga_fix_terendah'])} - ${formatRupiah(recoData['bimbel_parent']['price_list']['harga_fix_tertinggi'])}",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                          ],
-                        ),
-                      )
-                      : SizedBox.shrink(),
-                  recoData['upgrade'] != null
-                      ? GestureDetector(
-                        onTap: () {
-                          Get.toNamed(Routes.UPGRADE_AKUN);
-                        },
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(25),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.grey[300]!),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Center(
-                                    child: Container(
-                                      height: 180,
-                                      width: 240,
-                                      child:
-                                          recoData['upgrade']['gambar'] == null
-                                              ? Image.asset(
-                                                'assets/squareLogo.png',
-                                              )
-                                              : Image.network(
-                                                '${recoData['upgrade']['gambar']}',
-                                              ),
-                                    ),
-                                  ),
-
-                                  // Area gambar dengan background dan icon dummy
-                                  SizedBox(height: 16),
-                                  // Judul "Platinum"
-                                  Text(
-                                    '${recoData['upgrade']['name']}',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
-
-                                  // Deskripsi
-                                  Text(
-                                    'Upgrade jenis akun Anda menjadi Platinum dan dapatkan berbagai macam fitur unggulan seperti Video Series, E-book, Tryout Harian, dan Webinar yang dapat meningkatkan persiapan kamu lebih optimal lagi.',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  SizedBox(height: 16),
-
-                                  // Harga coret
-                                  Text(
-                                    "${formatRupiah(recoData['upgrade']['price_list']['harga_terendah'])} - ${formatRupiah(recoData['upgrade']['price_list']['harga_tertinggi'])}",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
-                                      decoration: TextDecoration.lineThrough,
-                                      decorationColor: Colors.grey,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  // Harga utama
-                                  Text(
-                                    "${formatRupiah(recoData['upgrade']['price_list']['harga_fix_terendah'])} - ${formatRupiah(recoData['upgrade']['price_list']['harga_fix_tertinggi'])}",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                          ],
-                        ),
-                      )
-                      : SizedBox.shrink(),
-
-                  SizedBox(height: 50),
-
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Judul dan deskripsi
-                      Text(
-                        'Event Tryout Gratis',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        style: TextStyle(color: Colors.grey),
-                        'Ikuti tryout akbar gratis bersama ribuan peserta lainnya.',
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ), // kasih jarak biar gak terlalu nempel
-                      Divider(
-                        thickness: 0.2,
-                        color: Colors.grey, // bisa diganti kalau mau lebih soft
-                      ),
-                      SizedBox(height: 20),
-
-                      // Search field
-                      Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.teal, width: 1.5),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: TextField(
-                          controller: controller.tryoutSearch,
-                          onChanged: (value) {
-                            controller.filterTryout(
-                              query: controller.tryoutSearch.text,
+                    SizedBox(height: 30),
+                    controller.tryoutRecomHomeData.isNotEmpty
+                        ? buildRecomenTryoutCard(
+                          onPressed: () {
+                            Get.toNamed(
+                              Routes.DETAIL_EVENT,
+                              arguments: data['uuid'],
                             );
                           },
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 15.0,
-                            ), // Sesuaikan nilai vertical
-                            hintText: 'Cari',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            border: InputBorder.none,
-                            suffixIcon: Icon(Icons.search, color: Colors.black),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      // Tombol Filter
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            showFilterCategoryBottomSheet(context);
-                          },
-                          style: TextButton.styleFrom(
-                            foregroundColor:
-                                Colors.teal, // Mengatur warna teks dan ikon
-                          ),
-                          child: Row(
-                            mainAxisSize:
-                                MainAxisSize
-                                    .min, // Agar Row tidak mengambil lebar penuh
-                            children: [
-                              Text('Filter', style: TextStyle(fontSize: 16)),
-                              SizedBox(
-                                width: 4,
-                              ), // Memberikan jarak antara teks dan ikon
-                              Icon(Icons.keyboard_arrow_down),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      controller.tryoutEventFilterData.isEmpty
-                          ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/emptyArchiveIcon.svg",
-                                  width: 140, // atur lebar
-                                  height: 140, // atur tinggi
-                                ),
-                                const SizedBox(height: 16),
-                                const Text(
-                                  'Belum Ada Event Berlangsung',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                                const SizedBox(height: 50),
-                              ],
-                            ),
-                          )
-                          : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Scrollable Row
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    for (var data
-                                        in controller.tryoutEventFilterData)
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 12,
-                                        ),
-                                        child: SizedBox(
-                                          width:
-                                              300, // biar card rapi & konsisten
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              Get.toNamed(
-                                                Routes.DETAIL_EVENT,
-                                                arguments: data['uuid'],
-                                              );
-                                            },
-                                            child: buildTryoutCard(
-                                              status: data['label_text'],
-                                              title: data['name'],
-                                              dateRange:
-                                                  data['range_date_string'],
-                                              period: data['periode_text'],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              // Indikasi scroll
-                              Visibility(
-                                visible:
-                                    (controller.tryoutEventFilterData?.length ??
-                                        0) >
-                                    1,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(
-                                      Icons.swipe,
-                                      size: 16,
-                                      color: Colors.black38,
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      "Geser untuk lihat lainnya",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.black38,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                    ],
-                  ),
-                  SizedBox(height: 50),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Rekomendasi Tryout',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Ikuti event tryout dari rekomendasi kita untuk anda!',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ), // kasih jarak biar gak terlalu nempel
-                      Divider(
-                        thickness: 0.2,
-                        color: Colors.grey, // bisa diganti kalau mau lebih soft
-                      ),
-                    ],
-                  ),
+                          title: data['name'],
+                          periode: data['range_date_string'],
+                          type: "x",
+                        )
+                        : EmptyStateWidget(message: "Belum ada event"),
 
-                  SizedBox(height: 30),
-                  controller.tryoutRecomHomeData.isNotEmpty
-                      ? buildRecomenTryoutCard(
-                        onPressed: () {
-                          Get.toNamed(
-                            Routes.DETAIL_EVENT,
-                            arguments: data['uuid'],
-                          );
-                        },
-                        title: data['name'],
-                        periode: data['range_date_string'],
-                        type: "x",
-                      )
-                      : EmptyStateWidget(message: "Belum ada event"),
+                    SizedBox(height: 50),
 
-                  SizedBox(height: 50),
-
-                  Text(
-                    'Program Afiliasi',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
-                  Divider(
-                    thickness: 0.2,
-                    color: Colors.grey, // bisa diganti kalau mau lebih soft
-                  ),
-                  SizedBox(height: 30),
-
-                  GestureDetector(
-                    onTap: () => Get.offNamed(Routes.AFFILIATE),
-                    child: Container(
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade200,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      clipBehavior: Clip.hardEdge,
-                      child: Image.asset(
-                        'assets/afiliasiBanner.jpg',
-                        fit: BoxFit.fill,
+                    Text(
+                      'Program Afiliasi',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  //
-                  SizedBox(height: 50),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Bantuan Cepat',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                    SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
+                    Divider(
+                      thickness: 0.2,
+                      color: Colors.grey, // bisa diganti kalau mau lebih soft
+                    ),
+                    SizedBox(height: 30),
+
+                    GestureDetector(
+                      onTap: () => Get.offNamed(Routes.AFFILIATE),
+                      child: Container(
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade200,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        clipBehavior: Clip.hardEdge,
+                        child: Image.asset(
+                          'assets/afiliasiBanner.jpg',
+                          fit: BoxFit.fill,
                         ),
                       ),
-                      SizedBox(
-                        height: 8,
-                      ), // kasih jarak biar gak terlalu nempel
-                      Divider(
-                        thickness: 0.2,
-                        color: Colors.grey, // bisa diganti kalau mau lebih soft
-                      ),
-                      SizedBox(height: 30),
-                      IntrinsicHeight(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildHelpContainer(
-                              title: 'Hubungi Kami',
-                              description:
-                                  'Punya pertanyaan atau bantuan? Silahkan hubungi kami. ',
-                              buttonText: 'Hubungi Kami',
-                              onPressed: () {
-                                controller.launchWhatsApp();
-                              },
-                            ),
-                            SizedBox(width: 16),
-                            _buildHelpContainer(
-                              title: 'Panduan',
-                              description:
-                                  'Pengguna baru? Silahkan baca panduan terlebih dahulu.',
-                              buttonText: 'Panduan',
-                              onPressed: () {
-                                controller.launchHelp();
-                              },
-                            ),
-                          ],
+                    ),
+                    //
+                    SizedBox(height: 50),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Bantuan Cepat',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          }),
+                        SizedBox(
+                          height: 8,
+                        ), // kasih jarak biar gak terlalu nempel
+                        Divider(
+                          thickness: 0.2,
+                          color:
+                              Colors.grey, // bisa diganti kalau mau lebih soft
+                        ),
+                        SizedBox(height: 30),
+                        IntrinsicHeight(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildHelpContainer(
+                                title: 'Hubungi Kami',
+                                description:
+                                    'Punya pertanyaan atau bantuan? Silahkan hubungi kami. ',
+                                buttonText: 'Hubungi Kami',
+                                onPressed: () {
+                                  controller.launchWhatsApp();
+                                },
+                              ),
+                              SizedBox(width: 16),
+                              _buildHelpContainer(
+                                title: 'Panduan',
+                                description:
+                                    'Pengguna baru? Silahkan baca panduan terlebih dahulu.',
+                                buttonText: 'Panduan',
+                                onPressed: () {
+                                  controller.launchHelp();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
         ),
       ),
     );

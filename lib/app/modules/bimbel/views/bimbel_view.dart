@@ -342,7 +342,7 @@ class BimbelView extends GetView<BimbelController> {
                         "${formatRupiah(hargaFixTerendah)} - ${formatRupiah(hargaFixTertinggi)}",
                         style: TextStyle(
                           color: Colors.black,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           fontSize: 14,
                         ),
                       ),

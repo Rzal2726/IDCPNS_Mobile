@@ -25,13 +25,7 @@ class DashboardController extends GetxController {
   final count = 0.obs;
   @override
   void onInit() {
-    getUser();
-    getBanner();
-    getKategori();
-    getRecomendation();
-    getBimbelRemainder();
-    getTryoutEvent();
-    getRecomenTryout();
+    initScreen();
     super.onInit();
   }
 
@@ -43,6 +37,16 @@ class DashboardController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> initScreen() async {
+    await getUser();
+    await getBanner();
+    await getKategori();
+    await getRecomendation();
+    await getBimbelRemainder();
+    await getTryoutEvent();
+    getRecomenTryout();
   }
 
   void filterTryout({String? query, int? categoryId}) {
@@ -101,6 +105,7 @@ class DashboardController extends GetxController {
       final result = await _restClient.getData(url: url);
       if (result["status"] == "success") {
         var data = result['data'];
+        print(data);
         bannerData.value = data;
       }
     } catch (e) {
