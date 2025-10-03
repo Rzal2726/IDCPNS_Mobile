@@ -103,7 +103,6 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                         SizedBox(height: 5),
                         DropdownSearch<int>(
                           items: (String? filter, LoadProps? props) {
-                            // return list of id dari bankList
                             return controller.bankList
                                 .map<int>((item) => item['id'] as int)
                                 .toList();
@@ -121,13 +120,14 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                                 ? "${selected['bank_name']} - ${selected['no_rekening']}"
                                 : '';
                           },
-                          popupProps: PopupProps.dialog(
+                          popupProps: PopupProps.menu(
+                            // ⬅️ ganti jadi menu
                             fit: FlexFit.loose,
-                            dialogProps: DialogProps(
+                            showSelectedItems: true,
+                            menuProps: MenuProps(
                               backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                              borderRadius: BorderRadius.circular(8),
+                              elevation: 2,
                             ),
                           ),
                           decoratorProps: DropDownDecoratorProps(

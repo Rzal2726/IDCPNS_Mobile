@@ -195,6 +195,8 @@ class PaymentWhislistController extends GetxController {
       promoCodeName.value = result['data']['voucher_code'];
     } else {
       promoController.clear();
+      kodePromo.value = '';
+      promoAmount.value = 0;
       if (afiFromStorage.value != 1)
         notifHelper.show(result["message"] ?? "Terjadi kesalahan", type: 0);
     }

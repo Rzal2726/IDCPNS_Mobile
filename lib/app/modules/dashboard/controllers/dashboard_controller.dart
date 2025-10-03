@@ -25,13 +25,7 @@ class DashboardController extends GetxController {
   final count = 0.obs;
   @override
   void onInit() {
-    getUser();
-    getBanner();
-    getKategori();
-    getRecomendation();
-    getBimbelRemainder();
-    getTryoutEvent();
-    getRecomenTryout();
+    refreshData();
     super.onInit();
   }
 
@@ -43,6 +37,16 @@ class DashboardController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  void refreshData() {
+    getUser();
+    getBanner();
+    getKategori();
+    getRecomendation();
+    getBimbelRemainder();
+    getTryoutEvent();
+    getRecomenTryout();
   }
 
   void filterTryout({String? query, int? categoryId}) {

@@ -837,7 +837,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
             return controller.paymantListData.isEmpty
                 ? Center(child: CircularProgressIndicator())
                 : SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.15,
+                  height: MediaQuery.of(context).size.height * 0.25,
                   child: SingleChildScrollView(
                     padding: AppStyle.contentPadding,
                     child: Column(
@@ -945,7 +945,7 @@ void showPhoneNumberBottomSheet(BuildContext context) {
             return controller.paymantListData.isEmpty
                 ? Center(child: CircularProgressIndicator())
                 : SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.15,
+                  height: MediaQuery.of(context).size.height * 0.25,
                   child: SingleChildScrollView(
                     padding: AppStyle.contentPadding,
                     child: Column(

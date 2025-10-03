@@ -79,7 +79,7 @@ class EmailVerificationController extends GetxController {
     if (result["status"] == "success") {
       notifHelper.show("Register berhasil", type: 1);
       otpController.clear();
-      Get.toNamed(Routes.LOGIN);
+      Get.toNamed(Routes.LENGKAPI_BIODATA);
     } else {
       // OTP gagal → kosongkan field
       otpController.clear();

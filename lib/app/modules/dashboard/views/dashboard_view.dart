@@ -80,7 +80,7 @@ class DashboardView extends GetView<DashboardController> {
                         for (var banner in controller.bannerData)
                           GestureDetector(
                             onTap: () async {
-                              final url = banner['link']!;
+                              final url = banner['link_mobile']!;
                               final uri = Uri.parse(url);
                               if (await canLaunchUrl(uri)) {
                                 await launchUrl(
@@ -473,6 +473,7 @@ class DashboardView extends GetView<DashboardController> {
                         child: GestureDetector(
                           onTap: () {
                             (Get.find<HomeController>()).changeBottomBar(2);
+                            (Get.find<HomeController>()).currentIndex.value = 2;
                           },
                           child: _buildServiceCard(
                             'assets/bimbelHomeIcon.svg',

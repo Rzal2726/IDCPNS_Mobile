@@ -5,6 +5,7 @@ import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -21,6 +22,7 @@ class MyBimbelView extends GetView<MyBimbelController> {
         if (didPop) return;
         // Arahkan tombol back fisik HP ke halaman BIMBEL
         Get.offNamed(Routes.HOME, arguments: {'initialIndex': 3});
+        (Get.find<HomeController>()).currentIndex.value = 3;
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -28,6 +30,7 @@ class MyBimbelView extends GetView<MyBimbelController> {
           "Bimbel Saya",
           onBack: () {
             Get.offNamed(Routes.HOME, arguments: {'initialIndex': 3});
+            (Get.find<HomeController>()).currentIndex.value = 4;
           },
         ),
         body: SafeArea(

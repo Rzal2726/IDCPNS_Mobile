@@ -147,6 +147,7 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                           } else {
                             controller.getBimbel(submenuCategoryId: "0");
                           }
+                          controller.selectedKategoriId.value = 0;
                         },
                       );
                     },
