@@ -20,6 +20,7 @@ class BimbelController extends GetxController {
   RxInt currentPage = 1.obs;
   RxInt totalPages = 0.obs;
   RxInt totalPage = 0.obs;
+  RxBool isLoading = false.obs;
 
   @override
   void onInit() {
@@ -51,6 +52,7 @@ class BimbelController extends GetxController {
     int? page,
   }) async {
     try {
+      isLoading.value = true;
       final url = baseUrl + apiGetBimbel;
 
       var payload = {
@@ -74,6 +76,8 @@ class BimbelController extends GetxController {
       }
     } catch (e) {
       print("Error getBimbel: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 

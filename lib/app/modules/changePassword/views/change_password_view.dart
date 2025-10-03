@@ -146,28 +146,6 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          OutlinedButton(
-                            onPressed: () => Get.back(),
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  6,
-                                ), // sudut sedikit membulat
-                              ),
-                              side: BorderSide(
-                                color: Colors.teal, // warna outline teal
-                                width: 1.5, // ketebalan outline
-                              ),
-                            ),
-                            child: Text(
-                              "Batal",
-                              style: TextStyle(
-                                color: Colors.teal,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 12),
                           ElevatedButton(
                             onPressed: controller.changePassword,
                             style: ElevatedButton.styleFrom(

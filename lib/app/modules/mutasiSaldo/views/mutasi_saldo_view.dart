@@ -35,139 +35,139 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
           child: Obx(() {
             final data = controller.mutasiSaldoData['data'];
 
-            return SingleChildScrollView(
-              child: Padding(
-                padding: AppStyle.screenPadding,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 🔎 Search box
-                    SearchRowButton(
-                      controller: controller.searchController,
-                      onSearch: () {
-                        controller.getMutasiSaldo(
-                          search: controller.searchController.text,
-                        );
-                      },
-                      hintText: "Cari",
-                    ),
+            return Padding(
+              padding: AppStyle.screenPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 🔎 Search box
+                  SearchRowButton(
+                    controller: controller.searchController,
+                    onSearch: () {
+                      controller.getMutasiSaldo(
+                        search: controller.searchController.text,
+                      );
+                    },
+                    hintText: "Cari",
+                  ),
 
-                    SizedBox(height: 30),
+                  SizedBox(height: 30),
 
-                    // 📋 Konten → skeleton / data / empty
-                    FutureBuilder(
-                      future: Future.delayed(Duration(seconds: 5)),
-                      builder: (context, snapshot) {
-                        // ⏳ Skeleton loading selama 5 detik
-                        if (snapshot.connectionState != ConnectionState.done) {
-                          return Column(
-                            children: List.generate(
-                              3,
-                              (index) => Container(
-                                margin: EdgeInsets.only(bottom: 16),
-                                padding: EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.shade300,
-                                      blurRadius: 4,
-                                      offset: Offset(0, 2),
+                  Expanded(
+                    child:
+                        data == null
+                            // ⏳ Skeletonizer
+                            ? ListView.builder(
+                              itemCount: 3,
+                              itemBuilder:
+                                  (context, index) => Container(
+                                    margin: EdgeInsets.only(bottom: 16),
+                                    padding: EdgeInsets.all(14),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.shade300,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      height: 20,
-                                      width: double.infinity, // ✅ full width
-                                      color: Colors.grey.shade300,
-                                    ),
-                                    SizedBox(height: 7),
-                                    Container(
-                                      height: 16,
-                                      width: double.infinity, // ✅ full width
-                                      color: Colors.grey.shade300,
-                                    ),
-                                    SizedBox(height: 7),
-                                    Container(
-                                      height: 14,
-                                      width: double.infinity, // ✅ full width
-                                      color: Colors.grey.shade300,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-
-                        // ✅ Data tersedia
-                        if (data != null && data.isNotEmpty) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 10),
-
-                              Column(
-                                children: List.generate(
-                                  data.length,
-                                  (i) => buildbalanceTransfer(
-                                    number: i + 1,
-                                    date: data[i]['tanggal'] ?? '',
-                                    price:
-                                        formatRupiah(data[i]['nominal']) ??
-                                        'Rp0',
-                                    status: _getStatus(data[i]['status']),
-                                    statusColor: _getStatusColor(
-                                      data[i]['status'],
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 20,
+                                          width: double.infinity,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        SizedBox(height: 7),
+                                        Container(
+                                          height: 16,
+                                          width: double.infinity,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        SizedBox(height: 7),
+                                        Container(
+                                          height: 14,
+                                          width: double.infinity,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                              ),
-
-                              SizedBox(height: 20),
-
-                              ReusablePagination(
-                                nextPage: controller.nextPage,
-                                prevPage: controller.prevPage,
-                                currentPage: controller.currentPage,
-                                totalPage: controller.totalPage,
-                                goToPage: controller.goToPage,
-                              ),
-                            ],
-                          );
-                        }
-
-                        // ❌ Data kosong → tampilkan empty state
-                        return Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
+                            )
+                            : data.isNotEmpty
+                            // ✅ Data tersedia
+                            ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SvgPicture.asset(
-                                  "assets/emptyArchiveIcon.svg",
-                                  height: 150,
-                                ),
-                                SizedBox(height: 8),
                                 Text(
-                                  "Tidak ada transaksi",
+                                  "Rincian Komisi",
                                   style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
+                                ),
+                                SizedBox(height: 20),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: data.length,
+                                    itemBuilder: (context, i) {
+                                      var item = data[i];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 12,
+                                        ),
+                                        child: buildbalanceTransfer(
+                                          number: i + 1,
+                                          date: item['tanggal'] ?? '',
+                                          price:
+                                              formatRupiah(item['nominal']) ??
+                                              'Rp0',
+                                          status: _getStatus(item['status']),
+                                          statusColor: _getStatusColor(
+                                            item['status'],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                ReusablePagination(
+                                  nextPage: controller.nextPage,
+                                  prevPage: controller.prevPage,
+                                  currentPage: controller.currentPage,
+                                  totalPage: controller.totalPage,
+                                  goToPage: controller.goToPage,
                                 ),
                               ],
+                            )
+                            // ❌ Data kosong
+                            : Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/emptyArchiveIcon.svg",
+                                    height: 150,
+                                  ),
+                                  SizedBox(height: 12),
+                                  Text(
+                                    "Tidak ada transaksi",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           }),

@@ -109,85 +109,26 @@ class CommisionDetailView extends GetView<CommisionDetailController> {
                                 ),
                               ],
                             )
-                            : FutureBuilder(
-                              future: Future.delayed(Duration(seconds: 5)),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState !=
-                                    ConnectionState.done) {
-                                  // Skeleton selama 5 detik
-                                  return ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount: 3,
-                                    itemBuilder:
-                                        (context, index) => Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            vertical: 8.0,
-                                            horizontal: 16.0,
-                                          ),
-                                          child: Container(
-                                            padding: EdgeInsets.all(14),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.grey.shade300,
-                                                  blurRadius: 4,
-                                                  offset: Offset(0, 2),
-                                                ),
-                                              ],
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                  height: 20,
-                                                  width: 100,
-                                                  color: Colors.grey.shade300,
-                                                ),
-                                                SizedBox(height: 7),
-                                                Container(
-                                                  height: 16,
-                                                  width: 160,
-                                                  color: Colors.grey.shade300,
-                                                ),
-                                                SizedBox(height: 7),
-                                                Container(
-                                                  height: 14,
-                                                  width: 120,
-                                                  color: Colors.grey.shade300,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                  );
-                                } else {
-                                  // Data tetap kosong → tampil empty message
-                                  return Center(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        SvgPicture.asset(
-                                          "assets/emptyArchiveIcon.svg",
-                                          height: 150,
-                                        ),
-                                        SizedBox(height: 12),
-                                        Text(
-                                          "Tidak ada transaksi",
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      ],
+                            : Expanded(
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/emptyArchiveIcon.svg",
+                                      height: 150,
                                     ),
-                                  );
-                                }
-                              },
+                                    SizedBox(height: 12),
+                                    Text(
+                                      "Tidak ada transaksi",
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                   ),
                 ),

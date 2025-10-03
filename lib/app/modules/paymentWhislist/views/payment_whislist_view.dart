@@ -119,6 +119,13 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                             .getTotalHargaFix() !=
                                                         0) {
                                                   controller.getApplyCode();
+                                                } else {
+                                                  controller.promoController
+                                                      .clear();
+                                                  controller.kodePromo.value =
+                                                      '';
+                                                  controller.promoAmount.value =
+                                                      0;
                                                 }
 
                                                 controller.updateBiayaAdmin(
@@ -228,6 +235,14 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                               .getTotalHargaFix() !=
                                                           0) {
                                                     controller.getApplyCode();
+                                                  } else {
+                                                    controller.promoController
+                                                        .clear();
+                                                    controller.kodePromo.value =
+                                                        '';
+                                                    controller
+                                                        .promoAmount
+                                                        .value = 0;
                                                   }
 
                                                   controller.updateBiayaAdmin(

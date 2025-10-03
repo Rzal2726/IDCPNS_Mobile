@@ -9,7 +9,7 @@ class MutasiSaldoController extends GetxController {
   final _restClient = RestClient();
   RxMap mutasiSaldoData = {}.obs;
   final TextEditingController searchController = TextEditingController();
-
+  RxBool isLoading = false.obs;
   RxInt currentPage = 1.obs;
   RxInt totalPages = 0.obs;
   RxInt totalPage = 0.obs;
@@ -55,6 +55,7 @@ class MutasiSaldoController extends GetxController {
 
   Future<void> getMutasiSaldo({int? page, int? perpage, String? search}) async {
     try {
+      isLoading.value = true;
       final url = await baseUrl + apiGetMutasiSaldo;
       var payload = {"page": page ?? 0, "perpage": 10, "search": search ?? " "};
       final result = await _restClient.postData(url: url, payload: payload);
@@ -66,6 +67,8 @@ class MutasiSaldoController extends GetxController {
       }
     } catch (e) {
       print("Error polling email verification: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 }
