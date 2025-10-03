@@ -74,8 +74,8 @@ class KategoriController extends GetxController {
     currentCategoryColor = categoryColor[categoryData['menu']]!;
 
     await fetchEventsTryout();
-    await fetchPaketTryout();
-    await fetchBimbel();
+    fetchPaketTryout();
+    fetchBimbel();
     showEventTryout();
   }
 
@@ -87,8 +87,6 @@ class KategoriController extends GetxController {
       response['data'],
     );
     eventBaseTryout.assignAll(paket);
-
-    loading['event'] = false;
   }
 
   void showEventTryout({String name = ""}) {
@@ -105,6 +103,7 @@ class KategoriController extends GetxController {
         return matchName && matchCategory;
       }),
     );
+    loading['event'] = false;
   }
 
   Future<void> fetchPaketTryout({

@@ -46,260 +46,276 @@ class DashboardView extends GetView<DashboardController> {
         appBar: basicAppBar(),
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: Obx(() {
-            var data = controller.tryoutRecomHomeData;
-            var recoData = controller.recomenData;
-            return SingleChildScrollView(
-              padding: AppStyle.sreenPaddingHome,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Highlight Section
-                  Text(
-                    'Highlight',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
-                  Divider(
-                    thickness: 0.2,
-                    color: Colors.grey, // bisa diganti kalau mau lebih soft
-                  ),
-                  SizedBox(height: 10),
-                  SizedBox(
-                    height: 150, // tinggi carousel
-                    width: double.infinity,
-                    child: CarouselSlider(
-                      options: CarouselOptions(
-                        autoPlay: true,
-                        autoPlayInterval: Duration(seconds: 5),
-                        autoPlayAnimationDuration: Duration(milliseconds: 1000),
-                        enlargeCenterPage: true,
-                        viewportFraction: 1,
+          child: RefreshIndicator(
+            backgroundColor: Colors.white,
+            onRefresh: () => controller.initScreen(),
+            child: Obx(() {
+              var data = controller.tryoutRecomHomeData;
+              var recoData = controller.recomenData;
+              return SingleChildScrollView(
+                padding: AppStyle.sreenPaddingHome,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Highlight Section
+                    Text(
+                      'Highlight',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                      items: [
-                        for (var banner in controller.bannerData)
-                          GestureDetector(
-                            onTap: () async {
-                              final url = banner['link_mobile']!;
-                              final uri = Uri.parse(url);
-                              if (await canLaunchUrl(uri)) {
-                                await launchUrl(
-                                  uri,
-                                  mode: LaunchMode.externalApplication,
-                                );
-                              }
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Skeletonizer(
-                                enabled:
-                                    banner['gambar'] == null ||
-                                    banner['gambar']!.isEmpty,
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return Image.network(
-                                      banner['gambar']!,
-                                      // opsional, agar image sesuai height
-                                      fit: BoxFit.cover, // biar menutupi area
-                                      loadingBuilder: (
-                                        context,
-                                        child,
-                                        loadingProgress,
-                                      ) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value:
-                                                loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                    : null,
-                                          ),
-                                        );
-                                      },
-                                      errorBuilder: (
-                                        context,
-                                        error,
-                                        stackTrace,
-                                      ) {
-                                        return Center(
-                                          child: Icon(Icons.broken_image),
-                                        );
-                                      },
+                    ),
+                    SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
+                    Divider(
+                      thickness: 0.2,
+                      color: Colors.grey, // bisa diganti kalau mau lebih soft
+                    ),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      height: 150, // tinggi carousel
+                      width: double.infinity,
+                      child: CarouselSlider(
+                        options: CarouselOptions(
+                          autoPlay: true,
+                          autoPlayInterval: Duration(seconds: 5),
+                          autoPlayAnimationDuration: Duration(
+                            milliseconds: 1000,
+                          ),
+                          enlargeCenterPage: true,
+                          viewportFraction: 1,
+                        ),
+                        items: [
+                          for (var banner in controller.bannerData)
+                            GestureDetector(
+                              onTap: () async {
+                                final url = banner['link_mobile']!;
+                                if (banner['is_url'] == "1") {
+                                  final uri = Uri.parse(url);
+                                  if (await canLaunchUrl(uri)) {
+                                    await launchUrl(
+                                      uri,
+                                      mode: LaunchMode.externalApplication,
                                     );
-                                  },
+                                  }
+                                } else {
+                                  Get.toNamed(url, arguments: banner['params']);
+                                }
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Skeletonizer(
+                                  enabled:
+                                      banner['gambar'] == null ||
+                                      banner['gambar']!.isEmpty,
+                                  child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return Image.network(
+                                        banner['gambar']!,
+                                        // opsional, agar image sesuai height
+                                        fit: BoxFit.cover, // biar menutupi area
+                                        loadingBuilder: (
+                                          context,
+                                          child,
+                                          loadingProgress,
+                                        ) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value:
+                                                  loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
+                                            ),
+                                          );
+                                        },
+                                        errorBuilder: (
+                                          context,
+                                          error,
+                                          stackTrace,
+                                        ) {
+                                          return Center(
+                                            child: Icon(Icons.broken_image),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 50),
-                  controller.bimbelRemainder.isNotEmpty
-                      ? Column(
-                        children: [
-                          for (var data in controller.bimbelRemainder)
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Pengingat Bimbel",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Divider(
-                                  thickness: 0.2,
-                                  color:
-                                      Colors
-                                          .grey, // bisa diganti kalau mau lebih soft
-                                ),
-                                SizedBox(height: 30),
-                                Container(
-                                  padding: EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: Colors.grey.shade300,
+                    SizedBox(height: 50),
+                    controller.bimbelRemainder.isNotEmpty
+                        ? Column(
+                          children: [
+                            for (var data in controller.bimbelRemainder)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Pengingat Bimbel",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        data['bimbel_parent_name'] ?? '-',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 10,
+                                  SizedBox(height: 8),
+                                  Divider(
+                                    thickness: 0.2,
+                                    color:
+                                        Colors
+                                            .grey, // bisa diganti kalau mau lebih soft
+                                  ),
+                                  SizedBox(height: 30),
+                                  Container(
+                                    padding: EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          data['bimbel_parent_name'] ?? '-',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 10,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      // Judul
-                                      Text(
-                                        data['judul'] ?? '-',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
+                                        SizedBox(height: 5),
+                                        // Judul
+                                        Text(
+                                          data['judul'] ?? '-',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 12),
-                                      // Hari, Tanggal, Jam
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Text(
-                                                "Hari",
-                                                style: TextStyle(
-                                                  color: Colors.grey,
+                                        SizedBox(height: 12),
+                                        // Hari, Tanggal, Jam
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  "Hari",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
                                                 ),
-                                              ),
-                                              Text(
-                                                data['jadwal_tanggal']['hari'] ??
-                                                    '-',
-                                              ),
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              Text(
-                                                "Tanggal",
-                                                style: TextStyle(
-                                                  color: Colors.grey,
+                                                Text(
+                                                  data['jadwal_tanggal']['hari'] ??
+                                                      '-',
                                                 ),
-                                              ),
-                                              Text(
-                                                data['jadwal_tanggal']['tanggal'] ??
-                                                    '-',
-                                              ),
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              Text(
-                                                "Jam",
-                                                style: TextStyle(
-                                                  color: Colors.grey,
+                                              ],
+                                            ),
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  "Tanggal",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
                                                 ),
-                                              ),
-                                              Text(
-                                                data['jadwal_tanggal']['jam'] ??
-                                                    '-',
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 12),
-                                      // Tombol Pretest + Buka Kelas
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: ElevatedButton.icon(
-                                              onPressed:
-                                                  (data['has_pretest'] == false)
-                                                      ? () async {
-                                                        final uuid =
-                                                            data['uuid']
-                                                                ?.toString() ??
-                                                            '';
-                                                        final eventUuid =
-                                                            data['event_uuid']
-                                                                ?.toString() ??
-                                                            '';
+                                                Text(
+                                                  data['jadwal_tanggal']['tanggal'] ??
+                                                      '-',
+                                                ),
+                                              ],
+                                            ),
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  "Jam",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  data['jadwal_tanggal']['jam'] ??
+                                                      '-',
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 12),
+                                        // Tombol Pretest + Buka Kelas
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: ElevatedButton.icon(
+                                                onPressed:
+                                                    (data['has_pretest'] ==
+                                                            false)
+                                                        ? () async {
+                                                          final uuid =
+                                                              data['uuid']
+                                                                  ?.toString() ??
+                                                              '';
+                                                          final eventUuid =
+                                                              data['event_uuid']
+                                                                  ?.toString() ??
+                                                              '';
 
-                                                        if (uuid.isEmpty ||
-                                                            eventUuid.isEmpty) {
-                                                          notifHelper.show(
-                                                            'Data tidak lengkap',
-                                                            type: 0,
-                                                          );
-                                                          return;
-                                                        }
-
-                                                        // optional: tampilkan loading sementara nge-fetch
-                                                        Get.dialog(
-                                                          Center(
-                                                            child:
-                                                                CircularProgressIndicator(),
-                                                          ),
-                                                          barrierDismissible:
-                                                              false,
-                                                        );
-
-                                                        try {
-                                                          final detail =
-                                                              await controller
-                                                                  .getDetailBimbel(
-                                                                    uuid: uuid,
-                                                                    eventUuid:
-                                                                        eventUuid,
-                                                                  );
-
-                                                          // tutup loading
-                                                          if (Get.isDialogOpen ??
-                                                              false)
-                                                            Get.back();
-
-                                                          if (detail == null) {
+                                                          if (uuid.isEmpty ||
+                                                              eventUuid
+                                                                  .isEmpty) {
                                                             notifHelper.show(
-                                                              'Detail pretest tidak ditemukan',
+                                                              'Data tidak lengkap',
                                                               type: 0,
                                                             );
                                                             return;
                                                           }
+
+                                                          // optional: tampilkan loading sementara nge-fetch
+                                                          Get.dialog(
+                                                            Center(
+                                                              child:
+                                                                  CircularProgressIndicator(),
+                                                            ),
+                                                            barrierDismissible:
+                                                                false,
+                                                          );
+
+                                                          try {
+                                                            final detail =
+                                                                await controller
+                                                                    .getDetailBimbel(
+                                                                      uuid:
+                                                                          uuid,
+                                                                      eventUuid:
+                                                                          eventUuid,
+                                                                    );
+
+                                                            // tutup loading
+                                                            if (Get.isDialogOpen ??
+                                                                false)
+                                                              Get.back();
+
+                                                            if (detail ==
+                                                                null) {
+                                                              notifHelper.show(
+                                                                'Detail pretest tidak ditemukan',
+                                                                type: 0,
+                                                              );
+                                                              return;
+                                                            }
 
                                                           Get.toNamed(
                                                             Routes
