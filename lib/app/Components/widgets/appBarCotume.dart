@@ -140,6 +140,7 @@ CustomAppBar secondaryAppBar(String title, {VoidCallback? onBack}) {
       }
     },
     showNotifIcon: true,
+    showRunningText: true,
   );
 }
 
