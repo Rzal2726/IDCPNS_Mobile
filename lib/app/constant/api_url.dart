@@ -133,3 +133,5 @@ const String apiCheckMaintenance = "v1/general/is-maintenance";
 const String apiPostAgree = "v1/account/user/afiliasi-agreement";
 const String apiCencelPayment = "v1/account/transaction/cancel";
 const String apiSubmitPretest = "v1/bimbel/pretest/submit";
+const String apiGetAnouncment = "v1/home/announcement";
+const String apiGetNoticeBoard = "v1/home/notice-board";

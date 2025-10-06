@@ -10,6 +10,7 @@ class DashboardController extends GetxController {
   RxList kategoriData = [].obs;
   RxMap recomenData = {}.obs;
   RxList bannerData = [].obs;
+  RxList noticeBoardData = [].obs;
   RxList bimbelRemainder = [].obs;
   RxList tryoutEventData = [].obs;
   RxMap tryoutRecomHomeData = {}.obs;
@@ -46,6 +47,7 @@ class DashboardController extends GetxController {
     await getRecomendation();
     await getBimbelRemainder();
     await getTryoutEvent();
+    await getNotifBimbel();
     getRecomenTryout();
   }
 
@@ -107,6 +109,21 @@ class DashboardController extends GetxController {
         var data = result['data'];
         print(data);
         bannerData.value = data;
+      }
+    } catch (e) {
+      print("Error polling email verification: $e");
+    }
+  }
+
+  Future<void> getNotifBimbel() async {
+    try {
+      final url = await baseUrl + apiGetNoticeBoard;
+
+      final result = await _restClient.getData(url: url);
+      if (result["status"] == "success") {
+        var data = result['data'];
+        print(data);
+        noticeBoardData.value = data;
       }
     } catch (e) {
       print("Error polling email verification: $e");
