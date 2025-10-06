@@ -40,8 +40,8 @@ class SearchRowButton extends StatelessWidget {
                             ),
                           ),
                   contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 15,
+                    horizontal: 12,
+                    vertical: 8,
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -65,7 +65,7 @@ class SearchRowButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           ),
           child: const Text(
             'Cari',
