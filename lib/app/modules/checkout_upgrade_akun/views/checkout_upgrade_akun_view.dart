@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
@@ -24,61 +25,11 @@ class CheckoutUpgradeAkunView extends GetView<CheckoutUpgradeAkunController> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(25),
-                  spreadRadius: 1,
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.white,
-
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              title: Image.asset(
-                'assets/logo.png', // Dummy logo
-                height: 40,
-              ),
-              actions: [
-                Stack(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.notifications_rounded,
-                        color: Colors.teal,
-                      ),
-                      onPressed: () {
-                        Get.to(NotificationView());
-                      },
-                    ),
-                    Positioned(
-                      right: 10,
-                      top: 10,
-                      child: Container(
-                        padding: EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          '4',
-                          style: TextStyle(color: Colors.white, fontSize: 10),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+        appBar: secondaryAppBar(
+          "",
+          onBack: () {
+            Get.offNamedUntil('/transaction', ModalRoute.withName('/home'));
+          },
         ),
         body: SafeArea(
           child: SingleChildScrollView(

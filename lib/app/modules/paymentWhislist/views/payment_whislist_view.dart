@@ -196,9 +196,6 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                     final isSelected = controller
                                         .selectedPaketPerCard
                                         .containsKey(data['id']);
-
-                                    // ✅ Auto-centang kalau belum ada yang dipilih
-
                                     return Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -502,35 +499,39 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                               SizedBox(height: 6),
                             ],
                           ),
-
-                        if (controller.promoAmount.value != 0)
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Diskon",
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                              ),
-                              controller.isLoadingHarga.value
-                                  ? Container(
-                                    width: 60,
-                                    height: 16,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade300,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  )
-                                  : Text(
-                                    "${formatRupiah(controller.promoAmount.value)}",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
+                        Obx(() {
+                          return controller.promoAmount.value != 0
+                              ? Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "Diskon",
+                                      style: TextStyle(fontSize: 14),
                                     ),
                                   ),
-                              SizedBox(height: 6),
-                            ],
-                          ),
+                                  controller.isLoadingHarga.value
+                                      ? Container(
+                                        width: 60,
+                                        height: 16,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                      )
+                                      : Text(
+                                        "${formatRupiah(controller.promoAmount.value)}",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                  SizedBox(height: 6),
+                                ],
+                              )
+                              : SizedBox.shrink();
+                        }),
 
                         // Total Harga
                         Row(

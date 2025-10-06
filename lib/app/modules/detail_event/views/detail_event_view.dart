@@ -3,6 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_svg/flutter_html_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -16,55 +17,7 @@ class DetailEventView extends GetView<DetailEventController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(25),
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-
-          child: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 1,
-            scrolledUnderElevation: 0,
-            title: Text("Detail Event"),
-            actions: [
-              Stack(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.notifications_none, color: Colors.teal),
-                    onPressed: () {
-                      Get.to(NotificationView());
-                    },
-                  ),
-                  Positioned(
-                    right: 10,
-                    top: 10,
-                    child: Container(
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '4',
-                        style: TextStyle(color: Colors.white, fontSize: 10),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+      appBar: secondaryAppBar("Detail Event"),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(

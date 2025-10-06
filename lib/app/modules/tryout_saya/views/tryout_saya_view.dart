@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/tryout_saya_controller.dart';
@@ -15,34 +16,11 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(25),
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: AppBar(
-            automaticallyImplyLeading: false,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                Get.offAllNamed("/home", arguments: {"initialIndex": 1});
-              },
-            ),
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            backgroundColor: Colors.white,
-            title: const Text('Tryout Saya'),
-            centerTitle: false,
-          ),
-        ),
+      appBar: secondaryAppBar(
+        "Tryout Saya",
+        onBack: () {
+          Get.offAllNamed("/home", arguments: {"initialIndex": 1});
+        },
       ),
       body: SafeArea(
         child: RefreshIndicator(
