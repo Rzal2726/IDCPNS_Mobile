@@ -17,10 +17,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60),
-        child: secondaryAppBar("Rincian Pembayaran"),
-      ),
+      appBar: secondaryAppBar("Rincian Pembayaran"),
       body: SafeArea(
         child: Obx(() {
           return SingleChildScrollView(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifIcon.dart';
+import 'package:idcpns_mobile/app/Components/widgets/runningTextWidget.dart';
 import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/modules/notification/controllers/notification_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -13,6 +14,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBack;
   final List<Widget>? actions;
   final bool showNotifIcon;
+  final bool showRunningText; // 🆕
 
   const CustomAppBar({
     Key? key,
@@ -21,104 +23,109 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.leftType = AppBarLeftType.back,
     this.showNotifIcon = false,
+    this.showRunningText = false, // 🆕 default false
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      automaticallyImplyLeading: false,
-      backgroundColor: Colors.white,
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      titleSpacing: 0,
-      title: Row(
-        children: [
-          SizedBox(width: 8),
-          if (leftType == AppBarLeftType.logo) ...[
-            Padding(
-              padding: EdgeInsets.only(left: 20),
-              child: InkWell(
-                onTap: () {
-                  (Get.find<HomeController>()).changeBottomBar(0);
-                  // hapus controller HomeController dulu
-                  // if (Get.isRegistered<HomeController>()) {
-                  //   Get.delete<HomeController>();
-                  // }
-
-                  // baru navigasi ke HOME
-                  // (Get.find<HomeController>()).changeBottomBar(0);
-                },
-                child: Image.asset('assets/logo.png', height: 50),
+    return SafeArea(
+      child: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (showRunningText) RunningTextBar(),
+            AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              titleSpacing: 0,
+              title: Row(
+                children: [
+                  SizedBox(width: 8),
+                  if (leftType == AppBarLeftType.logo) ...[
+                    Padding(
+                      padding: EdgeInsets.only(left: 20),
+                      child: InkWell(
+                        onTap: () {
+                          (Get.find<HomeController>()).changeBottomBar(0);
+                        },
+                        child: Image.asset('assets/logo.png', height: 50),
+                      ),
+                    ),
+                  ],
+                  if (leftType == AppBarLeftType.back) ...[
+                    Padding(
+                      padding: EdgeInsets.only(left: 4),
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_back, color: Colors.black),
+                        onPressed: onBack ?? () => Get.back(),
+                      ),
+                    ),
+                  ],
+                  if (leftType == AppBarLeftType.backWithTitle) ...[
+                    Padding(
+                      padding: EdgeInsets.only(left: 4),
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_back, color: Colors.black),
+                        onPressed: () {
+                          final notifC = Get.put(NotificationController());
+                          if (onBack != null) {
+                            onBack!();
+                          } else {
+                            Get.back();
+                          }
+                          notifC.getNotif();
+                        },
+                      ),
+                    ),
+                    if (title != null)
+                      Padding(
+                        padding: EdgeInsets.only(left: 4),
+                        child: Text(
+                          title!,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                  ],
+                  if (leftType == AppBarLeftType.title && title != null) ...[
+                    Text(
+                      title!,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ],
               ),
+              actions: [
+                if (showNotifIcon) NotifIcon(),
+                if (actions != null) ...actions!,
+              ],
             ),
           ],
-          if (leftType == AppBarLeftType.back) ...[
-            Padding(
-              padding: EdgeInsets.only(left: 4),
-              child: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: onBack ?? () => Get.back(),
-              ),
-            ),
-          ],
-          if (leftType == AppBarLeftType.backWithTitle) ...[
-            Padding(
-              padding: EdgeInsets.only(left: 4),
-              child: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () {
-                  // langsung pasang / ambil controller
-                  final notifC = Get.put(NotificationController());
-
-                  // jalankan onBack kalau ada, kalau nggak pakai Get.back()
-                  if (onBack != null) {
-                    onBack!();
-                  } else {
-                    Get.back();
-                  }
-
-                  // refresh notif setelah kembali
-                  notifC.getNotif();
-                },
-              ),
-            ),
-            if (title != null)
-              Padding(
-                padding: EdgeInsets.only(left: 4),
-                child: Text(
-                  title!,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-          ],
-          if (leftType == AppBarLeftType.title && title != null) ...[
-            Text(
-              title!,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ],
+        ),
       ),
-      actions: [
-        if (showNotifIcon) NotifIcon(),
-        if (actions != null) ...actions!,
-      ],
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize =>
+      Size.fromHeight(kToolbarHeight + (showRunningText ? 32 : 0));
 }
 
 /// 🔥 Shortcut Template
 CustomAppBar basicAppBar() {
-  return CustomAppBar(leftType: AppBarLeftType.logo, showNotifIcon: true);
+  return CustomAppBar(
+    leftType: AppBarLeftType.logo,
+    showNotifIcon: true,
+    showRunningText: true,
+  );
 }
 
 CustomAppBar secondaryAppBar(String title, {VoidCallback? onBack}) {
