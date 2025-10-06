@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:idcpns_mobile/app/Components/widgets/wdigetTryoutEventCard.dart';
@@ -98,6 +99,10 @@ class KategoriView extends GetView<KategoriController> {
                           decoration: InputDecoration(
                             labelStyle: TextStyle(color: Colors.grey),
                             labelText: "Cari",
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.teal,
@@ -112,6 +117,7 @@ class KategoriView extends GetView<KategoriController> {
                               ),
                               borderRadius: BorderRadius.circular(16),
                             ),
+                            suffixIcon: Icon(Icons.search, color: Colors.black),
                           ),
                         ),
                       ],
@@ -212,63 +218,17 @@ class KategoriView extends GetView<KategoriController> {
                         ),
                         SizedBox(height: 12),
 
-                        // Search bar
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: controller.paketTextController,
-                                decoration: InputDecoration(
-                                  labelStyle: TextStyle(color: Colors.grey),
-                                  labelText: "Cari",
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.teal,
-                                      width: 1.5,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.teal,
-                                      width: 2.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 8),
+                        SearchRowButton(
+                          controller: controller.paketTextController,
+                          onSearch: () {
+                            controller.fetchPaketTryout(
+                              page: 1,
 
-                            ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.teal, // warna tombol
-                                foregroundColor:
-                                    Colors.white, // warna teks/icon
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 12,
-                                ),
-                              ),
-                              onPressed: () {
-                                controller.fetchPaketTryout(
-                                  page: 1,
-
-                                  search: controller.paketTextController.text,
-                                  menuCategory:
-                                      controller.categoryId.toString(),
-                                );
-                              },
-                              label: Text("Cari"),
-                            ),
-                          ],
+                              search: controller.paketTextController.text,
+                              menuCategory: controller.categoryId.toString(),
+                            );
+                          },
+                          hintText: 'Apa yang ingin Anda cari?',
                         ),
                       ],
                     ),
@@ -419,110 +379,148 @@ class KategoriView extends GetView<KategoriController> {
                     (i) => start + i,
                   );
 
-                  return Container(
-                    height: 40,
-                    width: double.infinity,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          TextButton.icon(
-                            onPressed:
-                                current > 1
-                                    ? () => controller.fetchPaketTryout(
-                                      page: 1,
-                                      search:
-                                          controller.paketTextController.text,
-                                    )
-                                    : null,
-                            label: const Icon(Icons.first_page, size: 16),
-                          ),
-                          TextButton.icon(
-                            onPressed:
-                                current > 1
-                                    ? () => controller.fetchPaketTryout(
-                                      page: current - 1,
-                                      search:
-                                          controller.paketTextController.text,
-                                    )
-                                    : null,
-                            label: const Icon(Icons.arrow_back_ios, size: 16),
-                          ),
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      final screenWidth = MediaQuery.of(context).size.width;
+                      final isSmallScreen = screenWidth < 600;
+                      final fontSize = isSmallScreen ? 12.0 : 14.0;
+                      final padding = isSmallScreen ? 6.0 : 9.0;
 
-                          ...pages.map((page) {
-                            final isActive = page == current;
-                            return Container(
-                              child: GestureDetector(
-                                onTap:
-                                    () => controller.fetchPaketTryout(
-                                      page: page,
-                                      search:
-                                          controller.paketTextController.text,
-                                    ),
-                                child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 200),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 9,
-                                    vertical: 8,
-                                  ),
-
-                                  decoration: BoxDecoration(
-                                    color:
-                                        isActive
-                                            ? Colors.teal.shade100
-                                            : Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color:
-                                          isActive
-                                              ? Colors.teal
-                                              : Colors.grey.shade300,
-                                      width: isActive ? 2 : 1,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    '$page',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          isActive ? Colors.teal : Colors.black,
-                                      fontSize:
-                                          14, // font lebih besar untuk page aktif
-                                    ),
+                      return Container(
+                        height: 50,
+                        width: double.infinity,
+                        child: Center(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextButton.icon(
+                                  onPressed:
+                                      current > 1
+                                          ? () => controller.fetchPaketTryout(
+                                            page: 1,
+                                            search:
+                                                controller
+                                                    .paketTextController
+                                                    .text,
+                                          )
+                                          : null,
+                                  label: Icon(
+                                    Icons.first_page,
+                                    size: isSmallScreen ? 14 : 16,
                                   ),
                                 ),
-                              ),
-                            );
-                          }),
+                                TextButton.icon(
+                                  onPressed:
+                                      current > 1
+                                          ? () => controller.fetchPaketTryout(
+                                            page: current - 1,
+                                            search:
+                                                controller
+                                                    .paketTextController
+                                                    .text,
+                                          )
+                                          : null,
+                                  label: Icon(
+                                    Icons.arrow_back_ios,
+                                    size: isSmallScreen ? 14 : 16,
+                                  ),
+                                ),
 
-                          TextButton.icon(
-                            onPressed:
-                                current < total
-                                    ? () => controller.fetchPaketTryout(
-                                      page: current + 1,
-                                      search:
-                                          controller.paketTextController.text,
-                                    )
-                                    : null,
-                            label: const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
+                                Wrap(
+                                  spacing: 4,
+                                  runSpacing: 4,
+                                  children:
+                                      pages.map((page) {
+                                        final isActive = page == current;
+                                        return GestureDetector(
+                                          onTap:
+                                              () => controller.fetchPaketTryout(
+                                                page: page,
+                                                search:
+                                                    controller
+                                                        .paketTextController
+                                                        .text,
+                                              ),
+                                          child: AnimatedContainer(
+                                            duration: Duration(
+                                              milliseconds: 200,
+                                            ),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: padding,
+                                              vertical: 8,
+                                            ),
+
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  isActive
+                                                      ? Colors.teal.shade100
+                                                      : Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color:
+                                                    isActive
+                                                        ? Colors.teal
+                                                        : Colors.grey.shade300,
+                                                width: isActive ? 2 : 1,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              '$page',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color:
+                                                    isActive
+                                                        ? Colors.teal
+                                                        : Colors.black,
+                                                fontSize: fontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                ),
+
+                                TextButton.icon(
+                                  onPressed:
+                                      current < total
+                                          ? () => controller.fetchPaketTryout(
+                                            page: current + 1,
+                                            search:
+                                                controller
+                                                    .paketTextController
+                                                    .text,
+                                          )
+                                          : null,
+                                  label: Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: isSmallScreen ? 14 : 16,
+                                  ),
+                                ),
+                                TextButton.icon(
+                                  onPressed:
+                                      current < total
+                                          ? () => controller.fetchPaketTryout(
+                                            page: controller.totalPage.value,
+                                            search:
+                                                controller
+                                                    .paketTextController
+                                                    .text,
+                                          )
+                                          : null,
+                                  label: Icon(
+                                    Icons.last_page,
+                                    size: isSmallScreen ? 14 : 16,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          TextButton.icon(
-                            onPressed:
-                                current < total
-                                    ? () => controller.fetchPaketTryout(
-                                      page: controller.totalPage.value,
-                                      search:
-                                          controller.paketTextController.text,
-                                    )
-                                    : null,
-                            label: const Icon(Icons.last_page, size: 16),
-                          ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   );
                 }),
 
@@ -562,63 +560,17 @@ class KategoriView extends GetView<KategoriController> {
                           SizedBox(height: 12),
 
                           // Search bar
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: controller.bimbelTextController,
-                                  decoration: InputDecoration(
-                                    labelStyle: TextStyle(color: Colors.grey),
-                                    labelText: "Cari",
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 10,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.teal,
-                                        width: 1.5,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.teal,
-                                        width: 2.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 8),
+                          SearchRowButton(
+                            controller: controller.bimbelTextController,
+                            onSearch: () {
+                              controller.fetchBimbel(
+                                page: 1,
 
-                              ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal, // warna tombol
-                                  foregroundColor:
-                                      Colors.white, // warna teks/icon
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  controller.fetchBimbel(
-                                    page: 1,
-
-                                    search:
-                                        controller.bimbelTextController.text,
-                                    menuCategory:
-                                        controller.categoryId.toString(),
-                                  );
-                                },
-                                label: Text("Cari"),
-                              ),
-                            ],
+                                search: controller.bimbelTextController.text,
+                                menuCategory: controller.categoryId.toString(),
+                              );
+                            },
+                            hintText: 'Apa yang ingin Anda cari?',
                           ),
                         ],
                       ),
@@ -729,7 +681,10 @@ class KategoriView extends GetView<KategoriController> {
                         kategori: controller.categoryData['menu'],
                         color: controller.currentCategoryColor,
                         onTap: () {
-                          Get.toNamed("/detail-bimbel"); // sesuaikan rute
+                          Get.toNamed(
+                            "/detail-bimbel",
+                            arguments: data['uuid'],
+                          ); // sesuaikan rute
                         },
                       );
                     },
@@ -775,106 +730,154 @@ class KategoriView extends GetView<KategoriController> {
                     (i) => start + i,
                   );
 
-                  return Container(
-                    height: 40,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton.icon(
-                          onPressed:
-                              current > 1
-                                  ? () => controller.fetchBimbel(
-                                    page: 1,
-                                    search:
-                                        controller.bimbelTextController.text,
-                                  )
-                                  : null,
-                          label: const Icon(Icons.first_page, size: 16),
-                        ),
-                        TextButton.icon(
-                          onPressed:
-                              current > 1
-                                  ? () => controller.fetchBimbel(
-                                    page: current - 1,
-                                    search:
-                                        controller.bimbelTextController.text,
-                                  )
-                                  : null,
-                          label: const Icon(Icons.arrow_back_ios, size: 16),
-                        ),
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      final screenWidth = MediaQuery.of(context).size.width;
+                      final isSmallScreen = screenWidth < 600;
+                      final fontSize = isSmallScreen ? 12.0 : 14.0;
+                      final padding = isSmallScreen ? 6.0 : 9.0;
 
-                        ...pages.map((page) {
-                          final isActive = page == current;
-                          return Container(
-                            child: GestureDetector(
-                              onTap:
-                                  () => controller.fetchBimbel(
-                                    page: page,
-                                    search:
-                                        controller.bimbelTextController.text,
-                                    menuCategory:
-                                        controller.categoryId.toString(),
+                      return Container(
+                        height: 50,
+                        width: double.infinity,
+                        child: Center(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextButton.icon(
+                                  onPressed:
+                                      current > 1
+                                          ? () => controller.fetchBimbel(
+                                            page: 1,
+                                            search:
+                                                controller
+                                                    .bimbelTextController
+                                                    .text,
+                                          )
+                                          : null,
+                                  label: Icon(
+                                    Icons.first_page,
+                                    size: isSmallScreen ? 14 : 16,
                                   ),
-                              child: AnimatedContainer(
-                                duration: Duration(milliseconds: 200),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 9,
-                                  vertical: 8,
+                                ),
+                                TextButton.icon(
+                                  onPressed:
+                                      current > 1
+                                          ? () => controller.fetchBimbel(
+                                            page: current - 1,
+                                            search:
+                                                controller
+                                                    .bimbelTextController
+                                                    .text,
+                                          )
+                                          : null,
+                                  label: Icon(
+                                    Icons.arrow_back_ios,
+                                    size: isSmallScreen ? 14 : 16,
+                                  ),
                                 ),
 
-                                decoration: BoxDecoration(
-                                  color:
-                                      isActive
-                                          ? Colors.teal.shade100
-                                          : Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color:
-                                        isActive
-                                            ? Colors.teal
-                                            : Colors.grey.shade300,
-                                    width: isActive ? 2 : 1,
+                                Wrap(
+                                  spacing: 4,
+                                  runSpacing: 4,
+                                  children:
+                                      pages.map((page) {
+                                        final isActive = page == current;
+                                        return GestureDetector(
+                                          onTap:
+                                              () => controller.fetchBimbel(
+                                                page: page,
+                                                search:
+                                                    controller
+                                                        .bimbelTextController
+                                                        .text,
+                                                menuCategory:
+                                                    controller.categoryId
+                                                        .toString(),
+                                              ),
+                                          child: AnimatedContainer(
+                                            duration: Duration(
+                                              milliseconds: 200,
+                                            ),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: padding,
+                                              vertical: 8,
+                                            ),
+
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  isActive
+                                                      ? Colors.teal.shade100
+                                                      : Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color:
+                                                    isActive
+                                                        ? Colors.teal
+                                                        : Colors.grey.shade300,
+                                                width: isActive ? 2 : 1,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              '$page',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color:
+                                                    isActive
+                                                        ? Colors.teal
+                                                        : Colors.black,
+                                                fontSize: fontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                ),
+
+                                TextButton.icon(
+                                  onPressed:
+                                      current < total
+                                          ? () => controller.fetchBimbel(
+                                            page: current + 1,
+                                            search:
+                                                controller
+                                                    .bimbelTextController
+                                                    .text,
+                                          )
+                                          : null,
+                                  label: Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: isSmallScreen ? 14 : 16,
                                   ),
                                 ),
-                                child: Text(
-                                  '$page',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color:
-                                        isActive ? Colors.teal : Colors.black,
-                                    fontSize:
-                                        14, // font lebih besar untuk page aktif
+                                TextButton.icon(
+                                  onPressed:
+                                      current < total
+                                          ? () => controller.fetchBimbel(
+                                            page:
+                                                controller
+                                                    .totalBimbelPage
+                                                    .value,
+                                            search:
+                                                controller
+                                                    .bimbelTextController
+                                                    .text,
+                                          )
+                                          : null,
+                                  label: Icon(
+                                    Icons.last_page,
+                                    size: isSmallScreen ? 14 : 16,
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                          );
-                        }),
-
-                        TextButton.icon(
-                          onPressed:
-                              current < total
-                                  ? () => controller.fetchBimbel(
-                                    page: current + 1,
-                                    search:
-                                        controller.bimbelTextController.text,
-                                  )
-                                  : null,
-                          label: const Icon(Icons.arrow_forward_ios, size: 16),
+                          ),
                         ),
-                        TextButton.icon(
-                          onPressed:
-                              current < total
-                                  ? () => controller.fetchBimbel(
-                                    page: controller.totalPage.value,
-                                    search:
-                                        controller.bimbelTextController.text,
-                                  )
-                                  : null,
-                          label: const Icon(Icons.last_page, size: 16),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   );
                 }),
 

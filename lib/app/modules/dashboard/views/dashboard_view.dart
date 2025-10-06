@@ -933,10 +933,7 @@ class DashboardView extends GetView<DashboardController> {
                         // Search field
                         Container(
                           height: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.teal, width: 1.5),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
+
                           child: TextField(
                             controller: controller.tryoutSearch,
                             onChanged: (value) {
@@ -946,9 +943,23 @@ class DashboardView extends GetView<DashboardController> {
                             },
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 15.0,
+                                horizontal: 12,
+                                vertical: 8,
                               ), // Sesuaikan nilai vertical
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.teal,
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.teal,
+                                  width: 2.0,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
                               hintText: 'Cari',
                               hintStyle: TextStyle(color: Colors.grey),
                               border: InputBorder.none,
