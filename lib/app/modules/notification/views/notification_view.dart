@@ -165,12 +165,15 @@ class NotificationView extends GetView<NotificationController> {
                   ),
 
                   SizedBox(height: 8),
-                  FutureBuilder(
-                    future: Future.delayed(Duration(seconds: 5)),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState != ConnectionState.done) {
-                        // Skeleton placeholder selama 5 detik
-                        return ListView.builder(
+                  Obx(() {
+                    final unreadData =
+                        controller.notifData
+                            .where((d) => d['read'] == 0)
+                            .toList();
+
+                    return controller.isLoading.value
+                        // ✅ Skeleton Loader
+                        ? ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: 5,
@@ -218,46 +221,38 @@ class NotificationView extends GetView<NotificationController> {
                                   ),
                                 ),
                               ),
-                        );
-                      } else {
-                        // Setelah 5 detik, tampilkan notifikasi asli atau teks kosong
-                        final unreadData =
-                            controller.notifData
-                                .where((d) => d['read'] == 0)
-                                .toList();
-                        if (unreadData.isNotEmpty) {
-                          return Column(
-                            children: [
-                              for (var data in unreadData)
-                                _buildNotificationItem(
-                                  '${data['title']}',
-                                  '${data['created_at']}',
-                                  0,
-                                  data['id'],
-                                  data['parameter'] ?? "",
-                                  data['description'],
-                                  data['orderId']?.toString() ?? "",
-                                ),
-                            ],
-                          );
-                        } else {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: Center(
-                              child: Text(
-                                "Tidak ada pesan baru",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
-                                  fontStyle: FontStyle.italic,
-                                ),
+                        )
+                        : unreadData.isEmpty
+                        // ❌ Data kosong → Empty State
+                        ? Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Center(
+                            child: Text(
+                              "Tidak ada pesan baru",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                                fontStyle: FontStyle.italic,
                               ),
                             ),
-                          );
-                        }
-                      }
-                    },
-                  ),
+                          ),
+                        )
+                        // ✅ Data ada → render notifikasi
+                        : Column(
+                          children: [
+                            for (var data in unreadData)
+                              _buildNotificationItem(
+                                '${data['title']}',
+                                '${data['created_at']}',
+                                0,
+                                data['id'],
+                                data['parameter'] ?? "",
+                                data['description'],
+                                data['orderId']?.toString() ?? "",
+                              ),
+                          ],
+                        );
+                  }),
                   SizedBox(height: 16),
                   Divider(color: Colors.grey),
                   SizedBox(height: 16),
@@ -302,66 +297,61 @@ class NotificationView extends GetView<NotificationController> {
                     ],
                   ),
                   SizedBox(height: 8),
-                  FutureBuilder(
-                    future: Future.delayed(Duration(seconds: 5)),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState != ConnectionState.done) {
-                        // Skeleton placeholder selama 5 detik
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: 3, // jumlah skeleton
-                          itemBuilder:
-                              (context, index) => Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0,
-                                  horizontal: 16.0,
+                  controller.isLoading.value
+                      ? ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: 3, // jumlah skeleton
+                        itemBuilder:
+                            (context, index) => Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8.0,
+                                horizontal: 16.0,
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade300,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
-                                child: Container(
-                                  padding: EdgeInsets.all(14),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.shade300,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 20,
-                                        width: 120,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      SizedBox(height: 7),
-                                      Container(
-                                        height: 16,
-                                        width: 180,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                      SizedBox(height: 7),
-                                      Container(
-                                        height: 14,
-                                        width: 140,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                    ],
-                                  ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: 120,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      height: 16,
+                                      width: 180,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      height: 14,
+                                      width: 140,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ],
                                 ),
                               ),
-                        );
-                      } else {
-                        // Setelah 5 detik, tampilkan data asli atau teks jika kosong
+                            ),
+                      )
+                      : () {
                         final readData =
                             controller.notifData
                                 .where((d) => d['read'] == 1)
                                 .toList();
+
                         if (readData.isNotEmpty) {
                           return Column(
                             children: [
@@ -392,9 +382,7 @@ class NotificationView extends GetView<NotificationController> {
                             ),
                           );
                         }
-                      }
-                    },
-                  ),
+                      }(),
                 ],
               ),
             ),
@@ -762,7 +750,7 @@ void showDeleteBottomSheet({
         child: Padding(
           padding: EdgeInsets.all(16),
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.15,
+            height: MediaQuery.of(context).size.height * 0.25,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

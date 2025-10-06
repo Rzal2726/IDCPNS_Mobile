@@ -5,6 +5,8 @@ import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/syaratKetentuanDialog.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 
 class AffiliateController extends GetxController {
   final _restClient = RestClient();
@@ -86,6 +88,10 @@ class AffiliateController extends GetxController {
       showSyaratKetentuanDialog(
         onAgree: () {
           postAgree();
+        },
+        onDisagree: () {
+          Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+          (Get.find<HomeController>()).currentIndex.value = 4;
         },
       );
       // WidgetsBinding.instance.addPostFrameCallback((_) {

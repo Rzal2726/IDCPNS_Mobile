@@ -17,6 +17,7 @@ class PretestRankingController extends GetxController {
   var peserta = <Map<String, dynamic>>[].obs;
   RxList rankData = [].obs;
   RxInt userRank = 0.obs;
+  RxBool isLoading = false.obs;
 
   final count = 0.obs;
   @override
@@ -73,6 +74,7 @@ class PretestRankingController extends GetxController {
 
   Future<void> getData({int? page, String? search}) async {
     try {
+      isLoading.value = true;
       final url = await baseUrl + apiGetRankingBimbel + "/" + uuid.toString();
       final payload = {
         "perpage": 10,
@@ -95,6 +97,8 @@ class PretestRankingController extends GetxController {
       }
     } catch (e) {
       print("Error polling email verification: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 }

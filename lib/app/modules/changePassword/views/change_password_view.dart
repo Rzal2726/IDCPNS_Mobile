@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 
@@ -16,6 +17,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
       onPopInvoked: (didPop) async {
         if (didPop) return;
         Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+        (Get.find<HomeController>()).currentIndex.value = 4;
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -23,6 +25,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
           "Ubah kata sandi",
           onBack: () {
             Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+            (Get.find<HomeController>()).currentIndex.value = 4;
           },
         ),
         body: SafeArea(
@@ -143,28 +146,6 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          OutlinedButton(
-                            onPressed: () => Get.back(),
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  6,
-                                ), // sudut sedikit membulat
-                              ),
-                              side: BorderSide(
-                                color: Colors.teal, // warna outline teal
-                                width: 1.5, // ketebalan outline
-                              ),
-                            ),
-                            child: Text(
-                              "Batal",
-                              style: TextStyle(
-                                color: Colors.teal,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 12),
                           ElevatedButton(
                             onPressed: controller.changePassword,
                             style: ElevatedButton.styleFrom(

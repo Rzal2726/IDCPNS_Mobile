@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
-void showSyaratKetentuanDialog({VoidCallback? onAgree}) {
+void showSyaratKetentuanDialog({
+  VoidCallback? onAgree,
+  VoidCallback? onDisagree,
+}) {
   Get.dialog(
     WillPopScope(
       onWillPop: () async => false, // blokir tombol back HP
@@ -22,8 +25,10 @@ void showSyaratKetentuanDialog({VoidCallback? onAgree}) {
             children: [
               OutlinedButton(
                 onPressed: () {
-                  Get.back(); // tutup dialog
-                  Get.back(); // kalau mau balik 2 halaman
+                  Get.back();
+                  if (onDisagree != null) {
+                    onDisagree();
+                  }
                 },
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.teal),

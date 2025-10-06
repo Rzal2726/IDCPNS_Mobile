@@ -8,6 +8,7 @@ import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -23,6 +24,7 @@ class WishlistView extends GetView<WishlistController> {
         if (!didPop) {
           // Saat tombol back ditekan
           Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+          (Get.find<HomeController>()).currentIndex.value = 4;
         }
       },
       child: Scaffold(
@@ -31,6 +33,7 @@ class WishlistView extends GetView<WishlistController> {
           "Wishlist",
           onBack: () {
             Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+            (Get.find<HomeController>()).currentIndex.value = 4;
           },
         ),
         body: SafeArea(

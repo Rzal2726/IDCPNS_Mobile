@@ -170,112 +170,106 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                             ? controller.tryoutData
                             : controller.bimbelData;
 
-                    if (programList.isNotEmpty) {
-                      return ListView.builder(
-                        itemCount:
-                            programList.length + 1, // +1 untuk pagination
-                        itemBuilder: (context, index) {
-                          if (index < programList.length) {
-                            final program = programList[index];
-                            return _buildProgramCard(
-                              controller.selectedTab.value == 0
-                                  ? program['name']
-                                  : program['bimbel_parent_name'],
-                              () {
-                                if (controller.selectedTab.value == 0) {
-                                  Get.toNamed(
-                                    Routes.DETAIL_TRYOUT_SAYA,
-                                    arguments: program['uuid'],
-                                  );
-                                } else {
-                                  Get.toNamed(
-                                    Routes.DETAIL_MY_BIMBEL,
-                                    arguments: program['uuid'],
-                                  );
-                                }
-                              },
-                            );
-                          } else {
-                            // Pagination di akhir list
-                            return Container(
-                              color: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              child: Center(
-                                child: ReusablePagination(
-                                  currentPage: controller.currentPage,
-                                  totalPage: controller.totalPage,
-                                  goToPage: controller.goToPage,
-                                  nextPage: controller.nextPage,
-                                  prevPage: controller.prevPage,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      );
-                    }
-
-                    // Skeleton / Empty State
-                    return FutureBuilder(
-                      future: Future.delayed(Duration(seconds: 5)),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState != ConnectionState.done) {
-                          return Skeletonizer(
-                            child: ListView.builder(
-                              itemCount: 3,
-                              itemBuilder:
-                                  (context, index) => Container(
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    padding: EdgeInsets.all(14),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.shade300,
-                                          blurRadius: 4,
-                                          offset: Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          height: 20,
-                                          width: 80,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                        SizedBox(height: 7),
-                                        Container(
-                                          height: 16,
-                                          width: 120,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                        SizedBox(height: 7),
-                                        Container(
-                                          height: 14,
-                                          width: 160,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                      ],
-                                    ),
+                    return controller.isLoading.value
+                        // ✅ Loading → Skeletonizer
+                        ? Skeletonizer(
+                          child: ListView.builder(
+                            itemCount: 3,
+                            itemBuilder:
+                                (context, index) => Container(
+                                  margin: EdgeInsets.only(bottom: 20),
+                                  padding: EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.shade300,
+                                        blurRadius: 4,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 20,
+                                        width: 80,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      SizedBox(height: 7),
+                                      Container(
+                                        height: 16,
+                                        width: 120,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      SizedBox(height: 7),
+                                      Container(
+                                        height: 14,
+                                        width: 160,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                          ),
+                        )
+                        : programList.isEmpty
+                        // ❌ Kosong → Empty State
+                        ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            EmptyStateWidget(
+                              message: "Tidak ada Program ditemukan",
                             ),
-                          );
-                        } else {
-                          return Column(
-                            children: [
-                              EmptyStateWidget(
-                                message: "Tidak ada Program ditemukan",
-                              ),
-                              SizedBox(height: 30),
-                            ],
-                          );
-                        }
-                      },
-                    );
+                            SizedBox(height: 30),
+                          ],
+                        )
+                        // ✅ Ada data → ListView
+                        : ListView.builder(
+                          itemCount:
+                              programList.length + 1, // +1 untuk pagination
+                          itemBuilder: (context, index) {
+                            if (index < programList.length) {
+                              final program = programList[index];
+                              return _buildProgramCard(
+                                controller.selectedTab.value == 0
+                                    ? program['name']
+                                    : program['bimbel_parent_name'],
+                                () {
+                                  if (controller.selectedTab.value == 0) {
+                                    Get.toNamed(
+                                      Routes.DETAIL_TRYOUT_SAYA,
+                                      arguments: program['uuid'],
+                                    );
+                                  } else {
+                                    Get.toNamed(
+                                      Routes.DETAIL_MY_BIMBEL,
+                                      arguments: program['uuid'],
+                                    );
+                                  }
+                                },
+                              );
+                            } else {
+                              // Pagination di akhir list
+                              return Container(
+                                color: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: Center(
+                                  child: ReusablePagination(
+                                    currentPage: controller.currentPage,
+                                    totalPage: controller.totalPage,
+                                    goToPage: controller.goToPage,
+                                    nextPage: controller.nextPage,
+                                    prevPage: controller.prevPage,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        );
                   }),
                 ),
               ],

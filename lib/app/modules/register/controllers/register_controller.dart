@@ -156,7 +156,7 @@ class RegisterController extends GetxController {
     }
 
     if (password != confirmPassword) {
-      notifHelper.show("Konfirmasi password tidak cocok!", type: 0);
+      notifHelper.show("Konfirmasi kata sandi tidak cocok!", type: 0);
       return;
     }
     if (kodeAfiliator != null && kodeAfiliator.isNotEmpty) {

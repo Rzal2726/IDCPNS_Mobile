@@ -119,6 +119,13 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                             .getTotalHargaFix() !=
                                                         0) {
                                                   controller.getApplyCode();
+                                                } else {
+                                                  controller.promoController
+                                                      .clear();
+                                                  controller.kodePromo.value =
+                                                      '';
+                                                  controller.promoAmount.value =
+                                                      0;
                                                 }
 
                                                 controller.updateBiayaAdmin(
@@ -228,6 +235,14 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                               .getTotalHargaFix() !=
                                                           0) {
                                                     controller.getApplyCode();
+                                                  } else {
+                                                    controller.promoController
+                                                        .clear();
+                                                    controller.kodePromo.value =
+                                                        '';
+                                                    controller
+                                                        .promoAmount
+                                                        .value = 0;
                                                   }
 
                                                   controller.updateBiayaAdmin(
@@ -908,7 +923,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
                           .bottom, // ini bikin konten naik saat keyboard muncul
                 ),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.15,
+                  height: MediaQuery.of(context).size.height * 0.25,
                   child: SingleChildScrollView(
                     padding: AppStyle.contentPadding,
                     child: Column(
@@ -1015,7 +1030,7 @@ void showPhoneNumberBottomSheet(BuildContext context) {
             return controller.paymantListData.isEmpty
                 ? Center(child: CircularProgressIndicator())
                 : SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.15,
+                  height: MediaQuery.of(context).size.height * 0.25,
                   child: SingleChildScrollView(
                     padding: AppStyle.contentPadding,
                     child: Column(

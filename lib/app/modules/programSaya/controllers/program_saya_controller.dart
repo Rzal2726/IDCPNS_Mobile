@@ -17,6 +17,7 @@ class ProgramSayaController extends GetxController {
   RxInt totalPage = 0.obs;
   RxString selectedEventKategori = "Semua".obs;
   RxBool showSkeleton = true.obs;
+  RxBool isLoading = true.obs;
   // 🔹 daftar program (sementara hardcode, nanti bisa diisi dari API)
 
   @override
@@ -172,6 +173,7 @@ class ProgramSayaController extends GetxController {
     String? submenuCategoryId,
   }) async {
     try {
+      isLoading.value = true;
       final url = await baseUrl + apiGetTryoutSaya;
       var payload = {
         "page": page ?? 0,
@@ -187,6 +189,8 @@ class ProgramSayaController extends GetxController {
       }
     } catch (e) {
       print("Error polling email verification: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 }

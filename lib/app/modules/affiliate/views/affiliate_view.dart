@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 
@@ -19,6 +20,7 @@ class AffiliateView extends GetView<AffiliateController> {
         if (!didPop) {
           // Saat tombol back ditekan
           Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+          (Get.find<HomeController>()).currentIndex.value = 4;
         }
       },
       child: Scaffold(
@@ -27,6 +29,7 @@ class AffiliateView extends GetView<AffiliateController> {
           "Afiliasi",
           onBack: () {
             Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+            (Get.find<HomeController>()).currentIndex.value = 4;
           },
         ),
         body: SafeArea(

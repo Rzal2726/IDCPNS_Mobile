@@ -8,6 +8,7 @@ class NotificationController extends GetxController {
   RxList notifData = [].obs;
   RxList allReadData = [].obs;
   RxList allUnreadData = [].obs;
+  RxBool isLoading = false.obs;
   RxList<Map<String, int>> idSelected = <Map<String, int>>[].obs;
   @override
   void onInit() {
@@ -27,6 +28,7 @@ class NotificationController extends GetxController {
 
   Future<void> getNotif() async {
     try {
+      isLoading.value = true;
       final url = await baseUrl + apiGetNotif;
 
       final result = await _restClient.getData(url: url);
@@ -53,6 +55,8 @@ class NotificationController extends GetxController {
       }
     } catch (e) {
       print("Error polling email verification: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 

@@ -77,169 +77,161 @@ class PretestRankingView extends GetView<PretestRankingController> {
                   Obx(() {
                     final data = controller.rankData;
 
-                    if (data.isEmpty) {
-                      // FutureBuilder dipakai untuk delay 5 detik
-                      return FutureBuilder(
-                        future: Future.delayed(Duration(seconds: 5)),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            // SKELETON LOADER
-                            return Skeletonizer(
-                              enabled: true, // pastikan skeleton aktif
-                              child: Column(
-                                children: List.generate(3, (index) {
-                                  return Container(
-                                    width: double.infinity,
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    padding: EdgeInsets.all(14),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.shade300,
-                                          blurRadius: 4,
-                                          offset: Offset(0, 2),
-                                        ),
-                                      ],
+                    return controller.isLoading.value
+                        // ✅ Masih loading → Skeleton
+                        ? Skeletonizer(
+                          enabled: true,
+                          child: Column(
+                            children: List.generate(3, (index) {
+                              return Container(
+                                width: double.infinity,
+                                margin: EdgeInsets.only(bottom: 20),
+                                padding: EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade300,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: 80,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      height: 16,
+                                      width: 120,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      height: 14,
+                                      width: 160,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                          ),
+                        )
+                        : data.isEmpty
+                        ? EmptyStateWidget(
+                          message: 'Belum ada data rank tersedia saat ini',
+                        )
+                        // ✅ Ada data → List card
+                        : Column(
+                          children:
+                              data.map((p) {
+                                return Card(
+                                  color: Colors.white,
+                                  margin: EdgeInsets.only(bottom: 8),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    side: BorderSide(
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                      16,
+                                      12,
+                                      16,
+                                      14,
                                     ),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Container(
-                                          height: 20,
-                                          width: 80,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                        SizedBox(height: 7),
-                                        Container(
-                                          height: 16,
-                                          width: 120,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                        SizedBox(height: 7),
-                                        Container(
-                                          height: 14,
-                                          width: 160,
-                                          color: Colors.grey.shade300,
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }),
-                              ),
-                            );
-                          } else {
-                            // setelah 5 detik masih kosong -> tampilkan empty state
-                            return EmptyStateWidget(
-                              message: 'Belum ada data rank tersedia saat ini',
-                            );
-                          }
-                        },
-                      );
-                    }
-
-                    // kalau data ADA -> render daftar Card
-                    return Column(
-                      children:
-                          data.map((p) {
-                            return Card(
-                              color: Colors.white,
-                              margin: EdgeInsets.only(bottom: 8),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                side: BorderSide(color: Colors.grey.shade300),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(16, 12, 16, 14),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // badge kecil di atas (tidak overlay)
-                                    Row(
-                                      children: [
-                                        Container(
-                                          width: 26,
-                                          height: 26,
-                                          decoration: BoxDecoration(
-                                            color: Colors.lightBlue[400],
-                                            shape: BoxShape.circle,
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "${p['rank']}",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    SizedBox(height: 10),
-
-                                    // Nama
-                                    Text(
-                                      p['user_name'],
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-
-                                    SizedBox(height: 10),
-
-                                    // Baris Nilai
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Nilai',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.grey[700],
-                                          ),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 4,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.teal,
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black12,
-                                                blurRadius: 2,
-                                                offset: Offset(0, 1),
+                                        // badge rank
+                                        Row(
+                                          children: [
+                                            Container(
+                                              width: 26,
+                                              height: 26,
+                                              decoration: BoxDecoration(
+                                                color: Colors.lightBlue[400],
+                                                shape: BoxShape.circle,
                                               ),
-                                            ],
-                                          ),
-                                          child: Text(
-                                            "${p['total_point']}",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13,
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                "${p['rank']}",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
                                             ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 10),
+
+                                        // nama user
+                                        Text(
+                                          p['user_name'],
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 16,
                                           ),
+                                        ),
+                                        SizedBox(height: 10),
+
+                                        // nilai
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Nilai',
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                color: Colors.grey[700],
+                                              ),
+                                            ),
+                                            SizedBox(width: 8),
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 8,
+                                                vertical: 4,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.teal,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black12,
+                                                    blurRadius: 2,
+                                                    offset: Offset(0, 1),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Text(
+                                                "${p['total_point']}",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                    );
+                                  ),
+                                );
+                              }).toList(),
+                        );
                   }),
 
                   SizedBox(height: 20),

@@ -70,8 +70,9 @@ class MyBimbelController extends GetxController {
       }
     } catch (e) {
       print("Error polling email verification: $e");
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   }
 
   Future<void> getKategori() async {

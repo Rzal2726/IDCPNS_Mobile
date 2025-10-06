@@ -253,9 +253,67 @@ class AccountView extends GetView<AccountController> {
                         icon: Icons.logout,
                         title: "Keluar",
                         onTap: () {
-                          controller.isLoggingOut == true
-                              ? null
-                              : controller.logoutAkun();
+                          showDialog(
+                            context: context,
+                            barrierDismissible:
+                                false, // klik luar nggak bisa nutup
+                            builder:
+                                (context) => AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  title: Row(
+                                    children: [
+                                      Icon(Icons.logout, color: Colors.red),
+                                      SizedBox(width: 8),
+                                      Text("Konfirmasi Logout"),
+                                    ],
+                                  ),
+                                  content: Text(
+                                    "Apakah kamu yakin ingin keluar dari akun?",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  actionsPadding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text(
+                                        "Batal",
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 18,
+                                          vertical: 10,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context); // nutup dialog
+                                        controller
+                                            .logoutAkun(); // jalanin logout
+                                      },
+                                      child: Text("Keluar"),
+                                    ),
+                                  ],
+                                ),
+                          );
                         },
                       ),
 

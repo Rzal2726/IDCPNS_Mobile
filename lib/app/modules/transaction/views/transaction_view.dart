@@ -487,9 +487,6 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                     ),
                     SizedBox(height: 12),
 
-                    // Tanggal Mulai
-                    // Tanggal Mulai
-                    // Tanggal Mulai
                     Text("Tanggal Mulai"),
                     SizedBox(height: 4),
                     TextField(
@@ -520,6 +517,14 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                                 "${pickedDate.day.toString().padLeft(2, '0')}/"
                                 "${pickedDate.month.toString().padLeft(2, '0')}/"
                                 "${pickedDate.year}";
+
+                            // ⬇️ Reset endDate di sini
+                            controller.endDateController.text =
+                                "${DateTime.now().day.toString().padLeft(2, '0')}/"
+                                "${DateTime.now().month.toString().padLeft(2, '0')}/"
+                                "${DateTime.now().year}";
+                            // atau kalau mau kosong aja:
+                            // controller.endDateController.clear();
                           });
                         }
                       },

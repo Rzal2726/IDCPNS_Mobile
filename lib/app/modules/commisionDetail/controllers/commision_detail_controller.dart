@@ -10,6 +10,8 @@ class CommisionDetailController extends GetxController {
   RxInt currentPage = 1.obs;
   RxInt totalPages = 0.obs;
   RxInt totalPage = 0.obs;
+  RxBool isLoading = false.obs;
+
   @override
   void onInit() {
     getRincianKomisi();
@@ -53,18 +55,24 @@ class CommisionDetailController extends GetxController {
 
   Future<void> getRincianKomisi({int? page, String? search}) async {
     try {
+      isLoading.value = true; // mulai loading
       final url = await baseUrl + apiGetRincianKomisi;
 
-      final result = await _restClient.postData(url: url);
-      print("emailnnyaa ${result.toString()}");
+      var payload = {"perpage": 10, "search": search ?? "", "page": page ?? 0};
+      final result = await _restClient.postData(url: url, payload: payload);
+
       if (result["status"] == "success") {
         var data = result['data'];
         komisiDetailData.value = data;
         totalPage.value = result['data']['last_page'];
-        print("asda ${data['data'][0]['user'].toString()}");
+      } else {
+        komisiDetailData.value = {}; // kalau gagal reset
       }
     } catch (e) {
-      print("Error polling email verification: $e");
+      komisiDetailData.value = {}; // error → kosongkan data
+      print("Error getRincianKomisi: $e");
+    } finally {
+      isLoading.value = false; // selesai loading
     }
   }
 

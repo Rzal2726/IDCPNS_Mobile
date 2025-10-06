@@ -62,14 +62,14 @@ void showPaymentSheet(
                         if (onCancel != null) onCancel();
                       },
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.teal),
+                        side: BorderSide(color: Colors.red),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       child: Text(
                         "Batalkan",
-                        style: TextStyle(color: Colors.teal),
+                        style: TextStyle(color: Colors.red),
                       ),
                     ),
                   ),
