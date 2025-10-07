@@ -129,10 +129,16 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
-                                                "Apakah kamu yakin ingin menyelesaikan tryout?",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
+                                              SizedBox(
+                                                width: 250,
+                                                child: Text(
+                                                  "Apakah kamu yakin ingin menyelesaikan tryout?",
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
                                               ),
                                               IconButton(
@@ -310,7 +316,7 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
+                        horizontal: 8,
                         vertical: 12,
                       ),
                     ),
@@ -351,7 +357,7 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
+                        horizontal: 8,
                         vertical: 12,
                       ),
                     ),
@@ -492,21 +498,34 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                                                         controller.checkMark(
                                                                               soal,
                                                                             )
-                                                                            ? Colors.amber.shade100
+                                                                            ? Colors.amber
                                                                             : controller.checkAnswer(
                                                                               soal['id'],
                                                                             )
-                                                                            ? Colors.teal.shade100
+                                                                            ? Colors.teal
                                                                             : controller.viewedQuestions.contains(
                                                                               controller.soalList.indexOf(
                                                                                 soal,
                                                                               ),
                                                                             )
-                                                                            ? Colors.grey.shade200
+                                                                            ? Colors.grey
                                                                             : Colors.white,
                                                                     foregroundColor:
-                                                                        Colors
-                                                                            .black,
+                                                                        controller.checkMark(
+                                                                              soal,
+                                                                            )
+                                                                            ? Colors.black
+                                                                            : controller.checkAnswer(
+                                                                              soal['id'],
+                                                                            )
+                                                                            ? Colors.white
+                                                                            : controller.viewedQuestions.contains(
+                                                                              controller.soalList.indexOf(
+                                                                                soal,
+                                                                              ),
+                                                                            )
+                                                                            ? Colors.white
+                                                                            : Colors.black,
                                                                     shape: RoundedRectangleBorder(
                                                                       side: BorderSide(
                                                                         color:
@@ -634,66 +653,72 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                   return SizedBox.shrink();
                                 }
 
-                                return Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 4),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          controller.checkMark(
-                                                controller
-                                                    .soalList[questionNumber -
-                                                    1],
-                                              )
-                                              ? Colors.amber
-                                              : controller.checkAnswer(
-                                                controller
-                                                    .soalList[questionNumber -
-                                                    1]['id'],
-                                              )
-                                              ? Color.fromARGB(
-                                                255,
-                                                208,
-                                                255,
-                                                244,
-                                              )
-                                              : controller
-                                                      .currentQuestion
-                                                      .value ==
-                                                  questionNumber - 1
-                                              ? Colors.green.shade100
-                                              : controller.viewedQuestions
-                                                  .contains(questionNumber - 1)
-                                              ? Colors.grey.shade200
-                                              : Colors.white,
-                                      foregroundColor: Colors.black,
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          color: Colors.transparent,
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        controller.checkMark(
+                                              controller
+                                                  .soalList[questionNumber - 1],
+                                            )
+                                            ? Colors.amber
+                                            : controller.checkAnswer(
+                                              controller
+                                                  .soalList[questionNumber -
+                                                  1]['id'],
+                                            )
+                                            ? Colors.teal
+                                            : controller
+                                                    .currentQuestion
+                                                    .value ==
+                                                questionNumber - 1
+                                            ? Colors.teal.shade200
+                                            : controller.viewedQuestions
+                                                .contains(questionNumber - 1)
+                                            ? Colors.grey
+                                            : Colors.white,
+                                    foregroundColor:
+                                        controller.checkMark(
+                                              controller
+                                                  .soalList[questionNumber - 1],
+                                            )
+                                            ? Colors.black
+                                            : controller.checkAnswer(
+                                              controller
+                                                  .soalList[questionNumber -
+                                                  1]['id'],
+                                            )
+                                            ? Colors.white
+                                            : controller.viewedQuestions
+                                                .contains(questionNumber - 1)
+                                            ? Colors.white
+                                            : Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                      side: BorderSide(
+                                        color: Colors.transparent,
                                       ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                        vertical: 4,
-                                      ),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    onPressed: () {
-                                      controller.markAnswer(
-                                        controller.currentQuestion.value,
-                                        controller.checkIsAnswered(
-                                          controller.currentQuestion.value,
-                                        ),
-                                      );
-                                      controller.currentQuestion.value =
-                                          questionNumber - 1;
-                                      controller.startQuestion(
-                                        controller.soalList[controller
-                                            .currentQuestion
-                                            .value]['id'],
-                                      );
-                                    },
-                                    child: Text(questionNumber.toString()),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                      vertical: 4,
+                                    ),
                                   ),
+                                  onPressed: () {
+                                    controller.markAnswer(
+                                      controller.currentQuestion.value,
+                                      controller.checkIsAnswered(
+                                        controller.currentQuestion.value,
+                                      ),
+                                    );
+                                    controller.currentQuestion.value =
+                                        questionNumber - 1;
+                                    controller.startQuestion(
+                                      controller.soalList[controller
+                                          .currentQuestion
+                                          .value]['id'],
+                                    );
+                                  },
+                                  child: Text(questionNumber.toString()),
                                 );
                               }),
 

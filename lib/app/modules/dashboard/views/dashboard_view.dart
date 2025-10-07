@@ -618,13 +618,26 @@ class DashboardView extends GetView<DashboardController> {
                     ),
                     SizedBox(height: 50),
 
-                    Text(
-                      'Rekomendasi Penunjang Program ${recoData['menu']}',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Obx(() {
+                      return recoData['menu'] == null
+                          ? Skeletonizer(
+                            child: Text(
+                              'Rekomendasi Penunjang Program lorem',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                          : Text(
+                            'Rekomendasi Penunjang Program ${recoData['menu']}',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                    }),
+
                     SizedBox(height: 4),
                     Text(
                       style: TextStyle(color: Colors.grey),
@@ -1001,7 +1014,36 @@ class DashboardView extends GetView<DashboardController> {
                           ),
                         ),
                         SizedBox(height: 10),
-                        controller.tryoutEventFilterData.isEmpty
+                        controller.tryoutEventLoading.value
+                            ? Skeletonizer(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            right: 12,
+                                          ),
+                                          child: SizedBox(
+                                            width: 300,
+                                            child: buildTryoutCard(
+                                              dateRange: 'lorem',
+                                              period: "lorem",
+                                              status: 'lorem',
+                                              title: 'lorem ipsum',
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                            : controller.tryoutEventFilterData.isEmpty
                             ? Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1132,6 +1174,15 @@ class DashboardView extends GetView<DashboardController> {
                           title: data['name'],
                           periode: data['range_date_string'],
                           type: "x",
+                        )
+                        : controller.tryoutRecommendLoading.value
+                        ? Skeletonizer(
+                          child: buildRecomenTryoutCard(
+                            onPressed: () {},
+                            title: "lorem ipsum",
+                            periode: "lorem ipsum",
+                            type: "lorem",
+                          ),
                         )
                         : EmptyStateWidget(message: "Belum ada event"),
 

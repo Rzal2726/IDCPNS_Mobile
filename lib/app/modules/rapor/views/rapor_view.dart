@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 
 import '../controllers/rapor_controller.dart';
 
@@ -13,39 +14,9 @@ class RaporView extends GetView<RaporController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text("Rapor"),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications_rounded, color: Colors.teal),
-                onPressed: () {
-                  // ✅ Best practice: use a function for navigation
-                  Get.to(() => NotificationView());
-                },
-              ),
-              Positioned(
-                right: 10,
-                top: 10,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '4',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(400),
+        child: secondaryAppBar("Rapor"),
       ),
       body: RefreshIndicator(
         backgroundColor: Colors.white,
@@ -107,7 +78,7 @@ class RaporView extends GetView<RaporController> {
                       Obx(() {
                         return controller.statistics.isNotEmpty
                             ? SizedBox(
-                              width: 160, // fix biar nggak error flex
+                              width: 100, // fix biar nggak error flex
                               child: DropdownButton<String>(
                                 value:
                                     controller

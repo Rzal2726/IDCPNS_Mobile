@@ -36,8 +36,8 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+                      horizontal: 12,
+                      vertical: 8,
                     ),
                   ),
                   onPressed: () {
@@ -57,8 +57,8 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+                      horizontal: 12,
+                      vertical: 8,
                     ),
                   ),
                   onPressed: () {
@@ -79,7 +79,10 @@ class PembahasanTryoutView extends GetView<PembahasanTryoutController> {
           ],
         ),
       ),
-      appBar: secondaryAppBar("Pembahasan"),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(400),
+        child: secondaryAppBar("Pembahasan"),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
