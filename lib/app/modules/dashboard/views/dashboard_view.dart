@@ -89,19 +89,30 @@ class DashboardView extends GetView<DashboardController> {
                           for (var banner in controller.bannerData)
                             GestureDetector(
                               onTap: () async {
+                                if (!banner.containsKey('link_mobile') ||
+                                    banner['link_mobile'] == null ||
+                                    banner['link_mobile'].isEmpty) {
+                                  return;
+                                }
+
                                 final url = banner['link_mobile']!;
-                                if (banner['is_url'] == "1") {
+                                final isUrl =
+                                    banner.containsKey('is_url') &&
+                                    banner['is_url'] == "1";
+
+                                if (isUrl) {
                                   final uri = Uri.parse(url);
                                   if (await canLaunchUrl(uri)) {
                                     await launchUrl(
                                       uri,
                                       mode: LaunchMode.externalApplication,
                                     );
-                                  }
+                                  } else {}
                                 } else {
                                   Get.toNamed(url, arguments: banner['params']);
                                 }
                               },
+
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: Skeletonizer(

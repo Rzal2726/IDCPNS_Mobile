@@ -36,11 +36,10 @@ class PaymentWhislistController extends GetxController {
   RxBool isLoadingHarga = false.obs;
   RxInt afiFromStorage = 0.obs;
   @override
-  void onInit() {
-    getPromoCodeFromStorage();
-
-    getData();
-    getPaymentData();
+  void onInit() async {
+    await getData();
+    await getPromoCodeFromStorage();
+    await getPaymentData();
     super.onInit();
     // Dummy data hardcode
     // Tambahkan properti reactive untuk checkbox & radio
@@ -72,7 +71,7 @@ class PaymentWhislistController extends GetxController {
     super.onClose();
   }
 
-  void getPromoCodeFromStorage() {
+  Future<void> getPromoCodeFromStorage() async {
     afiFromStorage.value = 1;
     // baca dari box, kalau null atau kosong, default ke ""
     String storedValue = box.read('userAfi') ?? "";
@@ -174,7 +173,7 @@ class PaymentWhislistController extends GetxController {
 
   Future<void> getApplyCode() async {
     isLoadingHarga.value = true; // mulai loading
-
+    print("xxxbb ${getTotalHargaFix().toString()}");
     final url = baseUrl + apiApplyWishListVoucherCode;
     var payload = {
       "kode_promo": promoController.text,
@@ -192,6 +191,7 @@ class PaymentWhislistController extends GetxController {
     if (result["status"] == "success") {
       kodePromo.value = promoController.text;
       promoAmount.value = result['data']['nominal'];
+
       promoCodeName.value = result['data']['voucher_code'];
     } else {
       promoController.clear();
@@ -275,6 +275,7 @@ class PaymentWhislistController extends GetxController {
   }
 
   int getTotalHargaFix() {
+    print("xcc ${baseHarga.toString()}");
     final totalPaket = selectedPaketPerCard.values
         .map((paket) => (paket["harga_fix"] ?? 0) as int)
         .fold(0, (total, harga) => total + harga);

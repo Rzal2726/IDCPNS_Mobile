@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -15,28 +16,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(25),
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: AppBar(
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            title: const Text('Detail Tryout'),
-            centerTitle: false,
-            backgroundColor: Colors.white,
-          ),
-        ),
-      ),
+      appBar: secondaryAppBar("Detail Tryout"),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(

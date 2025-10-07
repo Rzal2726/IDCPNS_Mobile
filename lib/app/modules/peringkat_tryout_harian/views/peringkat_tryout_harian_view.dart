@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -15,64 +16,14 @@ class PeringkatTryoutHarianView
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(25),
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: AppBar(
-            leading: IconButton(
-              onPressed: () {
-                Get.offAllNamed(
-                  "/kategori-tryout-harian",
-                  arguments: controller.uuid,
-                );
-              },
-              icon: Icon(Icons.arrow_back),
-            ),
-            automaticallyImplyLeading: false,
-            backgroundColor: Colors.white,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            title: Text("Peringkat"),
-            actions: [
-              Stack(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.notifications_rounded, color: Colors.teal),
-                    onPressed: () {
-                      // ✅ Best practice: use a function for navigation
-                      Get.to(() => NotificationView());
-                    },
-                  ),
-                  Positioned(
-                    right: 10,
-                    top: 10,
-                    child: Container(
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '4',
-                        style: TextStyle(color: Colors.white, fontSize: 10),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+      appBar: secondaryAppBar(
+        "Peringkat",
+        onBack: () {
+          Get.offAllNamed(
+            "/kategori-tryout-harian",
+            arguments: controller.uuid,
+          );
+        },
       ),
       body: SafeArea(
         child: SingleChildScrollView(

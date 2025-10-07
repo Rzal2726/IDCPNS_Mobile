@@ -41,9 +41,9 @@ class PaymentDetailController extends GetxController {
   // untuk state radio pilihan (sub bimbel)
 
   @override
-  void onInit() {
-    getPromoCodeFromStorage();
-    getData();
+  void onInit() async {
+    await getData();
+    await getPromoCodeFromStorage();
     getPaymentData();
     super.onInit();
     // Dummy data hardcode
@@ -86,7 +86,7 @@ class PaymentDetailController extends GetxController {
     metodePembayaran.value = metode.replaceAll('_', ' ');
   }
 
-  void getPromoCodeFromStorage() {
+  Future<void> getPromoCodeFromStorage() async {
     afiFromStorage.value = 1;
 
     // baca dari box, kalau null atau kosong, default ke ""
@@ -115,8 +115,6 @@ class PaymentDetailController extends GetxController {
 
   Future<void> getData() async {
     final url = baseUrl + apiGetDetailBimbelNoevent + "/" + uuid;
-    print("xxx ${url.toString()}");
-
     final result = await _restClient.getData(url: url);
 
     // cek status dulu, kalau success lanjut
@@ -124,6 +122,7 @@ class PaymentDetailController extends GetxController {
       bimbelData.value = result["data"];
       parentId.value = result['data']['id'];
       baseHarga.value = hargaFix;
+      print("xxbx ${baseHarga.toString()}");
       final parent = result["data"]['bimbel_parent'];
       if (parent != null) {
         wishListFirstProduct.value = parent['name'] ?? '';
@@ -175,7 +174,7 @@ class PaymentDetailController extends GetxController {
 
   Future<void> getApplyCode() async {
     isLoadingHarga.value = true; // mulai loading
-
+    print("xxcccc ${getTotalHargaFix().toString()}");
     final url = baseUrl + apiApplyWishListVoucherCode;
     var payload = {
       "kode_promo": promoController.text,
@@ -274,13 +273,12 @@ class PaymentDetailController extends GetxController {
   }
 
   int getTotalHargaFix() {
-    print("xxc ${baseHarga.toString()}");
     final totalPaket = selectedPaketPerCard.values
         .map((paket) => (paket["harga_fix"] ?? 0) as int)
         .fold(0, (total, harga) => total + harga);
 
     final total = baseHarga.value + totalPaket;
-
+    print("xzcsd ${total.toString()}");
     return total < 0 ? 0 : total;
   }
 

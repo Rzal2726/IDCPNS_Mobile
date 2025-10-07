@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/payment_upgrade_akun_controller.dart';
@@ -12,28 +13,7 @@ class PaymentUpgradeAkunView extends GetView<PaymentUpgradeAkunController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(25),
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: AppBar(
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            backgroundColor: Colors.white,
-            title: const Text('Rincian Pembayaran'),
-            centerTitle: false,
-          ),
-        ),
-      ),
+      appBar: secondaryAppBar("Rincian Pembayaran"),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
