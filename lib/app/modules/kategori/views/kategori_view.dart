@@ -100,14 +100,14 @@ class KategoriView extends GetView<KategoriController> {
                                 color: Colors.teal,
                                 width: 1.5,
                               ),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.teal,
                                 width: 2.0,
                               ),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             suffixIcon: Icon(Icons.search, color: Colors.black),
                           ),
@@ -220,7 +220,7 @@ class KategoriView extends GetView<KategoriController> {
                               menuCategory: controller.categoryId.toString(),
                             );
                           },
-                          hintText: 'Apa yang ingin Anda cari?',
+                          hintText: 'Cari',
                         ),
                       ],
                     ),
@@ -562,7 +562,7 @@ class KategoriView extends GetView<KategoriController> {
                                 menuCategory: controller.categoryId.toString(),
                               );
                             },
-                            hintText: 'Apa yang ingin Anda cari?',
+                            hintText: 'Cari',
                           ),
                         ],
                       ),

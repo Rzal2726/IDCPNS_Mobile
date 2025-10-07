@@ -77,6 +77,8 @@ class DetailTryoutSayaController extends GetxController {
       response['data'],
     );
     tryOutSaya.assignAll(data);
+    print(data);
+    print("tanggal sekarang ${DateTime.now()}");
   }
 
   Future<void> getNilai() async {

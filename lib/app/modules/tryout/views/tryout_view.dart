@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
+import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:idcpns_mobile/app/Components/widgets/wdigetTryoutEventCard.dart';
@@ -143,25 +144,29 @@ class TryoutView extends GetView<TryoutController> {
                                 ),
 
                             decoration: InputDecoration(
-                              suffixIcon: Icon(
-                                Icons.search,
-                                color: Colors.black,
-                              ),
                               labelStyle: TextStyle(color: Colors.grey),
                               labelText: "Cari",
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.teal,
                                   width: 1.5,
                                 ),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.teal,
                                   width: 2.0,
                                 ),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              suffixIcon: Icon(
+                                Icons.search,
+                                color: Colors.black,
                               ),
                             ),
                           ),
@@ -172,175 +177,171 @@ class TryoutView extends GetView<TryoutController> {
                 SizedBox(height: 16),
 
                 // filter button
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 32),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          showModalBottomSheet(
-                            useSafeArea: false,
-                            context: context,
-                            builder: (ctx) {
-                              return StatefulBuilder(
-                                builder: (context, setState) {
-                                  return SafeArea(
-                                    child: Container(
-                                      color: Colors.white,
-                                      padding: EdgeInsets.all(16),
-                                      child: Column(
-                                        mainAxisSize:
-                                            MainAxisSize
-                                                .min, // biar bottomsheet menyesuaikan isi
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // Row(
-                                          //   mainAxisAlignment:
-                                          //       MainAxisAlignment.end,
-                                          //   children: [
-                                          //     TextButton(
-                                          //       onPressed: () {
-                                          //         controller
-                                          //             .selectedEventKategori
-                                          //             .value = "Semua";
-                                          //       },
-                                          //       child: Text(
-                                          //         "Atur Ulang",
-                                          //         style: TextStyle(
-                                          //           fontSize: 16,
-                                          //           fontWeight: FontWeight.bold,
-                                          //           color: Colors.pink,
-                                          //         ),
-                                          //       ),
-                                          //     ),
-                                          //   ],
-                                          // ),
-                                          const Text(
-                                            "Jenis Tryout",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          useSafeArea: false,
+                          context: context,
+                          builder: (ctx) {
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return SafeArea(
+                                  child: Container(
+                                    color: Colors.white,
+                                    padding: EdgeInsets.all(16),
+                                    child: Column(
+                                      mainAxisSize:
+                                          MainAxisSize
+                                              .min, // biar bottomsheet menyesuaikan isi
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Row(
+                                        //   mainAxisAlignment:
+                                        //       MainAxisAlignment.end,
+                                        //   children: [
+                                        //     TextButton(
+                                        //       onPressed: () {
+                                        //         controller
+                                        //             .selectedEventKategori
+                                        //             .value = "Semua";
+                                        //       },
+                                        //       child: Text(
+                                        //         "Atur Ulang",
+                                        //         style: TextStyle(
+                                        //           fontSize: 16,
+                                        //           fontWeight: FontWeight.bold,
+                                        //           color: Colors.pink,
+                                        //         ),
+                                        //       ),
+                                        //     ),
+                                        //   ],
+                                        // ),
+                                        const Text(
+                                          "Jenis Tryout",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                          const SizedBox(height: 8),
+                                        ),
+                                        const SizedBox(height: 8),
 
-                                          Obx(
-                                            () => Wrap(
-                                              spacing: 8,
-                                              children:
-                                                  controller.options.value.map((
-                                                    option,
-                                                  ) {
-                                                    final isSelected =
-                                                        controller
-                                                            .selectedEventKategori
-                                                            .value ==
-                                                        option;
-                                                    return ChoiceChip(
-                                                      label: Text(
-                                                        option,
-                                                        style: TextStyle(
-                                                          color:
-                                                              isSelected
-                                                                  ? Colors.teal
-                                                                  : Colors
-                                                                      .grey[700],
-                                                          fontWeight:
-                                                              isSelected
-                                                                  ? FontWeight
-                                                                      .bold
-                                                                  : FontWeight
-                                                                      .normal,
-                                                        ),
-                                                      ),
-                                                      selected: isSelected,
-                                                      selectedColor: Colors.teal
-                                                          .withOpacity(0.1),
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      shape: RoundedRectangleBorder(
-                                                        side: BorderSide(
-                                                          color:
-                                                              isSelected
-                                                                  ? Colors.teal
-                                                                  : Colors
-                                                                      .grey
-                                                                      .shade400,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              6,
-                                                            ),
-                                                      ),
-                                                      onSelected: (value) {
-                                                        controller
-                                                            .selectedEventKategori
-                                                            .value = option;
-                                                      },
-                                                    );
-                                                  }).toList(),
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 12),
-                                          SizedBox(
-                                            width: double.infinity,
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors.teal, // warna tombol
-                                                foregroundColor:
-                                                    Colors
-                                                        .white, // warna teks/icon
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 12,
-                                                    ),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                                controller.showEventTryout(
-                                                  name:
-                                                      eventTextController.text,
-                                                  category:
+                                        Obx(
+                                          () => Wrap(
+                                            spacing: 8,
+                                            children:
+                                                controller.options.value.map((
+                                                  option,
+                                                ) {
+                                                  final isSelected =
                                                       controller
                                                           .selectedEventKategori
-                                                          .value,
-                                                );
-                                              },
-                                              child: const Text("Cari"),
-                                            ),
+                                                          .value ==
+                                                      option;
+                                                  return ChoiceChip(
+                                                    label: Text(
+                                                      option,
+                                                      style: TextStyle(
+                                                        color:
+                                                            isSelected
+                                                                ? Colors.teal
+                                                                : Colors
+                                                                    .grey[700],
+                                                        fontWeight:
+                                                            isSelected
+                                                                ? FontWeight
+                                                                    .bold
+                                                                : FontWeight
+                                                                    .normal,
+                                                      ),
+                                                    ),
+                                                    selected: isSelected,
+                                                    selectedColor: Colors.teal
+                                                        .withOpacity(0.1),
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    shape: RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                        color:
+                                                            isSelected
+                                                                ? Colors.teal
+                                                                : Colors
+                                                                    .grey
+                                                                    .shade400,
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            6,
+                                                          ),
+                                                    ),
+                                                    onSelected: (value) {
+                                                      controller
+                                                          .selectedEventKategori
+                                                          .value = option;
+                                                    },
+                                                  );
+                                                }).toList(),
                                           ),
-                                        ],
-                                      ),
+                                        ),
+
+                                        const SizedBox(height: 12),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.teal, // warna tombol
+                                              foregroundColor:
+                                                  Colors
+                                                      .white, // warna teks/icon
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 24,
+                                                    vertical: 12,
+                                                  ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              controller.showEventTryout(
+                                                name: eventTextController.text,
+                                                category:
+                                                    controller
+                                                        .selectedEventKategori
+                                                        .value,
+                                              );
+                                            },
+                                            child: const Text("Cari"),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            Text(
-                              "Filter",
-                              style: TextStyle(color: Colors.teal),
-                            ),
-                            Icon(Icons.keyboard_arrow_down, color: Colors.teal),
-                          ],
-                        ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Filter', style: TextStyle(color: Colors.teal)),
+                          Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-                SizedBox(height: 8),
+
+                SizedBox(height: 16),
                 Obx(() {
                   if (controller.loading['event'] == true) {
                     return Skeletonizer(
@@ -368,7 +369,6 @@ class TryoutView extends GetView<TryoutController> {
                   }
 
                   return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -381,10 +381,18 @@ class TryoutView extends GetView<TryoutController> {
                                 width: 300, // biar card rapi & konsisten
                                 child: GestureDetector(
                                   onTap: () {
-                                    Get.toNamed(
-                                      "/detail-event",
-                                      arguments: data['uuid'],
-                                    );
+                                    if (data['is_purchase']) {
+                                      Get.toNamed(
+                                        "detail-tryout-saya",
+                                        arguments:
+                                            data['tryout_transaction_id'],
+                                      );
+                                    } else {
+                                      Get.toNamed(
+                                        "/detail-event",
+                                        arguments: data['uuid'],
+                                      );
+                                    }
                                   },
                                   child: buildTryoutCard(
                                     status: data['label_text'],
@@ -551,10 +559,7 @@ class TryoutView extends GetView<TryoutController> {
                       ],
                     )
                     : Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -573,250 +578,203 @@ class TryoutView extends GetView<TryoutController> {
                           SizedBox(height: 12),
 
                           // Search bar
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: paketTextController,
-                                  decoration: InputDecoration(
-                                    labelStyle: TextStyle(color: Colors.grey),
-                                    labelText: "Cari",
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 10,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.teal,
-                                        width: 1.5,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.teal,
-                                        width: 2.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 8),
+                          SearchRowButton(
+                            controller: paketTextController,
+                            onSearch: () {
+                              controller.fetchPaketTryout(
+                                page: 1,
 
-                              ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal, // warna tombol
-                                  foregroundColor:
-                                      Colors.white, // warna teks/icon
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  controller.fetchPaketTryout(
-                                    page: 1,
-
-                                    search: paketTextController.text,
-                                    menuCategory:
-                                        controller
-                                            .optionsId[controller
-                                                .selectedPaketKategori
-                                                .value]
-                                            .toString(),
-                                  );
-                                },
-                                label: Text("Cari"),
-                              ),
-                            ],
+                                search: paketTextController.text,
+                                menuCategory:
+                                    controller
+                                        .optionsId[controller
+                                            .selectedPaketKategori
+                                            .value]
+                                        .toString(),
+                              );
+                            },
+                            hintText: 'Cari',
                           ),
                         ],
                       ),
                     ),
-                // filter button
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 32),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          showModalBottomSheet(
-                            useSafeArea: false,
-                            context: context,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(16),
-                              ),
-                            ),
-                            builder: (ctx) {
-                              return StatefulBuilder(
-                                builder: (context, setState) {
-                                  return SafeArea(
-                                    child: Container(
-                                      color: Colors.white,
-                                      padding: EdgeInsets.all(16),
-                                      child: Column(
-                                        mainAxisSize:
-                                            MainAxisSize
-                                                .min, // biar bottomsheet menyesuaikan isi
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // Row(
-                                          //   mainAxisAlignment:
-                                          //       MainAxisAlignment.end,
-                                          //   children: [
-                                          //     TextButton(
-                                          //       onPressed: () {
-                                          //         controller
-                                          //             .selectedPaketKategori
-                                          //             .value = "Semua";
-                                          //       },
-                                          //       child: Text(
-                                          //         "Atur Ulang",
-                                          //         style: TextStyle(
-                                          //           fontSize: 16,
-                                          //           fontWeight: FontWeight.bold,
-                                          //           color: Colors.pink,
-                                          //         ),
-                                          //       ),
-                                          //     ),
-                                          //   ],
-                                          // ),
-                                          const Text(
-                                            "Jenis Tryout",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-
-                                          Obx(
-                                            () => Wrap(
-                                              spacing: 8,
-                                              children:
-                                                  controller.options.value.map((
-                                                    option,
-                                                  ) {
-                                                    final isSelected =
-                                                        controller
-                                                            .selectedPaketKategori
-                                                            .value ==
-                                                        option;
-                                                    return ChoiceChip(
-                                                      label: Text(
-                                                        option,
-                                                        style: TextStyle(
-                                                          color:
-                                                              isSelected
-                                                                  ? Colors.teal
-                                                                  : Colors
-                                                                      .grey[700],
-                                                          fontWeight:
-                                                              isSelected
-                                                                  ? FontWeight
-                                                                      .bold
-                                                                  : FontWeight
-                                                                      .normal,
-                                                        ),
-                                                      ),
-                                                      selected: isSelected,
-                                                      selectedColor: Colors.teal
-                                                          .withOpacity(0.1),
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      shape: RoundedRectangleBorder(
-                                                        side: BorderSide(
-                                                          color:
-                                                              isSelected
-                                                                  ? Colors.teal
-                                                                  : Colors
-                                                                      .grey
-                                                                      .shade400,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              6,
-                                                            ),
-                                                      ),
-                                                      onSelected: (value) {
-                                                        controller
-                                                            .selectedPaketKategori
-                                                            .value = option;
-                                                      },
-                                                    );
-                                                  }).toList(),
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 12),
-                                          SizedBox(
-                                            width: double.infinity,
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors.teal, // warna tombol
-                                                foregroundColor:
-                                                    Colors
-                                                        .white, // warna teks/icon
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 12,
-                                                    ),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                                controller.fetchPaketTryout(
-                                                  page: 1,
-                                                  search:
-                                                      paketTextController.text,
-                                                  menuCategory:
-                                                      controller
-                                                          .optionsId[controller
-                                                              .selectedPaketKategori
-                                                              .value]
-                                                          .toString(),
-                                                );
-                                              },
-                                              child: const Text("Cari"),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            Text(
-                              "Filter",
-                              style: TextStyle(color: Colors.teal),
-                            ),
-                            Icon(Icons.keyboard_arrow_down, color: Colors.teal),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
 
                 SizedBox(height: 16),
 
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          useSafeArea: false,
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(16),
+                            ),
+                          ),
+                          builder: (ctx) {
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return SafeArea(
+                                  child: Container(
+                                    color: Colors.white,
+                                    padding: EdgeInsets.all(16),
+                                    child: Column(
+                                      mainAxisSize:
+                                          MainAxisSize
+                                              .min, // biar bottomsheet menyesuaikan isi
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Row(
+                                        //   mainAxisAlignment:
+                                        //       MainAxisAlignment.end,
+                                        //   children: [
+                                        //     TextButton(
+                                        //       onPressed: () {
+                                        //         controller
+                                        //             .selectedPaketKategori
+                                        //             .value = "Semua";
+                                        //       },
+                                        //       child: Text(
+                                        //         "Atur Ulang",
+                                        //         style: TextStyle(
+                                        //           fontSize: 16,
+                                        //           fontWeight: FontWeight.bold,
+                                        //           color: Colors.pink,
+                                        //         ),
+                                        //       ),
+                                        //     ),
+                                        //   ],
+                                        // ),
+                                        const Text(
+                                          "Jenis Tryout",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+
+                                        Obx(
+                                          () => Wrap(
+                                            spacing: 8,
+                                            children:
+                                                controller.options.value.map((
+                                                  option,
+                                                ) {
+                                                  final isSelected =
+                                                      controller
+                                                          .selectedPaketKategori
+                                                          .value ==
+                                                      option;
+                                                  return ChoiceChip(
+                                                    label: Text(
+                                                      option,
+                                                      style: TextStyle(
+                                                        color:
+                                                            isSelected
+                                                                ? Colors.teal
+                                                                : Colors
+                                                                    .grey[700],
+                                                        fontWeight:
+                                                            isSelected
+                                                                ? FontWeight
+                                                                    .bold
+                                                                : FontWeight
+                                                                    .normal,
+                                                      ),
+                                                    ),
+                                                    selected: isSelected,
+                                                    selectedColor: Colors.teal
+                                                        .withOpacity(0.1),
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    shape: RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                        color:
+                                                            isSelected
+                                                                ? Colors.teal
+                                                                : Colors
+                                                                    .grey
+                                                                    .shade400,
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            6,
+                                                          ),
+                                                    ),
+                                                    onSelected: (value) {
+                                                      controller
+                                                          .selectedPaketKategori
+                                                          .value = option;
+                                                    },
+                                                  );
+                                                }).toList(),
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 12),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.teal, // warna tombol
+                                              foregroundColor:
+                                                  Colors
+                                                      .white, // warna teks/icon
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 24,
+                                                    vertical: 12,
+                                                  ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              controller.fetchPaketTryout(
+                                                page: 1,
+                                                search:
+                                                    paketTextController.text,
+                                                menuCategory:
+                                                    controller
+                                                        .optionsId[controller
+                                                            .selectedPaketKategori
+                                                            .value]
+                                                        .toString(),
+                                              );
+                                            },
+                                            child: const Text("Cari"),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Filter', style: TextStyle(color: Colors.teal)),
+                          Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // filter button
                 Obx(() {
                   if (controller.loading['paket'] == true) {
                     return Skeletonizer(
@@ -915,133 +873,135 @@ class TryoutView extends GetView<TryoutController> {
 
                   return Container(
                     height: 40,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TextButton.icon(
-                            onPressed:
-                                current > 1
-                                    ? () => controller.fetchPaketTryout(
-                                      page: 1,
-                                      search: paketTextController.text,
-                                      menuCategory:
-                                          controller
-                                              .optionsId[controller
-                                                  .selectedPaketKategori
-                                                  .value]
-                                              .toString(),
-                                    )
-                                    : null,
-                            label: const Icon(Icons.first_page, size: 16),
-                          ),
-                          TextButton.icon(
-                            onPressed:
-                                current > 1
-                                    ? () => controller.fetchPaketTryout(
-                                      page: current - 1,
-                                      search: paketTextController.text,
-                                      menuCategory:
-                                          controller
-                                              .optionsId[controller
-                                                  .selectedPaketKategori
-                                                  .value]
-                                              .toString(),
-                                    )
-                                    : null,
-                            label: const Icon(Icons.arrow_back_ios, size: 16),
-                          ),
+                    child: Center(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton.icon(
+                              onPressed:
+                                  current > 1
+                                      ? () => controller.fetchPaketTryout(
+                                        page: 1,
+                                        search: paketTextController.text,
+                                        menuCategory:
+                                            controller
+                                                .optionsId[controller
+                                                    .selectedPaketKategori
+                                                    .value]
+                                                .toString(),
+                                      )
+                                      : null,
+                              label: const Icon(Icons.first_page, size: 16),
+                            ),
+                            TextButton.icon(
+                              onPressed:
+                                  current > 1
+                                      ? () => controller.fetchPaketTryout(
+                                        page: current - 1,
+                                        search: paketTextController.text,
+                                        menuCategory:
+                                            controller
+                                                .optionsId[controller
+                                                    .selectedPaketKategori
+                                                    .value]
+                                                .toString(),
+                                      )
+                                      : null,
+                              label: const Icon(Icons.arrow_back_ios, size: 16),
+                            ),
 
-                          ...pages.map((page) {
-                            final isActive = page == current;
-                            return Container(
-                              margin: EdgeInsets.symmetric(horizontal: 2),
-                              child: GestureDetector(
-                                onTap:
-                                    () => controller.fetchPaketTryout(
-                                      page: page,
-                                      search: paketTextController.text,
-                                      menuCategory:
-                                          controller
-                                              .optionsId[controller
-                                                  .selectedPaketKategori
-                                                  .value]
-                                              .toString(),
+                            ...pages.map((page) {
+                              final isActive = page == current;
+                              return Container(
+                                margin: EdgeInsets.symmetric(horizontal: 2),
+                                child: GestureDetector(
+                                  onTap:
+                                      () => controller.fetchPaketTryout(
+                                        page: page,
+                                        search: paketTextController.text,
+                                        menuCategory:
+                                            controller
+                                                .optionsId[controller
+                                                    .selectedPaketKategori
+                                                    .value]
+                                                .toString(),
+                                      ),
+                                  child: AnimatedContainer(
+                                    duration: Duration(milliseconds: 200),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
                                     ),
-                                child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 200),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isActive ? 14 : 10,
-                                    vertical: isActive ? 8 : 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        isActive
-                                            ? Colors.teal.shade100
-                                            : Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
+                                    decoration: BoxDecoration(
                                       color:
                                           isActive
-                                              ? Colors.teal
-                                              : Colors.grey.shade300,
-                                      width: isActive ? 2 : 1,
+                                              ? Colors.teal.shade100
+                                              : Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color:
+                                            isActive
+                                                ? Colors.teal
+                                                : Colors.grey.shade300,
+                                        width: 1,
+                                      ),
                                     ),
-                                  ),
-                                  child: Text(
-                                    '$page',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          isActive ? Colors.teal : Colors.black,
-                                      fontSize:
-                                          isActive
-                                              ? 16
-                                              : 14, // font lebih besar untuk page aktif
+                                    child: Text(
+                                      '$page',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            isActive
+                                                ? Colors.teal
+                                                : Colors.black,
+                                        fontSize:
+                                            14, // font lebih besar untuk page aktif
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          }),
+                              );
+                            }),
 
-                          TextButton.icon(
-                            onPressed:
-                                current < total
-                                    ? () => controller.fetchPaketTryout(
-                                      page: current + 1,
-                                      search: paketTextController.text,
-                                      menuCategory:
-                                          controller
-                                              .optionsId[controller
-                                                  .selectedPaketKategori
-                                                  .value]
-                                              .toString(),
-                                    )
-                                    : null,
-                            label: const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
+                            TextButton.icon(
+                              onPressed:
+                                  current < total
+                                      ? () => controller.fetchPaketTryout(
+                                        page: current + 1,
+                                        search: paketTextController.text,
+                                        menuCategory:
+                                            controller
+                                                .optionsId[controller
+                                                    .selectedPaketKategori
+                                                    .value]
+                                                .toString(),
+                                      )
+                                      : null,
+                              label: const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16,
+                              ),
                             ),
-                          ),
-                          TextButton.icon(
-                            onPressed:
-                                current < total
-                                    ? () => controller.fetchPaketTryout(
-                                      page: controller.totalPage.value,
-                                      search: paketTextController.text,
-                                      menuCategory:
-                                          controller
-                                              .optionsId[controller
-                                                  .selectedPaketKategori
-                                                  .value]
-                                              .toString(),
-                                    )
-                                    : null,
-                            label: const Icon(Icons.last_page, size: 16),
-                          ),
-                        ],
+                            TextButton.icon(
+                              onPressed:
+                                  current < total
+                                      ? () => controller.fetchPaketTryout(
+                                        page: controller.totalPage.value,
+                                        search: paketTextController.text,
+                                        menuCategory:
+                                            controller
+                                                .optionsId[controller
+                                                    .selectedPaketKategori
+                                                    .value]
+                                                .toString(),
+                                      )
+                                      : null,
+                              label: const Icon(Icons.last_page, size: 16),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
