@@ -940,14 +940,14 @@ class DashboardView extends GetView<DashboardController> {
                                   color: Colors.teal,
                                   width: 1.5,
                                 ),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.teal,
                                   width: 2.0,
                                 ),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               hintText: 'Cari',
                               hintStyle: TextStyle(color: Colors.grey),

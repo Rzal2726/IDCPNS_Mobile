@@ -6,6 +6,7 @@ import 'package:idcpns_mobile/app/modules/notification/views/notification_view.d
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 
 import '../controllers/detail_tryout_saya_controller.dart';
 import '../models/chart_data_model.dart';
@@ -22,61 +23,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
-        child: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(25),
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: AppBar(
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-              ), // Example: Hamburger icon for a drawer
-              onPressed: () {
-                Get.offNamed("/tryout-saya");
-              },
-            ),
-
-            backgroundColor: Colors.white,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            title: Text("Detail Tryout Saya"),
-            actions: [
-              Stack(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.notifications_rounded, color: Colors.teal),
-                    onPressed: () {
-                      // ✅ Best practice: use a function for navigation
-                      Get.to(() => NotificationView());
-                    },
-                  ),
-                  Positioned(
-                    right: 10,
-                    top: 10,
-                    child: Container(
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '4',
-                        style: TextStyle(color: Colors.white, fontSize: 10),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+        child: secondaryAppBar("Detail Tryout Saya"),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -98,8 +45,14 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                           spacing: 8,
                           children: [
                             _badge(
-                              isi: "Premium",
-                              backgroundColor: Colors.amber,
+                              isi:
+                                  controller.tryOutSaya['ispremium'] == 1
+                                      ? "Premium"
+                                      : "Gratis",
+                              backgroundColor:
+                                  controller.tryOutSaya['ispremium'] == 1
+                                      ? Colors.amber
+                                      : Colors.lightBlue,
                             ),
                             controller.tryOutSaya['isdone'] == 1
                                 ? _badge(
@@ -222,7 +175,16 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    controller.tryOutSaya['isdone'] == 1
+                                    controller.tryOutSaya['tryout']['startdate'] !=
+                                                null &&
+                                            controller.hitungTotalMasaAktif(
+                                                  DateTime.now().toString(),
+                                                  controller
+                                                      .tryOutSaya['tryout']['startdate'],
+                                                ) <=
+                                                0
+                                        ? Colors.amber
+                                        : controller.tryOutSaya['isdone'] == 1
                                         ? Colors.pink
                                         : Colors.teal,
                                 foregroundColor: Colors.white,
@@ -236,6 +198,57 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                               onPressed: () {
                                 controller.checkList();
                                 // Logic to handle button press
+                                if (controller
+                                            .tryOutSaya['tryout']['startdate'] !=
+                                        null &&
+                                    controller.hitungTotalMasaAktif(
+                                          DateTime.now().toString(),
+                                          controller
+                                              .tryOutSaya['tryout']['startdate'],
+                                        ) <=
+                                        0) {
+                                  showModalBottomSheet(
+                                    useSafeArea: false,
+                                    backgroundColor: Colors.white,
+                                    context: context,
+                                    isScrollControlled: true,
+                                    builder: (context) {
+                                      return SafeArea(
+                                        child: SizedBox(
+                                          width: double.infinity,
+                                          child: Padding(
+                                            padding: EdgeInsets.all(32),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      'Tryout Belum Dimulai',
+                                                    ),
+                                                    IconButton(
+                                                      onPressed:
+                                                          () => Navigator.pop(
+                                                            context,
+                                                          ),
+                                                      icon: Icon(Icons.close),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                  return;
+                                }
                                 if (controller.tryOutSaya['isdone'] == 1) {
                                   Get.defaultDialog(
                                     backgroundColor: Colors.white,
@@ -595,7 +608,16 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                 }
                               },
                               child: Text(
-                                controller.tryOutSaya['isdone'] == 1
+                                controller.tryOutSaya['tryout']['startdate'] !=
+                                            null &&
+                                        controller.hitungTotalMasaAktif(
+                                              DateTime.now().toString(),
+                                              controller
+                                                  .tryOutSaya['tryout']['startdate'],
+                                            ) <=
+                                            0
+                                    ? "Tryout Belum Dimulai"
+                                    : controller.tryOutSaya['isdone'] == 1
                                     ? "Ulangi Tryout"
                                     : "Kerjakan Tryout",
                               ),
@@ -620,7 +642,9 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                 } else {
                   if (controller.loading['chart'] == true) {
                     return Skeletonizer(
-                      child: const Center(child: Card(child: Text("data"))),
+                      child: _buildPlaceholder(
+                        "Kerjakan tryout untuk melihat hasil dan statistik.",
+                      ),
                     );
                   } else {
                     if (controller.tryOutSaya['isdone'] == 1) {

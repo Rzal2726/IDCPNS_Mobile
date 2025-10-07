@@ -105,7 +105,7 @@ class BimbelView extends GetView<BimbelController> {
                   hintText: 'Apa yang ingin Anda cari?',
                 ),
 
-                SizedBox(height: 20),
+                SizedBox(height: 16),
 
                 // Filter (right)
                 Align(
@@ -124,7 +124,7 @@ class BimbelView extends GetView<BimbelController> {
                   ),
                 ),
 
-                SizedBox(height: 20),
+                SizedBox(height: 16),
 
                 // List paket (mirip style gambar)
                 controller.isLoading.value == true
