@@ -24,6 +24,9 @@ class DashboardController extends GetxController {
   final options = <Map<String, dynamic>>[].obs;
   RxInt selectedKategoriId = 0.obs; // RxnInt karena bisa null
   final count = 0.obs;
+  RxBool tryoutEventLoading = false.obs;
+  RxBool tryoutRecommendLoading = false.obs;
+
   @override
   void onInit() {
     initScreen();
@@ -41,6 +44,9 @@ class DashboardController extends GetxController {
   }
 
   Future<void> initScreen() async {
+    tryoutEventLoading.value = true;
+    tryoutRecommendLoading.value = true;
+
     await getUser();
     await getBanner();
     await getKategori();
@@ -188,8 +194,10 @@ class DashboardController extends GetxController {
         tryoutEventData.value = data;
         tryoutEventFilterData.value = data;
       }
+      tryoutEventLoading.value = false;
     } catch (e) {
       print("Error tryout event: $e");
+      tryoutEventLoading.value = false;
     }
   }
 
@@ -202,8 +210,10 @@ class DashboardController extends GetxController {
         var data = result['data'];
         tryoutRecomHomeData.value = data;
       }
+      tryoutRecommendLoading.value = false;
     } catch (e) {
       print("Error tryout event: $e");
+      tryoutRecommendLoading.value = false;
     }
   }
 

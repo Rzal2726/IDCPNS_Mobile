@@ -40,55 +40,56 @@ class RunningTextBar extends StatelessWidget {
 
       final shouldRun = _isTextTooLong(controller.htmlText.value, screenWidth);
 
-      return Container(
-        color: Colors.teal,
-        height: 32,
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        alignment: Alignment.centerLeft,
-        child:
-            shouldRun
-                ? Marquee(
-                  blankSpace: 60,
-                  velocity: 30,
-                  pauseAfterRound: const Duration(seconds: 1),
-                  text: _stripHtmlTags(controller.htmlText.value),
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
-                )
-                : Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Html(
-                    data: controller.htmlText.value,
-                    style: {
-                      "body": Style(
-                        margin: Margins.zero,
-                        padding: HtmlPaddings.zero,
-                        fontSize: FontSize(14),
-                        color: Colors.white,
-                        textAlign: TextAlign.center, // ✨ teks HTML di tengah
-                      ),
-                      "a": Style(
-                        textDecoration: TextDecoration.none,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    },
-                    onLinkTap: (url, attributes, element) async {
-                      if (url != null) {
-                        final uri = Uri.parse(url);
-                        if (await canLaunchUrl(uri)) {
-                          await launchUrl(
-                            uri,
-                            mode: LaunchMode.externalApplication,
-                          );
-                        } else {
-                          debugPrint("Could not launch $url");
+      return IntrinsicHeight(
+        child: Container(
+          color: Colors.teal,
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          alignment: Alignment.centerLeft,
+          child:
+              shouldRun
+                  ? Marquee(
+                    blankSpace: 60,
+                    velocity: 30,
+                    pauseAfterRound: const Duration(seconds: 1),
+                    text: _stripHtmlTags(controller.htmlText.value),
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                  )
+                  : Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Html(
+                      data: controller.htmlText.value,
+                      style: {
+                        "body": Style(
+                          margin: Margins.zero,
+                          padding: HtmlPaddings.zero,
+                          fontSize: FontSize(14),
+                          color: Colors.white,
+                          textAlign: TextAlign.center, // ✨ teks HTML di tengah
+                        ),
+                        "a": Style(
+                          textDecoration: TextDecoration.none,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      },
+                      onLinkTap: (url, attributes, element) async {
+                        if (url != null) {
+                          final uri = Uri.parse(url);
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(
+                              uri,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            debugPrint("Could not launch $url");
+                          }
                         }
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
+        ),
       );
     });
   }
