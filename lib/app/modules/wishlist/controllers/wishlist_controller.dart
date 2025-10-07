@@ -26,11 +26,7 @@ class WishlistController extends GetxController {
   RxBool isLoading = false.obs;
   @override
   void onInit() {
-    Future.delayed(Duration(seconds: 5), () {
-      showSkeleton.value = false;
-    });
-    getWhislist();
-    getKategori();
+    refresh();
     super.onInit();
   }
 
@@ -82,6 +78,15 @@ class WishlistController extends GetxController {
       );
       // panggil API fetch data di sini
     }
+  }
+
+  Future<void> refresh() async {
+    selectedKategoriId.value = 0;
+    selectedEventKategori.value = 'Semua';
+    selectedProductiId.value = 0;
+    selectedEventProduct.value = 'Semua';
+    await getWhislist();
+    await getKategori();
   }
 
   Future<void> getWhislist({

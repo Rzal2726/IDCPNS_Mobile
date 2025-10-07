@@ -15,6 +15,8 @@ class WatchVideoView extends GetView<WatchVideoController> {
       backgroundColor: Colors.white,
       appBar: secondaryAppBar("Tonton Video"),
       body: RefreshIndicator(
+        backgroundColor: Colors.white,
+        color: Colors.teal,
         onRefresh: () => controller.initVideoSeries(),
         child: SafeArea(
           child: SingleChildScrollView(

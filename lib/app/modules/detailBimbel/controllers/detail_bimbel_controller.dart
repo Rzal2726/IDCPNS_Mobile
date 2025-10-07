@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -14,6 +15,9 @@ class DetailBimbelController extends GetxController
   var totalPage = 1.obs;
   final int pageSize = 5;
   RxMap datalBimbelData = {}.obs;
+  RxMap paketBimbelData = {}.obs;
+  RxMap paymentData = {}.obs;
+  RxList otherBimbelData = [].obs;
   RxMap datalCheckList = {}.obs;
   RxString wishlistUuid = "".obs;
   RxString selectedPaket = "".obs;
@@ -28,12 +32,12 @@ class DetailBimbelController extends GetxController
   @override
   void onInit() async {
     await initializeDateFormatting('id_ID', null);
-    super.onInit();
-    getCheckWhislist();
-    getDetailBimbel(id: idBimbel);
-    checkMaintenance();
+
+    refresh();
 
     tabController = TabController(length: 3, vsync: this);
+    checkMaintenance();
+    super.onInit();
   }
 
   @override
@@ -54,6 +58,69 @@ class DetailBimbelController extends GetxController
     if (endIndex > dataJadwal.length) endIndex = dataJadwal.length;
 
     return dataJadwal.sublist(startIndex, endIndex);
+  }
+
+  Future<void> refresh() async {
+    await getCheckWhislist();
+    await getDetailBimbel(id: idBimbel);
+    await getPaymentData();
+  }
+
+  Future<void> getData() async {
+    final url = baseUrl + apiGetDetailBimbelNoevent + "/" + selectedPaket.value;
+    final result = await _restClient.getData(url: url);
+
+    // cek status dulu, kalau success lanjut
+    if (result["status"] == "success") {
+      paketBimbelData.value = result;
+      await getOtherBimbel(parentId: result['data']['id']);
+
+      Get.toNamed(
+        Routes.PAYMENT_DETAIL,
+        arguments: [
+          hargaFix.value,
+          paketBimbelData,
+          paymentData,
+          otherBimbelData,
+        ],
+      );
+    } else {
+      // kalau status bukan success, tampilkan pesan server
+      print("Fetch failed: ${result['message']}");
+      // bisa juga kasih notif ke user
+      notifHelper.show(result['message'] ?? "Terjadi kesalahan", type: 0);
+    }
+  }
+
+  Future<void> getOtherBimbel({required int parentId}) async {
+    final url = baseUrl + apiGetBimbelOther;
+    print("xxx ${url.toString()}");
+
+    final result = await _restClient.getData(url: url);
+
+    if (result["status"] == "success") {
+      final List allBimbel = result["data"] ?? [];
+
+      // filter kecuali yang id == parentId.value
+      otherBimbelData.value =
+          allBimbel.where((bimbel) => bimbel['id'] != parentId).toList();
+    } else {
+      notifHelper.show(result['message'] ?? "Terjadi kesalahan", type: 0);
+    }
+  }
+
+  Future<void> getPaymentData() async {
+    try {
+      final url = await baseUrl + apiGetPaymentList;
+
+      final result = await _restClient.getData(url: url);
+      print("emailnnyaa ${result.toString()}");
+      if (result["status"] == "success") {
+        paymentData.value = result;
+      }
+    } catch (e) {
+      print("Errorxx: $e");
+    }
   }
 
   Future<void> getDetailBimbel({required String id}) async {

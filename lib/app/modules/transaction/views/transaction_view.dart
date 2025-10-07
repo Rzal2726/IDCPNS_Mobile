@@ -34,194 +34,177 @@ class TransactionView extends GetView<TransactionController> {
             },
           ),
           body: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ===== OPTION BAR GANTI TAB =====
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: Obx(() {
-                    return SingleChildScrollView(
-                      scrollDirection:
-                          Axis.horizontal, // ✅ bikin scroll horizontal
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children:
-                            controller.option.map((option) {
-                              final isSelected =
-                                  controller.selectedOption.value == option;
+            child: Obx(() {
+              final allData = controller.transactions['data'] ?? [];
 
-                              return GestureDetector(
-                                onTap: () {
-                                  controller.isloading.value = true;
-                                  controller.selectedOption.value = option;
+              // default: semua data
+              List filteredData = allData;
 
-                                  // Tentukan status untuk API
-                                  String status = "";
-                                  if (option == "Sukses") status = "PAID";
-                                  if (option == "Menunggu Pembayaran")
-                                    status = "PENDING";
-                                  if (option == "Gagal") status = "FAILED";
+              if (controller.endDateController.text.isNotEmpty) {
+                final endDate = DateFormat(
+                  "dd/MM/yyyy",
+                ).parse(controller.endDateController.text);
 
-                                  controller.status.value = status;
+                filteredData =
+                    allData.where((item) {
+                      final tanggalStr =
+                          item['tanggal']; // "2025-09-25 14:38:16"
+                      final tanggal = DateFormat(
+                        "yyyy-MM-dd HH:mm:ss",
+                      ).parse(tanggalStr);
 
-                                  // Reset field lainnya ke default sebelum fetch
-                                  controller.currentPage.value = 1;
-                                  controller.searchController.clear();
-                                  controller.startDateController.clear();
+                      // cek: tanggal <= endDate (hari terakhir juga masuk)
+                      return tanggal.isBefore(endDate.add(Duration(days: 1))) ||
+                          tanggal.isAtSameMomentAs(endDate);
+                    }).toList();
+              }
 
-                                  // Panggil API hanya dengan status
-                                  controller.getTransaction(
-                                    page: controller.currentPage.value,
-                                    search: "", // reset
-                                    status: status,
-                                    date: "", // reset
-                                  );
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        option,
-                                        style: TextStyle(
-                                          color:
-                                              isSelected
-                                                  ? Colors.teal
-                                                  : Colors.grey[700],
-                                          fontWeight:
-                                              isSelected
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      AnimatedContainer(
-                                        duration: Duration(milliseconds: 200),
-                                        height: 2,
-                                        width: isSelected ? 20 : 0,
-                                        color: Colors.teal,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                      ),
-                    );
-                  }),
-                ),
-
-                SizedBox(height: 8),
-
-                // ===== SEARCH =====
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: SearchRowButton(
-                    controller: controller.searchController,
-                    hintText: 'Cari',
-                    onSearch: () {
-                      controller.getTransaction(
-                        page: 1, // reset halaman ke 1 saat search
-                        search: controller.searchController.text,
-                        date: controller.startDateController.text,
-                        status: controller.status.value,
-                      );
-                    },
-                  ),
-                ),
-
-                SizedBox(height: 12),
-
-                // ===== HEADER RIWAYAT + FILTER =====
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.end, // ⬅️ bikin tombol menempel kanan
-                    children: [
-                      InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () {
-                          showTransactionFilterBottomSheet(context);
-                        },
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ===== OPTION BAR GANTI TAB =====
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: Obx(() {
+                      return SingleChildScrollView(
+                        scrollDirection:
+                            Axis.horizontal, // ✅ bikin scroll horizontal
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Filter',
-                              style: TextStyle(
-                                color: Colors.teal,
-                                fontSize: 16,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 18,
-                              color: Colors.teal,
-                            ),
-                          ],
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:
+                              controller.option.map((option) {
+                                final isSelected =
+                                    controller.selectedOption.value == option;
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    controller.isloading.value = true;
+                                    controller.selectedOption.value = option;
+
+                                    // Tentukan status untuk API
+                                    String status = "";
+                                    if (option == "Sukses") status = "PAID";
+                                    if (option == "Menunggu Pembayaran")
+                                      status = "PENDING";
+                                    if (option == "Gagal") status = "FAILED";
+
+                                    controller.status.value = status;
+
+                                    // Reset field lainnya ke default sebelum fetch
+                                    controller.currentPage.value = 1;
+                                    controller.searchController.clear();
+                                    controller.startDateController.clear();
+
+                                    // Panggil API hanya dengan status
+                                    controller.getTransaction(
+                                      page: controller.currentPage.value,
+                                      search: "", // reset
+                                      status: status,
+                                      date: "", // reset
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          option,
+                                          style: TextStyle(
+                                            color:
+                                                isSelected
+                                                    ? Colors.teal
+                                                    : Colors.grey[700],
+                                            fontWeight:
+                                                isSelected
+                                                    ? FontWeight.bold
+                                                    : FontWeight.normal,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        AnimatedContainer(
+                                          duration: Duration(milliseconds: 200),
+                                          height: 2,
+                                          width: isSelected ? 20 : 0,
+                                          color: Colors.teal,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: 8),
-
-                // ===== LIST TRANSAKSI =====
-                Expanded(
-                  child: Obx(() {
-                    final allData = controller.transactions['data'] ?? [];
-
-                    // default: semua data
-                    List filteredData = allData;
-
-                    if (controller.endDateController.text.isNotEmpty) {
-                      final endDate = DateFormat(
-                        "dd/MM/yyyy",
-                      ).parse(controller.endDateController.text);
-
-                      filteredData =
-                          allData.where((item) {
-                            final tanggalStr =
-                                item['tanggal']; // "2025-09-25 14:38:16"
-                            final tanggal = DateFormat(
-                              "yyyy-MM-dd HH:mm:ss",
-                            ).parse(tanggalStr);
-
-                            // cek: tanggal <= endDate (hari terakhir juga masuk)
-                            return tanggal.isBefore(
-                                  endDate.add(const Duration(days: 1)),
-                                ) ||
-                                tanggal.isAtSameMomentAs(endDate);
-                          }).toList();
-                    }
-
-                    print("xxx ${filteredData.toString()}");
-
-                    if (filteredData.isEmpty ||
-                        controller.isloading.value == true) {
-                      return SkeletonListWidget<dynamic>(
-                        data: [],
-                        skeletonDuration: const Duration(seconds: 5),
-                        skeletonCount: 5,
-                        emptyMessage: "Tidak ada transaksi ditemukan",
-                        emptySvgAsset: "assets/empty_transactions.svg",
-                        itemBuilder: (_) => const SizedBox.shrink(),
                       );
-                    }
+                    }),
+                  ),
 
-                    return _buildTransactionList(filteredData);
-                  }),
-                ),
-              ],
-            ),
+                  SizedBox(height: 8),
+
+                  // ===== SEARCH =====
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: SearchRowButton(
+                      controller: controller.searchController,
+                      hintText: 'Cari',
+                      onSearch: () {
+                        controller.getTransaction(
+                          page: 1, // reset halaman ke 1 saat search
+                          search: controller.searchController.text,
+                          date: controller.startDateController.text,
+                          status: controller.status.value,
+                        );
+                      },
+                    ),
+                  ),
+
+                  SizedBox(height: 12),
+
+                  // ===== HEADER RIWAYAT + FILTER =====
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment
+                              .end, // ⬅️ bikin tombol menempel kanan
+                      children: [
+                        InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () {
+                            showTransactionFilterBottomSheet(context);
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Filter',
+                                style: TextStyle(
+                                  color: Colors.teal,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                size: 18,
+                                color: Colors.teal,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 8),
+
+                  // ===== LIST TRANSAKSI =====
+                  Expanded(child: _buildTransactionList(context, filteredData)),
+                ],
+              );
+            }),
           ),
         ),
       ),
@@ -229,218 +212,221 @@ class TransactionView extends GetView<TransactionController> {
   }
 }
 
-Widget _buildEmptyState() {
-  return Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.receipt_long, size: 60, color: Colors.grey),
-        SizedBox(height: 12),
-        Text(
-          "Tidak ada transaksi",
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _buildTransactionList(List<dynamic> filtered) {
+Widget _buildTransactionList(
+  BuildContext context,
+  List<dynamic>? filteredData,
+) {
   final controller = Get.put(TransactionController());
-  return ListView.separated(
-    padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
-    itemCount: filtered.length + 1, // ⬅️ +1 untuk pagination
-    separatorBuilder: (_, i) => SizedBox(height: 12),
-    itemBuilder: (context, i) {
-      if (i == filtered.length) {
-        return Column(
-          children: [
-            SizedBox(height: 20), // ⬅️ jarak sebelum pagination
-            Visibility(
-              visible: controller.transactions.isNotEmpty,
-              child: ReusablePagination(
-                nextPage: controller.nextPage,
-                prevPage: controller.prevPage,
-                currentPage: controller.currentPage,
-                totalPage: controller.totalPage,
-                goToPage: controller.goToPage,
-              ),
-            ),
-          ],
-        );
-      }
 
-      final trx = filtered[i];
-      return GestureDetector(
-        onTap: () {
-          trx['status'] == 'PENDING'
-              ? showPaymentSheet(
-                context,
-                onCancel: () {
-                  showPaymentSheet2(
+  // 🔹 Handle null list dulu biar aman
+  final list = filteredData ?? [];
+
+  // 🔹 Kondisi 1 — Masih loading ATAU data masih kosong tapi transaksi juga belum ada
+  final bool stillLoading =
+      controller.isloading.value ||
+      (list.isEmpty && controller.transactions.isEmpty);
+
+  if (stillLoading) {
+    return SafeArea(
+      child: SkeletonListWidget<dynamic>(
+        data: [],
+        skeletonCount: 5,
+        itemBuilder: (_) => SizedBox.shrink(),
+      ),
+    );
+  }
+
+  // 🔹 Kondisi 2 — Sudah tidak loading dan data kosong → tampilkan empty state
+  if (list.isEmpty) {
+    return SafeArea(
+      child: SkeletonListWidget<dynamic>(
+        data: [],
+        skeletonCount: 0,
+        emptyMessage: "Tidak ada transaksi ditemukan",
+        emptySvgAsset: "assets/empty_transactions.svg",
+        itemBuilder: (_) => SizedBox.shrink(),
+      ),
+    );
+  }
+
+  // 🔹 Kondisi 3 — Data sudah ada → tampilkan list
+  return SafeArea(
+    child: RefreshIndicator(
+      color: Colors.teal,
+      backgroundColor: Colors.white,
+      onRefresh: controller.refresh,
+      child: ListView.builder(
+        physics: AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
+        itemCount: list.length + 1,
+        itemBuilder: (context, i) {
+          if (i == list.length) {
+            return Visibility(
+              visible: controller.transactions.isNotEmpty,
+              child: Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: ReusablePagination(
+                  nextPage: controller.nextPage,
+                  prevPage: controller.prevPage,
+                  currentPage: controller.currentPage,
+                  totalPage: controller.totalPage,
+                  goToPage: controller.goToPage,
+                ),
+              ),
+            );
+          }
+
+          final trx = list[i];
+          final status = trx['status']?.toString().toUpperCase();
+          final isPaid = status == 'PAID';
+          final isPending = status == 'PENDING';
+
+          return Padding(
+            padding: EdgeInsets.only(bottom: 12),
+            child: GestureDetector(
+              onTap: () async {
+                if (isPending) {
+                  showPaymentSheet(
                     context,
                     onCancel: () {
-                      controller.deleteTransaction(id: trx['id'].toString());
-                    },
-                    onPay: () async {
-                      try {
-                        if (trx.containsKey('invoice_url') &&
-                            trx['invoice_url'] != null) {
-                          final String url = trx['invoice_url'];
-                          final uri = Uri.parse(url);
-
-                          if (await canLaunchUrl(uri)) {
-                            await launchUrl(
-                              uri,
-                              mode: LaunchMode.externalApplication,
-                            );
-                          } else {
-                            debugPrint("Tidak bisa buka link: $url");
-                          }
-                        }
-                      } catch (e) {
-                        debugPrint("Error saat buka link: $e");
-                      }
-
-                      // Tetap lanjut ke halaman checkout
-                      Get.offNamed(
-                        Routes.PAYMENT_CHECKOUT,
-                        arguments: [
-                          trx['payment_id'],
-                          trx['tanggal_kadaluarsa'],
-                        ],
+                      showPaymentSheet2(
+                        context,
+                        onCancel:
+                            () => controller.deleteTransaction(
+                              id: trx['id'].toString(),
+                            ),
+                        onPay: () => _openInvoice(trx),
                       );
                     },
+                    onPay: () => _openInvoice(trx),
                   );
-                },
-                onPay: () async {
-                  try {
-                    if (trx.containsKey('invoice_url') &&
-                        trx['invoice_url'] != null) {
-                      final String url = trx['invoice_url'];
-                      final uri = Uri.parse(url);
-
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(
-                          uri,
-                          mode: LaunchMode.externalApplication,
-                        );
-                      } else {
-                        debugPrint("Tidak bisa buka link: $url");
-                      }
-                    }
-                  } catch (e) {
-                    debugPrint("Error saat buka link: $e");
-                  }
-                  print("ccx ${trx['id'].toString()}");
-                  // Tetap lanjut ke halaman checkout
-                  Get.offNamed(
-                    Routes.PAYMENT_CHECKOUT,
-                    arguments: [trx['payment_id'], trx['tanggal_kadaluarsa']],
-                  );
-                },
-              )
-              : Get.toNamed(Routes.INVOICE, arguments: trx['id']);
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade300,
-                blurRadius: 6,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(14, 12, 12, 14),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                } else {
+                  Get.toNamed(Routes.INVOICE, arguments: trx['id']);
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade300,
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(14, 12, 12, 14),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color:
-                              trx['status'] == 'PAID'
-                                  ? Colors.green
-                                  : (trx['status'] == 'PENDING'
-                                      ? Colors.amber
-                                      : Colors.red),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          trx['status']?.toString().toUpperCase() == 'PAID'
-                              ? "Sukses"
-                              : trx['status'] == 'PENDING'
-                              ? "Menunggu Pembayaran"
-                              : "Gagal",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                          ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    isPaid
+                                        ? Colors.green
+                                        : (isPending
+                                            ? Colors.amber
+                                            : Colors.red),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                isPaid
+                                    ? "Sukses"
+                                    : isPending
+                                    ? "Menunggu Pembayaran"
+                                    : "Gagal",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              trx['no_order'] ?? "-",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              (trx['payment_details'] != null &&
+                                      trx['payment_details'].isNotEmpty)
+                                  ? (trx['payment_details'][0]['item_parent_name'] ??
+                                      trx['payment_details'][0]['item_name'] ??
+                                      "-")
+                                  : "-",
+                              style: TextStyle(
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              '${trx['tanggal'] ?? "-"} - ${formatRupiah(trx['amount'] ?? 0)}',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        trx['no_order'],
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        (trx['payment_details'] != null &&
-                                trx['payment_details'].isNotEmpty)
-                            ? (trx['payment_details'][0]['item_parent_name'] ??
-                                trx['payment_details'][0]['item_name'] ??
-                                "-")
-                            : "-",
-                        style: TextStyle(
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        '${trx['tanggal']} - ${formatRupiah(trx['amount'])}',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                      SizedBox(width: 8),
+                      CircleAvatar(
+                        radius: 18,
+                        backgroundColor: Colors.teal,
+                        child: Icon(
+                          Icons.chevron_right_rounded,
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(width: 8),
-                CircleAvatar(
-                  radius: 18,
-                  backgroundColor: Colors.teal,
-                  child: Icon(Icons.chevron_right_rounded, color: Colors.white),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      );
-    },
+          );
+        },
+      ),
+    ),
+  );
+}
+
+// 🔹 Helper: buka invoice URL dan arahkan ke halaman checkout
+Future<void> _openInvoice(Map<String, dynamic> trx) async {
+  try {
+    if (trx.containsKey('invoice_url') && trx['invoice_url'] != null) {
+      final String url = trx['invoice_url'];
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        debugPrint("Tidak bisa buka link: $url");
+      }
+    }
+  } catch (e) {
+    debugPrint("Error saat buka link: $e");
+  }
+
+  Get.offNamed(
+    Routes.PAYMENT_CHECKOUT,
+    arguments: [trx['payment_id'], trx['tanggal_kadaluarsa']],
   );
 }
 
@@ -604,6 +590,7 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                                   "${today.month.toString().padLeft(2, '0')}/"
                                   "${today.year}";
                               controller.getTransaction(
+                                search: controller.searchController.text,
                                 page: controller.currentPage.value,
                                 date:
                                     controller

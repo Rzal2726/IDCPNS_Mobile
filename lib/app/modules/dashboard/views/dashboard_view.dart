@@ -49,6 +49,8 @@ class DashboardView extends GetView<DashboardController> {
         body: SafeArea(
           child: RefreshIndicator(
             backgroundColor: Colors.white,
+            color: Colors.teal,
+
             onRefresh: () => controller.initScreen(),
             child: Obx(() {
               var data = controller.tryoutRecomHomeData;

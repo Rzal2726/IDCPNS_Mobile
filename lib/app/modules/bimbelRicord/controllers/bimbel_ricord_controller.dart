@@ -7,6 +7,7 @@ class BimbelRecordController extends GetxController {
   final count = 0.obs;
   @override
   void onInit() {
+    print("xcc ${selectedVideo.toString()}");
     super.onInit();
   }
 

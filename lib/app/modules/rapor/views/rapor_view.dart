@@ -48,6 +48,8 @@ class RaporView extends GetView<RaporController> {
         ],
       ),
       body: RefreshIndicator(
+        backgroundColor: Colors.white,
+        color: Colors.teal,
         onRefresh: () => controller.initRapor(),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),

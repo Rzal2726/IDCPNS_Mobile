@@ -23,212 +23,222 @@ class BimbelView extends GetView<BimbelController> {
     return Scaffold(
       appBar: basicAppBar(),
       backgroundColor: Colors.white,
-      body: Obx(() {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: AppStyle.sreenPaddingHome,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Bimbel Saya card (outline teal + light fill)
-                GestureDetector(
-                  onTap: () {
-                    Get.toNamed(Routes.MY_BIMBEL);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: Colors.teal.shade50,
-                      border: Border.all(
-                        color: Colors.teal.shade200,
-                        width: 1.6,
+      body: RefreshIndicator(
+        backgroundColor: Colors.white,
+        color: Colors.teal,
+        onRefresh: () => controller.refresh(),
+        child: Obx(() {
+          return SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Padding(
+              padding: AppStyle.sreenPaddingHome,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Bimbel Saya card (outline teal + light fill)
+                  GestureDetector(
+                    onTap: () {
+                      Get.toNamed(Routes.MY_BIMBEL);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
                       ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.teal.shade50,
+                        border: Border.all(
+                          color: Colors.teal.shade200,
+                          width: 1.6,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 40,
+                                height: 40,
 
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  "assets/computerIcon.svg",
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    "assets/computerIcon.svg",
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 13),
+                              Text(
+                                'Bimbel Saya',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.teal,
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 20),
+
+                  // Header Paket Bimbel
+                  Text('Paket Bimbel', style: AppStyle.style17Bold),
+                  SizedBox(height: 4),
+                  Text(
+                    'Belajar lebih intensif bersama mentor ahli di bidangnya.',
+                    style: TextStyle(fontSize: 13, color: Colors.grey),
+                  ),
+                  SizedBox(height: 20),
+
+                  // Search row
+                  SearchRowButton(
+                    controller: controller.searchController,
+                    onSearch: () {
+                      controller.getBimbel(
+                        menuCategoryId:
+                            controller.selectedKategoriId.value?.toString(),
+                        search: controller.searchController.text,
+                      );
+                    },
+                    hintText: 'Apa yang ingin Anda cari?',
+                  ),
+
+                  SizedBox(height: 16),
+
+                  // Filter (right)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        showBimbelBottomSheet(context);
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Filter', style: TextStyle(color: Colors.teal)),
+                          Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 16),
+
+                  // List paket (mirip style gambar)
+                  controller.isLoading.value == true
+                      ? ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: 3,
+                        itemBuilder:
+                            (context, index) => Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: Container(
+                                padding: EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade300,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: 100,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      height: 16,
+                                      width: 160,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      height: 14,
+                                      width: 120,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                            SizedBox(width: 13),
-                            Text(
-                              'Bimbel Saya',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Spacer(),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.teal,
-                          size: 16,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: 20),
-
-                // Header Paket Bimbel
-                Text('Paket Bimbel', style: AppStyle.style17Bold),
-                SizedBox(height: 4),
-                Text(
-                  'Belajar lebih intensif bersama mentor ahli di bidangnya.',
-                  style: TextStyle(fontSize: 13, color: Colors.grey),
-                ),
-                SizedBox(height: 20),
-
-                // Search row
-                SearchRowButton(
-                  controller: controller.searchController,
-                  onSearch: () {
-                    controller.getBimbel(
-                      menuCategoryId:
-                          controller.selectedKategoriId.value?.toString(),
-                      search: controller.searchController.text,
-                    );
-                  },
-                  hintText: 'Apa yang ingin Anda cari?',
-                ),
-
-                SizedBox(height: 16),
-
-                // Filter (right)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      showBimbelBottomSheet(context);
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Filter', style: TextStyle(color: Colors.teal)),
-                        Icon(Icons.keyboard_arrow_down, color: Colors.teal),
-                      ],
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: 16),
-
-                // List paket (mirip style gambar)
-                controller.isLoading.value == true
-                    ? ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: 3,
-                      itemBuilder:
-                          (context, index) => Padding(
+                      )
+                      : controller.bimbelData.isNotEmpty
+                      ? ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: controller.bimbelData.length,
+                        itemBuilder: (context, index) {
+                          final paket = controller.bimbelData[index];
+                          return Padding(
                             padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Container(
-                              padding: EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.shade300,
-                                    blurRadius: 4,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    height: 20,
-                                    width: 100,
-                                    color: Colors.grey.shade300,
-                                  ),
-                                  SizedBox(height: 7),
-                                  Container(
-                                    height: 16,
-                                    width: 160,
-                                    color: Colors.grey.shade300,
-                                  ),
-                                  SizedBox(height: 7),
-                                  Container(
-                                    height: 14,
-                                    width: 120,
-                                    color: Colors.grey.shade300,
-                                  ),
-                                ],
-                              ),
+                            child: _cardPaketBimbel(
+                              image: paket['gambar'] ?? '',
+                              title: paket['name'] ?? '',
+                              hargaFixTertinggi:
+                                  paket['price_list']['harga_fix_tertinggi'] ??
+                                  '',
+                              hargaTertinggi:
+                                  paket['price_list']['harga_tertinggi'] ?? '',
+                              hargaTerendah:
+                                  paket['price_list']['harga_terendah'] ?? '',
+                              hargaFixTerendah:
+                                  paket['price_list']['harga_fix_terendah'] ??
+                                  '',
+                              kategori: paket['menu_category']['menu'] ?? '',
+                              color: Colors.teal,
+                              onTap: () {
+                                Get.toNamed(
+                                  Routes.DETAIL_BIMBEL,
+                                  arguments: paket['uuid'],
+                                );
+                              },
                             ),
-                          ),
-                    )
-                    : controller.bimbelData.isNotEmpty
-                    ? ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: controller.bimbelData.length,
-                      itemBuilder: (context, index) {
-                        final paket = controller.bimbelData[index];
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.0),
-                          child: _cardPaketBimbel(
-                            image: paket['gambar'] ?? '',
-                            title: paket['name'] ?? '',
-                            hargaFixTertinggi:
-                                paket['price_list']['harga_fix_tertinggi'] ??
-                                '',
-                            hargaTertinggi:
-                                paket['price_list']['harga_tertinggi'] ?? '',
-                            hargaTerendah:
-                                paket['price_list']['harga_terendah'] ?? '',
-                            hargaFixTerendah:
-                                paket['price_list']['harga_fix_terendah'] ?? '',
-                            kategori: paket['menu_category']['menu'] ?? '',
-                            color: Colors.teal,
-                            onTap: () {
-                              Get.toNamed(
-                                Routes.DETAIL_BIMBEL,
-                                arguments: paket['uuid'],
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    )
-                    : EmptyStateWidget(
-                      message: 'Belum ada paket yang tersedia',
-                    ),
-                controller.bimbelData.isNotEmpty
-                    ? Container(
-                      color: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Center(
-                        child: ReusablePagination(
-                          currentPage: controller.currentPage,
-                          totalPage: controller.totalPage,
-                          goToPage: controller.goToPage,
-                          nextPage: controller.nextPage,
-                          prevPage: controller.prevPage,
-                        ),
+                          );
+                        },
+                      )
+                      : EmptyStateWidget(
+                        message: 'Belum ada paket yang tersedia',
                       ),
-                    )
-                    : SizedBox.shrink(),
-              ],
+                  controller.bimbelData.isNotEmpty
+                      ? Container(
+                        color: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Center(
+                          child: ReusablePagination(
+                            currentPage: controller.currentPage,
+                            totalPage: controller.totalPage,
+                            goToPage: controller.goToPage,
+                            nextPage: controller.nextPage,
+                            prevPage: controller.prevPage,
+                          ),
+                        ),
+                      )
+                      : SizedBox.shrink(),
+                ],
+              ),
             ),
-          ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 
@@ -442,31 +452,62 @@ void showBimbelBottomSheet(BuildContext context) {
                       ),
                     ),
                     SizedBox(height: 16),
-
-                    // Tombol cari
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          controller.getBimbel(
-                            menuCategoryId:
-                                controller.selectedKategoriId.value?.toString(),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              controller.selectedKategoriId.value = 0;
+                              controller.selectedEventKategori.value = "Semua";
+                              controller.getBimbel(menuCategoryId: "");
+                              Navigator.pop(context);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Colors.teal),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                            child: Text(
+                              "Reset",
+                              style: TextStyle(color: Colors.teal),
+                            ),
                           ),
                         ),
-                        child: Text("Cari"),
-                      ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+
+                                controller.getBimbel(
+                                  menuCategoryId:
+                                      controller.selectedKategoriId.value
+                                          ?.toString(),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
+                              ),
+                              child: Text("Cari"),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

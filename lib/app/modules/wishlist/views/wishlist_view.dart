@@ -38,190 +38,196 @@ class WishlistView extends GetView<WishlistController> {
         ),
         body: SafeArea(
           child: Obx(() {
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-              child: Column(
-                children: [
-                  // Search
-                  SearchRowButton(
-                    controller: controller.searchController,
-                    onSearch: () {
-                      controller.getWhislist(
-                        search: controller.searchController.text,
-                      );
-                    },
-                    hintText: 'Apa yang ingin Anda cari?',
-                  ),
-                  SizedBox(height: 16),
-
-                  // Baris tombol "Beli Semua" + Filter
-                  Row(
+            return RefreshIndicator(
+              color: Colors.teal,
+              backgroundColor: Colors.white,
+              onRefresh: () => controller.refresh(),
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                  child: Column(
                     children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          if (controller.whistlistData['data'] != null &&
-                              controller.whistlistData['data']!.isNotEmpty) {
-                            Get.toNamed(Routes.PAYMENT_WHISLIST);
-                          } else {
-                            null;
-                          }
+                      // Search
+                      SearchRowButton(
+                        controller: controller.searchController,
+                        onSearch: () {
+                          controller.getWhislist(
+                            search: controller.searchController.text,
+                          );
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          'Beli Semua',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
+                        hintText: 'Apa yang ingin Anda cari?',
                       ),
-                      Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          showBimbelBottomSheet(context);
-                        },
-                        child: Row(
-                          children: [
-                            Text(
-                              'Filter',
+                      SizedBox(height: 16),
+
+                      // Baris tombol "Beli Semua" + Filter
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              if (controller.whistlistData['data'] != null &&
+                                  controller
+                                      .whistlistData['data']!
+                                      .isNotEmpty) {
+                                Get.toNamed(Routes.PAYMENT_WHISLIST);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              'Beli Semua',
                               style: TextStyle(
-                                color: Colors.teal,
+                                color: Colors.white,
                                 fontSize: 16,
                               ),
                             ),
-                            SizedBox(width: 4),
-                            Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 18,
-                              color: Colors.teal,
+                          ),
+                          Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              showBimbelBottomSheet(context);
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Filter',
+                                  style: TextStyle(
+                                    color: Colors.teal,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(width: 4),
+                                Icon(
+                                  Icons.keyboard_arrow_down,
+                                  size: 18,
+                                  color: Colors.teal,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+
+                      // Konten utama
+                      if (controller.isLoading.value)
+                        Skeletonizer(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: 3,
+                            itemBuilder:
+                                (context, index) => Container(
+                                  margin: EdgeInsets.only(bottom: 20),
+                                  padding: EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.shade300,
+                                        blurRadius: 4,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 20,
+                                        width: 80,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      SizedBox(height: 7),
+                                      Container(
+                                        height: 16,
+                                        width: 120,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      SizedBox(height: 7),
+                                      Container(
+                                        height: 14,
+                                        width: 160,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                          ),
+                        )
+                      else if (controller.whistlistData['data'] != null &&
+                          controller.whistlistData['data']!.isNotEmpty)
+                        Column(
+                          children: [
+                            ...controller.whistlistData['data']!
+                                .map<Widget>(
+                                  (item) => Padding(
+                                    padding: EdgeInsets.only(bottom: 12),
+                                    child: _buildWishlistItem(
+                                      imageUrl: item['productDetail']['gambar'],
+                                      title:
+                                          item['productDetail']['name'] ??
+                                          item['productDetail']['formasi'],
+                                      oldPrice:
+                                          (item['productDetail']?['price_list']?['harga_terendah'] ??
+                                                  "")
+                                              .toString(),
+                                      oldPriceFix:
+                                          (item['productDetail']?['price_list']?['harga_fix_terendah'] ??
+                                                  "")
+                                              .toString(),
+                                      newPrice:
+                                          (item['productDetail']?['price_list']?['harga_tertinggi'] ??
+                                                  item['productDetail']['harga'])
+                                              .toString(),
+                                      newPriceFix:
+                                          (item['productDetail']?['price_list']?['harga_fix_tertinggi'] ??
+                                                  item['productDetail']['harga_fix'])
+                                              .toString(),
+                                      tag:
+                                          item['productDetail']['menu_category']['menu'],
+                                      tagColor:
+                                          item['productDetail']['menu_category']['warna']['hex'],
+                                      isBimbel:
+                                          item['bimbel_parent_id'] != null,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            SizedBox(height: 20),
+                            ReusablePagination(
+                              nextPage: controller.nextPage,
+                              prevPage: controller.prevPage,
+                              currentPage: controller.currentPage,
+                              totalPage: controller.totalPage,
+                              goToPage: controller.goToPage,
                             ),
                           ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 7),
-
-                  // Konten (expand biar isiannya bisa center)
-                  Expanded(
-                    child:
-                        controller.showSkeleton.value ||
-                                controller.isLoading.value
-                            ? Skeletonizer(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: 3,
-                                itemBuilder:
-                                    (context, index) => Container(
-                                      margin: EdgeInsets.only(bottom: 20),
-                                      padding: EdgeInsets.all(14),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.shade300,
-                                            blurRadius: 4,
-                                            offset: Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            height: 20,
-                                            width: 80,
-                                            color: Colors.grey.shade300,
-                                          ),
-                                          SizedBox(height: 7),
-                                          Container(
-                                            height: 16,
-                                            width: 120,
-                                            color: Colors.grey.shade300,
-                                          ),
-                                          SizedBox(height: 7),
-                                          Container(
-                                            height: 14,
-                                            width: 160,
-                                            color: Colors.grey.shade300,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                              ),
-                            )
-                            : (controller.whistlistData['data'] != null &&
-                                controller.whistlistData['data']!.isNotEmpty)
-                            ? SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Column(
-                                    children:
-                                        controller.whistlistData['data']!
-                                            .map<Widget>(
-                                              (item) => Padding(
-                                                padding: EdgeInsets.only(
-                                                  bottom: 12,
-                                                ),
-                                                child: _buildWishlistItem(
-                                                  imageUrl:
-                                                      item['productDetail']['gambar'],
-                                                  title:
-                                                      item['productDetail']['name'] ??
-                                                      item['productDetail']['formasi'],
-                                                  oldPrice:
-                                                      (item['productDetail']?['price_list']?['harga_terendah'] ??
-                                                              "")
-                                                          .toString(),
-                                                  oldPriceFix:
-                                                      (item['productDetail']?['price_list']?['harga_fix_terendah'] ??
-                                                              "")
-                                                          .toString(),
-                                                  newPrice:
-                                                      (item['productDetail']?['price_list']?['harga_tertinggi'] ??
-                                                              item['productDetail']['harga'])
-                                                          .toString(),
-                                                  newPriceFix:
-                                                      (item['productDetail']?['price_list']?['harga_fix_tertinggi'] ??
-                                                              item['productDetail']['harga_fix'])
-                                                          .toString(),
-                                                  tag:
-                                                      item['productDetail']['menu_category']['menu'],
-                                                  tagColor:
-                                                      item['productDetail']['menu_category']['warna']['hex'],
-                                                  isBimbel:
-                                                      item['bimbel_parent_id'] !=
-                                                      null,
-                                                ),
-                                              ),
-                                            )
-                                            .toList(),
-                                  ),
-                                  SizedBox(height: 20),
-                                  ReusablePagination(
-                                    nextPage: controller.nextPage,
-                                    prevPage: controller.prevPage,
-                                    currentPage: controller.currentPage,
-                                    totalPage: controller.totalPage,
-                                    goToPage: controller.goToPage,
-                                  ),
-                                ],
-                              ),
-                            )
-                            : Center(
+                        )
+                      else
+                        Center(
+                          child: SizedBox(
+                            height:
+                                MediaQuery.of(context).size.height *
+                                0.6, // biar ngisi layar
+                            child: Center(
                               child: EmptyStateWidget(
                                 message:
                                     'Wishlist Anda saat ini kosong. Silakan tambahkan produk favorit Anda untuk melihatnya di sini.',
                                 svgAsset: "assets/learningEmpty.svg",
                               ),
                             ),
+                          ),
+                        ),
+                    ],
                   ),
-                ],
+                ),
               ),
             );
           }),

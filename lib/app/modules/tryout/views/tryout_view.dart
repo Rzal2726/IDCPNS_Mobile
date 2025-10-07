@@ -36,6 +36,7 @@ class TryoutView extends GetView<TryoutController> {
       body: SafeArea(
         child: RefreshIndicator(
           backgroundColor: Colors.white,
+          color: Colors.teal,
           onRefresh: () => controller.initTryout(),
           child: SingleChildScrollView(
             child: Column(

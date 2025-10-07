@@ -23,6 +23,8 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
       ),
       body: SafeArea(
         child: RefreshIndicator(
+          backgroundColor: Colors.white,
+          color: Colors.teal,
           onRefresh: () => controller.initAll(),
           child: SingleChildScrollView(
             child: Column(

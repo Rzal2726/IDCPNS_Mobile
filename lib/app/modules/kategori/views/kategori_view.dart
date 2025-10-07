@@ -24,6 +24,7 @@ class KategoriView extends GetView<KategoriController> {
       body: SafeArea(
         child: RefreshIndicator(
           backgroundColor: Colors.white,
+          color: Colors.teal,
           onRefresh: () => controller.initKategori(),
           child: SingleChildScrollView(
             padding: AppStyle.sreenPaddingHome,

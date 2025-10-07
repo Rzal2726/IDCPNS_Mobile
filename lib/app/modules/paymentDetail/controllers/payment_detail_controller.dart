@@ -10,14 +10,17 @@ import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PaymentDetailController extends GetxController {
-  var uuid = Get.arguments[0];
-  var hargaFix = Get.arguments[1];
+  // var uuid = Get.arguments[0];
+  var hargaFix = Get.arguments[0];
+  var dataPaket = Get.arguments[1];
+  var dataPaymentMethode = Get.arguments[2];
+  var otherBimbelData = Get.arguments[3];
   final box = GetStorage();
   RxString subPaketName = "".obs;
   RxMap<int, String> selectedSub = <int, String>{}.obs;
   RxMap<int, bool> checked = <int, bool>{}.obs;
   RxMap bimbelData = {}.obs;
-  RxList otherBimbelData = [].obs;
+  // RxList otherBimbelData = [].obs;
   // var selectedSub = ''.obs; // bisa kosong kalau belum dipilih
   final selectedPaketPerCard = <int, Map<String, dynamic>>{}.obs;
 
@@ -42,12 +45,8 @@ class PaymentDetailController extends GetxController {
 
   @override
   void onInit() async {
-    await getData();
-    await getPromoCodeFromStorage();
-    getPaymentData();
+    refresh();
     super.onInit();
-    // Dummy data hardcode
-    // Tambahkan properti reactive untuk checkbox & radio
   }
 
   final _restClient = RestClient();
@@ -74,6 +73,12 @@ class PaymentDetailController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> refresh() async {
+    await getData();
+    await getPromoCodeFromStorage();
+    await getPaymentData();
   }
 
   void pilihPaket(int parentId, Map<String, dynamic> paket) {
@@ -114,58 +119,34 @@ class PaymentDetailController extends GetxController {
   }
 
   Future<void> getData() async {
-    final url = baseUrl + apiGetDetailBimbelNoevent + "/" + uuid;
-    final result = await _restClient.getData(url: url);
-
-    // cek status dulu, kalau success lanjut
-    if (result["status"] == "success") {
-      bimbelData.value = result["data"];
-      parentId.value = result['data']['id'];
+    if (dataPaket["status"] == "success") {
+      bimbelData.value = dataPaket["data"];
+      parentId.value = dataPaket['data']['id'];
       baseHarga.value = hargaFix;
       print("xxbx ${baseHarga.toString()}");
-      final parent = result["data"]['bimbel_parent'];
+      final parent = dataPaket["data"]['bimbel_parent'];
       if (parent != null) {
         wishListFirstProduct.value = parent['name'] ?? '';
       } else {
         wishListFirstProduct.value = ''; // fallback kalau null
       }
-      getOtherBimbel();
+      // getOtherBimbel();
     } else {
       // kalau status bukan success, tampilkan pesan server
-      print("Fetch failed: ${result['message']}");
+      print("Fetch failed: ${dataPaket['message']}");
       // bisa juga kasih notif ke user
-      notifHelper.show(result['message'] ?? "Terjadi kesalahan", type: 0);
-    }
-  }
-
-  Future<void> getOtherBimbel() async {
-    final url = baseUrl + apiGetBimbelOther;
-    print("xxx ${url.toString()}");
-
-    final result = await _restClient.getData(url: url);
-
-    if (result["status"] == "success") {
-      final List allBimbel = result["data"] ?? [];
-
-      // filter kecuali yang id == parentId.value
-      otherBimbelData.value =
-          allBimbel.where((bimbel) => bimbel['id'] != parentId.value).toList();
-
-      print("Other Bimbel: ${otherBimbelData.value}");
-    } else {
-      print("Fetch failed: ${result['message']}");
-      notifHelper.show(result['message'] ?? "Terjadi kesalahan", type: 0);
+      notifHelper.show(dataPaket['message'] ?? "Terjadi kesalahan", type: 0);
     }
   }
 
   Future<void> getPaymentData() async {
     try {
-      final url = await baseUrl + apiGetPaymentList;
-
-      final result = await _restClient.getData(url: url);
-      print("emailnnyaa ${result.toString()}");
-      if (result["status"] == "success") {
-        paymantListData.value = result['data'];
+      // final url = await baseUrl + apiGetPaymentList;
+      //
+      // final result = await _restClient.getData(url: url);
+      print("xcc ${dataPaymentMethode.toString()}");
+      if (dataPaymentMethode["status"] == "success") {
+        paymantListData.value = dataPaymentMethode['data'];
       }
     } catch (e) {
       print("Errorxx: $e");

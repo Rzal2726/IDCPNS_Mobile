@@ -22,7 +22,7 @@ class TransactionController extends GetxController {
   final count = 0.obs;
   @override
   void onInit() {
-    getTransaction();
+    refresh();
     super.onInit();
     // Dummy data
   }
@@ -104,8 +104,29 @@ class TransactionController extends GetxController {
       var data = result['data'];
       transactions.value = data;
       totalPage.value = data['last_page'];
-      print("Xxxc ${result['data']['last_page']}");
+      isloading.value = false;
     }
+  }
+
+  Future<void> refresh() async {
+    isloading.value = true; // 🔹 aktifkan loading state
+    selectedOption.value = "Semua"; // 🔹 ini harus pakai '='
+    status.value = "";
+    searchController.clear();
+    startDateController.clear();
+    endDateController.clear();
+
+    // Atur tanggal default (misal hari ini)
+    final today = DateTime.now();
+    endDateController.text =
+        "${today.day.toString().padLeft(2, '0')}/"
+        "${today.month.toString().padLeft(2, '0')}/"
+        "${today.year}";
+
+    currentPage.value = 1;
+
+    await getTransaction(search: "", page: 1, date: "", status: "");
+
     isloading.value = false;
   }
 

@@ -63,9 +63,7 @@ class BimbelRecordView extends GetView<BimbelRecordController> {
                           AspectRatio(
                             aspectRatio: 16 / 9,
                             child: InAppWebView(
-                              key: ValueKey(
-                                video['url'],
-                              ), // 👈 ini yang bikin widget "reset"
+                              key: ValueKey(video['url']),
                               initialUrlRequest: URLRequest(
                                 url: WebUri(
                                   "https://www.youtube.com/embed/${YoutubePlayer.convertUrlToId(video['url'] ?? '')}?autoplay=1&modestbranding=1&rel=0",

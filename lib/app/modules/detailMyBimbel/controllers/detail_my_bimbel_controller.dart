@@ -25,7 +25,6 @@ class DetailMyBimbelController extends GetxController {
   @override
   void onInit() {
     getData();
-    print("xxv ${box.read('levelName')}");
     levelName.value = box.read('levelName') ?? "";
     super.onInit();
     checkMaintenance();
@@ -44,6 +43,10 @@ class DetailMyBimbelController extends GetxController {
   void pilihPaket(String paket) {
     selectedPaket.value = paket;
     print("xxx${paket.toString()}");
+  }
+
+  Future<void> refresh() async {
+    getData();
   }
 
   Future<void> getData() async {

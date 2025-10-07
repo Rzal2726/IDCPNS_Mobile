@@ -21,11 +21,7 @@ class MyBimbelController extends GetxController {
   final count = 0.obs;
   @override
   void onInit() {
-    Future.delayed(Duration(seconds: 5), () {
-      showSkeleton.value = false;
-    });
-    getData();
-    getKategori();
+    refresh();
     super.onInit();
   }
 
@@ -73,6 +69,13 @@ class MyBimbelController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> refresh() async {
+    selectedKategoriId.value = 0;
+    selectedEventKategori.value = "Semua";
+    await getData();
+    await getKategori();
   }
 
   Future<void> getKategori() async {

@@ -45,6 +45,8 @@ class BimbelController extends GetxController {
   }
 
   Future<void> refresh() async {
+    selectedKategoriId.value = 0;
+    selectedEventKategori.value = "Semua";
     await getBimbel();
     await getKategori();
   }
@@ -69,7 +71,7 @@ class BimbelController extends GetxController {
         "search": search ?? "",
         "page": page ?? 0,
       };
-
+      print('xvb ${payload.toString()}');
       final result = await _restClient.postData(url: url, payload: payload);
 
       if (result["status"] == "success") {

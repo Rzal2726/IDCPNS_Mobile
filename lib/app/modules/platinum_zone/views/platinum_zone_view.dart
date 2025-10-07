@@ -16,6 +16,8 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
       appBar: basicAppBar(),
       backgroundColor: Colors.white,
       body: RefreshIndicator(
+        backgroundColor: Colors.white,
+        color: Colors.teal,
         onRefresh: () => controller.init(),
         child: Obx(() {
           if (controller.loading.value) {
