@@ -673,7 +673,9 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                       );
                     } else {
                       if (controller.tryOutSaya['isdone'] == 1) {
-                        return _buildResultCharts();
+                        return Column(
+                          children: [_totalNilai(), _buildResultCharts()],
+                        );
                       } else {
                         return _buildPlaceholder(
                           "Kerjakan tryout untuk melihat hasil dan statistik.",
@@ -778,10 +780,9 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
     );
   }
 
-  Widget _buildResultCharts() {
+  Widget _totalNilai() {
     return Column(
       children: [
-        // Pie Chart untuk total nilai
         Card(
           color: Colors.white,
           elevation: 1,
@@ -863,299 +864,396 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
             ),
           );
         }),
+      ],
+    );
+  }
 
+  Widget _buildResultCharts() {
+    return Column(
+      children: [
         const SizedBox(height: 16),
 
         // Bar Chart untuk Benar / Salah / Kosong
-        Obx(() {
-          return Card(
-            color: Colors.white,
-            elevation: 1,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-              child: Column(
-                children: [
-                  SfCartesianChart(
-                    title: ChartTitle(
-                      text: "Waktu Pengerjaan",
-                      textStyle: const TextStyle(fontWeight: FontWeight.bold),
+        Stack(
+          children: [
+            IgnorePointer(
+              ignoring: controller.tryOutSaya['ispremium'] != 1,
+              child: Obx(() {
+                return Card(
+                  color: Colors.white,
+                  elevation: 1,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 8,
                     ),
-                    primaryXAxis: CategoryAxis(
-                      labelRotation: -45,
-                      majorGridLines: const MajorGridLines(width: 0),
-                    ),
-                    primaryYAxis: NumericAxis(
-                      minimum: 0,
-                      labelRotation: 0,
-                      title: AxisTitle(text: 'Waktu(Detik)'),
-                    ),
-                    tooltipBehavior: TooltipBehavior(enable: true),
-                    series: <ColumnSeries>[
-                      ColumnSeries<ChartData, String>(
-                        dataSource: controller.chartDataList,
-                        xValueMapper: (ChartData data, _) => data.x,
-                        yValueMapper:
-                            (ChartData data, _) => int.tryParse(data.y),
-                        pointColorMapper: (ChartData data, _) => data.color,
-                        dataLabelSettings: const DataLabelSettings(
-                          isVisible: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 0.5,
-                          color: Colors.grey.shade400,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      spacing: 16,
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    child: Column(
                       children: [
-                        Text(
-                          "Total Waktu: ",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "${(controller.totalValue.value / 60).toStringAsFixed(2)} Menit",
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      spacing: 16,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Rata - Rata Waktu: ",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "${((controller.totalValue.value / controller.tryOutSaya['tryout']['jumlah_soal'])).toStringAsFixed(2)} Detik",
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-        Obx(
-          () =>
-              controller.nilaiChartStat.isEmpty
-                  ? const Skeletonizer(child: Text("data"))
-                  : Column(
-                    children:
-                        (controller.nilaiChartStat['statistics'] as List<dynamic>).map((
-                          item,
-                        ) {
-                          final subcategories =
-                              item['subcategories'] as List<dynamic>;
-
-                          // Calculate totals for Benar, Salah, and Kosong
-                          final totalBenar = subcategories.fold(
-                            0,
-                            (sum, sub) => sum + (sub['benar'] as int),
-                          );
-                          final totalSalah = subcategories.fold(
-                            0,
-                            (sum, sub) => sum + (sub['salah'] as int),
-                          );
-                          final totalKosong = subcategories.fold(
-                            0,
-                            (sum, sub) => sum + (sub['kosong'] as int),
-                          );
-
-                          // Ubah subcategories menjadi list ChartData
-                          final chartData =
-                              subcategories
-                                  .map((sub) {
-                                    return [
-                                      ChartData(
-                                        "${sub['title']} (Benar)",
-                                        sub['benar'].toString(),
-                                        Colors.green,
-                                      ),
-                                      ChartData(
-                                        "${sub['title']} (Salah)",
-                                        sub['salah'].toString(),
-                                        Colors.red,
-                                      ),
-                                      ChartData(
-                                        "${sub['title']} (Kosong)",
-                                        sub['kosong'].toString(),
-                                        Colors.orange,
-                                      ),
-                                    ];
-                                  })
-                                  .expand((e) => e)
-                                  .toList();
-
-                          return Card(
-                            color: Colors.white,
-                            elevation: 1,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical:
-                                    16, // Add vertical padding to the card
-                                horizontal: 16,
-                              ),
-                              child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment
-                                        .start, // Align totals to the start
-                                children: [
-                                  // Display total values above the chart
-                                  Text(
-                                    item['label'], // e.g., "TWK"
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    spacing: 16,
-                                    children: [
-                                      Row(
-                                        spacing: 8,
-                                        children: [
-                                          Icon(
-                                            Icons.stacked_bar_chart,
-                                            color: Colors.teal,
-                                          ),
-                                          Text(
-                                            "Benar: $totalBenar",
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        spacing: 8,
-                                        children: [
-                                          Icon(
-                                            Icons.stacked_bar_chart,
-                                            color: Colors.pink,
-                                          ),
-                                          Text(
-                                            "Salah: $totalSalah",
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        spacing: 8,
-                                        children: [
-                                          Icon(
-                                            Icons.stacked_bar_chart,
-                                            color: Colors.grey,
-                                          ),
-                                          Text(
-                                            "Kosong: $totalKosong",
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  // Chart untuk masing-masing label seperti TWK, TIU, TKP
-                                  SfCartesianChart(
-                                    title: ChartTitle(
-                                      text:
-                                          "Statistik Jawaban", // Update title to be more general
-                                      textStyle: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    legend: Legend(
-                                      isVisible: false,
-                                      position: LegendPosition.bottom,
-                                    ),
-                                    tooltipBehavior: TooltipBehavior(
-                                      enable: true,
-                                    ),
-                                    primaryXAxis: CategoryAxis(
-                                      labelRotation: 0,
-                                      labelStyle: const TextStyle(fontSize: 10),
-                                      majorGridLines: const MajorGridLines(
-                                        width: 0,
-                                      ),
-                                    ),
-                                    primaryYAxis: NumericAxis(
-                                      minimum: 0,
-                                      title: AxisTitle(text: 'Jumlah Soal'),
-                                    ),
-                                    series: <StackedBarSeries<dynamic, String>>[
-                                      // Benar
-                                      StackedBarSeries<dynamic, String>(
-                                        name: 'Benar',
-                                        color: Colors.teal,
-                                        dataSource: subcategories,
-                                        xValueMapper:
-                                            (data, _) => data['title'],
-                                        yValueMapper:
-                                            (data, _) => data['benar'],
-                                        dataLabelSettings:
-                                            const DataLabelSettings(
-                                              isVisible: true,
-                                            ),
-                                      ),
-                                      // Salah
-                                      StackedBarSeries<dynamic, String>(
-                                        name: 'Salah',
-                                        color: Colors.pink,
-                                        dataSource: subcategories,
-                                        xValueMapper:
-                                            (data, _) => data['title'],
-                                        yValueMapper:
-                                            (data, _) => data['salah'],
-                                        dataLabelSettings:
-                                            const DataLabelSettings(
-                                              isVisible: true,
-                                            ),
-                                      ),
-                                      // Kosong
-                                      StackedBarSeries<dynamic, String>(
-                                        name: 'Kosong',
-                                        color: Colors.grey,
-                                        dataSource: subcategories,
-                                        xValueMapper:
-                                            (data, _) => data['title'],
-                                        yValueMapper:
-                                            (data, _) => data['kosong'],
-                                        dataLabelSettings:
-                                            const DataLabelSettings(
-                                              isVisible: true,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                        SfCartesianChart(
+                          title: ChartTitle(
+                            text: "Waktu Pengerjaan",
+                            textStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          primaryXAxis: CategoryAxis(
+                            labelRotation: -45,
+                            majorGridLines: const MajorGridLines(width: 0),
+                          ),
+                          primaryYAxis: NumericAxis(
+                            minimum: 0,
+                            labelRotation: 0,
+                            title: AxisTitle(text: 'Waktu(Detik)'),
+                          ),
+                          tooltipBehavior: TooltipBehavior(enable: true),
+                          series: <ColumnSeries>[
+                            ColumnSeries<ChartData, String>(
+                              dataSource: controller.chartDataList,
+                              xValueMapper: (ChartData data, _) => data.x,
+                              yValueMapper:
+                                  (ChartData data, _) => int.tryParse(data.y),
+                              pointColorMapper:
+                                  (ChartData data, _) => data.color,
+                              dataLabelSettings: const DataLabelSettings(
+                                isVisible: true,
                               ),
                             ),
-                          );
-                        }).toList(),
+                          ],
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 0.5,
+                                color: Colors.grey.shade400,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            spacing: 16,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Total Waktu: ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "${(controller.totalValue.value / 60).toStringAsFixed(2)} Menit",
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            spacing: 16,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Rata - Rata Waktu: ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "${((controller.totalValue.value / controller.tryOutSaya['tryout']['jumlah_soal'])).toStringAsFixed(2)} Detik",
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                );
+              }),
+            ),
+            IgnorePointer(
+              ignoring: controller.tryOutSaya['ispremium'] != 1,
+              child: Obx(
+                () =>
+                    controller.nilaiChartStat.isEmpty
+                        ? const Skeletonizer(child: Text("data"))
+                        : Column(
+                          children:
+                              (controller.nilaiChartStat['statistics']
+                                      as List<dynamic>)
+                                  .map((item) {
+                                    final subcategories =
+                                        item['subcategories'] as List<dynamic>;
+
+                                    // Calculate totals for Benar, Salah, and Kosong
+                                    final totalBenar = subcategories.fold(
+                                      0,
+                                      (sum, sub) => sum + (sub['benar'] as int),
+                                    );
+                                    final totalSalah = subcategories.fold(
+                                      0,
+                                      (sum, sub) => sum + (sub['salah'] as int),
+                                    );
+                                    final totalKosong = subcategories.fold(
+                                      0,
+                                      (sum, sub) =>
+                                          sum + (sub['kosong'] as int),
+                                    );
+
+                                    // Ubah subcategories menjadi list ChartData
+                                    final chartData =
+                                        subcategories
+                                            .map((sub) {
+                                              return [
+                                                ChartData(
+                                                  "${sub['title']} (Benar)",
+                                                  sub['benar'].toString(),
+                                                  Colors.green,
+                                                ),
+                                                ChartData(
+                                                  "${sub['title']} (Salah)",
+                                                  sub['salah'].toString(),
+                                                  Colors.red,
+                                                ),
+                                                ChartData(
+                                                  "${sub['title']} (Kosong)",
+                                                  sub['kosong'].toString(),
+                                                  Colors.orange,
+                                                ),
+                                              ];
+                                            })
+                                            .expand((e) => e)
+                                            .toList();
+
+                                    return Card(
+                                      color: Colors.white,
+                                      elevation: 1,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical:
+                                              16, // Add vertical padding to the card
+                                          horizontal: 16,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment
+                                                  .start, // Align totals to the start
+                                          children: [
+                                            // Display total values above the chart
+                                            Text(
+                                              item['label'], // e.g., "TWK"
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Wrap(
+                                              children: [
+                                                Row(
+                                                  spacing: 8,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.stacked_bar_chart,
+                                                      color: Colors.teal,
+                                                    ),
+                                                    Text(
+                                                      "Benar: $totalBenar",
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  spacing: 8,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.stacked_bar_chart,
+                                                      color: Colors.pink,
+                                                    ),
+                                                    Text(
+                                                      "Salah: $totalSalah",
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  spacing: 8,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.stacked_bar_chart,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    Text(
+                                                      "Kosong: $totalKosong",
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 16),
+                                            // Chart untuk masing-masing label seperti TWK, TIU, TKP
+                                            SfCartesianChart(
+                                              title: ChartTitle(
+                                                text:
+                                                    "Statistik Jawaban", // Update title to be more general
+                                                textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              legend: Legend(
+                                                isVisible: false,
+                                                position: LegendPosition.bottom,
+                                              ),
+                                              tooltipBehavior: TooltipBehavior(
+                                                enable: true,
+                                              ),
+                                              primaryXAxis: CategoryAxis(
+                                                labelRotation: 0,
+                                                labelStyle: const TextStyle(
+                                                  fontSize: 10,
+                                                ),
+                                                majorGridLines:
+                                                    const MajorGridLines(
+                                                      width: 0,
+                                                    ),
+                                              ),
+                                              primaryYAxis: NumericAxis(
+                                                minimum: 0,
+                                                title: AxisTitle(
+                                                  text: 'Jumlah Soal',
+                                                ),
+                                              ),
+                                              series: <
+                                                StackedBarSeries<
+                                                  dynamic,
+                                                  String
+                                                >
+                                              >[
+                                                // Benar
+                                                StackedBarSeries<
+                                                  dynamic,
+                                                  String
+                                                >(
+                                                  name: 'Benar',
+                                                  color: Colors.teal,
+                                                  dataSource: subcategories,
+                                                  xValueMapper:
+                                                      (data, _) =>
+                                                          data['title'],
+                                                  yValueMapper:
+                                                      (data, _) =>
+                                                          data['benar'],
+                                                  dataLabelSettings:
+                                                      const DataLabelSettings(
+                                                        isVisible: true,
+                                                      ),
+                                                ),
+                                                // Salah
+                                                StackedBarSeries<
+                                                  dynamic,
+                                                  String
+                                                >(
+                                                  name: 'Salah',
+                                                  color: Colors.pink,
+                                                  dataSource: subcategories,
+                                                  xValueMapper:
+                                                      (data, _) =>
+                                                          data['title'],
+                                                  yValueMapper:
+                                                      (data, _) =>
+                                                          data['salah'],
+                                                  dataLabelSettings:
+                                                      const DataLabelSettings(
+                                                        isVisible: true,
+                                                      ),
+                                                ),
+                                                // Kosong
+                                                StackedBarSeries<
+                                                  dynamic,
+                                                  String
+                                                >(
+                                                  name: 'Kosong',
+                                                  color: Colors.grey,
+                                                  dataSource: subcategories,
+                                                  xValueMapper:
+                                                      (data, _) =>
+                                                          data['title'],
+                                                  yValueMapper:
+                                                      (data, _) =>
+                                                          data['kosong'],
+                                                  dataLabelSettings:
+                                                      const DataLabelSettings(
+                                                        isVisible: true,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  })
+                                  .toList(),
+                        ),
+              ),
+            ),
+
+            if (controller.tryOutSaya['ispremium'] != 1)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 8),
+                      Text(
+                        'Upgrade ke premium untuk menikmati semua fitur yang ada',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: () {
+                          Get.toNamed(
+                            'tryout-event-payment',
+                            arguments: controller.tryOutSaya['tryout']['uuid'],
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 4,
+                            horizontal: 8,
+                          ),
+                        ),
+                        child: Text("Upgrade Premium"),
+                      ),
+                      SizedBox(height: 8),
+                    ],
+                  ),
+                ),
+              ),
+          ],
         ),
       ],
     );
