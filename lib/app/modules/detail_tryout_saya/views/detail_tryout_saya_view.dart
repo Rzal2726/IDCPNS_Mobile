@@ -25,7 +25,10 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: secondaryAppBar("Detail Tryout Saya"),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(400),
+        child: secondaryAppBar("Detail Tryout Saya"),
+      ),
       body: SafeArea(
         child: RefreshIndicator(
           backgroundColor: Colors.white,

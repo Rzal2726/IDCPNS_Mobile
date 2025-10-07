@@ -16,7 +16,10 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: secondaryAppBar("Detail Tryout"),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(400),
+        child: secondaryAppBar("Detail Tryout"),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -35,7 +38,25 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                   child: Obx(
                     () =>
                         controller.detailData['gambar'] == null
-                            ? Skeletonizer(child: Icon(Icons.image_search))
+                            ? Skeletonizer(
+                              child: Center(
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.teal.shade300,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 100,
+                                      horizontal: 200,
+                                    ),
+                                  ),
+                                  child: Text("Lorem"),
+                                ),
+                              ),
+                            )
                             : Image.network(
                               controller.detailData['gambar'] ??
                                   '', // pastikan ada url
@@ -174,9 +195,47 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                 () =>
                     controller.detailData.isEmpty
                         ? Skeletonizer(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            child: Text("data"),
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 32),
+                            width: double.infinity,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.teal.shade300,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                    ),
+                                    child: Text("Tambah Wishlist"),
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.teal.shade300,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                    ),
+                                    child: Text("Daftar"),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         )
                         : Container(
@@ -254,29 +313,16 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                                       },
                                               style: OutlinedButton.styleFrom(
                                                 elevation: 0,
-                                                backgroundColor:
-                                                    controller
-                                                            .isOnWishlist
-                                                            .value
-                                                        ? Colors
-                                                            .teal
-                                                            .shade300 // Saat sudah ada di wishlist → tombol teal
-                                                        : Colors
-                                                            .white, // Default → putih
+                                                backgroundColor: Colors.white,
                                                 foregroundColor:
-                                                    controller
-                                                            .isOnWishlist
-                                                            .value
-                                                        ? Colors.white
-                                                        : Colors.teal.shade300,
+                                                    Colors.teal.shade300,
                                                 side: BorderSide(
                                                   color: Colors.teal.shade300,
                                                   width: 1.5,
                                                 ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      vertical: 12,
-                                                    ),
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 12,
+                                                ),
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(8),
@@ -323,7 +369,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                                                         .isOnWishlist
                                                                         .value
                                                                     ? Colors
-                                                                        .white
+                                                                        .teal
                                                                     : Colors
                                                                         .teal
                                                                         .shade300,
@@ -343,14 +389,9 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                                                   FontWeight
                                                                       .w700,
                                                               color:
-                                                                  controller
-                                                                          .isOnWishlist
-                                                                          .value
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .teal
-                                                                          .shade300,
+                                                                  Colors
+                                                                      .teal
+                                                                      .shade300,
                                                             ),
                                                             overflow:
                                                                 TextOverflow
@@ -552,7 +593,15 @@ Widget _cardBundling(String num, String Judul, String soal, String durasi) {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(Judul, style: TextStyle(fontSize: 16)),
+                SizedBox(
+                  width: 200,
+                  child: Text(
+                    Judul,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
                 SizedBox(height: 8),
                 SizedBox(
                   child: Row(

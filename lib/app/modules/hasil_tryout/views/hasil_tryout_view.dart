@@ -176,8 +176,9 @@ class HasilTryoutView extends GetView<HasilTryoutController> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Get.offNamed(
+                    Get.offNamedUntil(
                       "/detail-tryout-saya",
+                      ModalRoute.withName('/tryout-saya'),
                       arguments: controller.uuid,
                     );
                   },

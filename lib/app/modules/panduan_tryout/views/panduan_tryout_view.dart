@@ -40,8 +40,8 @@ class PanduanTryoutView extends GetView<PanduanTryoutController> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+                      horizontal: 12,
+                      vertical: 8,
                     ),
                   ),
                   onPressed: () {},
@@ -59,8 +59,8 @@ class PanduanTryoutView extends GetView<PanduanTryoutController> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+                      horizontal: 12,
+                      vertical: 8,
                     ),
                   ),
                   onPressed: () {},

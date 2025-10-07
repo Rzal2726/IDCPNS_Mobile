@@ -44,7 +44,7 @@ class RunningTextBar extends StatelessWidget {
         child: Container(
           color: Colors.teal,
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           alignment: Alignment.centerLeft,
           child:
               shouldRun

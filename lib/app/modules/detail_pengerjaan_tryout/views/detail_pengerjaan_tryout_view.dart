@@ -15,7 +15,10 @@ class DetailPengerjaanTryoutView
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: secondaryAppBar("Pengerjaan Tryout"),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(400),
+        child: secondaryAppBar("Pengerjaan Tryout"),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
