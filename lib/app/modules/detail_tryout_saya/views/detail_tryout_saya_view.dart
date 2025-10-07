@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
+import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -11,6 +12,8 @@ import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 
 import '../controllers/detail_tryout_saya_controller.dart';
 import '../models/chart_data_model.dart';
+import 'package:intl/intl.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
   // ❌ REMOVED: Never put a controller inside the build method or as a view property.
@@ -22,643 +25,665 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: secondaryAppBar("Detail Tryout Saya"),
-      ),
+      appBar: secondaryAppBar("Detail Tryout Saya"),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(8),
-          child: Column(
-            children: [
-              Card(
-                color: Colors.white,
-                elevation: 1,
-                child: Container(
-                  padding: EdgeInsets.all(12),
-                  child: Obx(
-                    () => Column(
-                      // spacing: 8, // ❌ REMOVED: This property does not exist
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          spacing: 8,
-                          children: [
-                            _badge(
-                              isi:
-                                  controller.tryOutSaya['ispremium'] == 1
-                                      ? "Premium"
-                                      : "Gratis",
-                              backgroundColor:
-                                  controller.tryOutSaya['ispremium'] == 1
-                                      ? Colors.amber
-                                      : Colors.lightBlue,
-                            ),
-                            controller.tryOutSaya['isdone'] == 1
-                                ? _badge(
-                                  isi:
-                                      controller.tryOutSaya['islulus'] == 1
-                                          ? "Lulus"
-                                          : "Tidak Lulus",
-                                  backgroundColor:
-                                      controller.tryOutSaya['islulus'] == 1
-                                          ? Colors.green
-                                          : Colors.pink,
-                                )
-                                : _badge(
-                                  isi: "Belum Dikerjakan",
-                                  backgroundColor: Colors.grey,
-                                ),
-                          ],
-                        ),
-                        SizedBox(height: 12), // ✅ ADDED: Spacing
-                        controller.tryOutSaya.isEmpty
-                            ? Skeletonizer(
-                              child: Text(
-                                "Judul Tryout",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            )
-                            : Text(
-                              controller.tryOutSaya['tryout']['name'],
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
-                        SizedBox(height: 8), // ✅ ADDED: Spacing
-                        Text("Masa Aktif"),
-                        SizedBox(height: 4), // ✅ ADDED: Spacing
-                        SizedBox(
-                          width: double.infinity,
-                          child:
-                              controller.tryOutSaya.isEmpty
-                                  ? Skeletonizer(child: _badge(isi: "180 Hari"))
-                                  : Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // Progress Bar
-                                      LinearProgressIndicator(
-                                        value:
-                                            (controller
-                                                    .tryOutSaya['tryout']['reamining_day'] /
-                                                controller
-                                                    .hitungTotalMasaAktif(
-                                                      controller
-                                                          .tryOutSaya['created_at'],
-                                                      controller
-                                                          .tryOutSaya['expireddate'],
-                                                    )
-                                                    .toDouble()), // Progress 0.0 - 1.0
-                                        backgroundColor: Colors.grey.shade300,
-                                        color: Colors.teal.shade300,
-                                        minHeight: 12, // Tinggi progress bar
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      const SizedBox(height: 8),
-
-                                      // Text Sisa Hari
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Sisa Hari",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            "${controller.tryOutSaya['tryout']['reamining_day'].toString()} Hari Lagi",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                        ),
-                        SizedBox(height: 16), // ✅ ADDED: Spacing
-                        Obx(() {
-                          if (controller.tryOutSaya.isEmpty) {
-                            return Skeletonizer(
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.teal,
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                  child: Text("Loading"),
-                                ),
-                              ),
-                            );
-                          }
-
-                          return SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
+        child: RefreshIndicator(
+          backgroundColor: Colors.white,
+          onRefresh: () => controller.initTryoutSaya(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: AppStyle.sreenPaddingHome,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Card(
+                  color: Colors.white,
+                  elevation: 1,
+                  child: Container(
+                    padding: EdgeInsets.all(12),
+                    child: Obx(
+                      () => Column(
+                        // spacing: 8, // ❌ REMOVED: This property does not exist
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            spacing: 8,
+                            children: [
+                              _badge(
+                                isi:
+                                    controller.tryOutSaya['ispremium'] == 1
+                                        ? "Premium"
+                                        : "Gratis",
                                 backgroundColor:
-                                    controller.tryOutSaya['tryout']['startdate'] !=
-                                                null &&
-                                            controller.hitungTotalMasaAktif(
-                                                  DateTime.now().toString(),
-                                                  controller
-                                                      .tryOutSaya['tryout']['startdate'],
-                                                ) <=
-                                                0
+                                    controller.tryOutSaya['ispremium'] == 1
                                         ? Colors.amber
-                                        : controller.tryOutSaya['isdone'] == 1
-                                        ? Colors.pink
-                                        : Colors.teal,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                        : Colors.lightBlue,
+                              ),
+                              controller.tryOutSaya['isdone'] == 1
+                                  ? _badge(
+                                    isi:
+                                        controller.tryOutSaya['islulus'] == 1
+                                            ? "Lulus"
+                                            : "Tidak Lulus",
+                                    backgroundColor:
+                                        controller.tryOutSaya['islulus'] == 1
+                                            ? Colors.green
+                                            : Colors.pink,
+                                  )
+                                  : _badge(
+                                    isi: "Belum Dikerjakan",
+                                    backgroundColor: Colors.grey,
+                                  ),
+                            ],
+                          ),
+                          SizedBox(height: 12), // ✅ ADDED: Spacing
+                          controller.tryOutSaya.isEmpty
+                              ? Skeletonizer(
+                                child: Text(
+                                  "Judul Tryout",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
+                              )
+                              : Text(
+                                controller.tryOutSaya['tryout']['name'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
                                 ),
                               ),
-                              onPressed: () {
-                                controller.checkList();
-                                // Logic to handle button press
-                                if (controller
-                                            .tryOutSaya['tryout']['startdate'] !=
-                                        null &&
-                                    controller.hitungTotalMasaAktif(
-                                          DateTime.now().toString(),
-                                          controller
-                                              .tryOutSaya['tryout']['startdate'],
-                                        ) <=
-                                        0) {
-                                  showModalBottomSheet(
-                                    useSafeArea: false,
-                                    backgroundColor: Colors.white,
-                                    context: context,
-                                    isScrollControlled: true,
-                                    builder: (context) {
-                                      return SafeArea(
-                                        child: SizedBox(
-                                          width: double.infinity,
-                                          child: Padding(
-                                            padding: EdgeInsets.all(32),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      'Tryout Belum Dimulai',
-                                                    ),
-                                                    IconButton(
-                                                      onPressed:
-                                                          () => Navigator.pop(
-                                                            context,
-                                                          ),
-                                                      icon: Icon(Icons.close),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                          SizedBox(height: 8), // ✅ ADDED: Spacing
+                          controller.tryOutSaya.isEmpty
+                              ? Skeletonizer(child: Text('lorem'))
+                              : controller.tryOutSaya['ispremium'] == 1
+                              ? Text("Masa Aktif")
+                              : Text(
+                                "Tryout ini adalah versi gratis, dan akan hilang apabila periode pengerjaan telah berakhir (${controller.formatTanggal(controller.tryOutSaya['tryout']?['startdate'])} - ${controller.formatTanggal(controller.tryOutSaya['tryout']?['enddate'])}). Silahkan upgrade ke premium agar mendapatkan tambahan masa aktif dan fitur lainnya.",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                          SizedBox(height: 4), // ✅ ADDED: Spacing
+                          controller.tryOutSaya['ispremium'] == 1
+                              ? SizedBox(
+                                width: double.infinity,
+                                child:
+                                    controller.tryOutSaya.isEmpty
+                                        ? Skeletonizer(
+                                          child: _badge(isi: "180 Hari"),
+                                        )
+                                        : Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // Progress Bar
+                                            LinearProgressIndicator(
+                                              value:
+                                                  (controller
+                                                          .tryOutSaya['tryout']['reamining_day'] /
+                                                      controller
+                                                          .hitungTotalMasaAktif(
+                                                            controller
+                                                                .tryOutSaya['created_at'],
+                                                            controller
+                                                                .tryOutSaya['expireddate'],
+                                                          )
+                                                          .toDouble()), // Progress 0.0 - 1.0
+                                              backgroundColor:
+                                                  Colors.grey.shade300,
+                                              color: Colors.teal.shade300,
+                                              minHeight:
+                                                  12, // Tinggi progress bar
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                  return;
-                                }
-                                if (controller.tryOutSaya['isdone'] == 1) {
-                                  Get.defaultDialog(
-                                    backgroundColor: Colors.white,
-                                    title: "Konfirmasi",
-                                    middleText:
-                                        "Apakah kamu yakin ingin me-reset tryout?",
-                                    textCancel: "Batal",
-                                    textConfirm: "Ya, Reset",
-                                    confirmTextColor: Colors.white,
-                                    buttonColor: Colors.teal,
-                                    onConfirm: () {
-                                      controller.resetTryout();
-                                      Get.back();
-                                    },
-                                    onCancel: () {},
-                                    radius: 8,
-                                  );
-                                } else {
-                                  showModalBottomSheet(
-                                    useSafeArea: false,
-                                    backgroundColor: Colors.white,
-                                    context: context,
-                                    isScrollControlled:
-                                        true, // biar bisa full height kalau perlu
-                                    builder: (context) {
-                                      return SafeArea(
-                                        child: SizedBox(
-                                          width:
-                                              double
-                                                  .infinity, // <- kasih full width
-                                          child: Padding(
-                                            padding: EdgeInsets.all(32),
-                                            child: Column(
-                                              mainAxisSize:
-                                                  MainAxisSize
-                                                      .min, // biar nggak full screen
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                            const SizedBox(height: 8),
+
+                                            // Text Sisa Hari
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text("Lengkapi Form"),
-                                                    IconButton(
-                                                      onPressed:
-                                                          () => Navigator.pop(
-                                                            context,
-                                                          ),
-                                                      icon: Icon(Icons.close),
-                                                    ),
-                                                  ],
+                                                Text(
+                                                  "Sisa Hari",
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
-                                                SizedBox(height: 16),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      "*",
-                                                      style: TextStyle(
-                                                        color: Colors.red,
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 4),
-                                                    Text("Instansi Tujuan"),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 12),
-                                                controller.listInstansi.isEmpty
-                                                    ? Skeletonizer(
-                                                      child: Text("data"),
-                                                    )
-                                                    : DropdownSearch<String>(
-                                                      items: (f, cs) {
-                                                        // Return Future<List<String>>
-                                                        return controller
-                                                            .listInstansi
-                                                            .map(
-                                                              (instansi) =>
-                                                                  instansi['nama']
-                                                                      .toString(),
-                                                            )
-                                                            .toList();
-                                                      },
-                                                      selectedItem:
-                                                          controller
-                                                                      .selectedInstansi
-                                                                      .value ==
-                                                                  ""
-                                                              ? null
-                                                              : controller.listInstansi.firstWhere(
-                                                                (jabatan) =>
-                                                                    jabatan['id']
-                                                                        .toString() ==
-                                                                    controller
-                                                                        .selectedInstansi
-                                                                        .value,
-                                                                orElse:
-                                                                    () => {
-                                                                      'nama':
-                                                                          '',
-                                                                    },
-                                                              )['nama'],
-
-                                                      popupProps: PopupProps.dialog(
-                                                        showSearchBox:
-                                                            true, // ✅ Ada search bawaan
-                                                        searchFieldProps: TextFieldProps(
-                                                          decoration: InputDecoration(
-                                                            labelText:
-                                                                'Cari Instansi',
-                                                            border: OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    8,
-                                                                  ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        dialogProps: DialogProps(
-                                                          backgroundColor:
-                                                              Colors.white,
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  12,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      decoratorProps: DropDownDecoratorProps(
-                                                        decoration: InputDecoration(
-                                                          labelText:
-                                                              "Pilih Instansi",
-                                                          border: OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  8,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      onChanged: (value) {
-                                                        final selected = controller
-                                                            .listInstansi
-                                                            .firstWhere(
-                                                              (instansi) =>
-                                                                  instansi['nama']
-                                                                      .toString() ==
-                                                                  value,
-                                                              orElse: () => {},
-                                                            );
-                                                        controller
-                                                                .selectedInstansi
-                                                                .value =
-                                                            selected['id']
-                                                                .toString();
-                                                      },
-                                                    ),
-
-                                                SizedBox(height: 12),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      "*",
-                                                      style: TextStyle(
-                                                        color: Colors.red,
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 4),
-                                                    Text("Jabatan Tujuan"),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 12),
-                                                controller.listJabatan.isEmpty
-                                                    ? Skeletonizer(
-                                                      child: Text("data"),
-                                                    )
-                                                    : DropdownSearch<String>(
-                                                      items: (f, cs) {
-                                                        // Return Future<List<String>>
-                                                        return controller
-                                                            .listJabatan
-                                                            .map(
-                                                              (instansi) =>
-                                                                  instansi['nama']
-                                                                      .toString(),
-                                                            )
-                                                            .toList();
-                                                      },
-                                                      selectedItem:
-                                                          controller
-                                                                      .selectedJabatan
-                                                                      .value ==
-                                                                  ""
-                                                              ? null
-                                                              : controller.listJabatan.firstWhere(
-                                                                (jabatan) =>
-                                                                    jabatan['id']
-                                                                        .toString() ==
-                                                                    controller
-                                                                        .selectedJabatan
-                                                                        .value,
-                                                                orElse:
-                                                                    () => {
-                                                                      'nama':
-                                                                          '',
-                                                                    },
-                                                              )['nama'],
-                                                      popupProps: PopupProps.dialog(
-                                                        showSearchBox:
-                                                            true, // ✅ Ada search bawaan
-                                                        searchFieldProps: TextFieldProps(
-                                                          decoration: InputDecoration(
-                                                            labelText:
-                                                                'Cari Jabatan',
-                                                            border: OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    8,
-                                                                  ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        dialogProps: DialogProps(
-                                                          backgroundColor:
-                                                              Colors.white,
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  12,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      decoratorProps: DropDownDecoratorProps(
-                                                        decoration: InputDecoration(
-                                                          labelText:
-                                                              "Pilih Jabatan",
-                                                          border: OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  8,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      onChanged: (value) {
-                                                        final selected = controller
-                                                            .listJabatan
-                                                            .firstWhere(
-                                                              (instansi) =>
-                                                                  instansi['nama']
-                                                                      .toString() ==
-                                                                  value,
-                                                              orElse: () => {},
-                                                            );
-                                                        controller
-                                                                .selectedJabatan
-                                                                .value =
-                                                            selected['id']
-                                                                .toString();
-                                                      },
-                                                    ),
-
-                                                SizedBox(height: 24),
-                                                SizedBox(
-                                                  width: double.infinity,
-                                                  child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                      backgroundColor:
-                                                          Colors.teal,
-                                                      foregroundColor:
-                                                          Colors.white,
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              8,
-                                                            ),
-                                                      ),
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            vertical: 12,
-                                                          ),
-                                                    ),
-                                                    onPressed: () {
-                                                      if (controller
-                                                                  .selectedInstansi
-                                                                  .value ==
-                                                              "" ||
-                                                          controller
-                                                                  .selectedInstansi
-                                                                  .value ==
-                                                              "0") {
-                                                        Get.snackbar(
-                                                          "Gagal",
-                                                          "Mohon pilih instansi tujuan anda",
-                                                          backgroundColor:
-                                                              Colors.pink,
-                                                          colorText:
-                                                              Colors.white,
-                                                        );
-                                                        return;
-                                                      }
-                                                      if (controller
-                                                                  .selectedJabatan
-                                                                  .value ==
-                                                              "" ||
-                                                          controller
-                                                                  .selectedJabatan
-                                                                  .value ==
-                                                              "0") {
-                                                        Get.snackbar(
-                                                          "Gagal",
-                                                          "Mohon pilih jabatan tujuan anda",
-                                                          backgroundColor:
-                                                              Colors.pink,
-                                                          colorText:
-                                                              Colors.white,
-                                                        );
-                                                        return;
-                                                      }
-
-                                                      controller.localStorage
-                                                          .setString(
-                                                            'jabatan',
-                                                            controller
-                                                                .selectedJabatan
-                                                                .value,
-                                                          );
-                                                      controller.localStorage
-                                                          .setString(
-                                                            'instansi',
-                                                            controller
-                                                                .selectedInstansi
-                                                                .value,
-                                                          );
-                                                      Navigator.pop(context);
-                                                      Get.offNamed(
-                                                        "/detail-pengerjaan-tryout",
-                                                      );
-                                                      controller.uuid.value =
-                                                          controller.lateUuid;
-                                                    },
-                                                    child: Text(
-                                                      "Lanjutkan Tryout",
-                                                    ),
+                                                Text(
+                                                  "${controller.tryOutSaya['tryout']['reamining_day'].toString()} Hari Lagi",
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black87,
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                      );
-                                    },
-                                  );
-                                }
-                              },
-                              child: Text(
-                                controller.tryOutSaya['tryout']['startdate'] !=
-                                            null &&
-                                        controller.hitungTotalMasaAktif(
-                                              DateTime.now().toString(),
-                                              controller
-                                                  .tryOutSaya['tryout']['startdate'],
-                                            ) <=
-                                            0
-                                    ? "Tryout Belum Dimulai"
-                                    : controller.tryOutSaya['isdone'] == 1
-                                    ? "Ulangi Tryout"
-                                    : "Kerjakan Tryout",
+                              )
+                              : SizedBox(),
+                          SizedBox(height: 16), // ✅ ADDED: Spacing
+                          Obx(() {
+                            if (controller.tryOutSaya.isEmpty) {
+                              return Skeletonizer(
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.teal,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                    ),
+                                    child: Text("Loading"),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      controller.tryOutSaya['tryout']['startdate'] !=
+                                                  null &&
+                                              controller.hitungTotalMasaAktif(
+                                                    DateTime.now().toString(),
+                                                    controller
+                                                        .tryOutSaya['tryout']['startdate'],
+                                                  ) <
+                                                  0
+                                          ? Colors.amber
+                                          : controller.tryOutSaya['isdone'] == 1
+                                          ? Colors.pink
+                                          : Colors.teal,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  controller.checkList();
+                                  // Logic to handle button press
+                                  if (controller
+                                              .tryOutSaya['tryout']['startdate'] !=
+                                          null &&
+                                      controller.hitungTotalMasaAktif(
+                                            DateTime.now().toString(),
+                                            controller
+                                                .tryOutSaya['tryout']['startdate'],
+                                          ) <
+                                          0) {
+                                    showModalBottomSheet(
+                                      useSafeArea: false,
+                                      backgroundColor: Colors.white,
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (context) {
+                                        return SafeArea(
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: Padding(
+                                              padding: EdgeInsets.all(32),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Tryout Belum Dimulai',
+                                                      ),
+                                                      IconButton(
+                                                        onPressed:
+                                                            () => Navigator.pop(
+                                                              context,
+                                                            ),
+                                                        icon: Icon(Icons.close),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                    return;
+                                  }
+                                  if (controller.tryOutSaya['isdone'] == 1) {
+                                    Get.defaultDialog(
+                                      backgroundColor: Colors.white,
+                                      title: "Konfirmasi",
+                                      middleText:
+                                          "Apakah kamu yakin ingin me-reset tryout?",
+                                      textCancel: "Batal",
+                                      textConfirm: "Ya, Reset",
+                                      confirmTextColor: Colors.white,
+                                      buttonColor: Colors.teal,
+                                      onConfirm: () {
+                                        controller.resetTryout();
+                                        Get.back();
+                                      },
+                                      onCancel: () {},
+                                      radius: 8,
+                                    );
+                                  } else {
+                                    showModalBottomSheet(
+                                      useSafeArea: false,
+                                      backgroundColor: Colors.white,
+                                      context: context,
+                                      isScrollControlled:
+                                          true, // biar bisa full height kalau perlu
+                                      builder: (context) {
+                                        return SafeArea(
+                                          child: SizedBox(
+                                            width:
+                                                double
+                                                    .infinity, // <- kasih full width
+                                            child: Padding(
+                                              padding: EdgeInsets.all(32),
+                                              child: Column(
+                                                mainAxisSize:
+                                                    MainAxisSize
+                                                        .min, // biar nggak full screen
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text("Lengkapi Form"),
+                                                      IconButton(
+                                                        onPressed:
+                                                            () => Navigator.pop(
+                                                              context,
+                                                            ),
+                                                        icon: Icon(Icons.close),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 16),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        "*",
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 4),
+                                                      Text("Instansi Tujuan"),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 12),
+                                                  controller
+                                                          .listInstansi
+                                                          .isEmpty
+                                                      ? Skeletonizer(
+                                                        child: Text("data"),
+                                                      )
+                                                      : DropdownSearch<String>(
+                                                        items: (f, cs) {
+                                                          // Return Future<List<String>>
+                                                          return controller
+                                                              .listInstansi
+                                                              .map(
+                                                                (instansi) =>
+                                                                    instansi['nama']
+                                                                        .toString(),
+                                                              )
+                                                              .toList();
+                                                        },
+                                                        selectedItem:
+                                                            controller
+                                                                        .selectedInstansi
+                                                                        .value ==
+                                                                    ""
+                                                                ? null
+                                                                : controller.listInstansi.firstWhere(
+                                                                  (jabatan) =>
+                                                                      jabatan['id']
+                                                                          .toString() ==
+                                                                      controller
+                                                                          .selectedInstansi
+                                                                          .value,
+                                                                  orElse:
+                                                                      () => {
+                                                                        'nama':
+                                                                            '',
+                                                                      },
+                                                                )['nama'],
+
+                                                        popupProps: PopupProps.dialog(
+                                                          showSearchBox:
+                                                              true, // ✅ Ada search bawaan
+                                                          searchFieldProps: TextFieldProps(
+                                                            decoration: InputDecoration(
+                                                              labelText:
+                                                                  'Cari Instansi',
+                                                              border: OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      8,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          dialogProps: DialogProps(
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    12,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        decoratorProps: DropDownDecoratorProps(
+                                                          decoration: InputDecoration(
+                                                            labelText:
+                                                                "Pilih Instansi",
+                                                            border: OutlineInputBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        onChanged: (value) {
+                                                          final selected = controller
+                                                              .listInstansi
+                                                              .firstWhere(
+                                                                (instansi) =>
+                                                                    instansi['nama']
+                                                                        .toString() ==
+                                                                    value,
+                                                                orElse:
+                                                                    () => {},
+                                                              );
+                                                          controller
+                                                                  .selectedInstansi
+                                                                  .value =
+                                                              selected['id']
+                                                                  .toString();
+                                                        },
+                                                      ),
+
+                                                  SizedBox(height: 12),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        "*",
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 4),
+                                                      Text("Jabatan Tujuan"),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 12),
+                                                  controller.listJabatan.isEmpty
+                                                      ? Skeletonizer(
+                                                        child: Text("data"),
+                                                      )
+                                                      : DropdownSearch<String>(
+                                                        items: (f, cs) {
+                                                          // Return Future<List<String>>
+                                                          return controller
+                                                              .listJabatan
+                                                              .map(
+                                                                (instansi) =>
+                                                                    instansi['nama']
+                                                                        .toString(),
+                                                              )
+                                                              .toList();
+                                                        },
+                                                        selectedItem:
+                                                            controller
+                                                                        .selectedJabatan
+                                                                        .value ==
+                                                                    ""
+                                                                ? null
+                                                                : controller.listJabatan.firstWhere(
+                                                                  (jabatan) =>
+                                                                      jabatan['id']
+                                                                          .toString() ==
+                                                                      controller
+                                                                          .selectedJabatan
+                                                                          .value,
+                                                                  orElse:
+                                                                      () => {
+                                                                        'nama':
+                                                                            '',
+                                                                      },
+                                                                )['nama'],
+                                                        popupProps: PopupProps.dialog(
+                                                          showSearchBox:
+                                                              true, // ✅ Ada search bawaan
+                                                          searchFieldProps: TextFieldProps(
+                                                            decoration: InputDecoration(
+                                                              labelText:
+                                                                  'Cari Jabatan',
+                                                              border: OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      8,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          dialogProps: DialogProps(
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    12,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        decoratorProps: DropDownDecoratorProps(
+                                                          decoration: InputDecoration(
+                                                            labelText:
+                                                                "Pilih Jabatan",
+                                                            border: OutlineInputBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        onChanged: (value) {
+                                                          final selected = controller
+                                                              .listJabatan
+                                                              .firstWhere(
+                                                                (instansi) =>
+                                                                    instansi['nama']
+                                                                        .toString() ==
+                                                                    value,
+                                                                orElse:
+                                                                    () => {},
+                                                              );
+                                                          controller
+                                                                  .selectedJabatan
+                                                                  .value =
+                                                              selected['id']
+                                                                  .toString();
+                                                        },
+                                                      ),
+
+                                                  SizedBox(height: 24),
+                                                  SizedBox(
+                                                    width: double.infinity,
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.teal,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              vertical: 12,
+                                                            ),
+                                                      ),
+                                                      onPressed: () {
+                                                        if (controller
+                                                                    .selectedInstansi
+                                                                    .value ==
+                                                                "" ||
+                                                            controller
+                                                                    .selectedInstansi
+                                                                    .value ==
+                                                                "0") {
+                                                          Get.snackbar(
+                                                            "Gagal",
+                                                            "Mohon pilih instansi tujuan anda",
+                                                            backgroundColor:
+                                                                Colors.pink,
+                                                            colorText:
+                                                                Colors.white,
+                                                          );
+                                                          return;
+                                                        }
+                                                        if (controller
+                                                                    .selectedJabatan
+                                                                    .value ==
+                                                                "" ||
+                                                            controller
+                                                                    .selectedJabatan
+                                                                    .value ==
+                                                                "0") {
+                                                          Get.snackbar(
+                                                            "Gagal",
+                                                            "Mohon pilih jabatan tujuan anda",
+                                                            backgroundColor:
+                                                                Colors.pink,
+                                                            colorText:
+                                                                Colors.white,
+                                                          );
+                                                          return;
+                                                        }
+
+                                                        controller.localStorage
+                                                            .setString(
+                                                              'jabatan',
+                                                              controller
+                                                                  .selectedJabatan
+                                                                  .value,
+                                                            );
+                                                        controller.localStorage
+                                                            .setString(
+                                                              'instansi',
+                                                              controller
+                                                                  .selectedInstansi
+                                                                  .value,
+                                                            );
+                                                        Navigator.pop(context);
+                                                        Get.offNamed(
+                                                          "/detail-pengerjaan-tryout",
+                                                        );
+                                                        controller.uuid.value =
+                                                            controller.lateUuid;
+                                                      },
+                                                      child: Text(
+                                                        "Lanjutkan Tryout",
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  }
+                                },
+                                child: Text(
+                                  controller.tryOutSaya['tryout']['startdate'] !=
+                                              null &&
+                                          controller.hitungTotalMasaAktif(
+                                                DateTime.now().toString(),
+                                                controller
+                                                    .tryOutSaya['tryout']['startdate'],
+                                              ) <
+                                              0
+                                      ? "Tryout Belum Dimulai"
+                                      : controller.tryOutSaya['isdone'] == 1
+                                      ? "Ulangi Tryout"
+                                      : "Kerjakan Tryout",
+                                ),
                               ),
-                            ),
-                          );
-                        }),
-                      ],
+                            );
+                          }),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 16),
-              // Other widgets remain the same...
-              // Make sure to apply the `colorFilter` fix to all your SVGs.
-              // Example for the 'Rapor' button:
-              Obx(() => _buildFeatureButtons()),
-              SizedBox(height: 16),
-              // If the tryout is not done, show a message. Otherwise, show the charts.
-              Obx(() {
-                if (controller.nilaiChart.isEmpty) {
-                  return const SizedBox();
-                } else {
-                  if (controller.loading['chart'] == true) {
-                    return Skeletonizer(
-                      child: _buildPlaceholder(
-                        "Kerjakan tryout untuk melihat hasil dan statistik.",
-                      ),
-                    );
+                SizedBox(height: 16),
+                // Other widgets remain the same...
+                // Make sure to apply the `colorFilter` fix to all your SVGs.
+                // Example for the 'Rapor' button:
+                Obx(() => _buildFeatureButtons()),
+                SizedBox(height: 16),
+                // If the tryout is not done, show a message. Otherwise, show the charts.
+                Obx(() {
+                  if (controller.nilaiChart.isEmpty) {
+                    return const SizedBox();
                   } else {
-                    if (controller.tryOutSaya['isdone'] == 1) {
-                      return _buildResultCharts();
-                    } else {
-                      return _buildPlaceholder(
-                        "Kerjakan tryout untuk melihat hasil dan statistik.",
+                    if (controller.loading['chart'] == true) {
+                      return Skeletonizer(
+                        child: _buildPlaceholder(
+                          "Kerjakan tryout untuk melihat hasil dan statistik.",
+                        ),
                       );
+                    } else {
+                      if (controller.tryOutSaya['isdone'] == 1) {
+                        return _buildResultCharts();
+                      } else {
+                        return _buildPlaceholder(
+                          "Kerjakan tryout untuk melihat hasil dan statistik.",
+                        );
+                      }
                     }
                   }
-                }
-              }),
-            ],
+                }),
+              ],
+            ),
           ),
         ),
       ),
@@ -1141,30 +1166,84 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
     bool isDone = controller.tryOutSaya['isdone'] == 1;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Stack(
         children: [
-          _featureButton(
-            "Rapor",
-            "assets/report.svg",
-            Color(0xFF00A693),
-            isDone,
-            "/rapor",
+          IgnorePointer(
+            ignoring: controller.tryOutSaya['ispremium'] != 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _featureButton(
+                  "Rapor",
+                  "assets/report.svg",
+                  Color(0xFF00A693),
+                  isDone,
+                  "/rapor",
+                ),
+                _featureButton(
+                  "Peringkat",
+                  "assets/trophy.svg",
+                  Color(0xFFFFA800),
+                  isDone,
+                  "/peringkat-tryout",
+                ),
+                _featureButton(
+                  "Pembahasan",
+                  "assets/book.svg",
+                  Color(0xFF00A8C5),
+                  isDone,
+                  "pembahasan-tryout",
+                ),
+              ],
+            ),
           ),
-          _featureButton(
-            "Peringkat",
-            "assets/trophy.svg",
-            Color(0xFFFFA800),
-            isDone,
-            "/peringkat-tryout",
-          ),
-          _featureButton(
-            "Pembahasan",
-            "assets/book.svg",
-            Color(0xFF00A8C5),
-            isDone,
-            "pembahasan-tryout",
-          ),
+
+          if (controller.tryOutSaya['ispremium'] != 1)
+            IntrinsicHeight(
+              child: Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 8),
+                      Text(
+                        'Upgrade ke premium untuk menikmati semua fitur yang ada',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: () {
+                          Get.toNamed(
+                            'tryout-event-payment',
+                            arguments: controller.tryOutSaya['tryout']['uuid'],
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 4,
+                            horizontal: 8,
+                          ),
+                        ),
+                        child: Text("Upgrade Premium"),
+                      ),
+                      SizedBox(height: 8),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

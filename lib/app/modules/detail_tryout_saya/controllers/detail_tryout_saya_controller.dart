@@ -7,6 +7,8 @@ import 'package:idcpns_mobile/app/modules/tryout_saya/controllers/tryout_saya_co
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/chart_data_model.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class DetailTryoutSayaController extends GetxController {
   //TODO: Implement DetailTryoutSayaController
@@ -39,6 +41,7 @@ class DetailTryoutSayaController extends GetxController {
 
   @override
   void onInit() async {
+    await initializeDateFormatting('id_ID', null);
     super.onInit();
     await initTryoutSaya();
     checkMaintenance();
@@ -226,6 +229,16 @@ class DetailTryoutSayaController extends GetxController {
     );
     if (response['is_maintenance']) {
       Get.offAllNamed("/maintenance");
+    }
+  }
+
+  String formatTanggal(String? tanggalStr) {
+    if (tanggalStr == null || tanggalStr.isEmpty) return "-";
+    try {
+      DateTime date = DateTime.parse(tanggalStr);
+      return DateFormat("dd MMMM yyyy", "id_ID").format(date);
+    } catch (e) {
+      return tanggalStr; // fallback kalau gagal parse
     }
   }
 }
