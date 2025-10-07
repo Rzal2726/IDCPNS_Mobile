@@ -495,9 +495,9 @@ class DashboardView extends GetView<DashboardController> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              (Get.find<HomeController>()).changeBottomBar(
-                                1,
-                              ); // Get.toNamed(Routes.TRYOUT); // ganti dengan route kamu
+                              (Get.find<HomeController>()).changeBottomBar(1);
+                              (Get.find<HomeController>()).currentIndex.value =
+                                  1;
                             },
                             child: _buildServiceCard(
                               'assets/tryoutHomeIcon.svg',
@@ -527,6 +527,8 @@ class DashboardView extends GetView<DashboardController> {
                           child: GestureDetector(
                             onTap: () {
                               (Get.find<HomeController>()).changeBottomBar(3);
+                              (Get.find<HomeController>()).currentIndex.value =
+                                  3;
                             },
                             child: _buildServiceCard(
                               'assets/platinumHomeIcon.svg',

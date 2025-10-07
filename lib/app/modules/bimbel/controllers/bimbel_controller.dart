@@ -24,8 +24,7 @@ class BimbelController extends GetxController {
 
   @override
   void onInit() {
-    getBimbel();
-    getKategori();
+    refresh();
     super.onInit();
     checkMaintenance();
   }
@@ -43,6 +42,11 @@ class BimbelController extends GetxController {
   void searchPaket(String query) {
     searchQuery.value = query;
     // Dummy: hanya update query, belum filter real.
+  }
+
+  Future<void> refresh() async {
+    await getBimbel();
+    await getKategori();
   }
 
   Future<void> getBimbel({

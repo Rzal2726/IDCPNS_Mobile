@@ -20,7 +20,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar:  secondaryAppBar("Detail Bimbel"),
+      appBar: secondaryAppBar("Detail Bimbel"),
       body: SafeArea(
         child: Obx(() {
           var data = controller.datalBimbelData;

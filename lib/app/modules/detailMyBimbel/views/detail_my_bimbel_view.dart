@@ -99,15 +99,23 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                             // Progress Bar (mirip card tryout)
                             Builder(
                               builder: (context) {
-                                // Parse tanggal dari string
-                                final startDate =
-                                    DateTime.parse(
-                                      data['created_at'],
-                                    ).toLocal();
-                                final endDate =
-                                    DateTime.parse(
-                                      data['expireddate'],
-                                    ).toLocal();
+                                // Parse tanggal dari string (aman dari null & error format)
+                                DateTime? startDate;
+                                DateTime? endDate;
+
+                                try {
+                                  final createdAt = data['created_at'];
+                                  final expiredAt = data['expireddate'];
+
+                                  if (createdAt != null && expiredAt != null) {
+                                    startDate =
+                                        DateTime.tryParse(createdAt)?.toLocal();
+                                    endDate =
+                                        DateTime.tryParse(expiredAt)?.toLocal();
+                                  }
+                                } catch (e) {
+                                  debugPrint("Error parsing date: $e");
+                                }
 
                                 final now = DateTime.now();
 
@@ -121,9 +129,9 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                       endDate.difference(now).inDays;
                                 }
 
-                                // Pastikan minimal 0 biar progress bar ga kebalik
-                                final progress = (remainingDays /
-                                        (totalDays == 0 ? 1 : totalDays))
+                                // Hindari nilai negatif atau NaN
+                                final progress = ((remainingDays /
+                                        (totalDays == 0 ? 1 : totalDays)))
                                     .clamp(0.0, 1.0);
 
                                 return Column(
@@ -136,12 +144,12 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                       minHeight: 12,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
+                                        const Text(
                                           'Sisa Hari',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -149,8 +157,8 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                           ),
                                         ),
                                         Text(
-                                          "$remainingDays Hari Lagi",
-                                          style: TextStyle(
+                                          "${remainingDays.clamp(0, totalDays)} Hari Lagi",
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14,
                                             color: Colors.black87,
