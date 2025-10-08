@@ -45,7 +45,7 @@ class TryoutView extends GetView<TryoutController> {
             child: Column(
               // 🚀 Hapus Expanded
               children: [
-                SizedBox(height: 16),
+                SizedBox(height: 20),
                 // Tryout Saya box
                 InkWell(
                   onTap: () {

@@ -38,44 +38,39 @@ class RunningTextBar extends StatelessWidget {
         return const SizedBox();
       }
 
-      final shouldRun = _isTextTooLong(controller.htmlText.value, screenWidth);
-
       return Container(
         color: Colors.teal,
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         alignment: Alignment.center,
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Html(
-            data: controller.htmlText.value,
-            style: {
-              "body": Style(
-                margin: Margins.zero,
-                padding: HtmlPaddings.zero,
-                fontSize: FontSize(14),
-                color: Colors.white,
-                textAlign: TextAlign.center,
-                lineHeight: LineHeight(1.4),
-                display: Display.block,
-              ),
-              "a": Style(
-                textDecoration: TextDecoration.none,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            },
-            onLinkTap: (url, attributes, element) async {
-              if (url != null) {
-                final uri = Uri.parse(url);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                } else {
-                  debugPrint("Could not launch $url");
-                }
+        child: Html(
+          data: controller.htmlText.value,
+          style: {
+            "body": Style(
+              margin: Margins.zero,
+              padding: HtmlPaddings.zero,
+              fontSize: FontSize(14),
+              color: Colors.white,
+              textAlign: TextAlign.center,
+              lineHeight: LineHeight(1.4),
+              display: Display.block,
+            ),
+            "a": Style(
+              textDecoration: TextDecoration.none,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          },
+          onLinkTap: (url, attributes, element) async {
+            if (url != null) {
+              final uri = Uri.parse(url);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              } else {
+                debugPrint("Could not launch $url");
               }
-            },
-          ),
+            }
+          },
         ),
       );
     });

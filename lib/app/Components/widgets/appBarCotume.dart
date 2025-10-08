@@ -29,87 +29,85 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: SingleChildScrollView(
-        physics: NeverScrollableScrollPhysics(),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (showRunningText) RunningTextBar(),
-            AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.white,
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              titleSpacing: 0,
-              title: Row(
-                children: [
-                  SizedBox(width: 8),
-                  if (leftType == AppBarLeftType.logo) ...[
-                    Padding(
-                      padding: EdgeInsets.only(left: 20),
-                      child: InkWell(
-                        onTap: () {
-                          (Get.find<HomeController>()).changeBottomBar(0);
-                        },
-                        child: Image.asset('assets/logo.png', height: 50),
-                      ),
+      child: Wrap(
+        children: [
+          // ⬆️ Ini “announcement bar” kamu
+          if (showRunningText) RunningTextBar(), // widget kamu yang sebelumnya
+          // 🧱 AppBar tetap jadi bagian dari PreferredSize
+          AppBar(
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.white,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            titleSpacing: 0,
+            title: Row(
+              children: [
+                SizedBox(width: 8),
+                if (leftType == AppBarLeftType.logo) ...[
+                  Padding(
+                    padding: EdgeInsets.only(left: 20),
+                    child: InkWell(
+                      onTap: () {
+                        (Get.find<HomeController>()).changeBottomBar(0);
+                      },
+                      child: Image.asset('assets/logo.png', height: 50),
                     ),
-                  ],
-                  if (leftType == AppBarLeftType.back) ...[
+                  ),
+                ],
+                if (leftType == AppBarLeftType.back) ...[
+                  Padding(
+                    padding: EdgeInsets.only(left: 4),
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.black),
+                      onPressed: onBack ?? () => Get.back(),
+                    ),
+                  ),
+                ],
+                if (leftType == AppBarLeftType.backWithTitle) ...[
+                  Padding(
+                    padding: EdgeInsets.only(left: 4),
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.black),
+                      onPressed: () {
+                        final notifC = Get.put(NotificationController());
+                        if (onBack != null) {
+                          onBack!();
+                        } else {
+                          Get.back();
+                        }
+                        notifC.getNotif();
+                      },
+                    ),
+                  ),
+                  if (title != null)
                     Padding(
                       padding: EdgeInsets.only(left: 4),
-                      child: IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.black),
-                        onPressed: onBack ?? () => Get.back(),
-                      ),
-                    ),
-                  ],
-                  if (leftType == AppBarLeftType.backWithTitle) ...[
-                    Padding(
-                      padding: EdgeInsets.only(left: 4),
-                      child: IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.black),
-                        onPressed: () {
-                          final notifC = Get.put(NotificationController());
-                          if (onBack != null) {
-                            onBack!();
-                          } else {
-                            Get.back();
-                          }
-                          notifC.getNotif();
-                        },
-                      ),
-                    ),
-                    if (title != null)
-                      Padding(
-                        padding: EdgeInsets.only(left: 4),
-                        child: Text(
-                          title!,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      child: Text(
+                        title!,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                  ],
-                  if (leftType == AppBarLeftType.title && title != null) ...[
-                    Text(
-                      title!,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
-                  ],
                 ],
-              ),
-              actions: [
-                if (showNotifIcon) NotifIcon(),
-                if (actions != null) ...actions!,
+                if (leftType == AppBarLeftType.title && title != null) ...[
+                  Text(
+                    title!,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ],
             ),
-          ],
-        ),
+            actions: [
+              if (showNotifIcon) NotifIcon(),
+              if (actions != null) ...actions!,
+            ],
+          ),
+        ],
       ),
     );
   }

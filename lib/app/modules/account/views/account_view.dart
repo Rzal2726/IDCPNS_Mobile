@@ -15,7 +15,10 @@ class AccountView extends GetView<AccountController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: basicAppBar(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(400),
+        child: basicAppBar(),
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Obx(() {
