@@ -12,7 +12,7 @@ class NotificationController extends GetxController {
   RxList<Map<String, int>> idSelected = <Map<String, int>>[].obs;
   @override
   void onInit() {
-    getNotif();
+    refresh();
     super.onInit();
   }
 
@@ -24,6 +24,12 @@ class NotificationController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> refresh() async {
+    selectedFilter.value = "Select All";
+    idSelected.value = [];
+    await getNotif();
   }
 
   Future<void> getNotif() async {

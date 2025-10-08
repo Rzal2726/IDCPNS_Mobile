@@ -15,168 +15,301 @@ class NotificationView extends GetView<NotificationController> {
       backgroundColor: Colors.white,
       appBar: basicAppBarWithoutNotif("Notifikasi"),
       body: SafeArea(
-        child: Obx(() {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
+        child: RefreshIndicator(
+          backgroundColor: Colors.white,
+          color: Colors.teal,
+          onRefresh: () => controller.refresh(),
+          child: Obx(() {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
 
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSelectAll(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSelectAll(),
 
-                  Visibility(
-                    visible: controller.idSelected.isNotEmpty,
-                    child: Column(
+                    Visibility(
+                      visible: controller.idSelected.isNotEmpty,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Ambil tipe semua yang dipilih
+                                  bool allRead = controller.idSelected.every(
+                                    (e) => e['tipe'] == 0,
+                                  );
+                                  bool allUnread = controller.idSelected.every(
+                                    (e) => e['tipe'] == 1,
+                                  );
+
+                                  List<int> ids =
+                                      controller.idSelected
+                                          .map((e) => e['id']!)
+                                          .toList();
+
+                                  if (allRead || (!allRead && !allUnread)) {
+                                    controller.getReadNotif(
+                                      id: 0,
+                                      idNotif: ids,
+                                    );
+                                  } else if (allUnread) {
+                                    controller.getUnreadNotif(
+                                      id: 0,
+                                      idNotif: ids,
+                                    );
+                                  }
+                                  controller.idSelected.clear();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                ),
+                                child: Text(
+                                  // Tentukan teks tombol
+                                  controller.idSelected.every(
+                                        (e) => e['tipe'] == 1,
+                                      )
+                                      ? "Tandai semua belum dibaca"
+                                      : "Tandai semua sudah dibaca",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Ambil semua ID yang dipilih, tidak peduli tipe
+                                  List<int> ids =
+                                      controller.idSelected
+                                          .map((e) => e['id']!)
+                                          .toList();
+
+                                  // Panggil fungsi hapus (misal getDeleteNotif atau fungsi custom)
+                                  controller.getDeleteNotif(idNotif: ids);
+
+                                  // Kosongkan idSelected setelah dihapus
+                                  controller.idSelected.clear();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Colors.red, // warna merah untuk delete
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                ),
+                                child: Text(
+                                  "Hapus",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                // Ambil tipe semua yang dipilih
-                                bool allRead = controller.idSelected.every(
-                                  (e) => e['tipe'] == 0,
-                                );
-                                bool allUnread = controller.idSelected.every(
-                                  (e) => e['tipe'] == 1,
-                                );
-
-                                List<int> ids =
-                                    controller.idSelected
-                                        .map((e) => e['id']!)
-                                        .toList();
-
-                                if (allRead || (!allRead && !allUnread)) {
-                                  controller.getReadNotif(id: 0, idNotif: ids);
-                                } else if (allUnread) {
-                                  controller.getUnreadNotif(
+                        _buildSectionHeader('Belum dibaca'),
+                        Visibility(
+                          visible: controller.idSelected.isEmpty,
+                          child: Align(
+                            alignment:
+                                Alignment
+                                    .centerRight, // posisinya bisa di kanan
+                            child: PopupMenuButton<String>(
+                              icon: Icon(Icons.more_vert, color: Colors.teal),
+                              onSelected: (value) {
+                                if (value == 'markRead') {
+                                  controller.getReadNotif(
                                     id: 0,
-                                    idNotif: ids,
+                                    idNotif: controller.allUnreadData,
                                   );
                                 }
-                                controller.idSelected.clear();
+                                // Bisa tambah opsi lain kalau mau
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.teal,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
-                              child: Text(
-                                // Tentukan teks tombol
-                                controller.idSelected.every(
-                                      (e) => e['tipe'] == 1,
-                                    )
-                                    ? "Tandai semua belum dibaca"
-                                    : "Tandai semua sudah dibaca",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              itemBuilder:
+                                  (BuildContext context) => [
+                                    PopupMenuItem<String>(
+                                      value: 'markRead',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.mark_email_read,
+                                            color: Colors.teal,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text("Tandai semua sudah dibaca"),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                             ),
-                            SizedBox(width: 10),
-                            ElevatedButton(
-                              onPressed: () {
-                                // Ambil semua ID yang dipilih, tidak peduli tipe
-                                List<int> ids =
-                                    controller.idSelected
-                                        .map((e) => e['id']!)
-                                        .toList();
-
-                                // Panggil fungsi hapus (misal getDeleteNotif atau fungsi custom)
-                                controller.getDeleteNotif(idNotif: ids);
-
-                                // Kosongkan idSelected setelah dihapus
-                                controller.idSelected.clear();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.red, // warna merah untuk delete
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
-                              child: Text(
-                                "Hapus",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildSectionHeader('Belum dibaca'),
-                      Visibility(
-                        visible: controller.idSelected.isEmpty,
-                        child: Align(
-                          alignment:
-                              Alignment.centerRight, // posisinya bisa di kanan
-                          child: PopupMenuButton<String>(
-                            icon: Icon(Icons.more_vert, color: Colors.teal),
-                            onSelected: (value) {
-                              if (value == 'markRead') {
-                                controller.getReadNotif(
-                                  id: 0,
-                                  idNotif: controller.allUnreadData,
-                                );
-                              }
-                              // Bisa tambah opsi lain kalau mau
-                            },
+
+                    SizedBox(height: 8),
+                    Obx(() {
+                      final unreadData =
+                          controller.notifData
+                              .where((d) => d['read'] == 0)
+                              .toList();
+
+                      return controller.isLoading.value
+                          // ✅ Skeleton Loader
+                          ? ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: 5,
                             itemBuilder:
-                                (BuildContext context) => [
-                                  PopupMenuItem<String>(
-                                    value: 'markRead',
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.mark_email_read,
-                                          color: Colors.teal,
+                                (context, index) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0,
+                                    horizontal: 16.0,
+                                  ),
+                                  child: Container(
+                                    padding: EdgeInsets.all(14),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.shade300,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
                                         ),
-                                        SizedBox(width: 8),
-                                        Text("Tandai semua sudah dibaca"),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 20,
+                                          width: 120,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        SizedBox(height: 7),
+                                        Container(
+                                          height: 16,
+                                          width: 180,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        SizedBox(height: 7),
+                                        Container(
+                                          height: 14,
+                                          width: 140,
+                                          color: Colors.grey.shade300,
+                                        ),
                                       ],
                                     ),
                                   ),
-                                ],
+                                ),
+                          )
+                          : unreadData.isEmpty
+                          // ❌ Data kosong → Empty State
+                          ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                              child: Text(
+                                "Tidak ada pesan baru",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          )
+                          // ✅ Data ada → render notifikasi
+                          : Column(
+                            children: [
+                              for (var data in unreadData)
+                                _buildNotificationItem(
+                                  '${data['title']}',
+                                  '${data['created_at']}',
+                                  0,
+                                  data['id'],
+                                  data['parameter'] ?? "",
+                                  data['description'],
+                                  data['orderId']?.toString() ?? "",
+                                ),
+                            ],
+                          );
+                    }),
+                    SizedBox(height: 16),
+                    Divider(color: Colors.grey),
+                    SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildSectionHeader('Sudah dibaca'),
+                        Visibility(
+                          visible: controller.idSelected.isEmpty,
+                          child: Align(
+                            alignment:
+                                Alignment.centerRight, // posisinya di kanan
+                            child: PopupMenuButton<String>(
+                              icon: Icon(Icons.more_vert, color: Colors.teal),
+                              onSelected: (value) {
+                                if (value == 'markUnread') {
+                                  controller.getUnreadNotif(
+                                    id: 0,
+                                    idNotif: controller.allReadData,
+                                  );
+                                }
+                              },
+                              itemBuilder:
+                                  (BuildContext context) => [
+                                    PopupMenuItem<String>(
+                                      value: 'markUnread',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.mark_email_unread,
+                                            color: Colors.teal,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text("Tandai semua belum dibaca"),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 8),
-                  Obx(() {
-                    final unreadData =
-                        controller.notifData
-                            .where((d) => d['read'] == 0)
-                            .toList();
-
-                    return controller.isLoading.value
-                        // ✅ Skeleton Loader
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    controller.isLoading.value
                         ? ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: 5,
+                          itemCount: 3, // jumlah skeleton
                           itemBuilder:
                               (context, index) => Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -222,172 +355,49 @@ class NotificationView extends GetView<NotificationController> {
                                 ),
                               ),
                         )
-                        : unreadData.isEmpty
-                        // ❌ Data kosong → Empty State
-                        ? Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Center(
-                            child: Text(
-                              "Tidak ada pesan baru",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                          ),
-                        )
-                        // ✅ Data ada → render notifikasi
-                        : Column(
-                          children: [
-                            for (var data in unreadData)
-                              _buildNotificationItem(
-                                '${data['title']}',
-                                '${data['created_at']}',
-                                0,
-                                data['id'],
-                                data['parameter'] ?? "",
-                                data['description'],
-                                data['orderId']?.toString() ?? "",
-                              ),
-                          ],
-                        );
-                  }),
-                  SizedBox(height: 16),
-                  Divider(color: Colors.grey),
-                  SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildSectionHeader('Sudah dibaca'),
-                      Visibility(
-                        visible: controller.idSelected.isEmpty,
-                        child: Align(
-                          alignment:
-                              Alignment.centerRight, // posisinya di kanan
-                          child: PopupMenuButton<String>(
-                            icon: Icon(Icons.more_vert, color: Colors.teal),
-                            onSelected: (value) {
-                              if (value == 'markUnread') {
-                                controller.getUnreadNotif(
-                                  id: 0,
-                                  idNotif: controller.allReadData,
-                                );
-                              }
-                            },
-                            itemBuilder:
-                                (BuildContext context) => [
-                                  PopupMenuItem<String>(
-                                    value: 'markUnread',
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.mark_email_unread,
-                                          color: Colors.teal,
-                                        ),
-                                        SizedBox(width: 8),
-                                        Text("Tandai semua belum dibaca"),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  controller.isLoading.value
-                      ? ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: 3, // jumlah skeleton
-                        itemBuilder:
-                            (context, index) => Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8.0,
-                                horizontal: 16.0,
-                              ),
-                              child: Container(
-                                padding: EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.shade300,
-                                      blurRadius: 4,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      height: 20,
-                                      width: 120,
-                                      color: Colors.grey.shade300,
-                                    ),
-                                    SizedBox(height: 7),
-                                    Container(
-                                      height: 16,
-                                      width: 180,
-                                      color: Colors.grey.shade300,
-                                    ),
-                                    SizedBox(height: 7),
-                                    Container(
-                                      height: 14,
-                                      width: 140,
-                                      color: Colors.grey.shade300,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                      )
-                      : () {
-                        final readData =
-                            controller.notifData
-                                .where((d) => d['read'] == 1)
-                                .toList();
+                        : () {
+                          final readData =
+                              controller.notifData
+                                  .where((d) => d['read'] == 1)
+                                  .toList();
 
-                        if (readData.isNotEmpty) {
-                          return Column(
-                            children: [
-                              for (var data in readData)
-                                _buildNotificationItem(
-                                  '${data['title']}',
-                                  '${data['created_at']}',
-                                  1,
-                                  data['id'],
-                                  data['parameter'] ?? "",
-                                  data['description'],
-                                  data['orderId']?.toString() ?? "",
-                                ),
-                            ],
-                          );
-                        } else {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: Center(
-                              child: Text(
-                                "Tidak ada pesan yang sudah dibaca",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
-                                  fontStyle: FontStyle.italic,
+                          if (readData.isNotEmpty) {
+                            return Column(
+                              children: [
+                                for (var data in readData)
+                                  _buildNotificationItem(
+                                    '${data['title']}',
+                                    '${data['created_at']}',
+                                    1,
+                                    data['id'],
+                                    data['parameter'] ?? "",
+                                    data['description'],
+                                    data['orderId']?.toString() ?? "",
+                                  ),
+                              ],
+                            );
+                          } else {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: Center(
+                                child: Text(
+                                  "Tidak ada pesan yang sudah dibaca",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        }
-                      }(),
-                ],
+                            );
+                          }
+                        }(),
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }

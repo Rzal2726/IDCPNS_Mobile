@@ -15,8 +15,8 @@ class PretestResultController extends GetxController {
 
   @override
   void onInit() {
-    super.onInit();
     initHasil();
+    super.onInit();
   }
 
   Future<void> initHasil() async {

@@ -59,159 +59,171 @@ class PretestView extends GetView<PretestController> {
                         context: context,
                         builder: (context) {
                           return SafeArea(
-                            child: Obx(
-                              () => Padding(
-                                padding: EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                  top: 16,
-                                  bottom:
-                                      MediaQuery.of(context).viewInsets.bottom +
-                                      16,
-                                ),
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    spacing: 12,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Apakah kamu yakin ingin menyelesaikan bimbel?",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          IconButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            icon: Icon(Icons.close),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Total Soal"),
-                                          Text(
-                                            "${controller.soalList.length.toString()} Soal",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Terjawab"),
-                                          Text(
-                                            "${controller.selectedAnswersList.where((answer) => answer['pretest_soal_option_id'] != 0).length.toString()} Soal",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Tidak Terjawab"),
-                                          Text(
-                                            "${(controller.soalList.length - controller.selectedAnswersList.where((answer) => answer['pretest_soal_option_id'] != 0).length).toString()} Soal",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Ditandai"),
-                                          Text(
-                                            "${(controller.markedList.length).toString()} Soal",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.white,
-                                                foregroundColor:
-                                                    Colors
-                                                        .black, // warna teks/icon
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: 14,
-                                                ),
+                            child: RefreshIndicator(
+                              color: Colors.teal,
+                              backgroundColor: Colors.white,
+                              onRefresh: () => controller.refresh(),
+                              child: Obx(
+                                () => Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 16,
+                                    right: 16,
+                                    top: 16,
+                                    bottom:
+                                        MediaQuery.of(
+                                          context,
+                                        ).viewInsets.bottom +
+                                        16,
+                                  ),
+                                  child: SingleChildScrollView(
+                                    physics: AlwaysScrollableScrollPhysics(),
+                                    child: Column(
+                                      spacing: 12,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Apakah kamu yakin ingin menyelesaikan bimbel?",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
                                               ),
+                                            ),
+                                            IconButton(
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
-                                              child: Text(
-                                                "Cek Kembali",
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
+                                              icon: Icon(Icons.close),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text("Total Soal"),
+                                            Text(
+                                              "${controller.soalList.length.toString()} Soal",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text("Terjawab"),
+                                            Text(
+                                              "${controller.selectedAnswersList.where((answer) => answer['pretest_soal_option_id'] != 0).length.toString()} Soal",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text("Tidak Terjawab"),
+                                            Text(
+                                              "${(controller.soalList.length - controller.selectedAnswersList.where((answer) => answer['pretest_soal_option_id'] != 0).length).toString()} Soal",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text("Ditandai"),
+                                            Text(
+                                              "${(controller.markedList.length).toString()} Soal",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.white,
+                                                  foregroundColor:
+                                                      Colors
+                                                          .black, // warna teks/icon
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 14,
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "Cek Kembali",
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: 12,
-                                          ), // jarak antar tombol
-                                          Expanded(
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors
-                                                        .teal, // warna tombol kedua
-                                                foregroundColor:
-                                                    Colors
-                                                        .white, // warna teks/icon
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                            SizedBox(
+                                              width: 12,
+                                            ), // jarak antar tombol
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Colors
+                                                          .teal, // warna tombol kedua
+                                                  foregroundColor:
+                                                      Colors
+                                                          .white, // warna teks/icon
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 14,
+                                                  ),
                                                 ),
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: 14,
-                                                ),
-                                              ),
-                                              onPressed: () async {
-                                                await controller.submitSoal();
-                                              },
-                                              child: Text(
-                                                "Kirim Jawaban",
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
+                                                onPressed: () async {
+                                                  await controller.submitSoal();
+                                                },
+                                                child: Text(
+                                                  "Kirim Jawaban",
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

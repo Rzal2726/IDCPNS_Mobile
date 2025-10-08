@@ -63,6 +63,12 @@ class PretestController extends GetxController {
     laporanController.dispose();
   }
 
+  Future<void> refresh() async {
+    await getDetailBimbel();
+    await getBimbelSoal();
+    uuid.value = bimbelData['uuid'];
+  }
+
   Future<void> initPengerjaan() async {
     await getDetailBimbel();
     await getBimbelSoal();
