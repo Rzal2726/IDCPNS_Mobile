@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paymentTracsactionWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
@@ -25,41 +26,22 @@ class TransactionView extends GetView<TransactionController> {
           if (didPop) return;
           Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
         },
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: secondaryAppBar(
-            "Transaksi",
-            onBack: () {
-              Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-            },
-          ),
-          body: SafeArea(
-            child: Obx(() {
-              final allData = controller.transactions['data'] ?? [];
+        child: Obx(() {
+          final allData = controller.transactions['data'] ?? [];
+          final isLoading = controller.isloading.value;
+          final isEmpty = !isLoading && allData.isEmpty;
 
-              // default: semua data
-              List filteredData = allData;
-
-              if (controller.endDateController.text.isNotEmpty) {
-                final endDate = DateFormat(
-                  "dd/MM/yyyy",
-                ).parse(controller.endDateController.text);
-
-                filteredData =
-                    allData.where((item) {
-                      final tanggalStr =
-                          item['tanggal']; // "2025-09-25 14:38:16"
-                      final tanggal = DateFormat(
-                        "yyyy-MM-dd HH:mm:ss",
-                      ).parse(tanggalStr);
-
-                      // cek: tanggal <= endDate (hari terakhir juga masuk)
-                      return tanggal.isBefore(endDate.add(Duration(days: 1))) ||
-                          tanggal.isAtSameMomentAs(endDate);
-                    }).toList();
-              }
-
-              return Column(
+          return Scaffold(
+            backgroundColor: Colors.white,
+            resizeToAvoidBottomInset: !isEmpty,
+            appBar: secondaryAppBar(
+              "Transaksi",
+              onBack: () {
+                Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+              },
+            ),
+            body: SafeArea(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ===== OPTION BAR GANTI TAB =====
@@ -67,8 +49,7 @@ class TransactionView extends GetView<TransactionController> {
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     child: Obx(() {
                       return SingleChildScrollView(
-                        scrollDirection:
-                            Axis.horizontal, // ✅ bikin scroll horizontal
+                        scrollDirection: Axis.horizontal,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children:
@@ -98,9 +79,9 @@ class TransactionView extends GetView<TransactionController> {
                                     // Panggil API hanya dengan status
                                     controller.getTransaction(
                                       page: controller.currentPage.value,
-                                      search: "", // reset
+                                      search: "",
                                       status: status,
-                                      date: "", // reset
+                                      date: "",
                                     );
                                   },
                                   child: Container(
@@ -151,7 +132,7 @@ class TransactionView extends GetView<TransactionController> {
                       hintText: 'Cari',
                       onSearch: () {
                         controller.getTransaction(
-                          page: 1, // reset halaman ke 1 saat search
+                          page: 1,
                           search: controller.searchController.text,
                           date: controller.startDateController.text,
                           status: controller.status.value,
@@ -166,9 +147,7 @@ class TransactionView extends GetView<TransactionController> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment
-                              .end, // ⬅️ bikin tombol menempel kanan
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         InkWell(
                           borderRadius: BorderRadius.circular(8),
@@ -201,12 +180,12 @@ class TransactionView extends GetView<TransactionController> {
                   SizedBox(height: 8),
 
                   // ===== LIST TRANSAKSI =====
-                  Expanded(child: _buildTransactionList(context, filteredData)),
+                  Expanded(child: _buildTransactionList(context, allData)),
                 ],
-              );
-            }),
-          ),
-        ),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -217,193 +196,184 @@ Widget _buildTransactionList(
   List<dynamic>? filteredData,
 ) {
   final controller = Get.put(TransactionController());
-
-  // 🔹 Handle null list dulu biar aman
   final list = filteredData ?? [];
 
-  // 🔹 Kondisi 1 — Masih loading ATAU data masih kosong tapi transaksi juga belum ada
-  final bool stillLoading =
-      controller.isloading.value ||
-      (list.isEmpty && controller.transactions.isEmpty);
-
-  if (stillLoading) {
-    return SafeArea(
-      child: SkeletonListWidget<dynamic>(
-        data: [],
-        skeletonCount: 5,
-        itemBuilder: (_) => SizedBox.shrink(),
-      ),
-    );
-  }
-
-  // 🔹 Kondisi 2 — Sudah tidak loading dan data kosong → tampilkan empty state
-  if (list.isEmpty) {
-    return SafeArea(
-      child: SkeletonListWidget<dynamic>(
-        data: [],
-        skeletonCount: 0,
-        emptyMessage: "Tidak ada transaksi ditemukan",
-        emptySvgAsset: "assets/empty_transactions.svg",
-        itemBuilder: (_) => SizedBox.shrink(),
-      ),
-    );
-  }
-
-  // 🔹 Kondisi 3 — Data sudah ada → tampilkan list
   return SafeArea(
-    child: RefreshIndicator(
-      color: Colors.teal,
-      backgroundColor: Colors.white,
-      onRefresh: controller.refresh,
-      child: ListView.builder(
-        physics: AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
-        itemCount: list.length + 1,
-        itemBuilder: (context, i) {
-          if (i == list.length) {
-            return Visibility(
-              visible: controller.transactions.isNotEmpty,
-              child: Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: ReusablePagination(
-                  nextPage: controller.nextPage,
-                  prevPage: controller.prevPage,
-                  currentPage: controller.currentPage,
-                  totalPage: controller.totalPage,
-                  goToPage: controller.goToPage,
-                ),
-              ),
-            );
-          }
-
-          final trx = list[i];
-          final status = trx['status']?.toString().toUpperCase();
-          final isPaid = status == 'PAID';
-          final isPending = status == 'PENDING';
-
+    child: Builder(
+      builder: (_) {
+        // 🔹 Kondisi 1 — Masih loading
+        if (controller.isloading.value) {
           return Padding(
-            padding: EdgeInsets.only(bottom: 12),
-            child: GestureDetector(
-              onTap: () async {
-                if (isPending) {
-                  showPaymentSheet(
-                    context,
-                    onCancel: () {
-                      showPaymentSheet2(
-                        context,
-                        onCancel:
-                            () => controller.deleteTransaction(
-                              id: trx['id'].toString(),
-                            ),
-                        onPay: () => _openInvoice(trx),
-                      );
-                    },
-                    onPay: () => _openInvoice(trx),
-                  );
-                } else {
-                  Get.toNamed(Routes.INVOICE, arguments: trx['id']);
-                }
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade300,
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(14, 12, 12, 14),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color:
-                                    isPaid
-                                        ? Colors.green
-                                        : (isPending
-                                            ? Colors.amber
-                                            : Colors.red),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                isPaid
-                                    ? "Sukses"
-                                    : isPending
-                                    ? "Menunggu Pembayaran"
-                                    : "Gagal",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              trx['no_order'] ?? "-",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              (trx['payment_details'] != null &&
-                                      trx['payment_details'].isNotEmpty)
-                                  ? (trx['payment_details'][0]['item_parent_name'] ??
-                                      trx['payment_details'][0]['item_name'] ??
-                                      "-")
-                                  : "-",
-                              style: TextStyle(
-                                fontSize: 14.5,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.black,
-                              ),
-                            ),
-                            SizedBox(height: 2),
-                            Text(
-                              '${trx['tanggal'] ?? "-"} - ${formatRupiah(trx['amount'] ?? 0)}',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
+            padding: EdgeInsets.fromLTRB(14, 12, 12, 14),
+            child: SkeletonListWidget<dynamic>(
+              data: [],
+              skeletonCount: 5,
+              itemBuilder: (_) => SizedBox.shrink(),
+            ),
+          );
+        } else {
+          // 🔹 Kondisi 2 — Sudah tidak loading
+          if (list.isEmpty) {
+            return EmptyStateWidget(message: 'Tidak ada transaksi ditemukan');
+          } else {
+            // 🔹 Kondisi 3 — Data sudah ada
+            return RefreshIndicator(
+              color: Colors.teal,
+              backgroundColor: Colors.white,
+              onRefresh: controller.refresh,
+              child: ListView.builder(
+                physics: AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(16, 4, 16, 16),
+                itemCount: list.length + 1,
+                itemBuilder: (context, i) {
+                  if (i == list.length) {
+                    return Visibility(
+                      visible: controller.transactions.isNotEmpty,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: ReusablePagination(
+                          nextPage: controller.nextPage,
+                          prevPage: controller.prevPage,
+                          currentPage: controller.currentPage,
+                          totalPage: controller.totalPage,
+                          goToPage: controller.goToPage,
+                        ),
+                      ),
+                    );
+                  }
+
+                  final trx = list[i];
+                  final status = trx['status']?.toString().toUpperCase();
+                  final isPaid = status == 'PAID';
+                  final isPending = status == 'PENDING';
+
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 12),
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (isPending) {
+                          showPaymentSheet(
+                            context,
+                            onCancel: () {
+                              showPaymentSheet2(
+                                context,
+                                onCancel:
+                                    () => controller.deleteTransaction(
+                                      id: trx['id'].toString(),
+                                    ),
+                                onPay: () => _openInvoice(trx),
+                              );
+                            },
+                            onPay: () => _openInvoice(trx),
+                          );
+                        } else {
+                          Get.toNamed(Routes.INVOICE, arguments: trx['id']);
+                        }
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade300,
+                              blurRadius: 6,
+                              offset: Offset(0, 2),
                             ),
                           ],
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      CircleAvatar(
-                        radius: 18,
-                        backgroundColor: Colors.teal,
-                        child: Icon(
-                          Icons.chevron_right_rounded,
-                          color: Colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(14, 12, 12, 14),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            isPaid
+                                                ? Colors.green
+                                                : (isPending
+                                                    ? Colors.amber
+                                                    : Colors.red),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        isPaid
+                                            ? "Sukses"
+                                            : isPending
+                                            ? "Menunggu Pembayaran"
+                                            : "Gagal",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      trx['no_order'] ?? "-",
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      (trx['payment_details'] != null &&
+                                              trx['payment_details'].isNotEmpty)
+                                          ? (trx['payment_details'][0]['item_parent_name'] ??
+                                              trx['payment_details'][0]['item_name'] ??
+                                              "-")
+                                          : "-",
+                                      style: TextStyle(
+                                        fontSize: 14.5,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    SizedBox(height: 2),
+                                    Text(
+                                      '${trx['tanggal'] ?? "-"} - ${formatRupiah(trx['amount'] ?? 0)}',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              CircleAvatar(
+                                radius: 18,
+                                backgroundColor: Colors.teal,
+                                child: Icon(
+                                  Icons.chevron_right_rounded,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
-            ),
-          );
-        },
-      ),
+            );
+          }
+        }
+      },
     ),
   );
 }

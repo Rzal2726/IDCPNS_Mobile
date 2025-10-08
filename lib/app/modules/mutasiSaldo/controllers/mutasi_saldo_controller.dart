@@ -15,7 +15,7 @@ class MutasiSaldoController extends GetxController {
   RxInt totalPage = 0.obs;
   @override
   void onInit() {
-    getMutasiSaldo();
+    refresh();
     super.onInit();
   }
 
@@ -27,6 +27,11 @@ class MutasiSaldoController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> refresh() async {
+    searchController.clear();
+    await getMutasiSaldo();
   }
 
   void goToPage(int page) {

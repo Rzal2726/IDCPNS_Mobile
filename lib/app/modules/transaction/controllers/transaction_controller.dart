@@ -89,6 +89,7 @@ class TransactionController extends GetxController {
     String? date,
   }) async {
     isloading.value = true;
+    print("xvv ${isloading.toString()}");
     final url = await baseUrl + apiGetTransaction;
     var payload = {
       "perpage": 10,
@@ -105,6 +106,7 @@ class TransactionController extends GetxController {
       transactions.value = data;
       totalPage.value = data['last_page'];
       isloading.value = false;
+      print("xvv ${isloading.toString()}");
     }
   }
 

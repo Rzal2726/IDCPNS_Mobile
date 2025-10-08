@@ -20,11 +20,7 @@ class AffiliateController extends GetxController {
   TextEditingController kodeController = TextEditingController();
   @override
   void onInit() {
-    print("xxx");
-
-    getCheckAffiliate();
-    getFinance();
-    kodeController.text = box.read('afiCode') ?? '';
+    refresh();
 
     super.onInit();
     checkMaintenance();
@@ -39,6 +35,12 @@ class AffiliateController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> refresh() async {
+    kodeController.text = box.read('afiCode') ?? '';
+    await getCheckAffiliate();
+    await getFinance();
   }
 
   void simpanKode() async {

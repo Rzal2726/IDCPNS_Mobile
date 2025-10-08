@@ -12,6 +12,7 @@ class RekeningController extends GetxController {
   RxList<Map<String, dynamic>> bankList = <Map<String, dynamic>>[].obs;
   RxString selectedBankName = ''.obs; // untuk menampilkan nama di dropdown
   RxInt bankId = 0.obs; // untuk simpan id bank yang dipilih
+  RxBool isLoading = false.obs; // untuk simpan id bank yang dipilih
   final accountNumberController = TextEditingController();
   final ownerNameController = TextEditingController();
   final List<String> informationPoints = [
@@ -23,8 +24,7 @@ class RekeningController extends GetxController {
   final count = 0.obs;
   @override
   void onInit() {
-    getRekeningUser();
-    getBank();
+    refresh();
     super.onInit();
   }
 
@@ -51,6 +51,16 @@ class RekeningController extends GetxController {
           'owner': 'MUHAMMAD FARIS RAFI',
         },
       ].obs;
+  Future<void> refresh() async {
+    selectedBankName.value = '';
+    accountNumberController.clear();
+    ownerNameController.clear();
+    selectedBank.value = '';
+    bankId.value = 0;
+    await getRekeningUser();
+    await getBank();
+  }
+
   void saveAccount() async {
     // Validasi Pilihan Bank
     if (bankId.value == 0) {
@@ -100,6 +110,7 @@ class RekeningController extends GetxController {
 
   Future<void> getRekeningUser() async {
     try {
+      isLoading.value = true;
       final url = await baseUrl + apiGetRekeningUser;
 
       final result = await _restClient.getData(url: url);
@@ -128,6 +139,7 @@ class RekeningController extends GetxController {
                 )
                 .toList();
         print("xxx ${bankList.toString()}");
+        isLoading.value = false;
       }
     } catch (e) {
       print("Error getBank: $e");

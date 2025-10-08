@@ -14,7 +14,7 @@ class CommisionDetailController extends GetxController {
 
   @override
   void onInit() {
-    getRincianKomisi();
+    refresh();
     super.onInit();
     checkMaintenance();
   }
@@ -27,6 +27,11 @@ class CommisionDetailController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> refresh() async {
+    searchController.clear();
+    await getRincianKomisi();
   }
 
   void goToPage(int page) {

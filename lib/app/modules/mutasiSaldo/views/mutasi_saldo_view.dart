@@ -58,6 +58,8 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
                         data == null
                             // ⏳ Skeletonizer
                             ? ListView.builder(
+                              physics:
+                                  AlwaysScrollableScrollPhysics(), // biar bisa tarik meski kosong
                               itemCount: 3,
                               itemBuilder:
                                   (context, index) => Container(
@@ -101,69 +103,81 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
                             )
                             : data.isNotEmpty
                             // ✅ Data tersedia
-                            ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Rincian Komisi",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                Expanded(
-                                  child: ListView.builder(
-                                    itemCount: data.length,
-                                    itemBuilder: (context, i) {
-                                      var item = data[i];
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 12,
-                                        ),
-                                        child: buildbalanceTransfer(
-                                          number: i + 1,
-                                          date: item['tanggal'] ?? '',
-                                          price:
-                                              formatRupiah(item['nominal']) ??
-                                              'Rp0',
-                                          status: _getStatus(item['status']),
-                                          statusColor: _getStatusColor(
-                                            item['status'],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                ReusablePagination(
-                                  nextPage: controller.nextPage,
-                                  prevPage: controller.prevPage,
-                                  currentPage: controller.currentPage,
-                                  totalPage: controller.totalPage,
-                                  goToPage: controller.goToPage,
-                                ),
-                              ],
-                            )
-                            // ❌ Data kosong
-                            : Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
+                            ? RefreshIndicator(
+                              color: Colors.teal,
+                              onRefresh: () => controller.refresh(),
+                              child: ListView(
                                 children: [
-                                  SvgPicture.asset(
-                                    "assets/emptyArchiveIcon.svg",
-                                    height: 150,
-                                  ),
-                                  SizedBox(height: 12),
                                   Text(
-                                    "Tidak ada transaksi",
+                                    "Rincian Komisi",
                                     style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
                                     ),
                                   ),
+                                  SizedBox(height: 20),
+                                  ...List.generate(data.length, (i) {
+                                    var item = data[i];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 12,
+                                      ),
+                                      child: buildbalanceTransfer(
+                                        number: i + 1,
+                                        date: item['tanggal'] ?? '',
+                                        price:
+                                            formatRupiah(item['nominal']) ??
+                                            'Rp0',
+                                        status: _getStatus(item['status']),
+                                        statusColor: _getStatusColor(
+                                          item['status'],
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                  SizedBox(height: 20),
+                                  ReusablePagination(
+                                    nextPage: controller.nextPage,
+                                    prevPage: controller.prevPage,
+                                    currentPage: controller.currentPage,
+                                    totalPage: controller.totalPage,
+                                    goToPage: controller.goToPage,
+                                  ),
                                 ],
+                              ),
+                            )
+                            // ❌ Data kosong
+                            : RefreshIndicator(
+                              color: Colors.teal,
+                              onRefresh: () async {
+                                await controller.getMutasiSaldo(
+                                  search: controller.searchController.text,
+                                );
+                              },
+                              child: SingleChildScrollView(
+                                physics: AlwaysScrollableScrollPhysics(),
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 100),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SvgPicture.asset(
+                                          "assets/emptyArchiveIcon.svg",
+                                          height: 150,
+                                        ),
+                                        SizedBox(height: 12),
+                                        Text(
+                                          "Tidak ada transaksi",
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                   ),
@@ -197,17 +211,22 @@ Widget buildbalanceTransfer({
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          number.toString(),
-          style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
+          spacing: 15,
           children: [
-            Text(date, style: TextStyle(fontSize: 10.0)),
             Text(
-              price,
-              style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+              number.toString(),
+              style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(date, style: TextStyle(fontSize: 10.0)),
+                Text(
+                  price,
+                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ],
         ),

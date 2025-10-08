@@ -33,173 +33,181 @@ class AffiliateView extends GetView<AffiliateController> {
           },
         ),
         body: SafeArea(
-          child: Obx(() {
-            return SingleChildScrollView(
-              padding: AppStyle.screenPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildKomisiCard(
-                    "Total Komisi",
-                    controller.komisiTotal.value,
-                  ),
-                  SizedBox(height: 12),
-                  _buildKomisiCard(
-                    "Komisi Tersedia",
-                    controller.komisiTersedia.value,
-                  ),
-                  SizedBox(height: 12),
-                  _buildKomisiCard(
-                    "Komisi Ditarik",
-                    controller.komisiDitarik.value,
-                  ),
-                  SizedBox(height: 24),
-                  Text("Informasi", style: AppStyle.styleW900),
-                  SizedBox(height: 8),
-                  _buildInfoItem(
-                    "Kamu berhak mendapatkan komisi atas setiap pembelian paket yang menggunakan kode referral kamu.",
-                  ),
-                  SizedBox(height: 8),
-                  _buildInfoItem(
-                    "Kamu dapat mengubah kode referral supaya lebih mudah diingat dan dibagikan.",
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.check_circle, size: 18, color: Colors.teal),
-                      SizedBox(width: 8),
+          child: RefreshIndicator(
+            backgroundColor: Colors.white,
+            color: Colors.teal,
+            onRefresh: () => controller.refresh(),
+            child: Obx(() {
+              return SingleChildScrollView(
+                padding: AppStyle.screenPadding,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildKomisiCard(
+                      "Total Komisi",
+                      controller.komisiTotal.value,
+                    ),
+                    SizedBox(height: 12),
+                    _buildKomisiCard(
+                      "Komisi Tersedia",
+                      controller.komisiTersedia.value,
+                    ),
+                    SizedBox(height: 12),
+                    _buildKomisiCard(
+                      "Komisi Ditarik",
+                      controller.komisiDitarik.value,
+                    ),
+                    SizedBox(height: 24),
+                    Text("Informasi", style: AppStyle.styleW900),
+                    SizedBox(height: 8),
+                    _buildInfoItem(
+                      "Kamu berhak mendapatkan komisi atas setiap pembelian paket yang menggunakan kode referral kamu.",
+                    ),
+                    SizedBox(height: 8),
+                    _buildInfoItem(
+                      "Kamu dapat mengubah kode referral supaya lebih mudah diingat dan dibagikan.",
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.check_circle, size: 18, color: Colors.teal),
+                        SizedBox(width: 8),
 
-                      Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            text: "Informasi selengkapnya : ",
-                            style: TextStyle(color: Colors.black, fontSize: 12),
-                            children: [
-                              TextSpan(
-                                text: "Klik disini.",
-                                style: TextStyle(color: Colors.blue),
-                                recognizer:
-                                    TapGestureRecognizer()
-                                      ..onTap = () {
-                                        // Panggil dialog ketika ditekan
-                                        showAfiliasiDialog(context);
-                                      },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24),
-                  Text("Kode Afiliasi Saya", style: AppStyle.styleW900),
-                  SizedBox(height: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextField(
-                        controller: controller.kodeController,
-                        focusNode: FocusNode(),
-                        readOnly: controller.affiliateStatus.value == true,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          isDense: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade400,
-                              width: 1.5,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade600,
-                              width: 1.8,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 12),
-                      Visibility(
-                        visible: controller.affiliateStatus.value == false,
-                        child: Container(
-                          margin: EdgeInsets.only(
-                            bottom: 12,
-                          ), // atas & bawah 12
-                          child: ElevatedButton(
-                            onPressed: controller.simpanKode,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.teal,
-                              minimumSize: Size(double.infinity, 48),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text(
-                              "Simpan",
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              text: "Informasi selengkapnya : ",
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
+                                color: Colors.black,
+                                fontSize: 12,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: "Klik disini.",
+                                  style: TextStyle(color: Colors.blue),
+                                  recognizer:
+                                      TapGestureRecognizer()
+                                        ..onTap = () {
+                                          // Panggil dialog ketika ditekan
+                                          showAfiliasiDialog(context);
+                                        },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 24),
+                    Text("Kode Afiliasi Saya", style: AppStyle.styleW900),
+                    SizedBox(height: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextField(
+                          controller: controller.kodeController,
+                          focusNode: FocusNode(),
+                          readOnly: controller.affiliateStatus.value == true,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            isDense: true,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade400,
+                                width: 1.5,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade600,
+                                width: 1.8,
                               ),
                             ),
                           ),
                         ),
-                      ),
+                        SizedBox(height: 12),
+                        Visibility(
+                          visible: controller.affiliateStatus.value == false,
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              bottom: 12,
+                            ), // atas & bawah 12
+                            child: ElevatedButton(
+                              onPressed: controller.simpanKode,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                minimumSize: Size(double.infinity, 48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                "Simpan",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
 
-                      Text(
-                        "Kamu tidak dapat mengubah kode referral jika sudah ada user lain yang memakai kode referral kamu saat daftar.",
-                        style: TextStyle(color: Colors.black87, fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 32),
-                  Column(
-                    children: [
-                      _buildMenuItem(
-                        icon: Icons.insert_drive_file,
-                        title: "Rincian Komisi",
-                        subtitle: "Lihat rincian komisi anda",
-                        onTap: () {
-                          // Aksi ketika diklik
-                          Get.offNamed(Routes.COMMISION_DETAIL);
-                        },
-                      ),
-                      SizedBox(height: 12),
-                      _buildMenuItem(
-                        icon: Icons.attach_money,
-                        title: "Tarik Komisi",
-                        subtitle: "Ajukan penarikan komisi",
-                        onTap: () {
-                          Get.toNamed(Routes.TARIK_KOMISI);
-                        },
-                      ),
-                      SizedBox(height: 12),
-                      _buildMenuItem(
-                        icon: Icons.account_balance,
-                        title: "Rekening",
-                        subtitle: "Atur rekening untuk penarikan komisi",
-                        onTap: () {
-                          Get.toNamed(Routes.REKENING);
-                        },
-                      ),
-                      SizedBox(height: 12),
-                      _buildMenuItem(
-                        icon: Icons.history,
-                        title: "Mutasi Saldo",
-                        subtitle: "Lihat riwayat penarikan komisi",
-                        onTap: () {
-                          Get.toNamed(Routes.MUTASI_SALDO);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          }),
+                        Text(
+                          "Kamu tidak dapat mengubah kode referral jika sudah ada user lain yang memakai kode referral kamu saat daftar.",
+                          style: TextStyle(color: Colors.black87, fontSize: 15),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 32),
+                    Column(
+                      children: [
+                        _buildMenuItem(
+                          icon: Icons.insert_drive_file,
+                          title: "Rincian Komisi",
+                          subtitle: "Lihat rincian komisi anda",
+                          onTap: () {
+                            // Aksi ketika diklik
+                            Get.offNamed(Routes.COMMISION_DETAIL);
+                          },
+                        ),
+                        SizedBox(height: 12),
+                        _buildMenuItem(
+                          icon: Icons.attach_money,
+                          title: "Tarik Komisi",
+                          subtitle: "Ajukan penarikan komisi",
+                          onTap: () {
+                            Get.toNamed(Routes.TARIK_KOMISI);
+                          },
+                        ),
+                        SizedBox(height: 12),
+                        _buildMenuItem(
+                          icon: Icons.account_balance,
+                          title: "Rekening",
+                          subtitle: "Atur rekening untuk penarikan komisi",
+                          onTap: () {
+                            Get.toNamed(Routes.REKENING);
+                          },
+                        ),
+                        SizedBox(height: 12),
+                        _buildMenuItem(
+                          icon: Icons.history,
+                          title: "Mutasi Saldo",
+                          subtitle: "Lihat riwayat penarikan komisi",
+                          onTap: () {
+                            Get.toNamed(Routes.MUTASI_SALDO);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
         ),
       ),
     );

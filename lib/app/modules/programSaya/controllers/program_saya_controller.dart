@@ -22,8 +22,7 @@ class ProgramSayaController extends GetxController {
 
   @override
   void onInit() {
-    getTryout();
-    getKategori();
+    refresh();
     tryoutData.listen((data) {
       if (data.isNotEmpty) {
         showSkeleton.value = false; // ada data, langsung matiin skeleton
@@ -37,12 +36,6 @@ class ProgramSayaController extends GetxController {
       }
     });
 
-    // fallback timer kalau tetap kosong setelah 5 detik
-    Future.delayed(const Duration(seconds: 5), () {
-      if (tryoutData.isEmpty && bimbelData.isEmpty) {
-        showSkeleton.value = false;
-      }
-    });
     super.onInit();
   }
 
@@ -54,6 +47,19 @@ class ProgramSayaController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> refresh() async {
+    searchController.clear();
+    selectedEventKategori.value = "Semua";
+    if (selectedTab.value == 0) {
+      getTryout(submenuCategoryId: "0");
+    } else {
+      getBimbel(submenuCategoryId: "0");
+    }
+    selectedTab.value = 0;
+    await getTryout();
+    await getKategori();
   }
 
   // ganti tab

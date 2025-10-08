@@ -28,8 +28,32 @@ class TarikKomisiController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getMutasi();
+  }
 
+  Future<void> getMutasi() async {
+    try {
+      final url = baseUrl + apiGetRekeningUser;
+      final result = await _restClient.getData(url: url);
+
+      if (result["status"] == "success") {
+        bankList.value = result['data'];
+      } else {
+        notifHelper.show(
+          result["messages"] ?? "Gagal memuat data bank",
+          type: 0,
+        );
+      }
+    } catch (e) {
+      notifHelper.show("Error memuat data bank: $e", type: 0);
+    }
+  }
+
+  Future<void> refresh() async {
+    nominalController.clear();
+    rekeningNum.value = "";
+    nominalValue.value = 0;
+    rekeningId.value = 0;
+    await getMutasi();
     nominalController.addListener(() {
       final text = nominalController.text.replaceAll('.', '');
       if (text.isEmpty) {
@@ -50,24 +74,6 @@ class TarikKomisiController extends GetxController {
         );
       }
     });
-  }
-
-  Future<void> getMutasi() async {
-    try {
-      final url = baseUrl + apiGetRekeningUser;
-      final result = await _restClient.getData(url: url);
-
-      if (result["status"] == "success") {
-        bankList.value = result['data'];
-      } else {
-        notifHelper.show(
-          result["messages"] ?? "Gagal memuat data bank",
-          type: 0,
-        );
-      }
-    } catch (e) {
-      notifHelper.show("Error memuat data bank: $e", type: 0);
-    }
   }
 
   Future<void> postMutasi() async {
