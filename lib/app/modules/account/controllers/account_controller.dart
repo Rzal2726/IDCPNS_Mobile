@@ -21,7 +21,7 @@ class AccountController extends GetxController {
 
   @override
   void onInit() {
-    getUser();
+    refresh();
     super.onInit();
     checkMaintenance();
   }
@@ -36,6 +36,11 @@ class AccountController extends GetxController {
     super.onClose();
   }
 
+  Future<void> refresh() async {
+    await getUser();
+  }
+
+  /// Fungsi logout aman
   Future<void> logoutAkun() async {
     isLoggingOut.value = true;
     try {

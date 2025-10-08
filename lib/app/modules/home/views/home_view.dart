@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
@@ -42,18 +43,34 @@ class HomeView extends GetView<HomeController> {
               controller.changeBottomBar(index);
               controller.currentIndex.value = index;
             },
+
             items: [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
               BottomNavigationBarItem(
-                icon: Icon(Icons.assignment),
+                icon: SvgPicture.asset(
+                  'assets/tryoutHomeIcon.svg',
+                  color: Colors.grey,
+                  width: 22,
+                  height: 22,
+                ),
                 label: 'Tryout',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.school),
+                icon: SvgPicture.asset(
+                  'assets/bimbelHomeIcon.svg',
+                  color: Colors.grey,
+                  width: 22,
+                  height: 22,
+                ),
                 label: 'Bimbel',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.diamond_sharp),
+                icon: SvgPicture.asset(
+                  'assets/platinumHomeIcon.svg',
+                  color: Colors.grey,
+                  width: 22,
+                  height: 22,
+                ),
                 label: 'Platinum',
               ),
               BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Akun'),
