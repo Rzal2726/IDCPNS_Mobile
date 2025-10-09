@@ -19,264 +19,328 @@ class DetailEventView extends GetView<DetailEventController> {
       backgroundColor: Colors.white,
       appBar: secondaryAppBar("Detail Event"),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Obx(() {
-                  if (controller.loading.value) {
-                    return Skeletonizer(child: Image.asset("assets/logo.png"));
-                  } else {
-                    if (controller.dataEvent.isEmpty) {
-                      return Image.asset("assets/logo.png");
-                    } else {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          controller.dataEvent['gambar'],
-                          loadingBuilder: (
-                            BuildContext context,
-                            Widget child,
-                            ImageChunkEvent? loadingProgress,
-                          ) {
-                            if (loadingProgress == null) {
-                              return child; // Image is fully loaded, display the image
-                            }
-                            return Skeletonizer(
-                              child: Image.asset("assets/logo.png"),
-                            );
-                          },
-                        ),
+        child: RefreshIndicator(
+          backgroundColor: Colors.white,
+          color: Colors.teal,
+          onRefresh: () => controller.initEvent(),
+          child: SingleChildScrollView(
+            child: Container(
+              margin: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Obx(() {
+                    if (controller.loading.value) {
+                      return Skeletonizer(
+                        child: Image.asset("assets/logo.png"),
                       );
-                    }
-                  }
-                }),
-                SizedBox(height: 16),
-                Obx(() {
-                  if (controller.loading.value == true) {
-                    return Skeletonizer(child: Text("Judul"));
-                  } else {
-                    if (controller.dataEvent.isEmpty) {
-                      return Text("Judul");
                     } else {
-                      return Text(
-                        controller.dataEvent['name'],
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                      );
+                      if (controller.dataEvent.isEmpty) {
+                        return Image.asset("assets/logo.png");
+                      } else {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            controller.dataEvent['gambar'],
+                            loadingBuilder: (
+                              BuildContext context,
+                              Widget child,
+                              ImageChunkEvent? loadingProgress,
+                            ) {
+                              if (loadingProgress == null) {
+                                return child; // Image is fully loaded, display the image
+                              }
+                              return Skeletonizer(
+                                child: Image.asset("assets/logo.png"),
+                              );
+                            },
+                          ),
+                        );
+                      }
                     }
-                  }
-                }),
-                SizedBox(height: 16),
-                Obx(() {
-                  if (controller.loading.value == true) {
-                    return Skeletonizer(child: Text("Judul"));
-                  } else {
-                    if (controller.dataEvent.isEmpty) {
-                      return Text("Judul");
+                  }),
+                  SizedBox(height: 16),
+                  Obx(() {
+                    if (controller.loading.value == true) {
+                      return Skeletonizer(child: Text("Judul"));
                     } else {
-                      return Row(
-                        spacing: 8,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(Icons.star, color: Colors.amber),
-                          Text(controller.dataEvent['review'].toString()),
-                          Icon(Icons.circle, size: 8),
-                          Icon(Icons.group, color: Colors.amber),
-
-                          Text(
-                            "${controller.dataEvent['jumlah_beli']} Sudah Bergabung",
+                      if (controller.dataEvent.isEmpty) {
+                        return Text("Judul");
+                      } else {
+                        return Text(
+                          controller.dataEvent['name'],
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
                           ),
-                        ],
-                      );
+                        );
+                      }
                     }
-                  }
-                }),
+                  }),
+                  SizedBox(height: 16),
+                  Obx(() {
+                    if (controller.loading.value == true) {
+                      return Skeletonizer(child: Text("Judul"));
+                    } else {
+                      if (controller.dataEvent.isEmpty) {
+                        return Text("Judul");
+                      } else {
+                        return Row(
+                          spacing: 8,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.star, color: Colors.amber),
+                            Text(controller.dataEvent['review'].toString()),
+                            Icon(Icons.circle, size: 8),
+                            Icon(Icons.group, color: Colors.amber),
 
-                SizedBox(height: 16),
-
-                Obx(() {
-                  if (controller.loading.value) {
-                    return Skeletonizer(
-                      child: _buildRadioOption("Premmium", "0", "1", true),
-                    );
-                  } else {
-                    if (controller.userData['level_name'] != "Platinum") {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Jenis Paket",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          _buildRadioOption(
-                            "Gratis ${controller.dataEvent["free_access"] ? "" : "(Sudah Berakhir)"}",
-                            "0",
-                            "Free",
-                            controller.dataEvent["free_access"],
-                          ),
-                          _buildRadioOption(
-                            "Premium",
-                            controller.formatCurrency(
-                              controller.dataEvent["harga_fix"].toString(),
+                            Text(
+                              "${controller.dataEvent['jumlah_beli']} Sudah Bergabung",
                             ),
-                            controller.dataEvent["uuid"],
-                            true,
-                          ),
-                        ],
+                          ],
+                        );
+                      }
+                    }
+                  }),
+
+                  SizedBox(height: 16),
+
+                  Obx(() {
+                    if (controller.loading.value) {
+                      return Skeletonizer(
+                        child: _buildRadioOption("Premmium", "0", "1", true),
                       );
                     } else {
-                      return SizedBox();
-                    }
-                  }
-                }),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
                       if (controller.userData['level_name'] != "Platinum") {
-                        if (controller.selectedPaket.value == "") {
-                          notifHelper.show(
-                            "Mohon pilih paket terlebih dahulu",
-                            type: 0,
-                          );
-                          return;
-                        }
-                      }
-                      if (controller.selectedPaket.value == "Free") {
-                        Get.toNamed(
-                          "/tryout-event-free-payment",
-                          arguments: controller.uuid,
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Jenis Paket",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            _buildRadioOption(
+                              "Gratis ${controller.dataEvent["free_access"] ? "" : "(Sudah Berakhir)"}",
+                              "0",
+                              "Free",
+                              controller.dataEvent['is_purchase']
+                                  ? false
+                                  : controller.dataEvent["free_access"],
+                            ),
+                            _buildRadioOption(
+                              "Premium",
+                              controller.formatCurrency(
+                                controller.dataEvent["harga_fix"].toString(),
+                              ),
+                              controller.dataEvent["uuid"],
+                              controller.dataEvent['is_purchase']
+                                  ? false
+                                  : true,
+                            ),
+                          ],
                         );
                       } else {
-                        Get.toNamed(
-                          "/tryout-event-payment",
-                          arguments: controller.uuid,
-                        );
+                        return SizedBox();
                       }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal.shade300,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
+                    }
+                  }),
+                  SizedBox(
+                    width: double.infinity,
                     child: Obx(() {
-                      if (controller.loading.value == true) {
-                        return Skeletonizer(child: Text("Loading.."));
+                      if (controller.dataEvent.isEmpty) {
+                        return Skeletonizer(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              return;
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal.shade300,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            child: Text('lorem ipsum'),
+                          ),
+                        );
+                      }
+
+                      if (controller.dataEvent['is_purchase'] &&
+                          controller.dataEvent['is_verification']) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Text(
+                            "Persyaratan sedang diverifikasi",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.amber,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        );
                       } else {
-                        if (controller.userData['level_name'] != "Platinum") {
-                          return Text("Daftar Sekarang");
-                        } else {
-                          return Text("Klaim");
-                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            if (controller.dataEvent['is_purchase']) {
+                              Get.toNamed(
+                                "/detail-tryout-saya",
+                                arguments:
+                                    controller
+                                        .dataEvent['tryout_transaction_id'],
+                              );
+                              return;
+                            }
+                            if (controller.userData['level_name'] !=
+                                "Platinum") {
+                              if (controller.selectedPaket.value == "") {
+                                notifHelper.show(
+                                  "Mohon pilih paket terlebih dahulu",
+                                  type: 0,
+                                );
+                                return;
+                              }
+                            }
+                            if (controller.selectedPaket.value == "Free") {
+                              Get.toNamed(
+                                "/tryout-event-free-payment",
+                                arguments: controller.uuid,
+                              );
+                            } else {
+                              Get.toNamed(
+                                "/tryout-event-payment",
+                                arguments: controller.uuid,
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal.shade300,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          child: Obx(() {
+                            if (controller.loading.value == true) {
+                              return Skeletonizer(child: Text("Loading.."));
+                            } else {
+                              if (controller.dataEvent['is_purchase']) {
+                                return Text("Tryout Saya");
+                              }
+                              if (controller.userData['level_name'] !=
+                                  "Platinum") {
+                                return Text("Daftar Sekarang");
+                              } else {
+                                return Text("Klaim");
+                              }
+                            }
+                          }),
+                        );
                       }
                     }),
                   ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  "Ingin mendapatkan setiap event tryout premium secara gratis?",
-                ),
-                InkWell(
-                  onTap: () {
-                    Get.offNamed("/upgrade-akun");
-                  },
-                  child: Text(
-                    "Upgrade ke platinum sekarang!",
-                    style: TextStyle(
-                      color: Colors.teal,
-                      fontWeight: FontWeight.bold,
+                  SizedBox(height: 16),
+                  Text(
+                    "Ingin mendapatkan setiap event tryout premium secara gratis?",
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Get.offNamed("/upgrade-akun");
+                    },
+                    child: Text(
+                      "Upgrade ke platinum sekarang!",
+                      style: TextStyle(
+                        color: Colors.teal,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 16),
-                Obx(() {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children:
-                        controller.option.map((option) {
-                          final isSelected =
-                              controller.selectedOption.value == option;
-                          return GestureDetector(
-                            onTap:
-                                () => controller.selectedOption.value = option,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    option,
-                                    style: TextStyle(
-                                      color:
-                                          isSelected
-                                              ? Colors.teal
-                                              : Colors.grey[700],
-                                      fontWeight:
-                                          isSelected
-                                              ? FontWeight.bold
-                                              : FontWeight.normal,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  AnimatedContainer(
-                                    duration: Duration(milliseconds: 200),
-                                    height: 2,
-                                    width: isSelected ? 20 : 0,
-                                    color: Colors.teal,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                  );
-                }),
-                Obx(() {
-                  final option = controller.selectedOption.value;
-
-                  if (controller.loading == true) {
-                    return Skeletonizer(child: Text("data"));
-                  }
-
-                  switch (option) {
-                    case "FAQ":
-                      return Container(
-                        margin: const EdgeInsets.all(16),
-                        child:
-                            controller.dataEvent.isEmpty
-                                ? const Center(child: Text("Tidak ada FAQ"))
-                                : _htmlCard(controller.dataEvent['faq_mobile']),
-                      );
-                    default: // Detail
-                      return Container(
-                        margin: const EdgeInsets.all(16),
-                        child:
-                            controller.dataEvent.isEmpty
-                                ? const Skeletonizer(
-                                  enabled: true,
-                                  child: Text(
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel velit in nisi pulvinar ornare. Integer faucibus mauris nec mauris aliquet, eget molestie tortor auctor. Phasellus sit amet congue purus. Curabitur cursus mauris quis sapien aliquet rhoncus. Donec semper nibh mollis orci posuere pulvinar. Vestibulum suscipit eu massa elementum efficitur",
-                                  ),
-                                )
-                                : _htmlCard(
-                                  controller.dataEvent['deskripsi_mobile'],
+                  SizedBox(height: 16),
+                  Obx(() {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children:
+                          controller.option.map((option) {
+                            final isSelected =
+                                controller.selectedOption.value == option;
+                            return GestureDetector(
+                              onTap:
+                                  () =>
+                                      controller.selectedOption.value = option,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
                                 ),
-                      );
-                  }
-                }),
-              ],
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      option,
+                                      style: TextStyle(
+                                        color:
+                                            isSelected
+                                                ? Colors.teal
+                                                : Colors.grey[700],
+                                        fontWeight:
+                                            isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    AnimatedContainer(
+                                      duration: Duration(milliseconds: 200),
+                                      height: 2,
+                                      width: isSelected ? 20 : 0,
+                                      color: Colors.teal,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                    );
+                  }),
+                  Obx(() {
+                    final option = controller.selectedOption.value;
+
+                    if (controller.loading == true) {
+                      return Skeletonizer(child: Text("data"));
+                    }
+
+                    switch (option) {
+                      case "FAQ":
+                        return Container(
+                          margin: const EdgeInsets.all(16),
+                          child:
+                              controller.dataEvent.isEmpty
+                                  ? const Center(child: Text("Tidak ada FAQ"))
+                                  : _htmlCard(
+                                    controller.dataEvent['faq_mobile'],
+                                  ),
+                        );
+                      default: // Detail
+                        return Container(
+                          margin: const EdgeInsets.all(16),
+                          child:
+                              controller.dataEvent.isEmpty
+                                  ? const Skeletonizer(
+                                    enabled: true,
+                                    child: Text(
+                                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel velit in nisi pulvinar ornare. Integer faucibus mauris nec mauris aliquet, eget molestie tortor auctor. Phasellus sit amet congue purus. Curabitur cursus mauris quis sapien aliquet rhoncus. Donec semper nibh mollis orci posuere pulvinar. Vestibulum suscipit eu massa elementum efficitur",
+                                    ),
+                                  )
+                                  : _htmlCard(
+                                    controller.dataEvent['deskripsi_mobile'],
+                                  ),
+                        );
+                    }
+                  }),
+                ],
+              ),
             ),
           ),
         ),

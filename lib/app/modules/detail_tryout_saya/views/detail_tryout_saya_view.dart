@@ -205,7 +205,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                                     DateTime.now().toString(),
                                                     controller
                                                         .tryOutSaya['tryout']['startdate'],
-                                                  ) <
+                                                  ) <=
                                                   0
                                           ? Colors.amber
                                           : controller.tryOutSaya['isdone'] == 1
@@ -229,7 +229,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                             DateTime.now().toString(),
                                             controller
                                                 .tryOutSaya['tryout']['startdate'],
-                                          ) <
+                                          ) <=
                                           0) {
                                     showModalBottomSheet(
                                       useSafeArea: false,
@@ -242,29 +242,140 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                             width: double.infinity,
                                             child: Padding(
                                               padding: EdgeInsets.all(32),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        'Tryout Belum Dimulai',
+                                              child: Obx(
+                                                () => Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Center(
+                                                      child: SvgPicture.asset(
+                                                        'assets/icon/info.svg',
                                                       ),
-                                                      IconButton(
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Center(
+                                                      child: Text(
+                                                        'Tryout akan dimulai pada',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Center(
+                                                      child: Text(
+                                                        controller
+                                                            .remaining
+                                                            .value,
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 20),
+                                                    ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.teal,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      onPressed: () {
+                                                        Get.find<
+                                                              DetailTryoutSayaController
+                                                            >()
+                                                            .addToCalendar(
+                                                              title:
+                                                                  'Tryout SKD CPNS 2024',
+                                                              startDate:
+                                                                  DateTime.parse(
+                                                                    controller
+                                                                        .tryOutSaya['tryout']['startdate'],
+                                                                  ), // DateTime
+                                                              endDate:
+                                                                  DateTime.parse(
+                                                                    controller
+                                                                        .tryOutSaya['tryout']['enddate'],
+                                                                  ), // DateTime
+                                                              description:
+                                                                  'Jangan telat ya!',
+                                                              location:
+                                                                  'Online',
+                                                              url:
+                                                                  'https://idcpns.com/app/tryout/me/${controller.uuid}',
+                                                            );
+                                                      },
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons
+                                                                .calendar_month_outlined,
+                                                            size: 18,
+                                                          ),
+
+                                                          Text(
+                                                            "Tambahkan ke kalender",
+                                                            textAlign:
+                                                                TextAlign
+                                                                    .center,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 2,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      child: ElevatedButton(
                                                         onPressed:
                                                             () => Navigator.pop(
                                                               context,
                                                             ),
-                                                        icon: Icon(Icons.close),
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.white,
+                                                          foregroundColor:
+                                                              Colors.teal,
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  8,
+                                                                ),
+                                                            side: BorderSide(
+                                                              color:
+                                                                  Colors.teal,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          "Kembali",
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          overflow:
+                                                              TextOverflow
+                                                                  .ellipsis,
+                                                          maxLines: 2,
+                                                        ),
                                                       ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -642,7 +753,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                                 DateTime.now().toString(),
                                                 controller
                                                     .tryOutSaya['tryout']['startdate'],
-                                              ) <
+                                              ) <=
                                               0
                                       ? "Tryout Belum Dimulai"
                                       : controller.tryOutSaya['isdone'] == 1

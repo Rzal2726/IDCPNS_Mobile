@@ -10,6 +10,7 @@ import 'package:idcpns_mobile/app/modules/notification/views/notification_view.d
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:idcpns_mobile/app/Components/widgets/wdigetTryoutEventCard.dart';
 import '../controllers/tryout_controller.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 class TryoutView extends GetView<TryoutController> {
   TryoutView({Key? key}) : super(key: key);
@@ -42,17 +43,16 @@ class TryoutView extends GetView<TryoutController> {
           color: Colors.teal,
           onRefresh: () => controller.initTryout(),
           child: SingleChildScrollView(
+            padding: AppStyle.sreenPaddingHome,
             child: Column(
               // 🚀 Hapus Expanded
               children: [
-                SizedBox(height: 20),
                 // Tryout Saya box
                 InkWell(
                   onTap: () {
                     Get.toNamed("/tryout-saya");
                   },
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16),
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     decoration: BoxDecoration(
                       color: Colors.teal.shade50,
@@ -63,7 +63,7 @@ class TryoutView extends GetView<TryoutController> {
                       children: [
                         Row(
                           children: [
-                            Container(
+                            SizedBox(
                               width: 40,
                               height: 40,
 
@@ -121,226 +121,213 @@ class TryoutView extends GetView<TryoutController> {
                         ),
                       ],
                     )
-                    : Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Event Tryout Gratis",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Event Tryout Gratis",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Text(
-                            "Ikuti tryout akbar gratis bersama ribuan peserta lainnya.",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
-                          ),
-                          SizedBox(height: 8),
-                          TextField(
-                            controller: eventTextController,
-                            onChanged:
-                                (value) => controller.showEventTryout(
-                                  name: value,
-                                  category:
-                                      controller.selectedEventKategori.value,
-                                ),
+                        ),
+                        Text(
+                          "Ikuti tryout akbar gratis bersama ribuan peserta lainnya.",
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        SizedBox(height: 8),
+                        TextField(
+                          controller: eventTextController,
+                          onChanged:
+                              (value) => controller.showEventTryout(
+                                name: value,
+                                category:
+                                    controller.selectedEventKategori.value,
+                              ),
 
-                            decoration: InputDecoration(
-                              labelStyle: TextStyle(color: Colors.grey),
-                              labelText: "Cari",
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.teal,
-                                  width: 1.5,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.teal,
-                                  width: 2.0,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              suffixIcon: Icon(
-                                Icons.search,
-                                color: Colors.black,
-                              ),
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(color: Colors.grey),
+                            labelText: "Cari",
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
                             ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.teal,
+                                width: 1.5,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.teal,
+                                width: 2.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            suffixIcon: Icon(Icons.search, color: Colors.black),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
 
                 SizedBox(height: 16),
 
                 // filter button
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          useSafeArea: false,
-                          context: context,
-                          builder: (ctx) {
-                            return StatefulBuilder(
-                              builder: (context, setState) {
-                                return SafeArea(
-                                  child: Container(
-                                    color: Colors.white,
-                                    padding: EdgeInsets.all(16),
-                                    child: Column(
-                                      mainAxisSize:
-                                          MainAxisSize
-                                              .min, // biar bottomsheet menyesuaikan isi
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Row(
-                                        //   mainAxisAlignment:
-                                        //       MainAxisAlignment.end,
-                                        //   children: [
-                                        //     TextButton(
-                                        //       onPressed: () {
-                                        //         controller
-                                        //             .selectedEventKategori
-                                        //             .value = "Semua";
-                                        //       },
-                                        //       child: Text(
-                                        //         "Atur Ulang",
-                                        //         style: TextStyle(
-                                        //           fontSize: 16,
-                                        //           fontWeight: FontWeight.bold,
-                                        //           color: Colors.pink,
-                                        //         ),
-                                        //       ),
-                                        //     ),
-                                        //   ],
-                                        // ),
-                                        const Text(
-                                          "Jenis Tryout",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        useSafeArea: false,
+                        context: context,
+                        builder: (ctx) {
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return SafeArea(
+                                child: Container(
+                                  color: Colors.white,
+                                  padding: EdgeInsets.all(16),
+                                  child: Column(
+                                    mainAxisSize:
+                                        MainAxisSize
+                                            .min, // biar bottomsheet menyesuaikan isi
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.end,
+                                      //   children: [
+                                      //     TextButton(
+                                      //       onPressed: () {
+                                      //         controller
+                                      //             .selectedEventKategori
+                                      //             .value = "Semua";
+                                      //       },
+                                      //       child: Text(
+                                      //         "Atur Ulang",
+                                      //         style: TextStyle(
+                                      //           fontSize: 16,
+                                      //           fontWeight: FontWeight.bold,
+                                      //           color: Colors.pink,
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //   ],
+                                      // ),
+                                      const Text(
+                                        "Jenis Tryout",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        const SizedBox(height: 8),
+                                      ),
+                                      const SizedBox(height: 8),
 
-                                        Obx(
-                                          () => Wrap(
-                                            spacing: 8,
-                                            children:
-                                                controller.options.value.map((
-                                                  option,
-                                                ) {
-                                                  final isSelected =
-                                                      controller
-                                                          .selectedEventKategori
-                                                          .value ==
-                                                      option;
-                                                  return ChoiceChip(
-                                                    label: Text(
-                                                      option,
-                                                      style: TextStyle(
-                                                        color:
-                                                            isSelected
-                                                                ? Colors.teal
-                                                                : Colors
-                                                                    .grey[700],
-                                                        fontWeight:
-                                                            isSelected
-                                                                ? FontWeight
-                                                                    .bold
-                                                                : FontWeight
-                                                                    .normal,
-                                                      ),
-                                                    ),
-                                                    selected: isSelected,
-                                                    selectedColor: Colors.teal
-                                                        .withOpacity(0.1),
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    shape: RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                        color:
-                                                            isSelected
-                                                                ? Colors.teal
-                                                                : Colors
-                                                                    .grey
-                                                                    .shade400,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            6,
-                                                          ),
-                                                    ),
-                                                    onSelected: (value) {
-                                                      controller
-                                                          .selectedEventKategori
-                                                          .value = option;
-                                                    },
-                                                  );
-                                                }).toList(),
-                                          ),
-                                        ),
-
-                                        const SizedBox(height: 12),
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Colors.teal, // warna tombol
-                                              foregroundColor:
-                                                  Colors
-                                                      .white, // warna teks/icon
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 24,
-                                                    vertical: 12,
-                                                  ),
-                                            ),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                              controller.showEventTryout(
-                                                name: eventTextController.text,
-                                                category:
+                                      Obx(
+                                        () => Wrap(
+                                          spacing: 8,
+                                          children:
+                                              controller.options.value.map((
+                                                option,
+                                              ) {
+                                                final isSelected =
                                                     controller
                                                         .selectedEventKategori
-                                                        .value,
-                                              );
-                                            },
-                                            child: const Text("Cari"),
-                                          ),
+                                                        .value ==
+                                                    option;
+                                                return ChoiceChip(
+                                                  label: Text(
+                                                    option,
+                                                    style: TextStyle(
+                                                      color:
+                                                          isSelected
+                                                              ? Colors.teal
+                                                              : Colors
+                                                                  .grey[700],
+                                                      fontWeight:
+                                                          isSelected
+                                                              ? FontWeight.bold
+                                                              : FontWeight
+                                                                  .normal,
+                                                    ),
+                                                  ),
+                                                  selected: isSelected,
+                                                  selectedColor: Colors.teal
+                                                      .withOpacity(0.1),
+                                                  backgroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                      color:
+                                                          isSelected
+                                                              ? Colors.teal
+                                                              : Colors
+                                                                  .grey
+                                                                  .shade400,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          6,
+                                                        ),
+                                                  ),
+                                                  onSelected: (value) {
+                                                    controller
+                                                        .selectedEventKategori
+                                                        .value = option;
+                                                  },
+                                                );
+                                              }).toList(),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+
+                                      const SizedBox(height: 12),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.teal, // warna tombol
+                                            foregroundColor:
+                                                Colors.white, // warna teks/icon
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 24,
+                                              vertical: 12,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            controller.showEventTryout(
+                                              name: eventTextController.text,
+                                              category:
+                                                  controller
+                                                      .selectedEventKategori
+                                                      .value,
+                                            );
+                                          },
+                                          child: const Text("Cari"),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('Filter', style: TextStyle(color: Colors.teal)),
-                          Icon(Icons.keyboard_arrow_down, color: Colors.teal),
-                        ],
-                      ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Filter', style: TextStyle(color: Colors.teal)),
+                        Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                      ],
                     ),
                   ),
                 ),
@@ -372,43 +359,40 @@ class TryoutView extends GetView<TryoutController> {
                     );
                   }
 
-                  return Container(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        children: [
-                          for (var data in controller.eventTryout)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: SizedBox(
-                                width: 300, // biar card rapi & konsisten
-                                child: GestureDetector(
-                                  onTap: () {
-                                    if (data['is_purchase']) {
-                                      Get.toNamed(
-                                        "detail-tryout-saya",
-                                        arguments:
-                                            data['tryout_transaction_id'],
-                                      );
-                                    } else {
-                                      Get.toNamed(
-                                        "/detail-event",
-                                        arguments: data['uuid'],
-                                      );
-                                    }
-                                  },
-                                  child: buildTryoutCard(
-                                    status: data['label_text'],
-                                    title: data['name'],
-                                    dateRange: data['range_date_string'],
-                                    period: data['periode_text'],
-                                  ),
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (var data in controller.eventTryout)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: SizedBox(
+                              width: 300, // biar card rapi & konsisten
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (data['is_purchase'] &&
+                                      !data['is_verification']) {
+                                    Get.toNamed(
+                                      "detail-tryout-saya",
+                                      arguments: data['tryout_transaction_id'],
+                                    );
+                                  } else {
+                                    Get.toNamed(
+                                      "/detail-event",
+                                      arguments: data['uuid'],
+                                    );
+                                  }
+                                },
+                                child: buildTryoutCard(
+                                  status: data['label_text'],
+                                  title: data['name'],
+                                  dateRange: data['range_date_string'],
+                                  period: data['periode_text'],
                                 ),
                               ),
                             ),
-                        ],
-                      ),
+                          ),
+                      ],
                     ),
                   );
                 }),
@@ -441,7 +425,6 @@ class TryoutView extends GetView<TryoutController> {
                   }
 
                   return Container(
-                    margin: EdgeInsets.all(16),
                     padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                     decoration: BoxDecoration(
                       border: Border.all(width: 0, color: Colors.transparent),
@@ -563,7 +546,7 @@ class TryoutView extends GetView<TryoutController> {
                       ],
                     )
                     : Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.symmetric(vertical: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -603,177 +586,167 @@ class TryoutView extends GetView<TryoutController> {
                       ),
                     ),
 
-                SizedBox(height: 16),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          useSafeArea: false,
-                          context: context,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(16),
-                            ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        useSafeArea: false,
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
                           ),
-                          builder: (ctx) {
-                            return StatefulBuilder(
-                              builder: (context, setState) {
-                                return SafeArea(
-                                  child: Container(
-                                    color: Colors.white,
-                                    padding: EdgeInsets.all(16),
-                                    child: Column(
-                                      mainAxisSize:
-                                          MainAxisSize
-                                              .min, // biar bottomsheet menyesuaikan isi
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Row(
-                                        //   mainAxisAlignment:
-                                        //       MainAxisAlignment.end,
-                                        //   children: [
-                                        //     TextButton(
-                                        //       onPressed: () {
-                                        //         controller
-                                        //             .selectedPaketKategori
-                                        //             .value = "Semua";
-                                        //       },
-                                        //       child: Text(
-                                        //         "Atur Ulang",
-                                        //         style: TextStyle(
-                                        //           fontSize: 16,
-                                        //           fontWeight: FontWeight.bold,
-                                        //           color: Colors.pink,
-                                        //         ),
-                                        //       ),
-                                        //     ),
-                                        //   ],
-                                        // ),
-                                        const Text(
-                                          "Jenis Tryout",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                        ),
+                        builder: (ctx) {
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return SafeArea(
+                                child: Container(
+                                  color: Colors.white,
+                                  padding: EdgeInsets.all(16),
+                                  child: Column(
+                                    mainAxisSize:
+                                        MainAxisSize
+                                            .min, // biar bottomsheet menyesuaikan isi
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.end,
+                                      //   children: [
+                                      //     TextButton(
+                                      //       onPressed: () {
+                                      //         controller
+                                      //             .selectedPaketKategori
+                                      //             .value = "Semua";
+                                      //       },
+                                      //       child: Text(
+                                      //         "Atur Ulang",
+                                      //         style: TextStyle(
+                                      //           fontSize: 16,
+                                      //           fontWeight: FontWeight.bold,
+                                      //           color: Colors.pink,
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //   ],
+                                      // ),
+                                      const Text(
+                                        "Jenis Tryout",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        const SizedBox(height: 8),
+                                      ),
+                                      const SizedBox(height: 12),
 
-                                        Obx(
-                                          () => Wrap(
-                                            spacing: 8,
-                                            children:
-                                                controller.options.value.map((
-                                                  option,
-                                                ) {
-                                                  final isSelected =
-                                                      controller
-                                                          .selectedPaketKategori
-                                                          .value ==
-                                                      option;
-                                                  return ChoiceChip(
-                                                    label: Text(
-                                                      option,
-                                                      style: TextStyle(
-                                                        color:
-                                                            isSelected
-                                                                ? Colors.teal
-                                                                : Colors
-                                                                    .grey[700],
-                                                        fontWeight:
-                                                            isSelected
-                                                                ? FontWeight
-                                                                    .bold
-                                                                : FontWeight
-                                                                    .normal,
-                                                      ),
-                                                    ),
-                                                    selected: isSelected,
-                                                    selectedColor: Colors.teal
-                                                        .withOpacity(0.1),
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    shape: RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                        color:
-                                                            isSelected
-                                                                ? Colors.teal
-                                                                : Colors
-                                                                    .grey
-                                                                    .shade400,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            6,
-                                                          ),
-                                                    ),
-                                                    onSelected: (value) {
-                                                      controller
-                                                          .selectedPaketKategori
-                                                          .value = option;
-                                                    },
-                                                  );
-                                                }).toList(),
-                                          ),
-                                        ),
-
-                                        const SizedBox(height: 12),
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Colors.teal, // warna tombol
-                                              foregroundColor:
-                                                  Colors
-                                                      .white, // warna teks/icon
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 24,
-                                                    vertical: 12,
-                                                  ),
-                                            ),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                              controller.fetchPaketTryout(
-                                                page: 1,
-                                                search:
-                                                    paketTextController.text,
-                                                menuCategory:
+                                      Obx(
+                                        () => Wrap(
+                                          spacing: 8,
+                                          children:
+                                              controller.options.value.map((
+                                                option,
+                                              ) {
+                                                final isSelected =
                                                     controller
-                                                        .optionsId[controller
-                                                            .selectedPaketKategori
-                                                            .value]
-                                                        .toString(),
-                                              );
-                                            },
-                                            child: const Text("Cari"),
-                                          ),
+                                                        .selectedPaketKategori
+                                                        .value ==
+                                                    option;
+                                                return ChoiceChip(
+                                                  label: Text(
+                                                    option,
+                                                    style: TextStyle(
+                                                      color:
+                                                          isSelected
+                                                              ? Colors.teal
+                                                              : Colors
+                                                                  .grey[700],
+                                                      fontWeight:
+                                                          isSelected
+                                                              ? FontWeight.bold
+                                                              : FontWeight
+                                                                  .normal,
+                                                    ),
+                                                  ),
+                                                  selected: isSelected,
+                                                  selectedColor: Colors.teal
+                                                      .withOpacity(0.1),
+                                                  backgroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                      color:
+                                                          isSelected
+                                                              ? Colors.teal
+                                                              : Colors
+                                                                  .grey
+                                                                  .shade400,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          6,
+                                                        ),
+                                                  ),
+                                                  onSelected: (value) {
+                                                    controller
+                                                        .selectedPaketKategori
+                                                        .value = option;
+                                                  },
+                                                );
+                                              }).toList(),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+
+                                      const SizedBox(height: 12),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.teal, // warna tombol
+                                            foregroundColor:
+                                                Colors.white, // warna teks/icon
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 24,
+                                              vertical: 12,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            controller.fetchPaketTryout(
+                                              page: 1,
+                                              search: paketTextController.text,
+                                              menuCategory:
+                                                  controller
+                                                      .optionsId[controller
+                                                          .selectedPaketKategori
+                                                          .value]
+                                                      .toString(),
+                                            );
+                                          },
+                                          child: const Text("Cari"),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('Filter', style: TextStyle(color: Colors.teal)),
-                          Icon(Icons.keyboard_arrow_down, color: Colors.teal),
-                        ],
-                      ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Filter', style: TextStyle(color: Colors.teal)),
+                        Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                      ],
                     ),
                   ),
                 ),
@@ -1034,7 +1007,7 @@ class TryoutView extends GetView<TryoutController> {
         Get.toNamed("/detail-tryout", arguments: uuid);
       },
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        margin: EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: Colors.transparent, width: 0),

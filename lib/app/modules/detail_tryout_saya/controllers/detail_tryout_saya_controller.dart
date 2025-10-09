@@ -9,6 +9,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/chart_data_model.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'dart:async';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class DetailTryoutSayaController extends GetxController {
   //TODO: Implement DetailTryoutSayaController
@@ -36,6 +41,9 @@ class DetailTryoutSayaController extends GetxController {
   RxString selectedInstansi = "0".obs;
   RxInt totalValue = 0.obs;
 
+  final remaining = ''.obs;
+  Timer? _ticker;
+
   final RxList<ChartData> chartData = <ChartData>[].obs;
   List<ChartData>? get chartDataList => chartData;
 
@@ -54,6 +62,7 @@ class DetailTryoutSayaController extends GetxController {
 
   @override
   void onClose() {
+    _ticker?.cancel();
     super.onClose();
   }
 
@@ -68,6 +77,12 @@ class DetailTryoutSayaController extends GetxController {
     await getInstansi();
     await getJabatan();
     await getStatsNilai();
+
+    startCountdown(
+      startDate: DateTime.now(),
+      endDate: DateTime.parse(tryOutSaya['tryout']['startdate']),
+    );
+
     loading['chart'] = false;
   }
 
@@ -241,6 +256,177 @@ class DetailTryoutSayaController extends GetxController {
       return tanggalStr; // fallback kalau gagal parse
     }
   }
+
+  void startCountdown({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    _ticker?.cancel();
+    final two = NumberFormat('00');
+
+    void update() {
+      final now = DateTime.now();
+      if (now.isAfter(endDate)) {
+        remaining.value =
+            '${two.format(0)} Hari ${two.format(0)} Jam ${two.format(0)} Menit ${two.format(0)} Detik';
+        _ticker?.cancel();
+        return;
+      }
+
+      // choose target (start if not yet started, else end)
+      final target = now.isBefore(startDate) ? startDate : endDate;
+
+      var diff = target.difference(now);
+      if (diff.isNegative) diff = Duration.zero;
+
+      final d = diff.inDays;
+      final h = diff.inHours % 24;
+      final m = diff.inMinutes % 60;
+      final s = diff.inSeconds % 60;
+
+      remaining.value =
+          '${two.format(d)} Hari ${two.format(h)} Jam ${two.format(m)} Menit ${two.format(s)} Detik';
+    }
+
+    update(); // initial paint
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) => update());
+  }
+
+  Future<void> addToCalendar({
+    required String title,
+    required DateTime startDate,
+    required DateTime endDate,
+    String? description,
+    String? location,
+    String? url, // optional source link
+  }) async {
+    // ----- helpers -----
+    String _fmtICS(DateTime dt) =>
+        DateFormat("yyyyMMdd'T'HHmmss'Z'").format(dt.toUtc());
+
+    String _esc(String s) => s
+        .replaceAll('\\', '\\\\')
+        .replaceAll(';', r'\;')
+        .replaceAll(',', r'\,')
+        .replaceAll('\n', r'\n');
+
+    String _icsContent() {
+      final now = _fmtICS(DateTime.now());
+      final uid = '${DateTime.now().millisecondsSinceEpoch}@yourapp';
+      return [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Your App//id',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'BEGIN:VEVENT',
+        'UID:$uid',
+        'DTSTAMP:$now',
+        'DTSTART:${_fmtICS(startDate)}',
+        'DTEND:${_fmtICS(endDate)}',
+        'SUMMARY:${_esc(title)}',
+        if (description?.isNotEmpty == true)
+          'DESCRIPTION:${_esc(description!)}',
+        if (location?.isNotEmpty == true) 'LOCATION:${_esc(location!)}',
+        if (url?.isNotEmpty == true) 'URL:${_esc(url!)}',
+        'END:VEVENT',
+        'END:VCALENDAR',
+      ].join('\r\n');
+    }
+
+    Future<void> _openGoogle() async {
+      final q = {
+        'action': 'TEMPLATE',
+        'text': title,
+        'dates': '${_fmtICS(startDate)}/${_fmtICS(endDate)}',
+        if (description?.isNotEmpty == true) 'details': description!,
+        if (location?.isNotEmpty == true) 'location': location!,
+        'sf': 'true',
+        'output': 'xml',
+      };
+      final uri = Uri.https('calendar.google.com', '/calendar/render', q);
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+
+    Future<void> _openOutlook() async {
+      final q = {
+        'rru': 'addevent',
+        'startdt': startDate.toUtc().toIso8601String(),
+        'enddt': endDate.toUtc().toIso8601String(),
+        'subject': title,
+        if (description?.isNotEmpty == true) 'body': description!,
+        if (location?.isNotEmpty == true) 'location': location!,
+      };
+      final uri = Uri.https(
+        'outlook.live.com',
+        '/calendar/0/deeplink/compose',
+        q,
+      );
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+
+    Future<void> _openYahoo() async {
+      final q = {
+        'v': '60',
+        'view': 'd',
+        'type': '20',
+        'title': title,
+        'st': _fmtICS(startDate),
+        'et': _fmtICS(endDate),
+        if (description?.isNotEmpty == true) 'desc': description!,
+        if (location?.isNotEmpty == true) 'in_loc': location!,
+      };
+      final uri = Uri.https('calendar.yahoo.com', '/', q);
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+
+    Future<void> _shareICS() async {
+      final dir = await getTemporaryDirectory();
+      final path =
+          '${dir.path}/event_${DateTime.now().millisecondsSinceEpoch}.ics';
+      final file = File(path)..writeAsStringSync(_icsContent());
+
+      final params = ShareParams(
+        text: 'Add "$title" to your calendar',
+        files: [XFile(path, mimeType: 'text/calendar')],
+      );
+
+      await SharePlus.instance.share(params);
+    }
+
+    // ----- UI sheet -----
+    await Get.bottomSheet(
+      SafeArea(
+        child: Wrap(
+          children: [
+            _Tile(icon: '🗓️', label: 'Google', onTap: _openGoogle),
+            _Tile(icon: '📅', label: 'iCal File', onTap: _shareICS),
+            _Tile(icon: '📧', label: 'Outlook.com', onTap: _openOutlook),
+            _Tile(icon: '🟪', label: 'Yahoo', onTap: _openYahoo),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Get.back(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.teal,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(color: Colors.teal),
+                  ),
+                ),
+                child: Text('Kembali'),
+              ),
+            ),
+            SizedBox(height: 20),
+          ],
+        ),
+      ),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    );
+  }
 }
 
 class LineChartData {
@@ -249,4 +435,28 @@ class LineChartData {
   final String x;
   final String y;
   final Color color;
+}
+
+class _Tile extends StatelessWidget {
+  final String icon;
+  final String label;
+  final Future<void> Function() onTap;
+  const _Tile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Text(icon, style: const TextStyle(fontSize: 20)),
+      title: Text(label),
+      onTap: () async {
+        Get.back(); // close sheet
+        await onTap();
+      },
+    );
+  }
 }
