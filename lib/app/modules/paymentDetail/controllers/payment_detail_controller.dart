@@ -156,7 +156,7 @@ class PaymentDetailController extends GetxController {
   Future<void> getApplyCode() async {
     isLoadingHarga.value = true; // mulai loading
     print("xxcccc ${getTotalHargaFix().toString()}");
-    final url = baseUrl + apiApplyWishListVoucherCode;
+    final url = baseUrl + apiApplyBimbelVoucherCode;
     var payload = {
       "kode_promo": promoController.text,
       "amount": getTotalHargaFix(),
@@ -173,13 +173,16 @@ class PaymentDetailController extends GetxController {
     if (result["status"] == "success") {
       kodePromo.value = promoController.text;
       promoAmount.value = result['data']['nominal'];
+
       promoCodeName.value = result['data']['voucher_code'];
     } else {
       promoController.clear();
+      kodePromo.value = '';
+      promoAmount.value = 0;
       if (afiFromStorage.value != 1)
         notifHelper.show(result["message"] ?? "Terjadi kesalahan", type: 0);
     }
-
+    afiFromStorage.value = 0;
     isLoadingHarga.value = false; // selesai loading
   }
 

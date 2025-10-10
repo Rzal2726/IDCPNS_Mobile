@@ -111,7 +111,7 @@ class DetailTryoutController extends GetxController {
     final response = await restClient.getData(
       url: baseUrl + apiCheckWishList + "/" + uuid,
     );
-
+    print("xxcc ${response['data'].toString()}");
     final data = response;
     isOnWishlist.value = data['data'] == null ? false : true;
     wishList.value = response['data'] ?? {};

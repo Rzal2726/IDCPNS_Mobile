@@ -49,7 +49,8 @@ class HomeView extends GetView<HomeController> {
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   'assets/tryoutHomeIcon.svg',
-                  color: Colors.grey,
+                  color:
+                      controller.currentIndex == 1 ? Colors.teal : Colors.grey,
                   width: 22,
                   height: 22,
                 ),
@@ -58,7 +59,8 @@ class HomeView extends GetView<HomeController> {
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   'assets/bimbelHomeIcon.svg',
-                  color: Colors.grey,
+                  color:
+                      controller.currentIndex == 2 ? Colors.teal : Colors.grey,
                   width: 22,
                   height: 22,
                 ),
@@ -67,7 +69,8 @@ class HomeView extends GetView<HomeController> {
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   'assets/platinumHomeIcon.svg',
-                  color: Colors.grey,
+                  color:
+                      controller.currentIndex == 3 ? Colors.teal : Colors.grey,
                   width: 22,
                   height: 22,
                 ),
