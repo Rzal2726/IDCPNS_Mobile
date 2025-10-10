@@ -144,7 +144,6 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                             ),
                             decoratorProps: DropDownDecoratorProps(
                               decoration: InputDecoration(
-                                labelText: "Rekening",
                                 hintText: "Pilih Rekening",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5),
