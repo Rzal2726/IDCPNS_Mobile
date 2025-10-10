@@ -159,16 +159,6 @@ class RegisterController extends GetxController {
       notifHelper.show("Konfirmasi kata sandi tidak cocok!", type: 0);
       return;
     }
-    if (kodeAfiliator != null && kodeAfiliator.isNotEmpty) {
-      if (kodeAfiliator.length < 8) {
-        notifHelper.show("Kode Afiliator minimal 8 karakter!", type: 0);
-        return;
-      }
-      if (kodeAfiliator.length > 13) {
-        notifHelper.show("Kode Afiliator maksimal 13 karakter!", type: 0);
-        return;
-      }
-    }
 
     if (!isAgreed.value) {
       notifHelper.show("Anda harus menyetujui syarat & ketentuan", type: 0);
