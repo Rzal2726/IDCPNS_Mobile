@@ -1085,10 +1085,19 @@ class DashboardView extends GetView<DashboardController> {
                                                 300, // biar card rapi & konsisten
                                             child: GestureDetector(
                                               onTap: () {
-                                                Get.toNamed(
-                                                  Routes.DETAIL_EVENT,
-                                                  arguments: data['uuid'],
-                                                );
+                                                if (data['is_purchase'] &&
+                                                    !data['is_verification']) {
+                                                  Get.toNamed(
+                                                    "detail-tryout-saya",
+                                                    arguments:
+                                                        data['tryout_transaction_id'],
+                                                  );
+                                                } else {
+                                                  Get.toNamed(
+                                                    "/detail-event",
+                                                    arguments: data['uuid'],
+                                                  );
+                                                }
                                               },
                                               child: buildTryoutCard(
                                                 status: data['label_text'],

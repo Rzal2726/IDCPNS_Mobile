@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/getOffNamedUntil.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/hasil_tryout_controller.dart';
@@ -176,11 +177,12 @@ class HasilTryoutView extends GetView<HasilTryoutController> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Get.offNamedUntil(
-                      "/detail-tryout-saya",
-                      ModalRoute.withName('/tryout-saya'),
-                      arguments: controller.uuid,
-                    );
+                    offNamedUntilAny('/detail-tryout-saya', {
+                      '/dashboard',
+                      '/tryout',
+                      '/tryout-saya',
+                      '/detail-event-tryout',
+                    }, arguments: controller.uuid);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
