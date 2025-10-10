@@ -65,7 +65,7 @@ class CommisionDetailController extends GetxController {
 
       var payload = {"perpage": 10, "search": search ?? "", "page": page ?? 0};
       final result = await _restClient.postData(url: url, payload: payload);
-
+      print("xcvn ${result['data'].toString()}");
       if (result["status"] == "success") {
         var data = result['data'];
         komisiDetailData.value = data;

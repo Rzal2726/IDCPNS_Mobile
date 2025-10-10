@@ -36,7 +36,7 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
             final data = controller.mutasiSaldoData['data'];
 
             return Padding(
-              padding: AppStyle.screenPadding,
+              padding: AppStyle.sreenPaddingHome,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -109,7 +109,7 @@ class MutasiSaldoView extends GetView<MutasiSaldoController> {
                               child: ListView(
                                 children: [
                                   Text(
-                                    "Rincian Komisi",
+                                    "Mutasi Saldo",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,

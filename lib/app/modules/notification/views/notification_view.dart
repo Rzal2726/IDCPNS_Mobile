@@ -556,7 +556,7 @@ class NotificationView extends GetView<NotificationController> {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   Text(
-                    date,
+                    DateFormat("dd/MM/yyyy HH:mm").format(DateTime.parse(date)),
                     style: TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ],

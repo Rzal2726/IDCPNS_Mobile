@@ -50,6 +50,7 @@ class ProgramSayaController extends GetxController {
   }
 
   Future<void> refresh() async {
+    selectedKategoriId.value = 0;
     searchController.clear();
     selectedEventKategori.value = "Semua";
     if (selectedTab.value == 0) {

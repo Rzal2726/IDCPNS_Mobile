@@ -24,16 +24,20 @@ String formatRupiah(dynamic value) {
   return formatter.format(number);
 }
 
-/// Hitung komisi detail
 int hitungKomisiDetail({
-  required int amount,
-  required int amountAdmin,
-  required int amountDiskon,
-  required int persen,
+  int? amount,
+  int? amountAdmin,
+  int? amountDiskon,
+  int? persen,
 }) {
-  // (amount + amount_diskon - amount_admin) * persen / 100
-  final total = (amount + amountDiskon - amountAdmin);
-  final hasil = total * persen ~/ 100; // ~/ biar hasilnya int langsung
+  // kasih nilai default kalau null
+  final amt = amount ?? 0;
+  final admin = amountAdmin ?? 0;
+  final diskon = amountDiskon ?? 0;
+  final percent = persen ?? 0;
+
+  final total = (amt + diskon - admin);
+  final hasil = total * percent ~/ 100;
   return hasil;
 }
 

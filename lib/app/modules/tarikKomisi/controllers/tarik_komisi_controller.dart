@@ -82,7 +82,7 @@ class TarikKomisiController extends GetxController {
       final url = baseUrl + apiPostMutasiSaldo;
       var payload = {
         "nominal": int.parse(nominalController.text.replaceAll('.', '')),
-        "rekening": rekeningNum.value,
+        "rekening": rekeningId.value,
       };
       print("xxx $payload");
 
