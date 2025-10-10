@@ -40,6 +40,7 @@ class PaymentDetailController extends GetxController {
   RxBool isLoadingHarga =
       false.obs; // default true kalau mau skeleton muncul awal
   RxInt afiFromStorage = 0.obs;
+  var ovoError = "".obs;
 
   // untuk state radio pilihan (sub bimbel)
 
@@ -254,6 +255,8 @@ class PaymentDetailController extends GetxController {
     paymentType.value = "";
     metodePembayaran.value = "";
     biayaAdmin.value = 0; // reset biaya admin juga
+    ovoError.value = "";
+    Get.back();
   }
 
   int getTotalHargaFix() {

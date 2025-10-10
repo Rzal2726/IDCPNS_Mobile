@@ -6,6 +6,7 @@ import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -980,7 +981,6 @@ void showPhoneNumberBottomSheet(BuildContext context) {
                               icon: Icon(Icons.close),
                               onPressed: () {
                                 controller.clearPaymentSelection();
-                                Get.back();
                               },
                             ),
                           ],
@@ -1051,8 +1051,22 @@ void showPhoneNumberBottomSheet(BuildContext context) {
                                   ),
                                 ),
                                 onPressed: () {
-                                  controller.getAddOvoNumber();
-                                  Get.back();
+                                  String text = controller.ovoController.text;
+
+                                  if (text.isEmpty) {
+                                    controller.ovoError.value =
+                                        "Nomor telepon tidak boleh kosong";
+                                  } else if (text.length < 10) {
+                                    controller.ovoError.value =
+                                        "Nomor telepon minimal 10 karakter";
+                                  } else if (text.length > 12) {
+                                    controller.ovoError.value =
+                                        "Nomor telepon maksimal 12 karakter";
+                                  } else {
+                                    controller.ovoError.value = '';
+                                    controller.getAddOvoNumber();
+                                    Get.back();
+                                  }
                                 },
                                 child: Text(
                                   "Kirim",

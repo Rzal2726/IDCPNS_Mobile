@@ -15,6 +15,8 @@ class notifHelper {
       borderRadius: 12,
       margin: const EdgeInsets.all(12),
       duration: const Duration(seconds: 3),
+      snackStyle: SnackStyle.FLOATING, // bikin snackbar floating
+      isDismissible: true, // bisa dismiss tanpa tunggu duration
     );
   }
 }

@@ -35,6 +35,8 @@ class PaymentWhislistController extends GetxController {
   RxBool isLoadingButton = false.obs;
   RxBool isLoadingHarga = false.obs;
   RxInt afiFromStorage = 0.obs;
+  var ovoError = ''.obs;
+
   @override
   void onInit() async {
     await getData();
@@ -213,6 +215,8 @@ class PaymentWhislistController extends GetxController {
     paymentType.value = "";
     metodePembayaran.value = "";
     biayaAdmin.value = 0; // reset biaya admin juga
+    ovoError.value = "";
+    Get.back();
   }
 
   int calculateBiayaAdmin(String biayaAdminRaw) {
