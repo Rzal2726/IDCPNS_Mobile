@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
+import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../controllers/tryout_payment_controller.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
+
+import 'package:flutter/services.dart';
 
 class TryoutPaymentView extends GetView<TryoutPaymentController> {
   TryoutPaymentView({super.key});
@@ -119,7 +123,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                 )
                                 : _menuTile(
                                   leading: SvgPicture.network(
-                                    height: 28,
+                                    width: 60,
                                     controller
                                         .selectedPaymentMethod['image_url'],
                                   ),
@@ -225,21 +229,29 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Obx(
-                      () => Row(
-                        children: [
-                          Text("Harga"),
-                          Spacer(),
-                          Text(
-                            controller
-                                .formatCurrency(
-                                  controller.harga.value.toString(),
-                                )
-                                .toString(),
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
+                    Row(
+                      children: [
+                        Text("Harga"),
+                        Spacer(),
+
+                        Obx(() {
+                          return controller.otherTryoutLoading.value
+                              ? Skeletonizer(
+                                child: Text(
+                                  'lorem',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              )
+                              : Text(
+                                controller
+                                    .formatCurrency(
+                                      controller.harga.value.toString(),
+                                    )
+                                    .toString(),
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              );
+                        }),
+                      ],
                     ),
 
                     Obx(() {
@@ -248,15 +260,28 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                             children: [
                               Text("Biaya Admin"),
                               Spacer(),
-                              Text(
-                                controller.formatCurrency(
-                                  controller.biayaAdmin.value.toString(),
-                                ),
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
+                              Obx(() {
+                                return controller.otherTryoutLoading.value
+                                    ? Skeletonizer(
+                                      child: Text(
+                                        'lorem',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                    : Text(
+                                      controller.formatCurrency(
+                                        controller.biayaAdmin.value.toString(),
+                                      ),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                              }),
                             ],
                           )
-                          : SizedBox();
+                          : SizedBox.shrink();
                     }),
                     Obx(() {
                       return controller.diskon.value > 0.0
@@ -270,39 +295,57 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                 ),
                               ),
                               Spacer(),
-                              Text(
-                                "-${controller.formatCurrency(controller.diskon.value.toString())}",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.teal,
-                                ),
-                              ),
+                              Obx(() {
+                                return controller.otherTryoutLoading.value
+                                    ? Skeletonizer(
+                                      child: Text(
+                                        'lorem',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                    : Text(
+                                      "-${controller.formatCurrency(controller.diskon.value.toString())}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.teal,
+                                      ),
+                                    );
+                              }),
                             ],
                           )
-                          : SizedBox();
+                          : SizedBox.shrink();
                     }),
-                    Obx(
-                      () => Row(
-                        children: [
-                          Text(
-                            "Total Harga",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    Row(
+                      children: [
+                        Text(
+                          "Total Harga",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Spacer(),
-                          Text(
-                            controller.formatCurrency(
-                              controller.totalHarga.value.toString(),
-                            ),
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                        Spacer(),
+                        Obx(() {
+                          return controller.otherTryoutLoading.value
+                              ? Skeletonizer(
+                                child: Text(
+                                  'lorem',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              )
+                              : Text(
+                                controller.formatCurrency(
+                                  controller.totalHarga.value.toString(),
+                                ),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                        }),
+                      ],
                     ),
 
                     Obx(
@@ -458,7 +501,10 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
             children: [
               leading, // 👈 langsung pakai widget
               const SizedBox(width: 16),
-              Text(text),
+              SizedBox(
+                width: 150,
+                child: Text(text, maxLines: 2, overflow: TextOverflow.ellipsis),
+              ),
             ],
           ),
           const Icon(
@@ -520,101 +566,188 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
 
   /// --- Bottomsheet metode pembayaran ---
   Widget _metodePembayaran(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      child: SizedBox(
+        height: screenHeight * 0.5,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Metode Pembayaran",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-            ),
-            const SizedBox(height: 12),
-
-            // 🔹 Virtual Account
-            Text(
-              "Virtual Account",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 180, // tinggi fix biar nggak overflow
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.virtualAccount.length,
-                itemBuilder: (context, index) {
-                  final data = controller.virtualAccount[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: _methodCard(
-                      SvgPicture.network(data['image_url']),
-                      name: data['name'],
-                      title: data['name'],
-                      subtitle: "Biaya Admin: Rp ${data['biaya_admin']}",
-                      value: data,
-                      context: context,
-                    ),
-                  );
-                },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Metode Pembayaran",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.black54),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
 
-            // 🔹 E-Wallet
-            Text(
-              "E-Wallet",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
             const SizedBox(height: 8),
-            SizedBox(
-              height: 180, // tinggi fix biar nggak overflow
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.EWallet.length,
-                itemBuilder: (context, index) {
-                  final data = controller.EWallet[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: _methodCard(
-                      SvgPicture.network(data['image_url']),
-                      name: data['name'],
-                      title: data['name'],
-                      value: data,
-                      subtitle: "Biaya Admin: ${data['biaya_admin']}",
-                      context: context,
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
 
-            // 🔹 QR Payments
-            Text(
-              "QR Payments",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 180, // tinggi fix biar nggak overflow
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.QR.length,
-                itemBuilder: (context, index) {
-                  final data = controller.QR[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: _methodCard(
-                      SvgPicture.network(data['image_url']),
-                      name: data['name'],
-                      title: data['name'],
-                      value: data,
-                      subtitle: "Biaya Admin: ${data['biaya_admin']}",
-                      context: context,
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Virtual Account",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
-                  );
-                },
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 200, // tinggi fix biar nggak overflow
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.virtualAccount.length,
+                        itemBuilder: (context, index) {
+                          final data = controller.virtualAccount[index];
+                          final ppnPercent =
+                              double.tryParse(
+                                controller.box.read("ppn") ?? '0',
+                              ) ??
+                              0;
+
+                          final adminAmount =
+                              double.tryParse(data['biaya_admin']) ?? 0;
+                          final adminWithPPN =
+                              adminAmount + (adminAmount * (ppnPercent / 100));
+
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: _methodCard(
+                              SvgPicture.network(data['image_url']),
+                              name: data['name'],
+                              title: data['name'],
+                              subtitle: "Biaya Admin",
+                              admin: adminWithPPN.toString(),
+                              value: data,
+                              context: context,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // 🔹 E-Wallet
+                    Text(
+                      "E-Wallet",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 200, // tinggi fix biar nggak overflow
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.EWallet.length,
+                        itemBuilder: (context, index) {
+                          final data = controller.EWallet[index];
+                          final ppnPercent =
+                              double.tryParse(
+                                controller.box.read("ppn") ?? '0',
+                              ) ??
+                              0;
+                          final clean =
+                              data['biaya_admin'].replaceAll("%", "").trim();
+                          final persen = double.tryParse(clean) ?? 0;
+                          final adminAmount =
+                              controller.totalHarga.value.toDouble() *
+                              (persen / 100);
+                          final adminWithPPN =
+                              adminAmount + (adminAmount * (ppnPercent / 100));
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: IntrinsicHeight(
+                              child: _methodCard(
+                                SvgPicture.network(data['image_url']),
+                                name: data['name'],
+                                title: data['name'],
+                                value: data,
+                                subtitle: "Biaya Admin",
+                                admin: adminWithPPN.toString(),
+                                context: context,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // 🔹 QR Payments
+                    Text(
+                      "QR Payments",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 200, // tinggi fix biar nggak overflow
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.QR.length,
+                        itemBuilder: (context, index) {
+                          final data = controller.QR[index];
+
+                          final ppnPercent =
+                              double.tryParse(
+                                controller.box.read("ppn") ?? '0',
+                              ) ??
+                              0;
+                          final clean =
+                              data['biaya_admin'].replaceAll("%", "").trim();
+                          final persen = double.tryParse(clean) ?? 0;
+                          final adminAmount =
+                              controller.totalHarga.value.toDouble() *
+                              (persen / 100);
+                          final adminWithPPN =
+                              adminAmount + (adminAmount * (ppnPercent / 100));
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: _methodCard(
+                              SvgPicture.network(
+                                data['image_url'],
+                                fit: BoxFit.contain,
+                                placeholderBuilder:
+                                    (context) => SizedBox(
+                                      height: 30,
+                                      width: 30,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                    ),
+                              ),
+                              name: data['name'],
+                              title: data['name'],
+                              value: data,
+                              subtitle: "Biaya Admin",
+                              admin: adminWithPPN.toString(),
+                              context: context,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -628,13 +761,12 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
     String? title,
     required String name,
     String? subtitle,
-    double admin = 0,
+    String? admin,
     required Map<String, dynamic> value,
     required BuildContext context,
   }) {
     return SizedBox(
       width: 150,
-      height: 160,
       child: Card(
         elevation: 0,
         color: Colors.white,
@@ -682,12 +814,12 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 40, child: image),
+                SizedBox(width: 60, height: 60, child: image),
                 const SizedBox(height: 12),
                 Text(
                   title ?? name,
                   textAlign: TextAlign.center,
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis, // biar nggak overflow
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
@@ -696,7 +828,14 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  subtitle ?? "Biaya Admin: Rp 0",
+                  subtitle ?? "Biaya Admin",
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                ),
+                Text(
+                  formatRupiah(admin) ?? "Rp. 0",
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -712,154 +851,228 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
 
   /// --- Bottomsheet kode promo ---
   Widget _kodePromo(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Column(
-          spacing: 8,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Voucher",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            TextField(
-              onChanged: (value) {
-                voucherController.value = voucherController.value.copyWith(
-                  text: value.toUpperCase(),
-                  selection: TextSelection.collapsed(offset: value.length),
-                );
-              },
-              controller: voucherController,
-              decoration: InputDecoration(
-                labelStyle: const TextStyle(color: Colors.grey),
-                labelText: "Masukkan Kode Promo",
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.teal, width: 1.5),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.teal, width: 2.0),
-                  borderRadius: BorderRadius.circular(12),
+    return SafeArea(
+      child: Obx(() {
+        return controller.paymentMethods.isEmpty
+            ? Center(child: CircularProgressIndicator())
+            : SizedBox(
+              height: MediaQuery.of(context).size.height * 0.18,
+              child: SingleChildScrollView(
+                padding: AppStyle.contentPadding,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Kode Promo",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () => Get.back(),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+
+                    Padding(
+                      padding: EdgeInsets.only(top: 1),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: voucherController,
+                              inputFormatters: [UpperCaseTextFormatter()],
+                              decoration: InputDecoration(
+                                hintText:
+                                    "Masukkan Kode Promo disini", // hintText juga bisa kamu bikin kapital manual
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                  borderSide: BorderSide(color: Colors.teal),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 14,
+                              ),
+                            ),
+                            onPressed: () {
+                              if (voucherController.text.length < 1) {
+                                Get.snackbar(
+                                  "Gagal",
+                                  "Mohon isi kode terlebih dahulu",
+                                  backgroundColor: Colors.pink,
+                                  colorText: Colors.white,
+                                );
+                                return;
+                              }
+
+                              controller.applyCode(voucherController.text);
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "Klaim",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  backgroundColor: Colors.teal,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(color: Colors.teal, width: 1.5),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                onPressed: () {
-                  if (voucherController.text.length < 1) {
-                    Get.snackbar(
-                      "Gagal",
-                      "Mohon isi kode terlebih dahulu",
-                      backgroundColor: Colors.pink,
-                      colorText: Colors.white,
-                    );
-                    return;
-                  }
-                  controller.applyCode(voucherController.text);
-                  Navigator.pop(context);
-                },
-                child: const Text("Klaim"),
-              ),
-            ),
-          ],
-        ),
-      ),
+            );
+      }),
     );
   }
 
   Widget _nomorOvo(BuildContext context) {
-    return Padding(
-      // Ini yang bikin container naik mengikuti keyboard
-      padding: MediaQuery.of(context).viewInsets,
-      child: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            spacing: 8,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Nomor OVO",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              TextField(
-                maxLength: 16,
-                controller: ovoNumController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelStyle: const TextStyle(color: Colors.grey),
-                  labelText: "Masukkan Nomor OVO",
-                  prefixText: '+62 ', // ✅ placeholder tetap
-                  prefixStyle: const TextStyle(
-                    color: Colors.black, // Warna teks +62
-                    fontWeight: FontWeight.bold,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Colors.teal,
-                      width: 1.5,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Colors.teal,
-                      width: 2.0,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: Colors.teal,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: Colors.teal, width: 1.5),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  onPressed: () {
-                    if (ovoNumController.text.length <= 0) {
-                      Get.snackbar(
-                        "Gagal",
-                        "Mohon isi nomor ovo anda",
-                        backgroundColor: Colors.pink,
-                        colorText: Colors.white,
-                      );
-                      return;
-                    }
-                    controller.ovoNumber.value = ovoNumController.text;
-                    Navigator.pop(context);
-                  },
-                  child: const Text("Konfirmasi"),
-                ),
-              ),
-            ],
-          ),
+    return SafeArea(
+      child: Padding(
+        // Tambahkan padding di sini
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
+        child: Obx(() {
+          return controller.paymentMethods.isEmpty
+              ? Center(child: CircularProgressIndicator())
+              : SizedBox(
+                height: MediaQuery.of(context).size.height * 0.18,
+                child: SingleChildScrollView(
+                  padding: AppStyle.contentPadding,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Nomor Telepon",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: () {
+                              ovoNumController.text = '';
+                              Get.back();
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      Padding(
+                        padding: EdgeInsets.only(top: 1),
+                        child: Row(
+                          children: [
+                            // Tambahkan Textbox untuk "+62" di sini
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                "+62",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8),
+
+                            Expanded(
+                              child: TextField(
+                                controller: ovoNumController,
+                                keyboardType: TextInputType.phone,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(
+                                    13,
+                                  ), // batasi maksimal 13 digit
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: "Kirim",
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 10,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                    borderSide: BorderSide(color: Colors.teal),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 14,
+                                ),
+                              ),
+                              onPressed: () {
+                                if (ovoNumController.text.length <= 0) {
+                                  Get.snackbar(
+                                    "Gagal",
+                                    "Mohon isi nomor ovo anda",
+                                    backgroundColor: Colors.pink,
+                                    colorText: Colors.white,
+                                  );
+                                  return;
+                                }
+                                controller.ovoNumber.value =
+                                    ovoNumController.text;
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                "Kirim",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+        }),
       ),
     );
   }

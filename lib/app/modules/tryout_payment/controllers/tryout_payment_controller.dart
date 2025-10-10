@@ -13,6 +13,7 @@ class TryoutPaymentController extends GetxController {
 
   final prevController = Get.find<DetailTryoutController>();
   final restClient = RestClient();
+  final box = GetStorage();
 
   RxMap<String, dynamic> selectedPaymentMethod = <String, dynamic>{}.obs;
   RxMap<String, dynamic> transactionData = <String, dynamic>{}.obs;
@@ -35,6 +36,8 @@ class TryoutPaymentController extends GetxController {
   RxDouble harga = 0.0.obs;
   RxDouble biayaAdmin = 0.0.obs;
   final count = 0.obs;
+
+  RxBool otherTryoutLoading = false.obs;
   @override
   void onInit() {
     super.onInit();
@@ -67,6 +70,7 @@ class TryoutPaymentController extends GetxController {
     // await fetchDetailTryoutEvent();
     await fetchDetailTryoutOther();
     await fetchListPayment();
+    await getPromoCodeFromStorage();
     loading['bayar'] = false;
   }
 
@@ -205,9 +209,9 @@ class TryoutPaymentController extends GetxController {
     return null; // kalau tidak ketemu
   }
 
-  void applyCode(String code) async {
+  Future<void> applyCode(String code) async {
     try {
-      final payload = {"kode_promo": code, "amount": totalHarga.toString()};
+      final payload = {"kode_promo": code, "amount": harga.toString()};
       final response = await restClient.postData(
         url: baseUrl + apiApplyVoucher,
         payload: payload,
@@ -288,23 +292,30 @@ class TryoutPaymentController extends GetxController {
     }
   }
 
-  void countAdmin() {
+  Future<void> countAdmin() async {
     try {
       final raw =
           (selectedPaymentMethod['biaya_admin'] ?? "").toString().trim();
       final paymentTypeId = selectedPaymentMethod['xendit_payment_type_id'];
+      final ppnPercent = double.tryParse(box.read("ppn") ?? "0") ?? 0.0;
 
       if (paymentTypeId == 1) {
         final clean = raw.replaceAll(
           RegExp(r'[^0-9]'),
           "",
         ); // buang titik, Rp, dsb.
-        biayaAdmin.value = double.tryParse(clean) ?? 0;
+        final adminAmount = double.tryParse(clean) ?? 0;
+        final adminWithPPN = adminAmount + (adminAmount * (ppnPercent / 100));
+
+        biayaAdmin.value = adminWithPPN;
       } else {
         // percentage (contoh: "2.7%")
         final clean = raw.replaceAll("%", "").trim();
         final persen = double.tryParse(clean) ?? 0;
-        biayaAdmin.value = totalHarga.value.toDouble() * (persen / 100);
+        final adminAmount = totalHarga.value.toDouble() * (persen / 100);
+        final adminWithPPN = adminAmount + (adminAmount * (ppnPercent / 100));
+
+        biayaAdmin.value = adminWithPPN;
       }
     } catch (e, stack) {
       print(e);
@@ -312,23 +323,49 @@ class TryoutPaymentController extends GetxController {
     }
   }
 
-  void addTryout(Map<String, dynamic> data) {
+  void addTryout(Map<String, dynamic> data) async {
+    otherTryoutLoading.value = true;
     selectedItems.add(data);
     harga.value += data['harga_fix'];
     itemsId.add(data['id']);
-    initHarga();
-    countAdmin();
+    await initHarga();
+    await countAdmin();
+
+    if (promoCode.value.isEmpty) {
+      otherTryoutLoading.value = false;
+      return;
+    }
+
+    await applyCode(promoCode.value);
+    otherTryoutLoading.value = false;
   }
 
-  void removeTryout(Map<String, dynamic> data) {
+  void removeTryout(Map<String, dynamic> data) async {
+    otherTryoutLoading.value = true;
     selectedItems.removeWhere((item) => item['id'] == data['id']);
     harga.value -= data['harga_fix'];
     itemsId.remove(data['id']);
-    initHarga();
-    countAdmin();
+    await initHarga();
+    await countAdmin();
+
+    if (promoCode.value.isEmpty) {
+      otherTryoutLoading.value = false;
+      return;
+    }
+
+    await applyCode(promoCode.value);
+    otherTryoutLoading.value = false;
   }
 
-  void initHarga() {
+  Future<void> initHarga() async {
     totalHarga.value = (biayaAdmin.value + harga.value - diskon.value);
+  }
+
+  Future<void> getPromoCodeFromStorage() async {
+    String storedValue = box.read('userAfi') ?? "";
+
+    if (storedValue.isEmpty) return;
+
+    applyCode(storedValue);
   }
 }
