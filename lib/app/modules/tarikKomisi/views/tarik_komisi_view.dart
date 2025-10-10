@@ -174,7 +174,7 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                                   controller.nominalValue.value = 0;
                                   controller.rekeningNum.value =
                                       ""; // reset dropdown
-                                  Navigator.pop(context);
+                                  // Navigator.pop(context);
                                 },
                                 style: OutlinedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(

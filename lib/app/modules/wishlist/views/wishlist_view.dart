@@ -73,7 +73,13 @@ class WishlistView extends GetView<WishlistController> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.teal,
+                              backgroundColor:
+                                  (controller.whistlistData['data'] != null &&
+                                          controller
+                                              .whistlistData['data']!
+                                              .isNotEmpty)
+                                      ? Colors.teal
+                                      : Colors.grey,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),

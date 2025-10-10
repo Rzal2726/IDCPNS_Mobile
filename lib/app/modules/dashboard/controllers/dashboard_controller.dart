@@ -225,7 +225,7 @@ class DashboardController extends GetxController {
       if (result["status"] == "success") {
         var data = result['data'];
         recomenData.value = data;
-        print("asdad ${data}");
+        print("asdadcvvv ${data}");
       }
     } catch (e) {
       print("Error polling email verification: $e");

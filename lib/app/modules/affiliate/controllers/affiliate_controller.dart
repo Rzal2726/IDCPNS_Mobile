@@ -82,7 +82,7 @@ class AffiliateController extends GetxController {
   }
 
   Future<void> getUser() async {
-    print("xxx masuk");
+    print("xxx masuk ${box.read("afiAgree").toString()}");
     var agree = box.read("afiAgree");
 
     if (agree.toString() == "0") {

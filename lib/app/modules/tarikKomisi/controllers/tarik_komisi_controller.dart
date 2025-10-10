@@ -27,6 +27,7 @@ class TarikKomisiController extends GetxController {
 
   @override
   void onInit() {
+    refresh();
     super.onInit();
   }
 

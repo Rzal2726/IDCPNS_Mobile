@@ -92,7 +92,7 @@ class RekeningController extends GetxController {
 
       if (result["status"] == "success") {
         notifHelper.show("Data berhasil disimpan", type: 1);
-        getRekeningUser(); // refresh data rekening
+        refresh();
       } else {
         notifHelper.show((result["message"] ?? "Terjadi kesalahan"), type: 0);
       }

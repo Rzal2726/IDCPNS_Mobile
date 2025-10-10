@@ -180,7 +180,7 @@ class AffiliateView extends GetView<AffiliateController> {
                           title: "Tarik Komisi",
                           subtitle: "Ajukan penarikan komisi",
                           onTap: () {
-                            Get.toNamed(Routes.TARIK_KOMISI);
+                            Get.offNamed(Routes.TARIK_KOMISI);
                           },
                         ),
                         SizedBox(height: 12),
@@ -189,7 +189,7 @@ class AffiliateView extends GetView<AffiliateController> {
                           title: "Rekening",
                           subtitle: "Atur rekening untuk penarikan komisi",
                           onTap: () {
-                            Get.toNamed(Routes.REKENING);
+                            Get.offNamed(Routes.REKENING);
                           },
                         ),
                         SizedBox(height: 12),
@@ -198,7 +198,7 @@ class AffiliateView extends GetView<AffiliateController> {
                           title: "Mutasi Saldo",
                           subtitle: "Lihat riwayat penarikan komisi",
                           onTap: () {
-                            Get.toNamed(Routes.MUTASI_SALDO);
+                            Get.offNamed(Routes.MUTASI_SALDO);
                           },
                         ),
                       ],

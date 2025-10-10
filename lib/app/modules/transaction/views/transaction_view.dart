@@ -480,7 +480,7 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                                 "${DateTime.now().month.toString().padLeft(2, '0')}/"
                                 "${DateTime.now().year}";
                             // atau kalau mau kosong aja:
-                            // controller.endDateController.clear();
+                            controller.endDateController.clear();
                           });
                         }
                       },

@@ -656,7 +656,7 @@ class DashboardView extends GetView<DashboardController> {
                               onTap: () {
                                 Get.toNamed(
                                   Routes.DETAIL_TRYOUT,
-                                  arguments: recoData["uuid"],
+                                  arguments: recoData['tryout_formasi']["uuid"],
                                 );
                               },
                               child: Container(

@@ -87,7 +87,7 @@ class RegisterController extends GetxController {
       box.write("name", user["name"]);
       box.write("userAfi", user["user_afiliator"]);
       box.write("afiCode", user["kode_afiliasi"] ?? "");
-      box.write("afiAgree", user["is_afiliasi_agree"]);
+      box.write("afiAgree", data["is_afiliasi_agree"]);
       box.write("idUser", user["id"]);
       box.write("email", user["email"]);
       box.write("photoProfile", user['profile_image_url'] ?? "");
@@ -159,16 +159,6 @@ class RegisterController extends GetxController {
       notifHelper.show("Konfirmasi kata sandi tidak cocok!", type: 0);
       return;
     }
-    if (kodeAfiliator != null && kodeAfiliator.isNotEmpty) {
-      if (kodeAfiliator.length < 8) {
-        notifHelper.show("Kode Afiliator minimal 8 karakter!", type: 0);
-        return;
-      }
-      if (kodeAfiliator.length > 13) {
-        notifHelper.show("Kode Afiliator maksimal 13 karakter!", type: 0);
-        return;
-      }
-    }
 
     if (!isAgreed.value) {
       notifHelper.show("Anda harus menyetujui syarat & ketentuan", type: 0);
@@ -198,7 +188,7 @@ class RegisterController extends GetxController {
         box.write("name", user["name"]);
         box.write("userAfi", user["user_afiliator"]);
         box.write("afiCode", user["kode_afiliasi"]);
-        box.write("afiAgree", user["is_afiliasi_agree"]);
+        box.write("afiAgree", data["is_afiliasi_agree"]);
         box.write("idUser", user["id"]);
         box.write("email", user["email"]);
         box.write("password", password);
