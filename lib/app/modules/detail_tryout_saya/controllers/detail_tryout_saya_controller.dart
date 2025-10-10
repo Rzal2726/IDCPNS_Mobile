@@ -230,6 +230,7 @@ class DetailTryoutSayaController extends GetxController {
 
     // hitung difference
     Duration diff = target.difference(targetBuy);
+
     return diff.inDays;
   }
 
