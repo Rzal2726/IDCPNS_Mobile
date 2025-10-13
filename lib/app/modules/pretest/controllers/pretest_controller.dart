@@ -84,7 +84,7 @@ class PretestController extends GetxController {
         startCountdown(event['waktu_pengerjaan']);
       }
     }
-    uuid.value = bimbelData['uuid'];
+    uuid = bimbelData['uuid'];
   }
 
   Future<void> getDetailBimbel() async {
