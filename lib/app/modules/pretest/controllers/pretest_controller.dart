@@ -66,7 +66,7 @@ class PretestController extends GetxController {
   Future<void> refresh() async {
     await getDetailBimbel();
     await getBimbelSoal();
-    uuid.value = bimbelData['uuid'];
+    uuid = bimbelData['uuid'];
   }
 
   Future<void> initPengerjaan() async {
