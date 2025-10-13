@@ -26,145 +26,163 @@ class PretestTourView extends GetView<PretestTourController> {
         backgroundColor: Colors.white,
         bottomNavigationBar: BottomAppBar(
           color: Colors.white,
-          child: Column(
-            spacing: 4,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(top: BorderSide(color: Colors.grey)),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(top: BorderSide(color: Colors.grey)),
+                  ),
                 ),
-              ),
-              Row(
-                spacing: 12,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    key: controller.prevKey,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black, // warna teks/icon
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Tombol Sebelumnya
+                      ElevatedButton(
+                        key: controller.prevKey,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                        onPressed: () {},
+                        child: const Row(
+                          children: [
+                            Icon(Icons.arrow_back_ios, size: 16),
+                            SizedBox(width: 4),
+                            Text("Sebelumnya", style: TextStyle(fontSize: 13)),
+                          ],
+                        ),
                       ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
+                      const SizedBox(width: 16),
+                      // Timer
+                      Text(
+                        "00:00:00",
+                        key: controller.timerKey,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      children: [
-                        Icon(Icons.arrow_back_ios),
-                        Text("Sebelumnya"),
-                      ],
-                    ),
+                      const SizedBox(width: 16),
+                      // Tombol Selanjutnya
+                      ElevatedButton(
+                        key: controller.nextKey,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                        onPressed: () {},
+                        child: const Row(
+                          children: [
+                            Text("Selanjutnya", style: TextStyle(fontSize: 13)),
+                            SizedBox(width: 4),
+                            Icon(Icons.arrow_forward_ios, size: 16),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(key: controller.timerKey, "00:00:00"),
-                  ElevatedButton(
-                    key: controller.nextKey,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black, // warna teks/icon
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      children: [
-                        Text("Selanjutnya"),
-                        Icon(Icons.arrow_forward_ios),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
           scrolledUnderElevation: 0,
-          title: Text("Panduan pretest"),
+          title: const Text(
+            "Panduan Pretest",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
           actions: [
-            Stack(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(right: 16),
-                  child: ElevatedButton(
-                    key: controller.selesaiKey,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(
-                        183,
-                        57,
-                        213,
-                        213,
-                      ), // warna tombol
-                      foregroundColor: Colors.white, // warna teks/icon
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Text("Selesai"),
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: ElevatedButton(
+                key: controller.selesaiKey,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(183, 57, 213, 213),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
                   ),
                 ),
-              ],
+                onPressed: () {},
+                child: const Text(
+                  "Selesai",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+              ),
             ),
           ],
         ),
         body: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              // Card Nomor Soal
               Card(
                 color: Colors.white,
-                child: Container(
-                  padding: EdgeInsets.all(16),
+                margin: const EdgeInsets.only(bottom: 16),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      SizedBox(
-                        width: double.infinity,
+                      const Align(
+                        alignment: Alignment.centerLeft,
                         child: Text(
                           "Nomor Soal",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
+                      const SizedBox(height: 12),
                       Row(
                         key: controller.nomorSoalKey,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
                             onPressed: () {},
-                            icon: Icon(Icons.arrow_back_ios),
+                            icon: const Icon(Icons.arrow_back_ios),
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
-                              foregroundColor: Colors.black, // warna teks/icon
+                              foregroundColor: Colors.black,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
-                                vertical: 12,
+                                vertical: 10,
                               ),
                             ),
                             onPressed: () {},
-                            child: Text("1"),
+                            child: const Text("1"),
                           ),
                           IconButton(
                             onPressed: () {},
-                            icon: Icon(Icons.arrow_forward_ios),
+                            icon: const Icon(Icons.arrow_forward_ios),
                           ),
                         ],
                       ),
@@ -172,26 +190,28 @@ class PretestTourView extends GetView<PretestTourController> {
                   ),
                 ),
               ),
+
+              // Card Soal
               Card(
                 color: Colors.white,
-                child: Container(
-                  padding: EdgeInsets.all(16),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
+                      // Header Soal
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            "Soal No.1",
+                          const Text(
+                            "Soal No. 1",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               IconButton(
                                 key: controller.tandaiKey,
                                 onPressed: () {},
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.bookmark,
                                   color: Colors.amberAccent,
                                 ),
@@ -199,73 +219,78 @@ class PretestTourView extends GetView<PretestTourController> {
                               IconButton(
                                 key: controller.flagKey,
                                 onPressed: () {},
-                                icon: Icon(Icons.flag, color: Colors.redAccent),
+                                icon: const Icon(
+                                  Icons.flag,
+                                  color: Colors.redAccent,
+                                ),
                               ),
                             ],
                           ),
                         ],
                       ),
+                      const SizedBox(height: 8),
+                      // Teks Soal
                       Container(
-                        margin: EdgeInsets.all(8),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
                         child: Text(
-                          "Sebagai pegawai kantoran, Anda memiliki delapan jam kerja aktif. Di lain sisi, Anda adalah seorang istri dan ibu dari dua balita. Bagaimana Anda mengatur tugas Anda sebagai pegawai dan ibu rumah tangga agar semua berjalan seimbang?",
                           key: controller.soalKey,
+                          "Sebagai pegawai kantoran, Anda memiliki delapan jam kerja aktif. Di lain sisi, Anda adalah seorang istri dan ibu dari dua balita. Bagaimana Anda mengatur tugas Anda sebagai pegawai dan ibu rumah tangga agar semua berjalan seimbang?",
+                          style: const TextStyle(height: 1.4),
                         ),
                       ),
+                      const SizedBox(height: 24),
 
-                      SizedBox(height: 24),
-
+                      // List Opsi
                       ListView.builder(
                         key: controller.optionKey,
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: controller.opsi.length,
                         itemBuilder: (context, index) {
-                          final inisial = String.fromCharCode(
-                            65 + index,
-                          ); // A, B, C, D, E
+                          final inisial = String.fromCharCode(65 + index);
                           final option = controller.opsi[index];
 
-                          return Card(
-                            color: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              side: const BorderSide(
-                                color: Colors.grey,
-                                width: 1,
-                              ),
-                            ),
+                          return Container(
                             margin: const EdgeInsets.symmetric(vertical: 4),
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.radio_button_unchecked,
-                                color: Colors.grey,
+                            child: Card(
+                              color: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: const BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
                               ),
-                              title: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 32,
-                                    alignment: Alignment.topCenter,
-                                    child: Text(
-                                      "$inisial.",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 6,
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 28,
+                                      child: Text(
+                                        "$inisial.",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      option,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        height: 1.3,
+                                    Expanded(
+                                      child: Text(
+                                        option,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          height: 1.3,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           );

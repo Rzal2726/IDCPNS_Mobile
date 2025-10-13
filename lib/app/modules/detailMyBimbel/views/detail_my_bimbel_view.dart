@@ -937,6 +937,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                     onPressed:
                                         (item['has_pretest'] == false &&
                                                 item['can_pretest'] == true)
+                                            // 1 == 1
                                             ? () {
                                               Get.toNamed(
                                                 Routes.PRETEST_DETAIL,

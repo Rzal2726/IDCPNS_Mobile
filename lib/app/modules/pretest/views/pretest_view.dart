@@ -261,7 +261,7 @@ class PretestView extends GetView<PretestController> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: EdgeInsets.symmetric(
-                        horizontal: 24,
+                        horizontal: 8,
                         vertical: 12,
                       ),
                     ),
@@ -296,7 +296,7 @@ class PretestView extends GetView<PretestController> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: EdgeInsets.symmetric(
-                        horizontal: 24,
+                        horizontal: 8,
                         vertical: 12,
                       ),
                     ),
@@ -580,72 +580,65 @@ class PretestView extends GetView<PretestController> {
                                   return SizedBox.shrink();
                                 }
 
-                                return Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 4),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          controller.checkMark(
-                                                controller
-                                                    .soalList[questionNumber -
-                                                    1],
-                                              )
-                                              ? Colors.amber
-                                              : controller.checkAnswer(
-                                                controller
-                                                    .soalList[questionNumber -
-                                                    1]['id'],
-                                              )
-                                              ? const Color.fromARGB(
-                                                255,
-                                                208,
-                                                255,
-                                                244,
-                                              )
-                                              : controller
-                                                      .currentQuestion
-                                                      .value ==
-                                                  questionNumber - 1
-                                              ? Colors.green.shade100
-                                              : controller.isEmptyQuest(
-                                                controller
-                                                    .soalList[questionNumber -
-                                                    1],
-                                              )
-                                              ? Colors.grey.shade300
-                                              : Colors.white,
-
-                                      foregroundColor: Colors.black,
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          color: Colors.transparent,
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        controller.checkMark(
+                                              controller
+                                                  .soalList[questionNumber - 1],
+                                            )
+                                            ? Colors.amber
+                                            : controller.checkAnswer(
+                                              controller
+                                                  .soalList[questionNumber -
+                                                  1]['id'],
+                                            )
+                                            ? const Color.fromARGB(
+                                              255,
+                                              208,
+                                              255,
+                                              244,
+                                            )
+                                            : controller
+                                                    .currentQuestion
+                                                    .value ==
+                                                questionNumber - 1
+                                            ? Colors.green.shade100
+                                            : controller.isEmptyQuest(
+                                              controller
+                                                  .soalList[questionNumber - 1],
+                                            )
+                                            ? Colors.grey.shade300
+                                            : Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: BorderSide(
+                                        color: Colors.transparent,
                                       ),
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                        vertical: 4,
-                                      ),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    onPressed: () {
-                                      controller.currentQuestion.value =
-                                          questionNumber - 1;
-                                      controller.startQuestion(
-                                        controller.soalList[controller
-                                            .currentQuestion
-                                            .value]['id'],
-                                      );
-
-                                      // Kalau soal sebelumnya gak di-mark & gak dijawab, tandai kosong
-                                      if (!controller.checkMark(soal) &&
-                                          !controller.checkAnswer(
-                                            questionNumber,
-                                          )) {
-                                        controller.markEmpty(soal);
-                                      }
-                                    },
-                                    child: Text(questionNumber.toString()),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                      vertical: 4,
+                                    ),
                                   ),
+                                  onPressed: () {
+                                    controller.currentQuestion.value =
+                                        questionNumber - 1;
+                                    controller.startQuestion(
+                                      controller.soalList[controller
+                                          .currentQuestion
+                                          .value]['id'],
+                                    );
+
+                                    // Kalau soal sebelumnya gak di-mark & gak dijawab, tandai kosong
+                                    if (!controller.checkMark(soal) &&
+                                        !controller.checkAnswer(
+                                          questionNumber,
+                                        )) {
+                                      controller.markEmpty(soal);
+                                    }
+                                  },
+                                  child: Text(questionNumber.toString()),
                                 );
                               }),
 
