@@ -122,10 +122,13 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                   text: "Pilih Pembayaran",
                                 )
                                 : _menuTile(
-                                  leading: SvgPicture.network(
+                                  leading: Container(
                                     width: 60,
-                                    controller
-                                        .selectedPaymentMethod['image_url'],
+                                    child: SvgPicture.network(
+                                      controller
+                                          .selectedPaymentMethod['image_url'],
+                                      fit: BoxFit.contain,
+                                    ),
                                   ),
                                   iconColor: Colors.teal,
                                   text:
@@ -874,7 +877,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                         ),
                         IconButton(
                           icon: Icon(Icons.close),
-                          onPressed: () => Get.back(),
+                          onPressed: () => Navigator.pop(context),
                         ),
                       ],
                     ),
@@ -918,18 +921,26 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                               ),
                             ),
                             onPressed: () {
-                              if (voucherController.text.length < 1) {
+                              String text = voucherController.text;
+
+                              if (text.isEmpty) {
                                 Get.snackbar(
                                   "Gagal",
-                                  "Mohon isi kode terlebih dahulu",
+                                  "Nomor telepon tidak boleh kosong",
                                   backgroundColor: Colors.pink,
                                   colorText: Colors.white,
                                 );
-                                return;
+                              } else if (text.length < 10) {
+                                Get.snackbar(
+                                  "Gagal",
+                                  "Nomor telepon minimal 10 karakter",
+                                  backgroundColor: Colors.pink,
+                                  colorText: Colors.white,
+                                );
+                              } else {
+                                controller.applyCode(voucherController.text);
+                                Navigator.pop(context);
                               }
-
-                              controller.applyCode(voucherController.text);
-                              Navigator.pop(context);
                             },
                             child: Text(
                               "Klaim",
@@ -978,7 +989,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                             icon: Icon(Icons.close),
                             onPressed: () {
                               ovoNumController.text = '';
-                              Get.back();
+                              Navigator.pop(context);
                             },
                           ),
                         ],

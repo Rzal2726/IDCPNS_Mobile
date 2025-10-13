@@ -24,10 +24,8 @@ class DetailMyBimbelController extends GetxController {
   final count = 0.obs;
   @override
   void onInit() {
-    getData();
-    levelName.value = box.read('levelName') ?? "";
+    refresh();
     super.onInit();
-    checkMaintenance();
   }
 
   @override
@@ -47,6 +45,8 @@ class DetailMyBimbelController extends GetxController {
 
   Future<void> refresh() async {
     getData();
+    levelName.value = box.read('levelName') ?? "";
+    checkMaintenance();
   }
 
   Future<void> getData() async {

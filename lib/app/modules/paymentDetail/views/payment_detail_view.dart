@@ -268,14 +268,15 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                             Expanded(
                               child: Text(
                                 controller.ovoNumber.value.isNotEmpty
-                                    ? controller.ovoNumber.value
+                                    ? "+62 ${controller.ovoNumber.value}"
                                     : controller
                                         .metodePembayaran
                                         .value
                                         .isNotEmpty
-                                    ? controller.metodePembayaran.value
+                                    ? controller.selectedPaymentMethod['name']
                                     : "Pilih Pembayaran",
-                                style: TextStyle(fontSize: 14),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             Icon(Icons.chevron_right),
@@ -725,6 +726,7 @@ void showPaymentBottomSheet(BuildContext context) {
                                           controller.paymentSelected(
                                             id: method['id'],
                                             methode: method['code'],
+                                            name: method['name'],
                                             type: data['code'],
                                             image: method['image_url'],
                                           );
@@ -852,7 +854,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
             return controller.paymantListData.isEmpty
                 ? Center(child: CircularProgressIndicator())
                 : SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.25,
+                  height: MediaQuery.of(context).size.height * 0.18,
                   child: SingleChildScrollView(
                     padding: AppStyle.contentPadding,
                     child: Column(
@@ -862,7 +864,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Voucher",
+                              "Kode Promo",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -870,7 +872,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
                             ),
                             IconButton(
                               icon: Icon(Icons.close),
-                              onPressed: () => Get.back(),
+                              onPressed: () => Navigator.pop(context),
                             ),
                           ],
                         ),
@@ -917,7 +919,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
                                 ),
                                 onPressed: () {
                                   controller.getApplyCode();
-                                  Get.back();
+                                  Navigator.pop(context);
                                 },
                                 child: Text(
                                   "Klaim",
@@ -960,7 +962,7 @@ void showPhoneNumberBottomSheet(BuildContext context) {
             return controller.paymantListData.isEmpty
                 ? Center(child: CircularProgressIndicator())
                 : SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.25,
+                  height: MediaQuery.of(context).size.height * 0.18,
                   child: SingleChildScrollView(
                     padding: AppStyle.contentPadding,
                     child: Column(
@@ -980,6 +982,7 @@ void showPhoneNumberBottomSheet(BuildContext context) {
                               icon: Icon(Icons.close),
                               onPressed: () {
                                 controller.clearPaymentSelection();
+                                Navigator.pop(context);
                               },
                             ),
                           ],
@@ -1053,14 +1056,23 @@ void showPhoneNumberBottomSheet(BuildContext context) {
                                   String text = controller.ovoController.text;
 
                                   if (text.isEmpty) {
+                                    Get.snackbar(
+                                      "Gagal",
+                                      "Nomor telepon tidak boleh kosong",
+                                      backgroundColor: Colors.pink,
+                                      colorText: Colors.white,
+                                    );
                                     controller.ovoError.value =
                                         "Nomor telepon tidak boleh kosong";
                                   } else if (text.length < 10) {
+                                    Get.snackbar(
+                                      "Gagal",
+                                      "Nomor telepon minimal 10 karakter",
+                                      backgroundColor: Colors.pink,
+                                      colorText: Colors.white,
+                                    );
                                     controller.ovoError.value =
                                         "Nomor telepon minimal 10 karakter";
-                                  } else if (text.length > 12) {
-                                    controller.ovoError.value =
-                                        "Nomor telepon maksimal 12 karakter";
                                   } else {
                                     controller.ovoError.value = '';
                                     controller.getAddOvoNumber();

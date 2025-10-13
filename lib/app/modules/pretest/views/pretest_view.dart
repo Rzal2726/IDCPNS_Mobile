@@ -26,10 +26,11 @@ class PretestView extends GetView<PretestController> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
           elevation: 0,
           scrolledUnderElevation: 0,
-          title: Text("Pengerjaan Bimbel"),
+          title: Text("Pengerjaan Pretest"),
           actions: [
             Stack(
               children: [
@@ -541,6 +542,7 @@ class PretestView extends GetView<PretestController> {
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            spacing: 2,
                             children: [
                               // Tombol Back
                               IconButton(
