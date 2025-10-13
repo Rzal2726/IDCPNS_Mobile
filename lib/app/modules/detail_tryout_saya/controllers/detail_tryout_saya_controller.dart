@@ -78,10 +78,12 @@ class DetailTryoutSayaController extends GetxController {
     await getJabatan();
     await getStatsNilai();
 
-    startCountdown(
-      startDate: DateTime.now(),
-      endDate: DateTime.parse(tryOutSaya['tryout']['startdate']),
-    );
+    if (tryOutSaya['tryout']['startdate'] != null) {
+      startCountdown(
+        startDate: DateTime.now(),
+        endDate: DateTime.parse(tryOutSaya['tryout']['startdate']),
+      );
+    }
 
     loading['chart'] = false;
   }
@@ -94,8 +96,9 @@ class DetailTryoutSayaController extends GetxController {
     final Map<String, dynamic> data = Map<String, dynamic>.from(
       response['data'],
     );
+    print("uuidtry: ${lateUuid}");
+    print("apakah ada expire ? ${data['expireddate'] != null}");
     tryOutSaya.assignAll(data);
-    print(data);
     print("tanggal sekarang ${DateTime.now()}");
   }
 

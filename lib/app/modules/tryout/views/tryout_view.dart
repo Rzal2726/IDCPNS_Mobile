@@ -5,7 +5,9 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
+import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
+import 'package:idcpns_mobile/app/modules/detail_tryout_saya/controllers/detail_tryout_saya_controller.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -388,10 +390,23 @@ class TryoutView extends GetView<TryoutController> {
                                 width: 300, // biar card rapi & konsisten
                                 child: GestureDetector(
                                   onTap: () {
-                                    if (data['is_purchase'] &&
-                                        !data['is_verification']) {
+                                    final isVerification = parseBoolNullable(
+                                      data['is_verification'],
+                                    );
+                                    if (data['is_purchase']) {
+                                      if (isVerification != null &&
+                                          isVerification) {
+                                        Get.toNamed(
+                                          "/detail-event",
+                                          arguments: data['uuid'],
+                                        );
+                                        return;
+                                      }
+                                      Get.delete<DetailTryoutSayaController>(
+                                        force: true,
+                                      );
                                       Get.toNamed(
-                                        "detail-tryout-saya",
+                                        "/detail-tryout-saya",
                                         arguments:
                                             data['tryout_transaction_id'],
                                       );

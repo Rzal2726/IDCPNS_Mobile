@@ -200,6 +200,11 @@ class DetailEventView extends GetView<DetailEventController> {
                                 );
                                 return;
                               }
+                            } else {
+                              controller.claimTryout(
+                                controller.dataEvent['id'],
+                              );
+                              return;
                             }
                             if (controller.selectedPaket.value == "Free") {
                               Get.toNamed(
@@ -232,7 +237,7 @@ class DetailEventView extends GetView<DetailEventController> {
                                   "Platinum") {
                                 return Text("Daftar Sekarang");
                               } else {
-                                return Text("Klaim");
+                                return Text("Claim Tryout");
                               }
                             }
                           }),
@@ -241,21 +246,32 @@ class DetailEventView extends GetView<DetailEventController> {
                     }),
                   ),
                   SizedBox(height: 16),
-                  Text(
-                    "Ingin mendapatkan setiap event tryout premium secara gratis?",
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Get.offNamed("/upgrade-akun");
-                    },
-                    child: Text(
-                      "Upgrade ke platinum sekarang!",
-                      style: TextStyle(
-                        color: Colors.teal,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  Obx(() {
+                    return controller.userData['level_name'] != "Platinum"
+                        ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Ingin mendapatkan setiap event tryout premium secara gratis?",
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Get.offNamed("/upgrade-akun");
+                              },
+                              child: Text(
+                                "Upgrade ke platinum sekarang!",
+                                style: TextStyle(
+                                  color: Colors.teal,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                        : Text(
+                          "Terima kasih sudah berlangganan Platinum. Klik tombol diatas untuk claim Tryout Premium",
+                        );
+                  }),
                   SizedBox(height: 16),
                   Obx(() {
                     return Row(

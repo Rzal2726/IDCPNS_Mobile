@@ -65,3 +65,16 @@ String formatTanggal(String? tanggalStr) {
     return tanggalStr; // fallback kalau gagal parse
   }
 }
+
+bool? parseBoolNullable(dynamic v) {
+  if (v == null) return null;
+  if (v is bool) return v;
+  if (v is num) return v != 0;
+  if (v is String) {
+    final s = v.trim().toLowerCase();
+    if (s.isEmpty) return null;
+    if (['true', '1', 'yes', 'y', 't'].contains(s)) return true;
+    if (['false', '0', 'no', 'n', 'f'].contains(s)) return false;
+  }
+  return null; // unknown value -> treat as absent
+}

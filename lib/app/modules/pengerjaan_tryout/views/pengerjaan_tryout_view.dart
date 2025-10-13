@@ -90,8 +90,8 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
+                            horizontal: 12,
+                            vertical: 8,
                           ),
                         ),
                         onPressed: () {
@@ -310,14 +310,14 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black, // warna teks/icon
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white, // warna teks/icon
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 12,
+                        horizontal: 12,
+                        vertical: 8,
                       ),
                     ),
                     onPressed: () {
@@ -351,14 +351,14 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black, // warna teks/icon
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white, // warna teks/icon
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 12,
+                        horizontal: 12,
+                        vertical: 8,
                       ),
                     ),
                     onPressed: () {
@@ -604,8 +604,9 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                       controller.numberPerPage.value)
                                   .ceil();
 
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          return Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            spacing: 2,
                             children: [
                               // Tombol Back
                               IconButton(
@@ -700,7 +701,7 @@ class PengerjaanTryoutView extends GetView<PengerjaanTryoutController> {
                                     ),
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 4,
-                                      vertical: 4,
+                                      vertical: 2,
                                     ),
                                   ),
                                   onPressed: () {

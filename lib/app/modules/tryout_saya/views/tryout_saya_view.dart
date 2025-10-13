@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
+import 'package:idcpns_mobile/app/modules/detail_tryout_saya/controllers/detail_tryout_saya_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
@@ -650,7 +651,9 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
     return InkWell(
       onTap: () {
         controller.selectedUuid.value = uuid;
-        Get.toNamed("detail-tryout-saya", arguments: uuid);
+        print("uuidtry: ${uuid}");
+        Get.delete<DetailTryoutSayaController>(force: true);
+        Get.toNamed("/detail-tryout-saya", arguments: uuid);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),

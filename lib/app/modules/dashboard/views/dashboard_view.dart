@@ -14,6 +14,7 @@ import 'package:idcpns_mobile/app/Components/widgets/exitDialog.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/programTryoutGratisCard.dart';
 import 'package:idcpns_mobile/app/Components/widgets/wdigetTryoutEventCard.dart';
+import 'package:idcpns_mobile/app/modules/detail_tryout_saya/controllers/detail_tryout_saya_controller.dart';
 import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -1085,10 +1086,24 @@ class DashboardView extends GetView<DashboardController> {
                                                 300, // biar card rapi & konsisten
                                             child: GestureDetector(
                                               onTap: () {
-                                                if (data['is_purchase'] &&
-                                                    !data['is_verification']) {
+                                                final isVerification =
+                                                    parseBoolNullable(
+                                                      data['is_verification'],
+                                                    );
+                                                if (data['is_purchase']) {
+                                                  if (isVerification != null &&
+                                                      isVerification) {
+                                                    Get.toNamed(
+                                                      "/detail-event",
+                                                      arguments: data['uuid'],
+                                                    );
+                                                    return;
+                                                  }
+                                                  Get.delete<
+                                                    DetailTryoutSayaController
+                                                  >(force: true);
                                                   Get.toNamed(
-                                                    "detail-tryout-saya",
+                                                    "/detail-tryout-saya",
                                                     arguments:
                                                         data['tryout_transaction_id'],
                                                   );

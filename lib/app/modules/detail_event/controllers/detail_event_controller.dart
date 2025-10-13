@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
@@ -83,6 +84,25 @@ class DetailEventController extends GetxController {
     );
     if (response['is_maintenance']) {
       Get.offAllNamed("/maintenance");
+    }
+  }
+
+  void claimTryout(int id) async {
+    try {
+      final payload = {"tryout_id": id};
+      final response = await restClient.postData(
+        url: baseUrl + apiClaimTryout,
+        payload: payload,
+      );
+
+      Get.offNamed("/pembayaran-berhasil");
+    } catch (e) {
+      Get.snackbar(
+        "Gagal",
+        "Terjadi kesalahan pada server",
+        backgroundColor: Colors.pink,
+        colorText: Colors.white,
+      );
     }
   }
 }

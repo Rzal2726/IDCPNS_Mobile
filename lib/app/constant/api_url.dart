@@ -44,6 +44,7 @@ const String apiGetPaymentList = "v1/transaction/payment-type/list";
 const String apiApplyVoucher = "v1/tryout/voucher/apply";
 const String apiApplyVoucherAkun = "v1/account/upgrade/voucher/apply";
 const String apiCreatePayment = "v1/transaction/create-payment";
+const String apiClaimTryout = "v1/tryout/claim/tryout";
 const String apiGetPaymentDetail = "v1/transaction/payment-history";
 const String apiGetServerTime = "v1/general/server-time";
 const String apiEnhaSimulateTransaction = "v1/transaction/simulate";

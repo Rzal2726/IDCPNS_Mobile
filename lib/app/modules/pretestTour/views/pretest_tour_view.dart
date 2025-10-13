@@ -44,8 +44,8 @@ class PretestTourView extends GetView<PretestTourController> {
                       ElevatedButton(
                         key: controller.prevKey,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.teal,
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -78,8 +78,8 @@ class PretestTourView extends GetView<PretestTourController> {
                       ElevatedButton(
                         key: controller.nextKey,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.teal,
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

@@ -34,8 +34,8 @@ class PanduanTryoutView extends GetView<PanduanTryoutController> {
                 ElevatedButton(
                   key: controller.prevKey,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black, // warna teks/icon
+                    backgroundColor: Colors.teal,
+                    foregroundColor: Colors.white, // warna teks/icon
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -53,8 +53,8 @@ class PanduanTryoutView extends GetView<PanduanTryoutController> {
                 ElevatedButton(
                   key: controller.nextKey,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black, // warna teks/icon
+                    backgroundColor: Colors.teal,
+                    foregroundColor: Colors.white, // warna teks/icon
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -100,8 +100,8 @@ class PanduanTryoutView extends GetView<PanduanTryoutController> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+                      horizontal: 12,
+                      vertical: 8,
                     ),
                   ),
                   onPressed: () {},

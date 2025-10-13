@@ -112,7 +112,9 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                             controller.tryOutSaya.isEmpty
                                 ? Skeletonizer(child: Text('lorem'))
                                 : controller.tryOutSaya['ispremium'] == 1
-                                ? Text("Masa Aktif")
+                                ? controller.tryOutSaya['expireddate'] != null
+                                    ? Text("Masa Aktif")
+                                    : SizedBox()
                                 : Text(
                                   "Tryout ini adalah versi gratis, dan akan hilang apabila periode pengerjaan telah berakhir (${controller.formatTanggal(controller.tryOutSaya['tryout']?['startdate'])} - ${controller.formatTanggal(controller.tryOutSaya['tryout']?['enddate'])}). Silahkan upgrade ke premium agar mendapatkan tambahan masa aktif dan fitur lainnya.",
                                   style: TextStyle(color: Colors.grey),
@@ -126,7 +128,10 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                           ? Skeletonizer(
                                             child: _badge(isi: "180 Hari"),
                                           )
-                                          : Column(
+                                          : controller
+                                                  .tryOutSaya['expireddate'] !=
+                                              null
+                                          ? Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
@@ -179,7 +184,8 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                                 ],
                                               ),
                                             ],
-                                          ),
+                                          )
+                                          : SizedBox(),
                                 )
                                 : SizedBox(),
                             SizedBox(height: 16), // ✅ ADDED: Spacing

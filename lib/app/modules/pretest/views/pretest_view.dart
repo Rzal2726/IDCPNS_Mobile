@@ -43,8 +43,8 @@ class PretestView extends GetView<PretestController> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
+                        horizontal: 12,
+                        vertical: 8,
                       ),
                     ),
                     onPressed: () {
@@ -255,14 +255,14 @@ class PretestView extends GetView<PretestController> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black, // warna teks/icon
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white, // warna teks/icon
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 12,
+                        horizontal: 12,
+                        vertical: 8,
                       ),
                     ),
                     onPressed: () {
@@ -290,14 +290,14 @@ class PretestView extends GetView<PretestController> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black, // warna teks/icon
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white, // warna teks/icon
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 12,
+                        horizontal: 12,
+                        vertical: 8,
                       ),
                     ),
                     onPressed: () {
