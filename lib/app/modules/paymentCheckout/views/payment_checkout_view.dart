@@ -69,11 +69,11 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
                   color: Colors.white,
                   margin: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
                   child: Container(
-                    padding: EdgeInsets.all(32),
+                    padding: EdgeInsets.symmetric(vertical: 32, horizontal: 16),
                     child: Center(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 8,
                         children: [
                           Obx(
                             () =>

@@ -24,6 +24,8 @@ class PaymentDetailController extends GetxController {
   // var selectedSub = ''.obs; // bisa kosong kalau belum dipilih
   final selectedPaketPerCard = <int, Map<String, dynamic>>{}.obs;
 
+  RxMap<String, dynamic> selectedPaymentMethod = <String, dynamic>{}.obs;
+
   // daftar opsi sub
   RxString biayaAdminRaw = "".obs;
   RxString ovoNumber = "".obs;
@@ -256,7 +258,6 @@ class PaymentDetailController extends GetxController {
     metodePembayaran.value = "";
     biayaAdmin.value = 0; // reset biaya admin juga
     ovoError.value = "";
-    Get.back();
   }
 
   int getTotalHargaFix() {
@@ -271,9 +272,7 @@ class PaymentDetailController extends GetxController {
 
   Future<void> getAddOvoNumber() async {
     String text = ovoController.text;
-    if (!text.startsWith("0")) {
-      text = "0$text";
-    }
+
     ovoNumber.value = text;
     // Optional: print the value to verify it's working
     print('OVO number saved: ${ovoNumber.value}');
@@ -282,10 +281,18 @@ class PaymentDetailController extends GetxController {
   void paymentSelected({
     required int id,
     required String methode,
+    required String name,
     required String type,
     required String image,
   }) {
     print("XXXvs");
+    selectedPaymentMethod.value = {
+      "id": id,
+      "methode": methode,
+      "name": name,
+      "type": type,
+      "image": image,
+    };
     paymentMethod.value = methode;
     paymentMethodId.value = id;
     paymentType.value = type;
@@ -308,7 +315,7 @@ class PaymentDetailController extends GetxController {
       "payment_method_id": paymentMethodId.value,
       "payment_method": paymentMethod.value,
       "payment_type": paymentType.value,
-      "mobile_number": ovoNumber.value,
+      "mobile_number": "+62${ovoNumber.value}",
     };
 
     print("xxxds${payload.toString()}");
