@@ -6,6 +6,7 @@ import 'package:idcpns_mobile/app/Components/widgets/menuCategoryFilter.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/Components/widgets/skeletonizerWidget.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../controllers/program_saya_controller.dart';
@@ -20,6 +21,7 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
       onPopInvoked: (didPop) async {
         if (didPop) return;
         Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+        (Get.find<HomeController>()).currentIndex.value = 4;
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -27,6 +29,7 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
           "Program Saya",
           onBack: () {
             Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+            (Get.find<HomeController>()).currentIndex.value = 4;
           },
         ),
         body: SafeArea(

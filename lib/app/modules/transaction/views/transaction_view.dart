@@ -7,6 +7,7 @@ import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paymentTracsactionWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/Components/widgets/skeletonizerWidget.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/modules/transaction/controllers/transaction_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
@@ -25,6 +26,7 @@ class TransactionView extends GetView<TransactionController> {
         onPopInvoked: (didPop) async {
           if (didPop) return;
           Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+          (Get.find<HomeController>()).currentIndex.value = 4;
         },
         child: Obx(() {
           final allData = controller.transactions['data'] ?? [];
@@ -38,6 +40,7 @@ class TransactionView extends GetView<TransactionController> {
               "Transaksi",
               onBack: () {
                 Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+                (Get.find<HomeController>()).currentIndex.value = 4;
               },
             ),
             body: SafeArea(

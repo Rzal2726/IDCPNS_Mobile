@@ -21,16 +21,16 @@ class MyBimbelView extends GetView<MyBimbelController> {
       onPopInvoked: (didPop) async {
         if (didPop) return;
         // Arahkan tombol back fisik HP ke halaman BIMBEL
-        Get.offNamed(Routes.HOME, arguments: {'initialIndex': 3});
-        (Get.find<HomeController>()).currentIndex.value = 3;
+        Get.offNamed(Routes.HOME, arguments: {'initialIndex': 2});
+        (Get.find<HomeController>()).currentIndex.value = 2;
       },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: secondaryAppBar(
           "Bimbel Saya",
           onBack: () {
-            Get.offNamed(Routes.HOME, arguments: {'initialIndex': 3});
-            (Get.find<HomeController>()).currentIndex.value = 4;
+            Get.offNamed(Routes.HOME, arguments: {'initialIndex': 2});
+            (Get.find<HomeController>()).currentIndex.value = 2;
           },
         ),
         body: SafeArea(

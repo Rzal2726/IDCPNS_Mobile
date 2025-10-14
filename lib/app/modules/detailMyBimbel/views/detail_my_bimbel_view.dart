@@ -935,9 +935,9 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                 Expanded(
                                   child: ElevatedButton.icon(
                                     onPressed:
-                                        (item['has_pretest'] == false &&
-                                                item['can_pretest'] == true)
-                                            // 1 == 1
+                                        // (item['has_pretest'] == false &&
+                                        //         item['can_pretest'] == true)
+                                        1 == 1
                                             ? () {
                                               Get.toNamed(
                                                 Routes.PRETEST_DETAIL,

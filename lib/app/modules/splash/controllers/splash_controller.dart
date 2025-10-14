@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
@@ -80,6 +81,7 @@ class SplashController extends GetxController {
           Get.offNamed(Routes.LENGKAPI_BIODATA);
         } else {
           Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
+          (Get.find<HomeController>()).currentIndex.value = 0;
         }
       } else {
         Get.offNamed(Routes.EMAIL_VERIFICATION);

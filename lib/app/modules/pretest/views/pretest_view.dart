@@ -440,25 +440,37 @@ class PretestView extends GetView<PretestController> {
                                                                           )
                                                                           ? Colors
                                                                               .amber
-                                                                              .shade100
                                                                           : controller.checkAnswer(
                                                                             soal['id'],
                                                                           )
                                                                           ? Colors
                                                                               .teal
-                                                                              .shade100
                                                                           : controller.isEmptyQuest(
                                                                             soal,
                                                                           )
                                                                           ? Colors
                                                                               .grey
-                                                                              .shade300
                                                                           : Colors
                                                                               .white,
 
                                                                   foregroundColor:
-                                                                      Colors
-                                                                          .black,
+                                                                      controller.checkMark(
+                                                                            soal,
+                                                                          )
+                                                                          ? Colors
+                                                                              .black
+                                                                          : controller.checkAnswer(
+                                                                            soal['id'],
+                                                                          )
+                                                                          ? Colors
+                                                                              .white
+                                                                          : controller.isEmptyQuest(
+                                                                            soal,
+                                                                          )
+                                                                          ? Colors
+                                                                              .white
+                                                                          : Colors
+                                                                              .black,
 
                                                                   shape: RoundedRectangleBorder(
                                                                     side: BorderSide(
@@ -544,119 +556,170 @@ class PretestView extends GetView<PretestController> {
                             children: [
                               // Tombol Back
                               IconButton(
-                                onPressed: () {
-                                  if (controller.currentQuestion.value > 0) {
-                                    controller.currentQuestion.value--;
-
-                                    // Ambil soal setelah pindah halaman
-                                    int questionNumber =
-                                        controller.currentPage.value;
-
-                                    // Kalau soal sebelumnya gak di-mark & gak dijawab, tandai kosong
-                                    if (!controller.checkMark(soal) &&
-                                        !controller.checkAnswer(
-                                          questionNumber,
-                                        )) {
-                                      controller.markEmpty(soal);
-                                    }
-                                  }
-                                },
-
-                                icon: Icon(Icons.arrow_back_ios),
+                                onPressed:
+                                    controller.currentPage.value > 0
+                                        ? () {
+                                          controller.currentPage.value--;
+                                          int newQuestionIndex =
+                                              controller.currentPage.value *
+                                              controller.numberPerPage.value;
+                                          newQuestionIndex = newQuestionIndex
+                                              .clamp(
+                                                0,
+                                                controller.soalList.length - 1,
+                                              );
+                                          if (!controller.checkMark(soal) &&
+                                              !controller.checkAnswer(
+                                                controller.currentPage.value,
+                                              )) {
+                                            controller.markEmpty(soal);
+                                          }
+                                          controller.currentQuestion.value =
+                                              newQuestionIndex;
+                                          controller.startQuestion(
+                                            controller
+                                                .soalList[newQuestionIndex]['id'],
+                                          );
+                                        }
+                                        : null,
+                                icon: const Icon(Icons.arrow_back_ios),
                               ),
 
-                              // Tombol nomor soal di page saat ini
-                              ...List.generate(controller.numberPerPage.value, (
-                                index,
-                              ) {
-                                int questionNumber =
-                                    controller.currentPage.value *
-                                        controller.numberPerPage.value +
-                                    (index + 1);
+                              // Tombol nomor soal (dengan margin dan anti-overflow)
+                              Flexible(
+                                child: Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing: 8, // jarak horizontal antar tombol
+                                  runSpacing:
+                                      8, // jarak vertikal kalau melipat ke bawah
+                                  children: List.generate(controller.numberPerPage.value, (
+                                    index,
+                                  ) {
+                                    int questionNumber =
+                                        controller.currentPage.value *
+                                            controller.numberPerPage.value +
+                                        (index + 1);
 
-                                // Cek kalau questionNumber > jumlah soal
-                                if (questionNumber >
-                                    controller.soalList.length) {
-                                  return SizedBox.shrink();
-                                }
-
-                                return ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        controller.checkMark(
-                                              controller
-                                                  .soalList[questionNumber - 1],
-                                            )
-                                            ? Colors.amber
-                                            : controller.checkAnswer(
-                                              controller
-                                                  .soalList[questionNumber -
-                                                  1]['id'],
-                                            )
-                                            ? const Color.fromARGB(
-                                              255,
-                                              208,
-                                              255,
-                                              244,
-                                            )
-                                            : controller
-                                                    .currentQuestion
-                                                    .value ==
-                                                questionNumber - 1
-                                            ? Colors.green.shade100
-                                            : controller.isEmptyQuest(
-                                              controller
-                                                  .soalList[questionNumber - 1],
-                                            )
-                                            ? Colors.grey.shade300
-                                            : Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                        color: Colors.transparent,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                      vertical: 4,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    controller.currentQuestion.value =
-                                        questionNumber - 1;
-                                    controller.startQuestion(
-                                      controller.soalList[controller
-                                          .currentQuestion
-                                          .value]['id'],
-                                    );
-
-                                    // Kalau soal sebelumnya gak di-mark & gak dijawab, tandai kosong
-                                    if (!controller.checkMark(soal) &&
-                                        !controller.checkAnswer(
-                                          questionNumber,
-                                        )) {
-                                      controller.markEmpty(soal);
+                                    // Cegah tombol di luar jumlah soal
+                                    if (questionNumber >
+                                        controller.soalList.length) {
+                                      return const SizedBox.shrink();
                                     }
-                                  },
-                                  child: Text(questionNumber.toString()),
-                                );
-                              }),
+
+                                    return ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            controller.checkMark(
+                                                  controller
+                                                      .soalList[questionNumber -
+                                                      1],
+                                                )
+                                                ? Colors.amber
+                                                : controller.checkAnswer(
+                                                  controller
+                                                      .soalList[questionNumber -
+                                                      1]['id'],
+                                                )
+                                                ? Colors.teal
+                                                : controller
+                                                        .currentQuestion
+                                                        .value ==
+                                                    questionNumber - 1
+                                                ? Colors.teal.shade200
+                                                : controller.isEmptyQuest(
+                                                  controller
+                                                      .soalList[questionNumber -
+                                                      1],
+                                                )
+                                                ? Colors.grey
+                                                : Colors.white,
+                                        foregroundColor:
+                                            controller.checkMark(
+                                                  controller
+                                                      .soalList[questionNumber -
+                                                      1],
+                                                )
+                                                ? Colors.black
+                                                : controller.checkAnswer(
+                                                  controller
+                                                      .soalList[questionNumber -
+                                                      1]['id'],
+                                                )
+                                                ? Colors.white
+                                                : controller
+                                                        .currentQuestion
+                                                        .value ==
+                                                    questionNumber - 1
+                                                ? Colors.white
+                                                : controller.isEmptyQuest(
+                                                  controller
+                                                      .soalList[questionNumber -
+                                                      1],
+                                                )
+                                                ? Colors.white
+                                                : Colors.black,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                          vertical: 6,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        controller.currentQuestion.value =
+                                            questionNumber - 1;
+                                        controller.startQuestion(
+                                          controller.soalList[controller
+                                              .currentQuestion
+                                              .value]['id'],
+                                        );
+
+                                        if (!controller.checkMark(soal) &&
+                                            !controller.checkAnswer(
+                                              questionNumber,
+                                            )) {
+                                          controller.markEmpty(soal);
+                                        }
+                                      },
+                                      child: Text(questionNumber.toString()),
+                                    );
+                                  }),
+                                ),
+                              ),
 
                               // Tombol Next
                               IconButton(
-                                onPressed: () {
-                                  (controller.currentQuestion.value + 1) <
-                                          controller.soalList.length
-                                      ? controller.currentQuestion.value++
-                                      : null;
-                                  int questionNumber =
-                                      controller.currentPage.value;
-                                  if (!controller.checkMark(soal) &&
-                                      !controller.checkAnswer(questionNumber)) {
-                                    controller.markEmpty(soal);
-                                  }
-                                },
-                                icon: Icon(Icons.arrow_forward_ios),
+                                onPressed:
+                                    controller.currentPage.value <
+                                            controller.soalList.length - 1
+                                        ? () {
+                                          controller.currentPage.value++;
+                                          int newQuestionIndex =
+                                              controller.currentPage.value *
+                                              controller.numberPerPage.value;
+                                          newQuestionIndex = newQuestionIndex
+                                              .clamp(
+                                                0,
+                                                controller.soalList.length - 1,
+                                              );
+                                          if (!controller.checkMark(soal) &&
+                                              !controller.checkAnswer(
+                                                controller.currentPage.value,
+                                              )) {
+                                            controller.markEmpty(soal);
+                                          }
+                                          controller.currentQuestion.value =
+                                              newQuestionIndex;
+                                          controller.startQuestion(
+                                            controller
+                                                .soalList[newQuestionIndex]['id'],
+                                          );
+                                        }
+                                        : null,
+                                icon: const Icon(Icons.arrow_forward_ios),
                               ),
                             ],
                           ),
