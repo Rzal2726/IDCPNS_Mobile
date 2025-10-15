@@ -151,7 +151,7 @@ class RegisterController extends GetxController {
     }
 
     if (password.isEmpty) {
-      notifHelper.show("Password tidak boleh kosong!", type: 0);
+      notifHelper.show("Kata sandi tidak boleh kosong!", type: 0);
       return;
     }
 

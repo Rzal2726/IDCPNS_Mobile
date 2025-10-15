@@ -99,6 +99,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                     TextField(
                       controller: controller.namaLengkapController,
                       decoration: InputDecoration(
+                        hintText: "Masukan Nama lengkap",
                         labelText: "Nama Lengkap",
                         border: OutlineInputBorder(),
                         isDense: true,
@@ -112,6 +113,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                       controller: controller.emailController,
                       enabled: false,
                       decoration: InputDecoration(
+                        hintText: "Masukan email",
                         labelText: "Email",
                         border: OutlineInputBorder(),
                         isDense: true,
