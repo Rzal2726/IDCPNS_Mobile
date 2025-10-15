@@ -292,12 +292,15 @@ class PaymentWhislistController extends GetxController {
   }
 
   Future<void> getAddOvoNumber() async {
-    String text = ovoController.text;
-    if (!text.startsWith("0")) {
-      text = "0$text";
+    String text = ovoController.text.trim();
+
+    if (text.startsWith('0')) {
+      text = text.replaceFirst('0', '+62 ');
+    } else if (!text.startsWith('+62')) {
+      text = '+62 $text';
     }
+
     ovoNumber.value = text;
-    // Optional: print the value to verify it's working
   }
 
   void createPayment() async {

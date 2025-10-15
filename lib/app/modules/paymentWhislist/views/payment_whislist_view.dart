@@ -1081,7 +1081,9 @@ void showPhoneNumberBottomSheet(BuildContext context) {
                               child: TextField(
                                 controller: controller.ovoController,
                                 keyboardType: TextInputType.phone,
+
                                 inputFormatters: [
+                                  LengthLimitingTextInputFormatter(13),
                                   FilteringTextInputFormatter.digitsOnly,
                                 ],
                                 decoration: InputDecoration(
