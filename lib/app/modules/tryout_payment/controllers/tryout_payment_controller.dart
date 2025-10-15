@@ -6,6 +6,7 @@ import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/detail_tryout/controllers/detail_tryout_controller.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
 
 class TryoutPaymentController extends GetxController {
@@ -281,7 +282,12 @@ class TryoutPaymentController extends GetxController {
         response['data'],
       );
       transactionData.assignAll(data);
-      Get.offNamed("/tryout-checkout", arguments: data['payment_id']);
+
+      Get.offNamed(
+        Routes.PAYMENT_CHECKOUT,
+        arguments: [data['payment_id'], data['tanggal_kadaluarsa']],
+      );
+      // Get.offNamed("/tryout-checkout", arguments: data['payment_id']);
     } catch (e) {
       Get.snackbar(
         "Gagal",

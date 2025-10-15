@@ -194,9 +194,11 @@ class UpgradeAkunView extends GetView<UpgradeAkunController> {
                                           top: Radius.circular(16),
                                         ),
                                       ),
+                                      isScrollControlled: true,
                                       builder: (context) {
                                         return SafeArea(
                                           child: Container(
+                                            margin: EdgeInsets.only(top: 20),
                                             padding: const EdgeInsets.all(16),
                                             child: Column(
                                               mainAxisAlignment:

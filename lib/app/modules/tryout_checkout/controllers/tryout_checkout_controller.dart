@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/modules/tryout_payment/controllers/tryout_payment_controller.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,6 +25,8 @@ class TryoutCheckoutController extends GetxController {
   RxBool isDeveloper = false.obs;
   RxBool isRedirected = false.obs;
   final count = 0.obs;
+  RxBool isInit = false.obs;
+
   @override
   void onInit() {
     initPayment();
@@ -91,6 +95,23 @@ class TryoutCheckoutController extends GetxController {
     if (paymentDetails.isNotEmpty) {
       if (paymentDetails['tanggal_paid'] == null) {
         print("Belum Dibayar");
+        // if (isInit.value == true) {
+        //   final pref = await SharedPreferences.getInstance();
+        //   DateTime? isOvo;
+        //   if (paymentDetails['payment_details'][0]['xendit_payment_method_id'] ==
+        //       10) {
+        //     isOvo = DateTime.parse(
+        //       pref.getString("initTime")!,
+        //     ).add(Duration(minutes: 1));
+        //   } else {
+        //     isOvo = DateTime.parse(
+        //       pref.getString("initTime")!,
+        //     ).add(Duration(days: 1));
+        //   }
+        //   if (DateTime.now().isAfter(isOvo)) {
+        //     Get.offNamed("/checkout-gagal");
+        //   }
+        // }
         if (compareTimeStamp(paymentDetails['tanggal_kadaluarsa'])) {
           Get.offAllNamed("/tryout");
         }
@@ -104,10 +125,9 @@ class TryoutCheckoutController extends GetxController {
               );
             } else {
               print("Tidak bisa membuka URL: $url");
+              Get.offNamed("/checkout-gagal");
             }
             isRedirected.value = true;
-          } else {
-            print("No Url");
           }
         }
       } else {

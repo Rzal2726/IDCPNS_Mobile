@@ -213,7 +213,7 @@ class WebinarView extends GetView<WebinarController> {
 
                           return _dataCard(
                             uuid: data['uuid'],
-                            status: data['status'],
+                            status: data['iscompleted'],
                             category: data['menu_category']['menu'],
                             judul: data['nama'],
                             categoryColor:
@@ -415,9 +415,19 @@ class WebinarView extends GetView<WebinarController> {
                   backgroundColor: categoryColor,
                 ),
                 _badge(
-                  title: status == 1 ? "Selesai" : "Belum Mulai",
+                  title:
+                      status == 1
+                          ? "Selesai"
+                          : canAccess
+                          ? "Sedang Berlangsung"
+                          : "Belum Mulai",
                   foregroundColor: Colors.white,
-                  backgroundColor: status == 1 ? Colors.teal : Colors.grey,
+                  backgroundColor:
+                      status == 1
+                          ? Colors.teal
+                          : canAccess
+                          ? Colors.amber
+                          : Colors.grey,
                 ),
               ],
             ),

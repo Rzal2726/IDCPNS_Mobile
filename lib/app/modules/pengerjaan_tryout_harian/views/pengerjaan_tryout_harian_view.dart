@@ -6,7 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../controllers/pengerjaan_tryout_harian_controller.dart';
+import 'package:idcpns_mobile/app/modules/pengerjaan_tryout_harian/controllers/pengerjaan_tryout_harian_controller.dart';
 
 class PengerjaanTryoutHarianView
     extends GetView<PengerjaanTryoutHarianController> {
@@ -21,7 +21,7 @@ class PengerjaanTryoutHarianView
               backgroundColor: Colors.white,
               title: const Text('Konfirmasi'),
               content: const Text(
-                "Apakah kamu yakin ingin kembali?\nProgress tryout yang belum selesai akan hilang.",
+                "Apakah kamu yakin ingin kembali?\nProgres tryout yang belum selesai akan hilang.",
               ),
               actions: [
                 TextButton(
@@ -53,7 +53,6 @@ class PengerjaanTryoutHarianView
             controller.localStorage.remove("selected_answer");
             controller.localStorage.remove("soal_uuid");
             controller.localStorage.remove("sisa_durasi");
-
             Get.back(); // keluar manual
           }
         }
@@ -92,8 +91,8 @@ class PengerjaanTryoutHarianView
                             borderRadius: BorderRadius.circular(8),
                           ),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
+                            horizontal: 12,
+                            vertical: 8,
                           ),
                         ),
                         onPressed: () {
@@ -131,10 +130,16 @@ class PengerjaanTryoutHarianView
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
-                                                "Apakah kamu yakin ingin menyelesaikan tryout?",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
+                                              SizedBox(
+                                                width: 250,
+                                                child: Text(
+                                                  "Apakah kamu yakin ingin menyelesaikan tryout?",
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
                                               ),
                                               IconButton(
@@ -164,7 +169,7 @@ class PengerjaanTryoutHarianView
                                             children: [
                                               Text("Terjawab"),
                                               Text(
-                                                "${controller.selectedAnswersList.where((answer) => answer['lathar_soal_option_id'] != 0).length.toString()} Soal",
+                                                "${controller.selectedAnswersList.where((answer) => answer['tryout_question_option_id'] != 0).length.toString()} Soal",
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -177,7 +182,7 @@ class PengerjaanTryoutHarianView
                                             children: [
                                               Text("Tidak Terjawab"),
                                               Text(
-                                                "${(controller.soalList.length - controller.selectedAnswersList.where((answer) => answer['lathar_soal_option_id'] != 0).length).toString()} Soal",
+                                                "${(controller.soalList.length - controller.selectedAnswersList.where((answer) => answer['tryout_question_option_id'] != 0).length).toString()} Soal",
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -306,18 +311,24 @@ class PengerjaanTryoutHarianView
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black, // warna teks/icon
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white, // warna teks/icon
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
+                        horizontal: 12,
+                        vertical: 8,
                       ),
                     ),
                     onPressed: () {
                       if (controller.currentQuestion.value > 0) {
+                        controller.markAnswer(
+                          controller.currentQuestion.value,
+                          controller.checkAnswer(
+                            controller.currentQuestion.value,
+                          ),
+                        );
                         controller.currentQuestion.value--;
                         controller.startQuestion(
                           controller.soalList[controller
@@ -341,19 +352,25 @@ class PengerjaanTryoutHarianView
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black, // warna teks/icon
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white, // warna teks/icon
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
+                        horizontal: 12,
+                        vertical: 8,
                       ),
                     ),
                     onPressed: () {
                       if (controller.currentQuestion.value <
                           controller.soalList.length - 1) {
+                        controller.markAnswer(
+                          controller.currentQuestion.value,
+                          controller.checkAnswer(
+                            controller.currentQuestion.value,
+                          ),
+                        );
                         controller.currentQuestion.value++;
                         controller.startQuestion(
                           controller.soalList[controller
@@ -482,15 +499,34 @@ class PengerjaanTryoutHarianView
                                                                         controller.checkMark(
                                                                               soal,
                                                                             )
-                                                                            ? Colors.amber.shade100
+                                                                            ? Colors.amber
                                                                             : controller.checkAnswer(
                                                                               soal['id'],
                                                                             )
-                                                                            ? Colors.teal.shade100
+                                                                            ? Colors.teal
+                                                                            : controller.viewedQuestions.contains(
+                                                                              controller.soalList.indexOf(
+                                                                                soal,
+                                                                              ),
+                                                                            )
+                                                                            ? Colors.grey
                                                                             : Colors.white,
                                                                     foregroundColor:
-                                                                        Colors
-                                                                            .black,
+                                                                        controller.checkMark(
+                                                                              soal,
+                                                                            )
+                                                                            ? Colors.black
+                                                                            : controller.checkAnswer(
+                                                                              soal['id'],
+                                                                            )
+                                                                            ? Colors.white
+                                                                            : controller.viewedQuestions.contains(
+                                                                              controller.soalList.indexOf(
+                                                                                soal,
+                                                                              ),
+                                                                            )
+                                                                            ? Colors.white
+                                                                            : Colors.black,
                                                                     shape: RoundedRectangleBorder(
                                                                       side: BorderSide(
                                                                         color:
@@ -509,6 +545,16 @@ class PengerjaanTryoutHarianView
                                                                     ),
                                                                   ),
                                                                   onPressed: () {
+                                                                    controller.markAnswer(
+                                                                      controller
+                                                                          .currentQuestion
+                                                                          .value,
+                                                                      controller.checkAnswer(
+                                                                        controller
+                                                                            .currentQuestion
+                                                                            .value,
+                                                                      ),
+                                                                    );
                                                                     controller
                                                                         .currentQuestion
                                                                         .value = index;
@@ -554,15 +600,41 @@ class PengerjaanTryoutHarianView
                             controller.currentPage.value = pageIndex;
                           }
 
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          int totalPages =
+                              (controller.soalList.length /
+                                      controller.numberPerPage.value)
+                                  .ceil();
+
+                          return Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            spacing: 2,
                             children: [
                               // Tombol Back
                               IconButton(
                                 onPressed:
-                                    controller.currentQuestion.value > 0
+                                    controller.currentPage.value > 0
                                         ? () {
-                                          controller.currentQuestion.value--;
+                                          controller.currentPage.value--;
+                                          int newQuestionIndex =
+                                              controller.currentPage.value *
+                                              controller.numberPerPage.value;
+                                          newQuestionIndex = newQuestionIndex
+                                              .clamp(
+                                                0,
+                                                controller.soalList.length - 1,
+                                              );
+                                          controller.markAnswer(
+                                            controller.currentQuestion.value,
+                                            controller.checkAnswer(
+                                              controller.currentQuestion.value,
+                                            ),
+                                          );
+                                          controller.currentQuestion.value =
+                                              newQuestionIndex;
+                                          controller.startQuestion(
+                                            controller
+                                                .soalList[newQuestionIndex]['id'],
+                                          );
                                         }
                                         : null,
                                 icon: const Icon(Icons.arrow_back_ios),
@@ -583,67 +655,102 @@ class PengerjaanTryoutHarianView
                                   return SizedBox.shrink();
                                 }
 
-                                return Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 4),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          controller.checkMark(
-                                                controller
-                                                    .soalList[questionNumber -
-                                                    1],
-                                              )
-                                              ? Colors.amber
-                                              : controller.checkAnswer(
-                                                controller
-                                                    .soalList[questionNumber -
-                                                    1]['id'],
-                                              )
-                                              ? Color.fromARGB(
-                                                255,
-                                                208,
-                                                255,
-                                                244,
-                                              )
-                                              : controller
-                                                      .currentQuestion
-                                                      .value ==
-                                                  questionNumber - 1
-                                              ? Colors.green.shade100
-                                              : Colors.white,
-                                      foregroundColor: Colors.black,
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          color: Colors.transparent,
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        controller.checkMark(
+                                              controller
+                                                  .soalList[questionNumber - 1],
+                                            )
+                                            ? Colors.amber
+                                            : controller.checkAnswer(
+                                              controller
+                                                  .soalList[questionNumber -
+                                                  1]['id'],
+                                            )
+                                            ? Colors.teal
+                                            : controller
+                                                    .currentQuestion
+                                                    .value ==
+                                                questionNumber - 1
+                                            ? Colors.teal.shade200
+                                            : controller.viewedQuestions
+                                                .contains(questionNumber - 1)
+                                            ? Colors.grey
+                                            : Colors.white,
+                                    foregroundColor:
+                                        controller.checkMark(
+                                              controller
+                                                  .soalList[questionNumber - 1],
+                                            )
+                                            ? Colors.black
+                                            : controller.checkAnswer(
+                                              controller
+                                                  .soalList[questionNumber -
+                                                  1]['id'],
+                                            )
+                                            ? Colors.white
+                                            : controller.viewedQuestions
+                                                .contains(questionNumber - 1)
+                                            ? Colors.white
+                                            : Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                      side: BorderSide(
+                                        color: Colors.transparent,
                                       ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                        vertical: 4,
-                                      ),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    onPressed: () {
-                                      controller.currentQuestion.value =
-                                          questionNumber - 1;
-                                      controller.startQuestion(
-                                        controller.soalList[controller
-                                            .currentQuestion
-                                            .value]['id'],
-                                      );
-                                    },
-                                    child: Text(questionNumber.toString()),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                      vertical: 2,
+                                    ),
                                   ),
+                                  onPressed: () {
+                                    controller.markAnswer(
+                                      controller.currentQuestion.value,
+                                      controller.checkAnswer(
+                                        controller.currentQuestion.value,
+                                      ),
+                                    );
+                                    controller.currentQuestion.value =
+                                        questionNumber - 1;
+                                    controller.startQuestion(
+                                      controller.soalList[controller
+                                          .currentQuestion
+                                          .value]['id'],
+                                    );
+                                  },
+                                  child: Text(questionNumber.toString()),
                                 );
                               }),
 
                               // Tombol Next
                               IconButton(
                                 onPressed:
-                                    (controller.currentQuestion.value + 1) <
-                                            controller.soalList.length
+                                    controller.currentPage.value <
+                                            totalPages - 1
                                         ? () {
-                                          controller.currentQuestion.value++;
+                                          controller.currentPage.value++;
+                                          int newQuestionIndex =
+                                              controller.currentPage.value *
+                                              controller.numberPerPage.value;
+                                          newQuestionIndex = newQuestionIndex
+                                              .clamp(
+                                                0,
+                                                controller.soalList.length - 1,
+                                              );
+                                          controller.markAnswer(
+                                            controller.currentQuestion.value,
+                                            controller.checkAnswer(
+                                              controller.currentQuestion.value,
+                                            ),
+                                          );
+                                          controller.currentQuestion.value =
+                                              newQuestionIndex;
+                                          controller.startQuestion(
+                                            controller
+                                                .soalList[newQuestionIndex]['id'],
+                                          );
                                         }
                                         : null,
                                 icon: const Icon(Icons.arrow_forward_ios),
