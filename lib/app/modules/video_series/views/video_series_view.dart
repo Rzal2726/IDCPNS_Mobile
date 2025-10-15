@@ -272,8 +272,8 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
                                 child: AnimatedContainer(
                                   duration: Duration(milliseconds: 200),
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: isActive ? 14 : 10,
-                                    vertical: isActive ? 8 : 6,
+                                    horizontal: 10,
+                                    vertical: 6,
                                   ),
                                   decoration: BoxDecoration(
                                     color:
@@ -296,9 +296,7 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
                                       color:
                                           isActive ? Colors.teal : Colors.black,
                                       fontSize:
-                                          isActive
-                                              ? 16
-                                              : 14, // font lebih besar untuk page aktif
+                                          14, // font lebih besar untuk page aktif
                                     ),
                                   ),
                                 ),

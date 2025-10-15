@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
+import 'package:pinput/pinput.dart';
 import 'package:rich_editor/rich_editor.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -14,6 +16,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
   const DetailVideoView({super.key});
   @override
   Widget build(BuildContext context) {
+    TextEditingController _controller = TextEditingController();
     return PopScope(
       canPop: false, // <- biar kita kontrol manual
       onPopInvoked: (didPop) {
@@ -23,71 +26,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar:
-            MediaQuery.of(context).orientation == Orientation.landscape
-                ? null
-                : PreferredSize(
-                  preferredSize: const Size.fromHeight(60),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha(25),
-                          spreadRadius: 1,
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: AppBar(
-                      automaticallyImplyLeading: false,
-                      leading: IconButton(
-                        icon: Icon(Icons.arrow_back),
-                        onPressed: () {
-                          Get.back(result: "refresh");
-                        },
-                      ),
-                      backgroundColor: Colors.white,
-                      elevation: 0,
-                      scrolledUnderElevation: 0,
-                      title: Text("Detail Video"),
-                      actions: [
-                        Stack(
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.notifications_rounded,
-                                color: Colors.teal,
-                              ),
-                              onPressed: () {
-                                // ✅ Best practice: use a function for navigation
-                                Get.to(() => NotificationView());
-                              },
-                            ),
-                            Positioned(
-                              right: 10,
-                              top: 10,
-                              child: Container(
-                                padding: EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Text(
-                                  '4',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+        appBar: secondaryAppBar("Detail Video"),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Container(
@@ -588,12 +527,8 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                                     ),
                                                     padding:
                                                         EdgeInsets.symmetric(
-                                                          horizontal:
-                                                              isActive
-                                                                  ? 14
-                                                                  : 10,
-                                                          vertical:
-                                                              isActive ? 8 : 6,
+                                                          horizontal: 10,
+                                                          vertical: 6,
                                                         ),
                                                     decoration: BoxDecoration(
                                                       color:
@@ -626,9 +561,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                                                 ? Colors.teal
                                                                 : Colors.black,
                                                         fontSize:
-                                                            isActive
-                                                                ? 16
-                                                                : 14, // font lebih besar untuk page aktif
+                                                            14, // font lebih besar untuk page aktif
                                                       ),
                                                     ),
                                                   ),
@@ -796,6 +729,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                               '', // fallback kalau text null
                                           controller.formatDuration(durasi),
                                           data['durasi'],
+                                          _controller,
                                           context,
                                         );
                                       },
@@ -1312,6 +1246,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
     String notes,
     String duration,
     num time,
+    TextEditingController _controller,
     BuildContext context,
   ) {
     return Container(
@@ -1343,6 +1278,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
                   IconButton(
                     onPressed: () async {
                       await controller.keyEditEditor.currentState?.clear();
+                      _controller.setText(notes);
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled:
@@ -1391,21 +1327,20 @@ class DetailVideoView extends GetView<DetailVideoController> {
 
                                   // Editor
                                   Container(
-                                    height: 300,
+                                    height: 250,
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
+                                      horizontal: 21,
                                     ),
-                                    child: RichEditor(
-                                      key: controller.keyEditEditor,
-                                      value: notes, // Set initial value di sini
-                                      editorOptions: RichEditorOptions(
-                                        enableVideo: false,
-                                        placeholder: 'Edit Catatan',
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 5.0,
-                                        ),
-                                        baseFontFamily: 'sans-serif',
-                                        barPosition: BarPosition.TOP,
+                                    child: TextField(
+                                      controller: _controller,
+                                      minLines: 8,
+                                      maxLines: null,
+                                      keyboardType:
+                                          TextInputType
+                                              .multiline, // Ensures the appropriate keyboard layout
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        hintText: 'Buat Catatan',
                                       ),
                                     ),
                                   ),
@@ -1433,14 +1368,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                           ),
                                         ),
                                         onPressed: () async {
-                                          final String? updatedHtml =
-                                              await controller
-                                                  .keyEditEditor
-                                                  .currentState
-                                                  ?.getHtml();
-
-                                          if (updatedHtml == null ||
-                                              updatedHtml.trim().isEmpty) {
+                                          if (_controller.text.isEmpty) {
                                             Get.snackbar(
                                               "Gagal",
                                               "Catatan tidak boleh kosong",
@@ -1455,7 +1383,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                               "durasi": time,
                                               "topicUuid":
                                                   controller.videoData['uuid'],
-                                              "text": updatedHtml,
+                                              "text": _controller.text,
                                             },
                                           );
 
@@ -1495,10 +1423,12 @@ class DetailVideoView extends GetView<DetailVideoController> {
                         textCancel: "Tidak",
                         textConfirm: "Ya",
                         confirmTextColor: Colors.white,
-                        onCancel: () {},
-                        onConfirm: () async {
+                        // onCancel: () {
+                        //   Get.back();
+                        // },
+                        onConfirm: () {
                           Get.back();
-                          await controller.deleteNotes(
+                          controller.deleteNotes(
                             payload: {
                               "durasi": time,
                               "topicUuid": controller.videoData['uuid'],
@@ -1555,22 +1485,38 @@ class DetailVideoView extends GetView<DetailVideoController> {
             ),
             SizedBox(
               width: double.infinity,
-              height: 300, // ✅ Tentukan tinggi
+              height: 250, // ✅ Tentukan tinggi
               child: Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   border: Border.all(width: 0.5, color: Colors.grey),
                 ),
-                child: RichEditor(
-                  key: controller.keyEditor,
-                  editorOptions: RichEditorOptions(
-                    enableVideo: false,
-                    placeholder: 'Buat Catatan',
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    baseFontFamily: 'sans-serif',
-                    barPosition: BarPosition.TOP,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: TextField(
+                    onChanged: (value) => controller.noteValue.value = value,
+                    minLines: 8,
+                    maxLines: null,
+                    keyboardType:
+                        TextInputType
+                            .multiline, // Ensures the appropriate keyboard layout
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Buat Catatan',
+                    ),
                   ),
                 ),
+
+                // RichEditor(
+                //   key: controller.keyEditor,
+                //   editorOptions: RichEditorOptions(
+                //     enableVideo: false,
+                //     placeholder: 'Buat Catatan',
+                //     padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                //     baseFontFamily: 'sans-serif',
+                //     barPosition: BarPosition.TOP,
+                //   ),
+                // ),
               ),
             ),
 
@@ -1591,14 +1537,10 @@ class DetailVideoView extends GetView<DetailVideoController> {
                     onPressed: () {
                       if (controller.isNote.value) {
                         controller.isNote.value = false;
+                        controller.noteValue.value = '';
                       } else {
                         controller.isNote.value = true;
                       }
-
-                      Future.delayed(const Duration(seconds: 1), () {
-                        controller.keyEditor.currentState?.clear();
-                        print("RichEditor sudah di-clear setelah 5 detik");
-                      });
                     },
 
                     child: const Text(
@@ -1621,36 +1563,8 @@ class DetailVideoView extends GetView<DetailVideoController> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () async {
-                      // Ambil HTML dari RichEditor
-                      final String? html =
-                          await controller.keyEditor.currentState?.getHtml();
-
                       // Pastikan tidak null
-                      if (html == null) {
-                        Get.snackbar(
-                          "Gagal",
-                          "Catatan tidak boleh kosong",
-                          backgroundColor: Colors.pink,
-                          colorText: Colors.white,
-                        );
-                        return;
-                      }
-
-                      // Bersihkan HTML dari tag kosong, whitespace, dan karakter yang tidak penting
-                      final cleanedHtml =
-                          html
-                              .replaceAll(
-                                RegExp(r'<[^>]*>'),
-                                '',
-                              ) // Hapus semua tag HTML
-                              .replaceAll(
-                                RegExp(r'&nbsp;'),
-                                '',
-                              ) // Hapus non-breaking space
-                              .trim();
-
-                      // Validasi setelah dibersihkan
-                      if (cleanedHtml.isEmpty) {
+                      if (controller.noteValue.value.isEmpty) {
                         Get.snackbar(
                           "Gagal",
                           "Catatan tidak boleh kosong",
@@ -1664,12 +1578,13 @@ class DetailVideoView extends GetView<DetailVideoController> {
                       controller.addNote(
                         payload: {
                           "durasi": controller.detik.value,
-                          "text": html, // Tetap kirim HTML aslinya
+                          "text": controller.noteValue.value,
                           "topicUuid": controller.videoData['uuid'],
                         },
                       );
                       controller.playVideo();
                       controller.isNote.value = false;
+                      controller.noteValue.value = '';
                     },
 
                     child: const Text(

@@ -9,6 +9,7 @@ import '../controllers/watch_video_controller.dart';
 
 class WatchVideoView extends GetView<WatchVideoController> {
   const WatchVideoView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,6 +96,8 @@ class WatchVideoView extends GetView<WatchVideoController> {
                               ),
                               child: ExpansionTile(
                                 initiallyExpanded: index == 0,
+                                onExpansionChanged:
+                                    (v) => print("is expanded: $v"),
                                 shape: RoundedRectangleBorder(
                                   side: BorderSide(color: Colors.transparent),
                                 ),
@@ -109,7 +112,6 @@ class WatchVideoView extends GetView<WatchVideoController> {
                                     fontSize: 16,
                                   ),
                                 ),
-                                trailing: const Icon(Icons.keyboard_arrow_down),
                                 children: [
                                   ListView.builder(
                                     physics:

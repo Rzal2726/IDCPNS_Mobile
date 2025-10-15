@@ -82,24 +82,23 @@ class CheckoutUpgradeAkunController extends GetxController {
     if (paymentDetails.isNotEmpty) {
       if (paymentDetails['tanggal_paid'] == null) {
         print("Belum Dibayar");
-        if (isInit.value == true) {
-          final pref = await SharedPreferences.getInstance();
-          DateTime? isOvo;
-          if (paymentDetails['payment_details'][0]['xendit_payment_method_id'] ==
-              10) {
-            isOvo = DateTime.parse(
-              pref.getString("initTime")!,
-            ).add(Duration(minutes: 1));
-          } else {
-            isOvo = DateTime.parse(
-              pref.getString("initTime")!,
-            ).add(Duration(days: 1));
-          }
-          if (paymentDetails[''])
-            if (DateTime.now().isAfter(isOvo)) {
-              Get.offNamed("/checkout-gagal");
-            }
-        }
+        // if (isInit.value == true) {
+        //   final pref = await SharedPreferences.getInstance();
+        //   DateTime? isOvo;
+        //   if (paymentDetails['payment_details'][0]['xendit_payment_method_id'] ==
+        //       10) {
+        //     isOvo = DateTime.parse(
+        //       pref.getString("initTime")!,
+        //     ).add(Duration(minutes: 1));
+        //   } else {
+        //     isOvo = DateTime.parse(
+        //       pref.getString("initTime")!,
+        //     ).add(Duration(days: 1));
+        //   }
+        //   if (DateTime.now().isAfter(isOvo)) {
+        //     Get.offNamed("/checkout-gagal");
+        //   }
+        // }
         if (isRedirected.value == false) {
           if (data['invoice_url'] != null) {
             final Uri url = Uri.parse(data['invoice_url']);
@@ -110,10 +109,12 @@ class CheckoutUpgradeAkunController extends GetxController {
               );
             } else {
               print("Tidak bisa membuka URL: $url");
+              Get.offNamed("/checkout-gagal");
             }
             isRedirected.value = true;
           } else {
             print("No Url");
+            Get.offNamed("/checkout-gagal");
           }
         }
         if (compareTimeStamp(paymentDetails['tanggal_kadaluarsa'])) {

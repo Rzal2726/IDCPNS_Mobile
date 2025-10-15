@@ -26,9 +26,8 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
           if (controller.loading.value) {
             return Skeletonizer(
               child: Container(
-                margin: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   children: [
                     SizedBox(width: double.infinity, child: _expireCard()),
                     const SizedBox(height: 16),
@@ -37,6 +36,24 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
                       title: "Video Series",
                       routeName: "/video-series",
                       bgColor: const Color.fromARGB(255, 255, 222, 211),
+                    ),
+                    _menuCard(
+                      imageurl: "assets/video_series.png",
+                      title: "Video Series",
+                      routeName: "/video-series",
+                      bgColor: const Color.fromARGB(255, 255, 182, 246),
+                    ),
+                    _menuCard(
+                      imageurl: "assets/video_series.png",
+                      title: "Video Series",
+                      routeName: "/video-series",
+                      bgColor: const Color.fromARGB(255, 177, 220, 255),
+                    ),
+                    _menuCard(
+                      imageurl: "assets/video_series.png",
+                      title: "Video Series",
+                      routeName: "/video-series",
+                      bgColor: const Color.fromARGB(255, 205, 255, 236),
                     ),
                   ],
                 ),
@@ -232,7 +249,12 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
               ),
 
               // Bagian Kanan -> Gambar ilustrasi
-              Image.asset(imageurl, height: 120, fit: BoxFit.cover),
+              Image.asset(
+                imageurl,
+                width: 140,
+                height: 120,
+                fit: BoxFit.contain,
+              ),
             ],
           ),
         ),
