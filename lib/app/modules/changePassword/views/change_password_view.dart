@@ -17,7 +17,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
       onPopInvoked: (didPop) async {
         if (didPop) return;
         Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-        (Get.find<HomeController>()).currentIndex.value = 4;
+        // (Get.find<HomeController>()).currentIndex.value = 4;
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -25,7 +25,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
           "Ubah kata sandi",
           onBack: () {
             Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-            (Get.find<HomeController>()).currentIndex.value = 4;
+            // (Get.find<HomeController>()).currentIndex.value = 4;
           },
         ),
         body: SafeArea(

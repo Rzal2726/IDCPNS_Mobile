@@ -93,7 +93,7 @@ class AffiliateController extends GetxController {
         },
         onDisagree: () {
           Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-          (Get.find<HomeController>()).currentIndex.value = 4;
+          // (Get.find<HomeController>()).currentIndex.value = 4;
         },
       );
       // WidgetsBinding.instance.addPostFrameCallback((_) {

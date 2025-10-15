@@ -20,7 +20,7 @@ class AffiliateView extends GetView<AffiliateController> {
         if (!didPop) {
           // Saat tombol back ditekan
           Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-          (Get.find<HomeController>()).currentIndex.value = 4;
+          // (Get.find<HomeController>()).currentIndex.value = 4;
         }
       },
       child: Scaffold(
@@ -29,7 +29,7 @@ class AffiliateView extends GetView<AffiliateController> {
           "Afiliasi",
           onBack: () {
             Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-            (Get.find<HomeController>()).currentIndex.value = 4;
+            // (Get.find<HomeController>()).currentIndex.value = 4;
           },
         ),
         body: SafeArea(
