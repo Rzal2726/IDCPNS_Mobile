@@ -49,7 +49,7 @@ class PeringkatTryoutHarianView
                 }),
                 SizedBox(width: double.infinity),
                 Container(
-                  margin: EdgeInsets.all(16),
+                  margin: EdgeInsets.symmetric(vertical: 12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -83,7 +83,7 @@ class PeringkatTryoutHarianView
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text("Lengkapi Form"),
+                                            Text("Filter"),
                                             IconButton(
                                               onPressed:
                                                   () => Navigator.pop(context),
@@ -273,7 +273,7 @@ class PeringkatTryoutHarianView
                           "Filter",
                           style: TextStyle(color: Colors.teal),
                         ),
-                        icon: Icon(Icons.list, color: Colors.teal),
+                        icon: Icon(Icons.arrow_drop_down, color: Colors.teal),
                       ),
                     ],
                   ),
@@ -411,7 +411,7 @@ class PeringkatTryoutHarianView
                     (i) => start + i,
                   );
                   return Row(
-                    spacing: 16,
+                    spacing: 6,
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -446,8 +446,8 @@ class PeringkatTryoutHarianView
                             child: AnimatedContainer(
                               duration: Duration(milliseconds: 200),
                               padding: EdgeInsets.symmetric(
-                                horizontal: isActive ? 14 : 10,
-                                vertical: isActive ? 8 : 6,
+                                horizontal: 10,
+                                vertical: 6,
                               ),
                               decoration: BoxDecoration(
                                 color:
@@ -469,9 +469,7 @@ class PeringkatTryoutHarianView
                                   fontWeight: FontWeight.bold,
                                   color: isActive ? Colors.teal : Colors.black,
                                   fontSize:
-                                      isActive
-                                          ? 16
-                                          : 14, // font lebih besar untuk page aktif
+                                      14, // font lebih besar untuk page aktif
                                 ),
                               ),
                             ),
@@ -548,23 +546,28 @@ class PeringkatTryoutHarianView
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Badge nomor
-            Row(
-              spacing: 16,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 64,
-                  child: _badge(color: Colors.blueAccent, text: num),
-                ),
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.black87,
+            SizedBox(
+              width: double.infinity,
+              child: Row(
+                spacing: 10,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 64,
+                    child: _badge(color: Colors.blueAccent, text: num),
                   ),
-                ),
-              ],
+                  Text(
+                    name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 12),
 
@@ -572,20 +575,38 @@ class PeringkatTryoutHarianView
             const SizedBox(height: 6),
 
             // Lokasi
-            Row(
-              children: [
-                Text(
-                  provisi,
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-                const SizedBox(width: 6),
-                const Icon(Icons.circle, color: Colors.grey, size: 8),
-                const SizedBox(width: 6),
-                Text(
-                  kota,
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-              ],
+            SizedBox(
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      provisi,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  const Icon(Icons.circle, color: Colors.grey, size: 8),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      kota,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const Divider(height: 24, thickness: 0.7, color: Colors.grey),
 

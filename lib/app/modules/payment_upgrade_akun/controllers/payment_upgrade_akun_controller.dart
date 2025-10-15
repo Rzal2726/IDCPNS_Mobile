@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
 
 class PaymentUpgradeAkunController extends GetxController {
@@ -14,6 +16,7 @@ class PaymentUpgradeAkunController extends GetxController {
   late String bonusUuid;
   final voucherController = TextEditingController();
   final ovoNumController = TextEditingController();
+  final box = GetStorage();
   RxMap<String, dynamic> selectedPaymentMethod = <String, dynamic>{}.obs;
   RxMap<String, dynamic> transactionData = <String, dynamic>{}.obs;
   RxMap<String, bool> loading =
@@ -32,6 +35,8 @@ class PaymentUpgradeAkunController extends GetxController {
   RxString ovoNumber = "".obs;
   RxDouble harga = 0.0.obs;
   RxDouble biayaAdmin = 0.0.obs;
+  RxBool loadingHarga = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -50,12 +55,15 @@ class PaymentUpgradeAkunController extends GetxController {
   }
 
   Future<void> initPayment() async {
+    loadingHarga.value = true;
+
     durasiUuid = await Get.arguments['durasi_uuid'];
     bonusUuid = await Get.arguments['bonus_uuid'];
     await fetchBonus();
     await fetchDurasi();
-    harga.value += double.parse(detailDurasi['final_price'].toString());
     await fetchListPayment();
+    harga.value += double.parse(detailDurasi['final_price'].toString());
+    getPromoCodeFromStorage();
     initHarga();
   }
 
@@ -175,13 +183,15 @@ class PaymentUpgradeAkunController extends GetxController {
   }
 
   void applyCode(String code) async {
+    loadingHarga.value = true;
+
     try {
       final payload = {"kode_promo": code, "amount": totalHarga.toString()};
+      print("checkpay: $payload");
       final response = await restClient.postData(
         url: baseUrl + apiApplyVoucherAkun,
         payload: payload,
       );
-      print(payload);
 
       if (response['data'] == null) {
         Get.snackbar(
@@ -241,7 +251,10 @@ class PaymentUpgradeAkunController extends GetxController {
       response['data'],
     );
     transactionData.assignAll(data);
-    Get.offNamed("/checkout-upgrade-akun", arguments: data);
+    Get.offNamed(
+      Routes.PAYMENT_CHECKOUT,
+      arguments: [data['payment_id'], data['tanggal_kadaluarsa']],
+    );
   }
 
   void countAdmin() {
@@ -249,18 +262,25 @@ class PaymentUpgradeAkunController extends GetxController {
       final raw =
           (selectedPaymentMethod['biaya_admin'] ?? "").toString().trim();
       final paymentTypeId = selectedPaymentMethod['xendit_payment_type_id'];
+      final ppnPercent = double.tryParse(box.read("ppn") ?? "0") ?? 0.0;
 
       if (paymentTypeId == 1) {
         final clean = raw.replaceAll(
           RegExp(r'[^0-9]'),
           "",
         ); // buang titik, Rp, dsb.
-        biayaAdmin.value = double.tryParse(clean) ?? 0;
+        final adminAmount = double.tryParse(clean) ?? 0;
+        final adminWithPPN = adminAmount + (adminAmount * (ppnPercent / 100));
+
+        biayaAdmin.value = adminWithPPN;
       } else {
         // percentage (contoh: "2.7%")
         final clean = raw.replaceAll("%", "").trim();
         final persen = double.tryParse(clean) ?? 0;
-        biayaAdmin.value = totalHarga.value.toDouble() * (persen / 100);
+        final adminAmount = totalHarga.value.toDouble() * (persen / 100);
+        final adminWithPPN = adminAmount + (adminAmount * (ppnPercent / 100));
+
+        biayaAdmin.value = adminWithPPN;
       }
     } catch (e, stack) {
       print(e);
@@ -270,6 +290,7 @@ class PaymentUpgradeAkunController extends GetxController {
 
   void initHarga() {
     totalHarga.value = (biayaAdmin.value + harga.value - diskon.value);
+    loadingHarga.value = false;
   }
 
   void removeCode() {
@@ -284,6 +305,18 @@ class PaymentUpgradeAkunController extends GetxController {
     );
     if (response['is_maintenance']) {
       Get.offAllNamed("/maintenance");
+    }
+  }
+
+  Future<void> getPromoCodeFromStorage() async {
+    String storedValue = box.read('userAfi') ?? "";
+
+    if (storedValue.isEmpty) {
+      totalHarga.value = (biayaAdmin.value + harga.value - diskon.value);
+      loadingHarga.value = false;
+    } else {
+      totalHarga.value = (biayaAdmin.value + harga.value - diskon.value);
+      applyCode(storedValue);
     }
   }
 }

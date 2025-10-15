@@ -43,6 +43,7 @@ class PengerjaanTryoutHarianController extends GetxController {
   RxInt totalSoal = 0.obs;
   DateTime initialTimer = DateTime.now();
   final count = 0.obs;
+  RxSet<int> viewedQuestions = <int>{}.obs;
 
   @override
   void onInit() async {
@@ -351,5 +352,9 @@ class PengerjaanTryoutHarianController extends GetxController {
           element['lathar_soal_id'] == id &&
           element['lathar_soal_option_id'] != 0,
     );
+  }
+
+  void markAnswer(int index, bool isQAnswered) {
+    viewedQuestions.add(index);
   }
 }

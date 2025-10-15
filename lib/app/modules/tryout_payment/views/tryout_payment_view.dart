@@ -926,21 +926,14 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                               if (text.isEmpty) {
                                 Get.snackbar(
                                   "Gagal",
-                                  "Nomor telepon tidak boleh kosong",
+                                  "Kode Promo tidak boleh kosong",
                                   backgroundColor: Colors.pink,
                                   colorText: Colors.white,
                                 );
-                              } else if (text.length < 10) {
-                                Get.snackbar(
-                                  "Gagal",
-                                  "Nomor telepon minimal 10 karakter",
-                                  backgroundColor: Colors.pink,
-                                  colorText: Colors.white,
-                                );
-                              } else {
-                                controller.applyCode(voucherController.text);
-                                Navigator.pop(context);
+                                return;
                               }
+                              controller.applyCode(voucherController.text);
+                              Navigator.pop(context);
                             },
                             child: Text(
                               "Klaim",
@@ -1058,18 +1051,27 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                 ),
                               ),
                               onPressed: () {
-                                if (ovoNumController.text.length <= 0) {
+                                String text = ovoNumController.text;
+
+                                if (text.isEmpty) {
                                   Get.snackbar(
                                     "Gagal",
-                                    "Mohon isi nomor ovo anda",
+                                    "Nomor telepon tidak boleh kosong",
                                     backgroundColor: Colors.pink,
                                     colorText: Colors.white,
                                   );
-                                  return;
+                                } else if (text.length < 10) {
+                                  Get.snackbar(
+                                    "Gagal",
+                                    "Nomor telepon minimal 10 karakter",
+                                    backgroundColor: Colors.pink,
+                                    colorText: Colors.white,
+                                  );
+                                } else {
+                                  controller.ovoNumber.value =
+                                      ovoNumController.text;
+                                  Navigator.pop(context);
                                 }
-                                controller.ovoNumber.value =
-                                    ovoNumController.text;
-                                Navigator.pop(context);
                               },
                               child: Text(
                                 "Kirim",

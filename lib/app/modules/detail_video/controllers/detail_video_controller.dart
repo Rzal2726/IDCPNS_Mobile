@@ -28,6 +28,8 @@ class DetailVideoController extends GetxController {
   final GlobalKey<RichEditorState> keyEditor = GlobalKey<RichEditorState>();
   final GlobalKey<RichEditorState> keyEditEditor = GlobalKey<RichEditorState>();
 
+  RxString noteValue = ''.obs;
+
   RxMap<String, dynamic> videoData = <String, dynamic>{}.obs;
   RxList<Map<String, dynamic>> commentList = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> noteList = <Map<String, dynamic>>[].obs;

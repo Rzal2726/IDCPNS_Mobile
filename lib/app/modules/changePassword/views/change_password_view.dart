@@ -63,7 +63,8 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                               controller: controller.oldPasswordController,
                               obscureText: controller.isOldPasswordHidden.value,
                               decoration: InputDecoration(
-                                labelText: "Password lama",
+                                hintText: "Masukan kata sandi lama",
+                                labelText: "Kata sandi lama",
                                 labelStyle: TextStyle(color: Colors.black),
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.grey),
@@ -91,7 +92,8 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                               obscureText: controller.isNewPasswordHidden.value,
                               decoration: InputDecoration(
                                 labelStyle: TextStyle(color: Colors.black),
-                                labelText: "password baru",
+                                hintText: "Masukan kata sandi baru",
+                                labelText: "Kata sandi baru",
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.grey),
                                   borderRadius: BorderRadius.circular(8.0),
@@ -118,8 +120,9 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                               obscureText:
                                   controller.isConfirmPasswordHidden.value,
                               decoration: InputDecoration(
+                                hintText: "Masukan Konfirmasi Kata sandi baru",
                                 labelStyle: TextStyle(color: Colors.black),
-                                labelText: "Konfirmasi password baru",
+                                labelText: "Konfirmasi Kata sandi baru",
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.grey),
                                   borderRadius: BorderRadius.circular(8.0),

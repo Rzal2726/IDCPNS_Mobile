@@ -52,19 +52,19 @@ class ChangePasswordController extends GetxController {
 
     // ✅ Validasi satu-satu
     if (oldPassword.isEmpty) {
-      notifHelper.show("Password lama tidak boleh kosong", type: 0);
+      notifHelper.show("Kata sandi lama tidak boleh kosong", type: 0);
       return;
     }
     if (newPassword.isEmpty) {
-      notifHelper.show("Password baru tidak boleh kosong", type: 0);
+      notifHelper.show("Kata sandi baru tidak boleh kosong", type: 0);
       return;
     }
     if (conPassword.isEmpty) {
-      notifHelper.show("Konfirmasi password tidak boleh kosong", type: 0);
+      notifHelper.show("Konfirmasi Kata sandi tidak boleh kosong", type: 0);
       return;
     }
     if (newPassword != conPassword) {
-      notifHelper.show("Konfirmasi password tidak cocok", type: 0);
+      notifHelper.show("Konfirmasi Kata sandi tidak cocok", type: 0);
       return;
     }
 
@@ -81,7 +81,7 @@ class ChangePasswordController extends GetxController {
     final result = await _restClient.postData(url: url, payload: payload);
 
     if (result['status'] == "success") {
-      notifHelper.show("Password berhasil diubah", type: 1);
+      notifHelper.show("Kata sandi berhasil diubah", type: 1);
     } else {
       var messages = result['messages'] ?? {};
 
@@ -94,7 +94,7 @@ class ChangePasswordController extends GetxController {
           messages['old_password'].isNotEmpty) {
         notifHelper.show(messages['old_password'][0], type: 0);
       } else {
-        notifHelper.show("Password gagal diubah", type: 0);
+        notifHelper.show("Kata sandi gagal diubah", type: 0);
       }
     }
 
