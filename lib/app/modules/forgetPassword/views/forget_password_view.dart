@@ -40,9 +40,24 @@ class ForgetPasswordView extends GetView<ForgetPasswordController> {
                       SizedBox(height: 32),
 
                       // Input Email
-                      Text(
-                        'Email',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                      RichText(
+                        text: TextSpan(
+                          text: 'Email',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black, // warna teks utama
+                          ),
+                          children: [
+                            TextSpan(
+                              text: ' *',
+                              style: TextStyle(
+                                color:
+                                    Colors
+                                        .red, // warna merah buat tanda bintang
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
 
                       SizedBox(height: 8),

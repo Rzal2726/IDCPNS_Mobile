@@ -69,7 +69,7 @@ class WishlistView extends GetView<WishlistController> {
                                   controller
                                       .whistlistData['data']!
                                       .isNotEmpty) {
-                                Get.toNamed(Routes.PAYMENT_WHISLIST);
+                                Get.offNamed(Routes.PAYMENT_WHISLIST);
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -175,33 +175,43 @@ class WishlistView extends GetView<WishlistController> {
                                 .map<Widget>(
                                   (item) => Padding(
                                     padding: EdgeInsets.only(bottom: 12),
-                                    child: _buildWishlistItem(
-                                      imageUrl: item['productDetail']['gambar'],
-                                      title:
-                                          item['productDetail']['name'] ??
-                                          item['productDetail']['formasi'],
-                                      oldPrice:
-                                          (item['productDetail']?['price_list']?['harga_terendah'] ??
-                                                  "")
-                                              .toString(),
-                                      oldPriceFix:
-                                          (item['productDetail']?['price_list']?['harga_fix_terendah'] ??
-                                                  "")
-                                              .toString(),
-                                      newPrice:
-                                          (item['productDetail']?['price_list']?['harga_tertinggi'] ??
-                                                  item['productDetail']['harga'])
-                                              .toString(),
-                                      newPriceFix:
-                                          (item['productDetail']?['price_list']?['harga_fix_tertinggi'] ??
-                                                  item['productDetail']['harga_fix'])
-                                              .toString(),
-                                      tag:
-                                          item['productDetail']['menu_category']['menu'],
-                                      tagColor:
-                                          item['productDetail']['menu_category']['warna']['hex'],
-                                      isBimbel:
-                                          item['bimbel_parent_id'] != null,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Get.toNamed(
+                                          Routes.DETAIL_BIMBEL,
+                                          arguments:
+                                              item['productDetail']['uuid'],
+                                        );
+                                      },
+                                      child: _buildWishlistItem(
+                                        imageUrl:
+                                            item['productDetail']['gambar'],
+                                        title:
+                                            item['productDetail']['name'] ??
+                                            item['productDetail']['formasi'],
+                                        oldPrice:
+                                            (item['productDetail']?['price_list']?['harga_terendah'] ??
+                                                    "")
+                                                .toString(),
+                                        oldPriceFix:
+                                            (item['productDetail']?['price_list']?['harga_fix_terendah'] ??
+                                                    "")
+                                                .toString(),
+                                        newPrice:
+                                            (item['productDetail']?['price_list']?['harga_tertinggi'] ??
+                                                    item['productDetail']['harga'])
+                                                .toString(),
+                                        newPriceFix:
+                                            (item['productDetail']?['price_list']?['harga_fix_tertinggi'] ??
+                                                    item['productDetail']['harga_fix'])
+                                                .toString(),
+                                        tag:
+                                            item['productDetail']['menu_category']['menu'],
+                                        tagColor:
+                                            item['productDetail']['menu_category']['warna']['hex'],
+                                        isBimbel:
+                                            item['bimbel_parent_id'] != null,
+                                      ),
                                     ),
                                   ),
                                 )
@@ -373,25 +383,28 @@ class WishlistView extends GetView<WishlistController> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent, // biar ada radius
+      backgroundColor: Colors.transparent,
       builder: (ctx) {
-        return FractionallySizedBox(
-          heightFactor: 0.47, // maksimal 60% layar, bisa ubah sesuai kebutuhan
+        return Padding(
+          padding: const EdgeInsets.only(
+            bottom: 12, // kasih space dikit biar gak nempel layar
+          ),
           child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: SafeArea(
               child: Column(
+                mainAxisSize: MainAxisSize.min, // tinggi auto sesuai konten
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Header
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         "Filter Wishlist",
                         style: TextStyle(
                           fontSize: 16,
@@ -399,19 +412,19 @@ class WishlistView extends GetView<WishlistController> {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.close),
+                        icon: const Icon(Icons.close),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
                   // Kategori
-                  Text(
+                  const Text(
                     "Kategori",
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Obx(
                     () => Wrap(
                       spacing: 8,
@@ -458,14 +471,14 @@ class WishlistView extends GetView<WishlistController> {
                           }).toList(),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // Produk
-                  Text(
+                  const Text(
                     "Produk",
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Obx(
                     () => Wrap(
                       spacing: 8,
@@ -512,84 +525,70 @@ class WishlistView extends GetView<WishlistController> {
                           }).toList(),
                     ),
                   ),
+                  const SizedBox(height: 20),
 
-                  Spacer(), // tombol di bawah
-                  // Tombol Cari
-                  SizedBox(
-                    width: double.infinity,
-                    child: Row(
-                      children: [
-                        // Tombol Batal
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () async {
-                              Navigator.pop(context);
-                              controller.selectedKategoriId.value = 0;
-                              controller.selectedEventKategori.value = 'Semua';
-                              controller.selectedProductiId.value = 0;
-                              controller.selectedEventProduct.value = 'Semua';
+                  // Tombol Bawah
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            controller.selectedKategoriId.value = 0;
+                            controller.selectedEventKategori.value = 'Semua';
+                            controller.selectedProductiId.value = 0;
+                            controller.selectedEventProduct.value = 'Semua';
+                            controller.isLoading.value = true;
 
-                              controller.isLoading.value = true;
-
-                              await controller.getWhislist(
-                                menuCategoryId: "0", // ambil semua
-                                produk: "",
-                              );
-
-                              controller.isLoading.value =
-                                  false; // ⬅️ matikan loading
-
-                              // tutup popup/setelah selesai
-                            },
-
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.teal,
-                              side: BorderSide(color: Colors.teal),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
-                              ),
+                            await controller.getWhislist(
+                              menuCategoryId: "0",
+                              produk: "",
+                            );
+                            controller.isLoading.value = false;
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.teal,
+                            side: const BorderSide(color: Colors.teal),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text("Reset"),
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        // Tombol Cari
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              Navigator.pop(context);
-
-                              controller.isLoading.value = true;
-
-                              await controller.getWhislist(
-                                menuCategoryId:
-                                    controller.selectedKategoriId.value
-                                        ?.toString(),
-                                produk: controller.selectedEventProduct.value,
-                              );
-
-                              controller.isLoading.value = false;
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.teal,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
-                              ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
                             ),
-                            child: Text("Cari"),
                           ),
+                          child: const Text("Reset"),
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            controller.isLoading.value = true;
+                            await controller.getWhislist(
+                              menuCategoryId:
+                                  controller.selectedKategoriId.value
+                                      ?.toString(),
+                              produk: controller.selectedEventProduct.value,
+                            );
+                            controller.isLoading.value = false;
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                          ),
+                          child: const Text("Cari"),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

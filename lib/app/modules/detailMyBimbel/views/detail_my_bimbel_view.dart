@@ -197,9 +197,19 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
 
                                   return ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.teal,
+                                      backgroundColor:
+                                          (controller.bimbelBuyData['bimbel']
+                                                          as List?)
+                                                      ?.any(
+                                                        (item) =>
+                                                            item['is_showing'] ==
+                                                            true,
+                                                      ) ==
+                                                  true
+                                              ? Colors.teal
+                                              : Colors.grey[400],
                                       foregroundColor: Colors.white,
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                         vertical: 12,
                                       ),
                                       shape: RoundedRectangleBorder(
@@ -208,16 +218,25 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                     ),
                                     onPressed:
                                         isLoading
-                                            ? null // tombol tidak bisa ditekan saat loading
-                                            : () {
+                                            ? null
+                                            : ((controller.bimbelBuyData['bimbel']
+                                                        as List?)
+                                                    ?.any(
+                                                      (item) =>
+                                                          item['is_showing'] ==
+                                                          true,
+                                                    ) ==
+                                                true)
+                                            ? () {
                                               buildBuyBimbelDialog(
                                                 context,
                                                 controller,
                                               );
-                                            },
+                                            }
+                                            : null,
                                     child:
                                         isLoading
-                                            ? SizedBox(
+                                            ? const SizedBox(
                                               height: 20,
                                               width: 20,
                                               child: CircularProgressIndicator(
@@ -225,7 +244,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                                 strokeWidth: 2,
                                               ),
                                             )
-                                            : Text(
+                                            : const Text(
                                               "Ganti Paket",
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
@@ -1150,6 +1169,9 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                       i++
                     )
                       Obx(() {
+                        print(
+                          controller.bimbelBuyData['bimbel'].length.toString(),
+                        );
                         final subData = controller.bimbelBuyData['bimbel'][i];
 
                         // filter paket yang sedang ditampilkan
@@ -1213,13 +1235,18 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                         );
                         return;
                       }
-                      Get.toNamed(
-                        Routes.PAYMENT_DETAIL,
-                        arguments: [
-                          controller.selectedPaket.value,
-                          controller.hargaFix.value,
-                        ],
-                      );
+                      // hargaFix.value,
+                      // paketBimbelData,
+                      // paymentData,
+                      // otherBimbelData,
+                      // Get.toNamed(
+                      //   Routes.PAYMENT_DETAIL,
+                      //   arguments: [
+                      //     controller.hargaFix.value,
+                      //     controller.selectedPaket.value,
+                      //   ],
+                      // );
+                      controller.getDataChangePaket();
                     },
                     child: Text(
                       "Lanjutkan",

@@ -62,7 +62,7 @@ class LoginController extends GetxController {
       box.write("name", user["name"]);
       box.write("userAfi", user["user_afiliator"]);
       box.write("afiCode", user["kode_afiliasi"]);
-      box.write("afiAgree", result["is_afiliasi_agree"]);
+      box.write("afiAgree", user["is_afiliasi_agree"]);
       box.write("idUser", user["id"]);
       box.write("email", user["email"]);
       box.write("password", password);
@@ -151,7 +151,7 @@ class LoginController extends GetxController {
       box.write("userAfi", user["user_afiliator"]);
       box.write("name", user["name"]);
       box.write("afiCode", user["kode_afiliasi"] ?? "");
-      box.write("afiAgree", data["is_afiliasi_agree"]);
+      box.write("afiAgree", user["is_afiliasi_agree"]);
       box.write("idUser", user["id"]);
       box.write("email", user["email"]);
       box.write("photoProfile", user['profile_image_url'] ?? "");

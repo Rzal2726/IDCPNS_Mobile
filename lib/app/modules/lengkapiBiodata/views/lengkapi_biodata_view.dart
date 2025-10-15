@@ -504,19 +504,20 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                                     ? null // tombol disable kalau loading
                                     : () {
                                       Get.defaultDialog(
-                                        title: "Konfirmasi",
-                                        middleText: "Apakah Anda ingin keluar?",
+                                        title: "Konfirmasi Logout",
+                                        middleText:
+                                            "Apakah kamu yakin ingin keluar dari akun?",
                                         backgroundColor: Colors.white,
-                                        titleStyle: TextStyle(
+                                        radius: 16,
+                                        titleStyle: const TextStyle(
                                           color: Colors.black,
                                           fontSize: 18,
                                           fontWeight: FontWeight.w600,
                                         ),
                                         middleTextStyle: TextStyle(
-                                          color: Colors.black87,
-                                          fontSize: 16,
+                                          color: Colors.grey[800],
+                                          fontSize: 14,
                                         ),
-                                        radius: 12,
                                         actions: [
                                           TextButton(
                                             onPressed: () {
@@ -525,12 +526,25 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                                             child: Text(
                                               "Batal",
                                               style: TextStyle(
-                                                color: Colors.grey[700],
-                                                fontSize: 16,
+                                                color: Colors.grey[600],
+                                                fontSize: 15,
                                               ),
                                             ),
                                           ),
-                                          TextButton(
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 18,
+                                                    vertical: 10,
+                                                  ),
+                                            ),
                                             onPressed: () {
                                               final box = GetStorage();
                                               final GoogleSignIn googleSignIn =
@@ -538,18 +552,17 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                                                     scopes: ['email'],
                                                   );
                                               googleSignIn
-                                                  .disconnect(); // reset session supaya akun tidak otomatis dipilih
-                                              googleSignIn
-                                                  .signOut(); // logout dari akun
+                                                  .disconnect(); // reset session
+                                              googleSignIn.signOut(); // logout
                                               box.erase();
                                               Get.offAllNamed(Routes.LOGIN);
                                               Get.back();
                                             },
-                                            child: Text(
+                                            child: const Text(
                                               "Keluar",
                                               style: TextStyle(
-                                                color: Colors.redAccent,
-                                                fontSize: 16,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w500,
                                               ),
                                             ),
                                           ),

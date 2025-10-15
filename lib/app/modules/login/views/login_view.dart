@@ -31,7 +31,24 @@ class LoginView extends GetView<LoginController> {
               SizedBox(height: 32),
 
               // Email Input
-              Text("Email", style: TextStyle(fontWeight: FontWeight.w600)),
+              RichText(
+                text: TextSpan(
+                  text: 'Email',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: Colors.black, // warna teks utama
+                  ),
+                  children: [
+                    TextSpan(
+                      text: ' *',
+                      style: TextStyle(
+                        color: Colors.red, // warna merah buat tanda bintang
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               SizedBox(height: 8),
               TextField(
                 controller: controller.emailController,
@@ -55,7 +72,24 @@ class LoginView extends GetView<LoginController> {
               SizedBox(height: 16),
 
               // Password Input
-              Text("Kata Sandi", style: TextStyle(fontWeight: FontWeight.w600)),
+              RichText(
+                text: TextSpan(
+                  text: 'Kata sandi',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: Colors.black, // warna teks utama
+                  ),
+                  children: [
+                    TextSpan(
+                      text: ' *',
+                      style: TextStyle(
+                        color: Colors.red, // warna merah buat tanda bintang
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               SizedBox(height: 8),
               Obx(
                 () => TextField(

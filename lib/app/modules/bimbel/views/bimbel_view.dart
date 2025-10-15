@@ -211,7 +211,7 @@ class BimbelView extends GetView<BimbelController> {
                                 kategori: paket['menu_category']['menu'] ?? '',
                                 color: Colors.teal,
                                 onTap: () {
-                                  Get.toNamed(
+                                  Get.offNamed(
                                     Routes.DETAIL_BIMBEL,
                                     arguments: paket['uuid'],
                                   );

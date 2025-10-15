@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:intl/intl.dart';
 
 class TransactionController extends GetxController {
   final _restClient = RestClient();
@@ -64,11 +65,15 @@ class TransactionController extends GetxController {
   }
 
   void getDate() {
+    print("xve ${searchController.text}");
     getTransaction(
       page: currentPage.value,
+      search: searchController.text,
       date: startDateController.text,
+      endDate: endDateController.text,
       status: status.value,
     );
+    print("xvev ${startDateController.text.toString()}");
   }
 
   void _onSearchChanged() {
@@ -87,27 +92,59 @@ class TransactionController extends GetxController {
     String? search,
     String? status,
     String? date,
+    String? endDate, // tambahin parameter ini
   }) async {
     isloading.value = true;
-    print("xvv ${isloading.toString()}");
-    final url = await baseUrl + apiGetTransaction;
+
+    print("📅 tanggal mulai: $date");
+    print("📅 tanggal selesai: $endDate");
+
+    final url = baseUrl + apiGetTransaction;
+
+    String? formatToIso(String? inputDate) {
+      if (inputDate != null && inputDate.isNotEmpty) {
+        try {
+          final parsedDate = DateFormat("dd/MM/yyyy").parse(inputDate);
+          final adjustedDate = DateTime(
+            parsedDate.year,
+            parsedDate.month,
+            parsedDate.day,
+            17,
+            0,
+            0,
+          );
+          return adjustedDate.toUtc().toIso8601String();
+        } catch (e) {
+          print("⚠️ Format tanggal tidak valid: $e");
+          return null;
+        }
+      }
+      return null;
+    }
+
+    final formattedStart = formatToIso(date);
+    final formattedEnd = formatToIso(endDate);
+
     var payload = {
+      "params": null,
       "perpage": 10,
       "page": page ?? 0,
-      "tanggal_mulai": dateFormat(date ?? ""),
+      "tanggal_mulai": formattedStart ?? "",
+      "tanggal_selesai": formattedEnd ?? "",
       "search": search ?? "",
       "status": status ?? "",
     };
-    print("xxx${payload.toString()}");
+    print("xvv ${payload.toString()}");
     final result = await _restClient.postData(url: url, payload: payload);
 
     if (result["status"] == "success") {
       var data = result['data'];
       transactions.value = data;
       totalPage.value = data['last_page'];
-      isloading.value = false;
-      print("xvv ${isloading.toString()}");
     }
+
+    isloading.value = false;
+    print("xvv ${isloading.toString()}");
   }
 
   Future<void> refresh() async {

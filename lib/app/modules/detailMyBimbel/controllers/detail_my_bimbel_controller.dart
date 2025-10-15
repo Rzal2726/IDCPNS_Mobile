@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 class DetailMyBimbelController extends GetxController {
   final _restClient = RestClient();
@@ -20,6 +22,8 @@ class DetailMyBimbelController extends GetxController {
   RxList jadwalKelasIsRunning = [].obs;
   RxString selectedPaket = "".obs;
   RxString levelName = "".obs;
+  RxList otherBimbelData = [].obs;
+  RxMap paymentData = {}.obs;
 
   final count = 0.obs;
   @override
@@ -44,9 +48,63 @@ class DetailMyBimbelController extends GetxController {
   }
 
   Future<void> refresh() async {
+    getPaymentData();
     getData();
+
     levelName.value = box.read('levelName') ?? "";
     checkMaintenance();
+  }
+
+  Future<void> getOtherBimbel({required int parentId}) async {
+    final url = baseUrl + apiGetBimbelOther;
+    print("xxx ${url.toString()}");
+
+    final result = await _restClient.getData(url: url);
+
+    if (result["status"] == "success") {
+      final List allBimbel = result["data"] ?? [];
+
+      // filter kecuali yang id == parentId.value
+      otherBimbelData.value =
+          allBimbel.where((bimbel) => bimbel['id'] != parentId).toList();
+    } else {
+      notifHelper.show(result['message'] ?? "Terjadi kesalahan", type: 0);
+    }
+  }
+
+  Future<void> getPaymentData() async {
+    try {
+      final url = await baseUrl + apiGetPaymentList;
+
+      final result = await _restClient.getData(url: url);
+      print("emailnnyaa ${result.toString()}");
+      if (result["status"] == "success") {
+        paymentData.value = result;
+      }
+    } catch (e) {
+      print("Errorxx: $e");
+    }
+  }
+
+  Future<void> getDataChangePaket() async {
+    final url = baseUrl + apiGetDetailBimbelNoevent + "/" + selectedPaket.value;
+    final result = await _restClient.getData(url: url);
+
+    // cek status dulu, kalau success lanjut
+    if (result["status"] == "success") {
+      // paketBimbelData.value = result;
+      await getOtherBimbel(parentId: result['data']['id']);
+
+      Get.toNamed(
+        Routes.PAYMENT_DETAIL,
+        arguments: [hargaFix.value, result, paymentData, otherBimbelData],
+      );
+    } else {
+      // kalau status bukan success, tampilkan pesan server
+      print("Fetch failed: ${result['message']}");
+      // bisa juga kasih notif ke user
+      notifHelper.show(result['message'] ?? "Terjadi kesalahan", type: 0);
+    }
   }
 
   Future<void> getData() async {

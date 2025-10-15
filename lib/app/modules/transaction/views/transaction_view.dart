@@ -85,6 +85,7 @@ class TransactionView extends GetView<TransactionController> {
                                       search: "",
                                       status: status,
                                       date: "",
+                                      endDate: "",
                                     );
                                   },
                                   child: Container(
@@ -138,6 +139,7 @@ class TransactionView extends GetView<TransactionController> {
                           page: 1,
                           search: controller.searchController.text,
                           date: controller.startDateController.text,
+                          endDate: controller.endDateController.text,
                           status: controller.status.value,
                         );
                       },
@@ -234,12 +236,14 @@ Widget _buildTransactionList(
                       visible: controller.transactions.isNotEmpty,
                       child: Padding(
                         padding: EdgeInsets.only(top: 20),
-                        child: ReusablePagination(
-                          nextPage: controller.nextPage,
-                          prevPage: controller.prevPage,
-                          currentPage: controller.currentPage,
-                          totalPage: controller.totalPage,
-                          goToPage: controller.goToPage,
+                        child: Center(
+                          child: ReusablePagination(
+                            nextPage: controller.nextPage,
+                            prevPage: controller.prevPage,
+                            currentPage: controller.currentPage,
+                            totalPage: controller.totalPage,
+                            goToPage: controller.goToPage,
+                          ),
                         ),
                       ),
                     );
@@ -518,6 +522,7 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                         ),
                       ),
                       onTap: () async {
+                        print("xvb ${controller.searchController.text}");
                         if (controller.startDateController.text.isEmpty) return;
 
                         // Ambil tanggal mulai
@@ -569,6 +574,7 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                                     controller
                                         .startDateController
                                         .text, // akan kosong
+                                endDate: controller.endDateController.text,
                                 status: controller.status.value,
                               );
                               Navigator.pop(context); // tutup bottom sheet

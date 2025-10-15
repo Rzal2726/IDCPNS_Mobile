@@ -39,6 +39,7 @@ class AffiliateController extends GetxController {
 
   Future<void> refresh() async {
     kodeController.text = box.read('afiCode') ?? '';
+    print(box.read('afiCode') ?? '');
     await getCheckAffiliate();
     await getFinance();
   }

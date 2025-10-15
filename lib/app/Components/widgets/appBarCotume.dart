@@ -49,6 +49,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     child: InkWell(
                       onTap: () {
                         (Get.find<HomeController>()).changeBottomBar(0);
+                        Get.find<HomeController>().currentIndex.value = 0;
                       },
                       child: Image.asset('assets/logo.png', height: 50),
                     ),

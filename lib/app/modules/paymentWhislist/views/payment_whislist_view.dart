@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/modules/paymentDetail/controllers/payment_detail_controller.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:idcpns_mobile/styles/app_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -16,215 +17,114 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text("Checkout Wishlist", style: AppStyle.appBarTitle),
+    return PopScope(
+      canPop: false, // biar kita handle manual
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        Get.offNamed(Routes.WISHLIST);
+        // (Get.find<HomeController>()).currentIndex.value = 4;
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: Obx(() {
-          // Pisahin data
-          final listBimbel =
-              controller.wishLishData
-                  .where((e) => e['bimbel_parent_id'] != null)
-                  .toList();
-          final listTryout =
-              controller.wishLishData
-                  .where((e) => e['bimbel_parent_id'] == null)
-                  .toList();
+        appBar: AppBar(
+          title: Text("Checkout Wishlist", style: AppStyle.appBarTitle),
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 0,
+        ),
+        body: SafeArea(
+          child: Obx(() {
+            // Pisahin data
+            final listBimbel =
+                controller.wishLishData
+                    .where((e) => e['bimbel_parent_id'] != null)
+                    .toList();
+            final listTryout =
+                controller.wishLishData
+                    .where((e) => e['bimbel_parent_id'] == null)
+                    .toList();
 
-          return Skeletonizer(
-            enabled:
-                controller.isLoading.value ==
-                true, // true saat loading, false kalau sudah ada data
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(16),
-              child: Container(
+            return Skeletonizer(
+              enabled:
+                  controller.isLoading.value ==
+                  true, // true saat loading, false kalau sudah ada data
+              child: SingleChildScrollView(
                 padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Checkout Paket Wishlist", style: AppStyle.styleW900),
-                    SizedBox(height: 10),
-
-                    // SECTION BIMBEL
-                    if (listBimbel.isNotEmpty) ...[
-                      Text(
-                        "Paket Bimbel",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 6,
+                        offset: Offset(0, 2),
                       ),
-
-                      Column(
-                        children: [
-                          for (var data in listBimbel)
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              child: Container(
-                                padding: EdgeInsets.all(12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // HEADER
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            data['productDetail']?['name'] ??
-                                                '',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            softWrap: true,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.visible,
-                                          ),
-                                        ),
-                                        Obx(() {
-                                          final isSelected = controller
-                                              .selectedPaketPerCard
-                                              .containsKey(data['id']);
-                                          return Visibility(
-                                            visible: isSelected,
-                                            maintainSize: true,
-                                            maintainAnimation: true,
-                                            maintainState: true,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                controller.selectedPaketPerCard
-                                                    .remove(data['id']);
-                                                if (controller
-                                                            .promoController
-                                                            .text !=
-                                                        "" &&
-                                                    controller
-                                                            .getTotalHargaFix() !=
-                                                        0) {
-                                                  controller.getApplyCode();
-                                                } else {
-                                                  controller.promoController
-                                                      .clear();
-                                                  controller.kodePromo.value =
-                                                      '';
-                                                  controller.promoAmount.value =
-                                                      0;
-                                                }
-
-                                                controller.updateBiayaAdmin(
-                                                  controller
-                                                      .biayaAdminRaw
-                                                      .value,
-                                                );
-                                              },
-                                              child: Icon(
-                                                Icons.cancel,
-                                                size: 20,
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                      ],
-                                    ),
-                                    SizedBox(height: 8),
-
-                                    // LIST PAKET
-                                    Column(
-                                      children: [
-                                        for (var subData
-                                            in (data['productDetail']?['is_not_purchased'] ??
-                                                []))
-                                          _buildRadioOption(
-                                            subData['name'],
-                                            subData['id'],
-                                            data['id'],
-                                            subData['final_price'],
-                                            true,
-                                            controller,
-                                            type: "bimbel",
-                                          ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
                     ],
-
-                    // SECTION TRYOUT
-                    if (listTryout.isNotEmpty) ...[
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        "Paket Tryout",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        "Checkout Paket Wishlist",
+                        style: AppStyle.styleW900,
                       ),
-                      Column(
-                        children: [
-                          for (var data in listTryout)
-                            Container(
-                              padding: EdgeInsets.only(right: 12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // HEADER
+                      SizedBox(height: 10),
 
-                                  // GANTI RADIO → CHECKBOX
-                                  Obx(() {
-                                    final isSelected = controller
-                                        .selectedPaketPerCard
-                                        .containsKey(data['id']);
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          // <-- ini supaya text bisa wrap
-                                          child: Row(
-                                            children: [
-                                              Checkbox(
-                                                value: isSelected,
-                                                activeColor: Colors.teal,
-                                                onChanged: (value) {
-                                                  if (value == true) {
-                                                    controller.pilihPaket(
-                                                      data['id'],
-                                                      {
-                                                        "type": "tryout",
-                                                        "id":
-                                                            data['productDetail']?['id'],
-                                                        "harga_fix":
-                                                            data['productDetail']?['harga_fix'],
-                                                      },
-                                                    );
-                                                  } else {
-                                                    controller
-                                                        .selectedPaketPerCard
-                                                        .remove(data['id']);
-                                                  }
+                      // SECTION BIMBEL
+                      if (listBimbel.isNotEmpty) ...[
+                        Text(
+                          "Paket Bimbel",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        Column(
+                          children: [
+                            for (var data in listBimbel)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: Container(
+                                  padding: EdgeInsets.all(12),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // HEADER
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              data['productDetail']?['name'] ??
+                                                  '',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              softWrap: true,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.visible,
+                                            ),
+                                          ),
+                                          Obx(() {
+                                            final isSelected = controller
+                                                .selectedPaketPerCard
+                                                .containsKey(data['id']);
+                                            return Visibility(
+                                              visible: isSelected,
+                                              maintainSize: true,
+                                              maintainAnimation: true,
+                                              maintainState: true,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  controller
+                                                      .selectedPaketPerCard
+                                                      .remove(data['id']);
                                                   if (controller
                                                               .promoController
                                                               .text !=
@@ -248,236 +148,327 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                                         .biayaAdminRaw
                                                         .value,
                                                   );
-                                                  print(
-                                                    "ccc ${controller.promoAmount.value}",
-                                                  );
                                                 },
-                                              ),
-                                              Expanded(
-                                                // <-- ini juga supaya text wrap
-                                                child: Text(
-                                                  '${data['productDetail']?['formasi'] ?? ''}',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                  softWrap: true,
-                                                  maxLines:
-                                                      2, // maksimal 2 baris
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                child: Icon(
+                                                  Icons.cancel,
+                                                  size: 20,
+                                                  color: Colors.red,
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                        Text(
-                                          formatRupiah(
-                                            data['productDetail']?['harga_fix'],
-                                          ),
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  }),
-                                ],
-                              ),
-                            ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                    ],
+                                            );
+                                          }),
+                                        ],
+                                      ),
+                                      SizedBox(height: 8),
 
-                    Divider(height: 1),
-                    SizedBox(height: 15),
-
-                    // Metode Pembayaran
-                    Text(
-                      "Metode Pembayaran",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: () => showPaymentBottomSheet(context),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Colors.grey.withOpacity(0.35),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Obx(() {
-                              if (controller.paymentImage.value.isEmpty) {
-                                return Icon(
-                                  Icons.credit_card,
-                                  color: Colors.teal,
-                                  size: 36,
-                                );
-                              } else {
-                                return SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: SvgPicture.network(
-                                    controller.paymentImage.value,
-                                    fit: BoxFit.contain,
-                                    placeholderBuilder:
-                                        (_) => Icon(
-                                          Icons.credit_card,
-                                          color: Colors.teal,
-                                        ),
-                                  ),
-                                );
-                              }
-                            }),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                controller.ovoNumber.value.isNotEmpty
-                                    ? controller.ovoNumber.value
-                                    : controller
-                                        .metodePembayaran
-                                        .value
-                                        .isNotEmpty
-                                    ? controller.metodePembayaran.value
-                                    : "Pilih Pembayaran",
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ),
-                            Icon(Icons.chevron_right),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 24),
-
-                    // Kode Promo
-                    Text(
-                      "Kode Promo",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 10),
-                    GestureDetector(
-                      onTap:
-                          controller.kodePromo.value.isNotEmpty
-                              ? null
-                              : () => showPromoCodeBottomSheet(context),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Colors.grey.withOpacity(0.35),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 36,
-                              height: 36,
-                              child: Icon(Icons.discount, color: Colors.orange),
-                            ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                controller.kodePromo.isEmpty
-                                    ? "Gunakan Kode Promo"
-                                    : controller.kodePromo.value,
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ),
-                            controller.kodePromo.value.isNotEmpty
-                                ? GestureDetector(
-                                  onTap: () {
-                                    controller.promoController.clear();
-                                    controller.kodePromo.value = '';
-                                    controller.promoAmount.value = 0;
-                                  },
-                                  child: Icon(Icons.close),
-                                )
-                                : Icon(Icons.chevron_right),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: controller.promoAmount.value != 0,
-                      child: Column(
-                        children: [
-                          SizedBox(height: 5),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.check_circle, // icon ceklis bulat
-                                color: Colors.green,
-                                size: 20, // bisa disesuaikan
-                              ),
-                              SizedBox(width: 6), // jarak antara icon dan text
-                              Text(
-                                "Kode promo berhasil digunakan.",
-                                style: TextStyle(color: Colors.green),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: 24),
-
-                    // Rincian Pesanan
-                    Text(
-                      "Rincian Pesanan",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 8),
-                    Column(
-                      children: [
-                        // Baris Harga
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "Harga",
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ),
-                            controller.isLoadingHarga.value
-                                ? Container(
-                                  width: 60,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                )
-                                : Text(
-                                  "${formatRupiah(controller.getTotalHargaFix())}",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                                      // LIST PAKET
+                                      Column(
+                                        children: [
+                                          for (var subData
+                                              in (data['productDetail']?['is_not_purchased'] ??
+                                                  []))
+                                            _buildRadioOption(
+                                              subData['name'],
+                                              subData['id'],
+                                              data['id'],
+                                              subData['final_price'],
+                                              true,
+                                              controller,
+                                              type: "bimbel",
+                                            ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                            SizedBox(height: 6),
+                              ),
                           ],
                         ),
+                        SizedBox(height: 20),
+                      ],
 
-                        if (controller.biayaAdmin.value != 0)
+                      // SECTION TRYOUT
+                      if (listTryout.isNotEmpty) ...[
+                        Text(
+                          "Paket Tryout",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            for (var data in listTryout)
+                              Container(
+                                padding: EdgeInsets.only(right: 12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // HEADER
+
+                                    // GANTI RADIO → CHECKBOX
+                                    Obx(() {
+                                      final isSelected = controller
+                                          .selectedPaketPerCard
+                                          .containsKey(data['id']);
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            // <-- ini supaya text bisa wrap
+                                            child: Row(
+                                              children: [
+                                                Checkbox(
+                                                  value: isSelected,
+                                                  activeColor: Colors.teal,
+                                                  onChanged: (value) {
+                                                    if (value == true) {
+                                                      controller.pilihPaket(
+                                                        data['id'],
+                                                        {
+                                                          "type": "tryout",
+                                                          "id":
+                                                              data['productDetail']?['id'],
+                                                          "harga_fix":
+                                                              data['productDetail']?['harga_fix'],
+                                                        },
+                                                      );
+                                                    } else {
+                                                      controller
+                                                          .selectedPaketPerCard
+                                                          .remove(data['id']);
+                                                    }
+                                                    if (controller
+                                                                .promoController
+                                                                .text !=
+                                                            "" &&
+                                                        controller
+                                                                .getTotalHargaFix() !=
+                                                            0) {
+                                                      controller.getApplyCode();
+                                                    } else {
+                                                      controller.promoController
+                                                          .clear();
+                                                      controller
+                                                          .kodePromo
+                                                          .value = '';
+                                                      controller
+                                                          .promoAmount
+                                                          .value = 0;
+                                                    }
+
+                                                    controller.updateBiayaAdmin(
+                                                      controller
+                                                          .biayaAdminRaw
+                                                          .value,
+                                                    );
+                                                    print(
+                                                      "ccc ${controller.promoAmount.value}",
+                                                    );
+                                                  },
+                                                ),
+                                                Expanded(
+                                                  // <-- ini juga supaya text wrap
+                                                  child: Text(
+                                                    '${data['productDetail']?['formasi'] ?? ''}',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                    softWrap: true,
+                                                    maxLines:
+                                                        2, // maksimal 2 baris
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Text(
+                                            formatRupiah(
+                                              data['productDetail']?['harga_fix'],
+                                            ),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                      ],
+
+                      Divider(height: 1),
+                      SizedBox(height: 15),
+
+                      // Metode Pembayaran
+                      Text(
+                        "Metode Pembayaran",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 10),
+                      GestureDetector(
+                        onTap: () => showPaymentBottomSheet(context),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: Colors.grey.withOpacity(0.35),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Obx(() {
+                                if (controller.paymentImage.value.isEmpty) {
+                                  return Icon(
+                                    Icons.credit_card,
+                                    color: Colors.teal,
+                                    size: 36,
+                                  );
+                                } else {
+                                  return SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: SvgPicture.network(
+                                      controller.paymentImage.value,
+                                      fit: BoxFit.contain,
+                                      placeholderBuilder:
+                                          (_) => Icon(
+                                            Icons.credit_card,
+                                            color: Colors.teal,
+                                          ),
+                                    ),
+                                  );
+                                }
+                              }),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  controller.ovoNumber.value.isNotEmpty
+                                      ? controller.ovoNumber.value
+                                      : controller
+                                          .metodePembayaran
+                                          .value
+                                          .isNotEmpty
+                                      ? controller.metodePembayaran.value
+                                      : "Pilih Pembayaran",
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ),
+                              Icon(Icons.chevron_right),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 24),
+
+                      // Kode Promo
+                      Text(
+                        "Kode Promo",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 10),
+                      GestureDetector(
+                        onTap:
+                            controller.kodePromo.value.isNotEmpty
+                                ? null
+                                : () => showPromoCodeBottomSheet(context),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: Colors.grey.withOpacity(0.35),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 36,
+                                height: 36,
+                                child: Icon(
+                                  Icons.discount,
+                                  color: Colors.orange,
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  controller.kodePromo.isEmpty
+                                      ? "Gunakan Kode Promo"
+                                      : controller.kodePromo.value,
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ),
+                              controller.kodePromo.value.isNotEmpty
+                                  ? GestureDetector(
+                                    onTap: () {
+                                      controller.promoController.clear();
+                                      controller.kodePromo.value = '';
+                                      controller.promoAmount.value = 0;
+                                    },
+                                    child: Icon(Icons.close),
+                                  )
+                                  : Icon(Icons.chevron_right),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Visibility(
+                        visible: controller.promoAmount.value != 0,
+                        child: Column(
+                          children: [
+                            SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.check_circle, // icon ceklis bulat
+                                  color: Colors.green,
+                                  size: 20, // bisa disesuaikan
+                                ),
+                                SizedBox(
+                                  width: 6,
+                                ), // jarak antara icon dan text
+                                Text(
+                                  "Kode promo berhasil digunakan.",
+                                  style: TextStyle(color: Colors.green),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: 24),
+
+                      // Rincian Pesanan
+                      Text(
+                        "Rincian Pesanan",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Column(
+                        children: [
+                          // Baris Harga
                           Row(
                             children: [
                               Expanded(
                                 child: Text(
-                                  "Biaya admin",
+                                  "Harga",
                                   style: TextStyle(fontSize: 14),
                                 ),
                               ),
@@ -491,7 +482,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                                     ),
                                   )
                                   : Text(
-                                    "${formatRupiah(controller.biayaAdmin.value)}",
+                                    "${formatRupiah(controller.getTotalHargaFix())}",
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
@@ -500,119 +491,149 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
                               SizedBox(height: 6),
                             ],
                           ),
-                        Obx(() {
-                          return controller.promoAmount.value != 0
-                              ? Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      "Diskon",
-                                      style: TextStyle(fontSize: 14),
-                                    ),
+
+                          if (controller.biayaAdmin.value != 0)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Biaya admin",
+                                    style: TextStyle(fontSize: 14),
                                   ),
-                                  controller.isLoadingHarga.value
-                                      ? Container(
-                                        width: 60,
-                                        height: 16,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey.shade300,
-                                          borderRadius: BorderRadius.circular(
-                                            4,
+                                ),
+                                controller.isLoadingHarga.value
+                                    ? Container(
+                                      width: 60,
+                                      height: 16,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    )
+                                    : Text(
+                                      "${formatRupiah(controller.biayaAdmin.value)}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                SizedBox(height: 6),
+                              ],
+                            ),
+                          Obx(() {
+                            return controller.promoAmount.value != 0
+                                ? Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "Diskon",
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                    controller.isLoadingHarga.value
+                                        ? Container(
+                                          width: 60,
+                                          height: 16,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade300,
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+                                        )
+                                        : Text(
+                                          "${formatRupiah(controller.promoAmount.value)}",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      )
-                                      : Text(
-                                        "${formatRupiah(controller.promoAmount.value)}",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                  SizedBox(height: 6),
-                                ],
-                              )
-                              : SizedBox.shrink();
-                        }),
+                                    SizedBox(height: 6),
+                                  ],
+                                )
+                                : SizedBox.shrink();
+                          }),
 
-                        // Total Harga
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "Total Harga",
-                                style: TextStyle(fontSize: 14),
+                          // Total Harga
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "Total Harga",
+                                  style: TextStyle(fontSize: 14),
+                                ),
                               ),
-                            ),
-                            controller.isLoadingHarga.value
-                                ? Container(
-                                  width: 60,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                )
-                                : Text(
-                                  "${formatRupiah(controller.getTotalHargaFix() + controller.biayaAdmin.value - controller.promoAmount.value)}",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                          ],
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 20),
-
-                    // Tombol Bayar
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 0,
-                        ),
-                        onPressed:
-                            controller.isLoadingButton.value
-                                ? null // disable tombol kalau lagi loading
-                                : controller.getTotalHargaFix() > 0 &&
-                                    controller.paymentMethodId.value != 0
-                                ? () => controller.createPayment()
-                                : null,
-                        child:
-                            controller.isLoading.value
-                                ? SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
+                              controller.isLoadingHarga.value
+                                  ? Container(
+                                    width: 60,
+                                    height: 16,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade300,
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
-                                    backgroundColor: Colors.teal.shade100,
+                                  )
+                                  : Text(
+                                    "${formatRupiah(controller.getTotalHargaFix() + controller.biayaAdmin.value - controller.promoAmount.value)}",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                )
-                                : Text(
-                                  "Bayar Sekarang",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+
+                      SizedBox(height: 20),
+
+                      // Tombol Bayar
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 0,
+                          ),
+                          onPressed:
+                              controller.isLoadingButton.value
+                                  ? null // disable tombol kalau lagi loading
+                                  : controller.getTotalHargaFix() > 0 &&
+                                      controller.paymentMethodId.value != 0
+                                  ? () => controller.createPayment()
+                                  : null,
+                          child:
+                              controller.isLoading.value
+                                  ? SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                      backgroundColor: Colors.teal.shade100,
+                                    ),
+                                  )
+                                  : Text(
+                                    "Bayar Sekarang",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }
@@ -1026,129 +1047,137 @@ void showPhoneNumberBottomSheet(BuildContext context) {
       return SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+            bottom:
+                MediaQuery.of(context).viewInsets.bottom +
+                16, // kasih jarak dikit bawah
+            top: 12, // kasih jarak dikit atas
           ),
           child: Obx(() {
-            return controller.paymantListData.isEmpty
-                ? Center(child: CircularProgressIndicator())
-                : SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.25,
-                  child: SingleChildScrollView(
-                    padding: AppStyle.contentPadding,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Nomor Telepon",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.close),
-                              onPressed: () {
-                                controller.clearPaymentSelection();
-                              },
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 10,
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                "+62",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: TextField(
-                                controller: controller.ovoController,
-                                keyboardType: TextInputType.phone,
+            if (controller.paymantListData.isEmpty) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(13),
-                                  FilteringTextInputFormatter.digitsOnly,
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: "Masukan nomor telepon",
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                    borderSide: BorderSide(color: Colors.teal),
-                                  ),
-                                  errorText:
-                                      controller.ovoError.value.isEmpty
-                                          ? null
-                                          : controller
-                                              .ovoError
-                                              .value, // tampilkan error langsung
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.teal,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 14,
-                                ),
-                              ),
-                              onPressed: () {
-                                String text = controller.ovoController.text;
-                                if (text.isEmpty) {
-                                  controller.ovoError.value =
-                                      "Nomor telepon tidak boleh kosong";
-                                } else if (text.length < 10) {
-                                  controller.ovoError.value =
-                                      "Nomor telepon minimal 10 karakter";
-                                } else if (text.length > 12) {
-                                  controller.ovoError.value =
-                                      "Nomor telepon maksimal 12 karakter";
-                                } else {
-                                  controller.ovoError.value = '';
-                                  controller.getAddOvoNumber();
-                                  Get.back();
-                                }
-                              },
-
-                              child: Text(
-                                "Kirim",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ],
+            return SingleChildScrollView(
+              padding: AppStyle.contentPadding,
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // biar tinggi ngikut konten
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Nomor Telepon",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
-                    ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () {
+                          controller.clearPaymentSelection();
+                        },
+                      ),
+                    ],
                   ),
-                );
+                  SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          "+62",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          controller: controller.ovoController,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(13),
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          decoration: InputDecoration(
+                            hintText: "Masukkan nomor telepon",
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(color: Colors.teal),
+                            ),
+                            errorText:
+                                controller.ovoError.value.isEmpty
+                                    ? null
+                                    : controller.ovoError.value,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 14,
+                          ),
+                        ),
+                        onPressed: () {
+                          String text = controller.ovoController.text;
+                          if (text.isEmpty) {
+                            Get.snackbar(
+                              "Gagal",
+                              "Nomor telepon tidak boleh kosong",
+                              backgroundColor: Colors.pink,
+                              colorText: Colors.white,
+                            );
+                            controller.ovoError.value =
+                                "Nomor telepon tidak boleh kosong";
+                          } else if (text.length < 10) {
+                            Get.snackbar(
+                              "Gagal",
+                              "Nomor telepon minimal 11 karakter",
+                              backgroundColor: Colors.pink,
+                              colorText: Colors.white,
+                            );
+                            controller.ovoError.value =
+                                "Nomor telepon minimal 11 karakter";
+                          } else {
+                            controller.ovoError.value = '';
+                            controller.getAddOvoNumber();
+                            Get.back();
+                          }
+                        },
+                        child: Text(
+                          "Kirim",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
           }),
         ),
       );

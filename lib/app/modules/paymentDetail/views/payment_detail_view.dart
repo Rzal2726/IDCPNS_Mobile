@@ -268,13 +268,15 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                             Expanded(
                               child: Text(
                                 controller.ovoNumber.value.isNotEmpty
-                                    ? "+62 ${controller.ovoNumber.value}"
-                                    : controller
-                                        .metodePembayaran
-                                        .value
-                                        .isNotEmpty
-                                    ? controller.selectedPaymentMethod['name']
-                                    : "Pilih Pembayaran",
+                                    ? controller.ovoNumber.value
+                                    : (controller
+                                            .metodePembayaran
+                                            .value
+                                            .isNotEmpty
+                                        ? (controller
+                                                .selectedPaymentMethod?['name'] ??
+                                            "Pilih Pembayaran")
+                                        : "Pilih Pembayaran"),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -1067,12 +1069,12 @@ void showPhoneNumberBottomSheet(BuildContext context) {
                                   } else if (text.length < 10) {
                                     Get.snackbar(
                                       "Gagal",
-                                      "Nomor telepon minimal 10 karakter",
+                                      "Nomor telepon minimal 11 karakter",
                                       backgroundColor: Colors.pink,
                                       colorText: Colors.white,
                                     );
                                     controller.ovoError.value =
-                                        "Nomor telepon minimal 10 karakter";
+                                        "Nomor telepon minimal 11 karakter";
                                   } else {
                                     controller.ovoError.value = '';
                                     controller.getAddOvoNumber();
