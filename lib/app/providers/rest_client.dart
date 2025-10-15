@@ -121,14 +121,13 @@ class RestClient {
 
       return _processResponse(response);
     } on DioException catch (e) {
-      print("xxxcc ${e.toString()}");
       throw _dioException(e);
     } on SocketException catch (_) {
       if (kDebugMode) {
         print('not connected');
       }
     } catch (e) {
-      rethrow;
+      // rethrow;
     }
   }
 
