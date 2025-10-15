@@ -26,7 +26,7 @@ class TransactionView extends GetView<TransactionController> {
         onPopInvoked: (didPop) async {
           if (didPop) return;
           Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-          (Get.find<HomeController>()).currentIndex.value = 4;
+          // (Get.find<HomeController>()).currentIndex.value = 4;
         },
         child: Obx(() {
           final allData = controller.transactions['data'] ?? [];
@@ -40,7 +40,7 @@ class TransactionView extends GetView<TransactionController> {
               "Transaksi",
               onBack: () {
                 Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-                (Get.find<HomeController>()).currentIndex.value = 4;
+                // (Get.find<HomeController>()).currentIndex.value = 4;
               },
             ),
             body: SafeArea(

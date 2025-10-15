@@ -21,7 +21,7 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
       onPopInvoked: (didPop) async {
         if (didPop) return;
         Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-        (Get.find<HomeController>()).currentIndex.value = 4;
+        // (Get.find<HomeController>()).currentIndex.value = 4;
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -29,7 +29,7 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
           "Program Saya",
           onBack: () {
             Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-            (Get.find<HomeController>()).currentIndex.value = 4;
+            // (Get.find<HomeController>()).currentIndex.value = 4;
           },
         ),
         body: SafeArea(

@@ -24,7 +24,7 @@ class WishlistView extends GetView<WishlistController> {
         if (!didPop) {
           // Saat tombol back ditekan
           Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-          (Get.find<HomeController>()).currentIndex.value = 4;
+          // (Get.find<HomeController>()).currentIndex.value = 4;
         }
       },
       child: Scaffold(
@@ -33,7 +33,7 @@ class WishlistView extends GetView<WishlistController> {
           "Wishlist",
           onBack: () {
             Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-            (Get.find<HomeController>()).currentIndex.value = 4;
+            // (Get.find<HomeController>()).currentIndex.value = 4;
           },
         ),
         body: SafeArea(

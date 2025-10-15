@@ -21,7 +21,7 @@ class MyAccountView extends GetView<MyAccountController> {
       onPopInvoked: (didPop) async {
         if (didPop) return;
         Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-        (Get.find<HomeController>()).currentIndex.value = 4;
+        // (Get.find<HomeController>()).currentIndex.value = 4;
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -29,7 +29,7 @@ class MyAccountView extends GetView<MyAccountController> {
           "Ubah Akun",
           onBack: () {
             Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
-            (Get.find<HomeController>()).currentIndex.value = 4;
+            // (Get.find<HomeController>()).currentIndex.value = 4;
           },
         ),
         body: SafeArea(
