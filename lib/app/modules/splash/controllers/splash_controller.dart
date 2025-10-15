@@ -81,15 +81,6 @@ class SplashController extends GetxController {
           Get.offNamed(Routes.LENGKAPI_BIODATA);
         } else {
           Get.offNamed(Routes.HOME, arguments: {'initialIndex': 0});
-
-          // Tunggu satu frame biar controller sempat dibuild
-          Future.delayed(Duration(milliseconds: 200), () {
-            if (Get.isRegistered<HomeController>()) {
-              Get.find<HomeController>().currentIndex.value = 0;
-            } else {
-              debugPrint('HomeController belum tersedia saat ini.');
-            }
-          });
         }
       } else {
         Get.offNamed(Routes.EMAIL_VERIFICATION);
