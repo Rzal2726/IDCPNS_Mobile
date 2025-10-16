@@ -88,10 +88,14 @@ class PretestView extends GetView<PretestController> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              "Apakah kamu yakin ingin menyelesaikan bimbel?",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
+                                            Flexible(
+                                              child: Text(
+                                                "Apakah kamu yakin ingin menyelesaikan bimbel?",
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                softWrap: true,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                             IconButton(
@@ -401,29 +405,35 @@ class PretestView extends GetView<PretestController> {
                                                                       ),
                                                                 ),
                                                                 padding:
-                                                                    EdgeInsets.symmetric(
+                                                                    const EdgeInsets.symmetric(
                                                                       horizontal:
-                                                                          24,
+                                                                          4,
                                                                       vertical:
-                                                                          12,
+                                                                          2,
                                                                     ),
                                                               ),
                                                               onPressed: () {},
-                                                              child: Text("5"),
+                                                              child: const Text(
+                                                                "5",
+                                                              ),
                                                             ),
                                                           )
                                                           : GridView.builder(
+                                                            padding:
+                                                                const EdgeInsets.all(
+                                                                  2,
+                                                                ), // meniru Wrap spacing
                                                             itemCount:
                                                                 controller
                                                                     .soalList
                                                                     .length,
-                                                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                                               crossAxisCount:
                                                                   5, // jumlah kolom
                                                               crossAxisSpacing:
-                                                                  16,
+                                                                  2, // mirip spacing di Wrap
                                                               mainAxisSpacing:
-                                                                  16,
+                                                                  2, // jarak vertikal antar tombol
                                                             ),
                                                             itemBuilder: (
                                                               context,
@@ -432,55 +442,60 @@ class PretestView extends GetView<PretestController> {
                                                               final soal =
                                                                   controller
                                                                       .soalList[index];
+                                                              final isMarked =
+                                                                  controller
+                                                                      .checkMark(
+                                                                        soal,
+                                                                      );
+                                                              final isAnswered =
+                                                                  controller
+                                                                      .checkAnswer(
+                                                                        soal['id'],
+                                                                      );
+                                                              final isEmpty =
+                                                                  controller
+                                                                      .isEmptyQuest(
+                                                                        soal,
+                                                                      );
+                                                              final isCurrent =
+                                                                  controller
+                                                                      .currentQuestion
+                                                                      .value ==
+                                                                  index;
+
                                                               return ElevatedButton(
                                                                 style: ElevatedButton.styleFrom(
                                                                   elevation: 0,
                                                                   backgroundColor:
-                                                                      controller.checkMark(
-                                                                            soal,
-                                                                          )
+                                                                      isMarked
                                                                           ? Colors
                                                                               .amber
-                                                                          : controller.checkAnswer(
-                                                                            soal['id'],
-                                                                          )
+                                                                          : isAnswered
                                                                           ? Colors
                                                                               .teal
-                                                                          : controller.isEmptyQuest(
-                                                                            soal,
-                                                                          )
+                                                                          : isEmpty
                                                                           ? Colors
                                                                               .grey
                                                                           : Colors
                                                                               .white,
-
                                                                   foregroundColor:
-                                                                      controller.checkMark(
-                                                                            soal,
-                                                                          )
+                                                                      isMarked
                                                                           ? Colors
                                                                               .black
-                                                                          : controller.checkAnswer(
-                                                                            soal['id'],
-                                                                          )
+                                                                          : isAnswered
                                                                           ? Colors
                                                                               .white
-                                                                          : controller.isEmptyQuest(
-                                                                            soal,
-                                                                          )
+                                                                          : isEmpty
                                                                           ? Colors
                                                                               .white
                                                                           : Colors
                                                                               .black,
-
                                                                   shape: RoundedRectangleBorder(
                                                                     side: BorderSide(
                                                                       color:
-                                                                          controller.currentQuestion.value ==
-                                                                                  index
-                                                                              ? Colors
-                                                                                  .teal // <- warna border kalau ini soal aktif
-                                                                              : Colors.grey, // <- default
+                                                                          isCurrent
+                                                                              ? Colors.teal
+                                                                              : Colors.grey,
                                                                       width: 2,
                                                                     ),
                                                                     borderRadius:
@@ -488,13 +503,12 @@ class PretestView extends GetView<PretestController> {
                                                                           8,
                                                                         ),
                                                                   ),
-
                                                                   padding:
                                                                       const EdgeInsets.symmetric(
                                                                         horizontal:
-                                                                            12,
+                                                                            4,
                                                                         vertical:
-                                                                            12,
+                                                                            2,
                                                                       ),
                                                                 ),
                                                                 onPressed: () {

@@ -108,6 +108,22 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                   onSearch: () {
                     controller.searchData();
                   },
+                  onReset: () {
+                    controller.searchController.clear();
+                    if (controller.selectedTab.value == 0) {
+                      controller.getTryout(
+                        submenuCategoryId:
+                            controller.selectedKategoriId.value.toString(),
+                        search: "",
+                      );
+                    } else {
+                      controller.getBimbel(
+                        submenuCategoryId:
+                            controller.selectedKategoriId.value.toString(),
+                        search: "",
+                      );
+                    }
+                  },
                 ),
 
                 SizedBox(height: 15),
@@ -135,12 +151,14 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                               submenuCategoryId:
                                   controller.selectedKategoriId.value
                                       .toString(),
+                              search: controller.searchController.text,
                             );
                           } else {
                             controller.getBimbel(
                               submenuCategoryId:
                                   controller.selectedKategoriId.value
                                       .toString(),
+                              search: controller.searchController.text,
                             );
                           }
                         },

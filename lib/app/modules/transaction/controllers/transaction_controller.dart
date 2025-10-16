@@ -43,7 +43,13 @@ class TransactionController extends GetxController {
   void goToPage(int page) {
     if (page >= 1 && page <= totalPage.value) {
       currentPage.value = page;
-      getTransaction(page: currentPage.value, status: status.value);
+      getTransaction(
+        page: currentPage.value,
+        search: searchController.text,
+        // date: startDateController.text,
+        // endDate: endDateController.text,
+        status: status.value,
+      );
       // panggil API fetch data di sini jika perlu
     }
   }
@@ -51,7 +57,13 @@ class TransactionController extends GetxController {
   void nextPage() {
     if (currentPage.value < totalPage.value) {
       currentPage.value++;
-      getTransaction(page: currentPage.value, status: status.value);
+      getTransaction(
+        page: currentPage.value,
+        search: searchController.text,
+        date: startDateController.text,
+        endDate: endDateController.text,
+        status: status.value,
+      );
       // panggil API fetch data di sini
     }
   }
@@ -59,7 +71,13 @@ class TransactionController extends GetxController {
   void prevPage() {
     if (currentPage.value > 1) {
       currentPage.value--;
-      getTransaction(page: currentPage.value, status: status.value);
+      getTransaction(
+        page: currentPage.value,
+        search: searchController.text,
+        date: startDateController.text,
+        endDate: endDateController.text,
+        status: status.value,
+      );
       // panggil API fetch data di sini
     }
   }
@@ -67,7 +85,7 @@ class TransactionController extends GetxController {
   void getDate() {
     print("xve ${searchController.text}");
     getTransaction(
-      page: currentPage.value,
+      page: 1,
       search: searchController.text,
       date: startDateController.text,
       endDate: endDateController.text,
@@ -126,9 +144,9 @@ class TransactionController extends GetxController {
     final formattedEnd = formatToIso(endDate);
 
     var payload = {
+      "page": page ?? 0,
       "params": null,
       "perpage": 10,
-      "page": page ?? 0,
       "tanggal_mulai": formattedStart ?? "",
       "tanggal_selesai": formattedEnd ?? "",
       "search": search ?? "",

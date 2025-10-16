@@ -51,17 +51,17 @@ class ReusablePagination extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextButton.icon(
+              IconButton(
                 onPressed: current > 1 ? () => goToPage(1) : null,
-                label: const Icon(
+                icon: const Icon(
                   Icons.first_page,
                   size: 16,
                   color: Colors.teal,
                 ),
               ),
-              TextButton.icon(
+              IconButton(
                 onPressed: current > 1 ? prevPage : null,
-                label: const Icon(
+                icon: const Icon(
                   Icons.arrow_back_ios,
                   size: 16,
                   color: Colors.teal,
@@ -101,21 +101,17 @@ class ReusablePagination extends StatelessWidget {
                 );
               }).toList(),
 
-              TextButton.icon(
+              IconButton(
                 onPressed: current < total ? nextPage : null,
-                label: const Icon(
+                icon: const Icon(
                   Icons.arrow_forward_ios,
                   size: 16,
                   color: Colors.teal,
                 ),
               ),
-              TextButton.icon(
+              IconButton(
                 onPressed: current < total ? () => goToPage(total) : null,
-                label: const Icon(
-                  Icons.last_page,
-                  size: 16,
-                  color: Colors.teal,
-                ),
+                icon: const Icon(Icons.last_page, size: 16, color: Colors.teal),
               ),
             ],
           ),
