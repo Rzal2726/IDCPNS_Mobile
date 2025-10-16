@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/htmlResponsive/responsive_html.dart';
 import 'package:idcpns_mobile/app/Components/widgets/exitDialog.dart';
 import 'package:idcpns_mobile/app/Components/widgets/exitPretetsNotif.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
@@ -868,36 +869,37 @@ class PretestView extends GetView<PretestController> {
                                         ],
                                       ),
                                     )
-                                    : Html(
-                                      data: soal['soal'] ?? "",
-                                      extensions: [
-                                        TagExtension(
-                                          tagsToExtend: {
-                                            "img",
-                                          }, // khusus untuk <img>
-                                          builder: (context) {
-                                            final src =
-                                                context.attributes['src'] ?? '';
-                                            return SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Image.network(
-                                                src,
-                                                fit: BoxFit.contain,
-                                                errorBuilder:
-                                                    (
-                                                      context,
-                                                      error,
-                                                      stackTrace,
-                                                    ) => Icon(
-                                                      Icons.broken_image,
-                                                      color: Colors.red,
-                                                    ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
+                                    : buildSmartHtml(soal['soal'] ?? ""),
+                            // Html(
+                            //       data: soal['soal'] ?? "",
+                            //       extensions: [
+                            //         TagExtension(
+                            //           tagsToExtend: {
+                            //             "img",
+                            //           }, // khusus untuk <img>
+                            //           builder: (context) {
+                            //             final src =
+                            //                 context.attributes['src'] ?? '';
+                            //             return SingleChildScrollView(
+                            //               scrollDirection: Axis.horizontal,
+                            //               child: Image.network(
+                            //                 src,
+                            //                 fit: BoxFit.contain,
+                            //                 errorBuilder:
+                            //                     (
+                            //                       context,
+                            //                       error,
+                            //                       stackTrace,
+                            //                     ) => Icon(
+                            //                       Icons.broken_image,
+                            //                       color: Colors.red,
+                            //                     ),
+                            //               ),
+                            //             );
+                            //           },
+                            //         ),
+                            //       ],
+                            //     ),
                           ),
 
                           SizedBox(height: 24),
