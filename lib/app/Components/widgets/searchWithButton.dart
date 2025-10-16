@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class SearchRowButton extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSearch;
+  final VoidCallback? onReset; // opsional reset callback
   final String hintText;
 
   const SearchRowButton({
     super.key,
     required this.controller,
     required this.onSearch,
+    this.onReset, // <- opsional
     this.hintText = 'apa yang Anda cari',
   });
 
@@ -31,8 +33,14 @@ class SearchRowButton extends StatelessWidget {
                           ? const Icon(Icons.search, color: Colors.black87)
                           : GestureDetector(
                             onTap: () {
-                              controller.clear(); // reset textfield
-                              onSearch(); // langsung panggil search/update data
+                              // kalau ada onReset custom → pakai itu
+                              if (onReset != null) {
+                                onReset!();
+                              } else {
+                                // default behavior
+                                controller.clear();
+                                onSearch();
+                              }
                             },
                             child: const Icon(
                               Icons.close,

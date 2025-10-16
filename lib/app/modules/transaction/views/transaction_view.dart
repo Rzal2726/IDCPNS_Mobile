@@ -81,11 +81,12 @@ class TransactionView extends GetView<TransactionController> {
 
                                     // Panggil API hanya dengan status
                                     controller.getTransaction(
-                                      page: controller.currentPage.value,
-                                      search: "",
+                                      // page: controller.currentPage.value,
+                                      // search: "",
                                       status: status,
-                                      date: "",
-                                      endDate: "",
+                                      // date: controller.startDateController.text,
+                                      // endDate:
+                                      //     controller.endDateController.text,
                                     );
                                   },
                                   child: Container(
@@ -206,22 +207,34 @@ Widget _buildTransactionList(
   return SafeArea(
     child: Builder(
       builder: (_) {
-        // 🔹 Kondisi 1 — Masih loading
         if (controller.isloading.value) {
-          return Padding(
-            padding: EdgeInsets.fromLTRB(14, 12, 12, 14),
-            child: SkeletonListWidget<dynamic>(
-              data: [],
-              skeletonCount: 5,
-              itemBuilder: (_) => SizedBox.shrink(),
-            ),
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6,
+                  horizontal: 16,
+                ),
+                child: Skeletonizer(
+                  child: Container(
+                    width: double.infinity,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              );
+            },
           );
         } else {
-          // 🔹 Kondisi 2 — Sudah tidak loading
           if (list.isEmpty) {
             return EmptyStateWidget(message: 'Tidak ada transaksi ditemukan');
           } else {
-            // 🔹 Kondisi 3 — Data sudah ada
             return RefreshIndicator(
               color: Colors.teal,
               backgroundColor: Colors.white,
@@ -501,11 +514,7 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                     TextField(
                       controller: controller.endDateController,
                       readOnly: true,
-                      enabled:
-                          controller
-                              .startDateController
-                              .text
-                              .isNotEmpty, // ⬅️ disable jika start date kosong
+                      enabled: controller.startDateController.text.isNotEmpty,
                       decoration: InputDecoration(
                         hintText:
                             controller.startDateController.text.isEmpty
@@ -516,38 +525,36 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                           borderRadius: BorderRadius.circular(6),
                           borderSide: BorderSide(color: Colors.grey.shade400),
                         ),
-                        contentPadding: EdgeInsets.symmetric(
+                        contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 8,
                         ),
                       ),
                       onTap: () async {
-                        print("xvb ${controller.searchController.text}");
                         if (controller.startDateController.text.isEmpty) return;
 
                         // Ambil tanggal mulai
-                        List<String> parts = controller.startDateController.text
-                            .split("/");
-                        DateTime startDate = DateTime(
+                        final parts = controller.startDateController.text.split(
+                          "/",
+                        );
+                        final startDate = DateTime(
                           int.parse(parts[2]),
                           int.parse(parts[1]),
                           int.parse(parts[0]),
                         );
 
-                        DateTime? pickedDate = await showDatePicker(
+                        final pickedDate = await showDatePicker(
                           context: context,
                           initialDate: startDate,
-                          firstDate: startDate, // minimal tanggal mulai
+                          firstDate: startDate,
                           lastDate: DateTime(2100),
                         );
 
                         if (pickedDate != null) {
-                          setState(() {
-                            controller.endDateController.text =
-                                "${pickedDate.day.toString().padLeft(2, '0')}/"
-                                "${pickedDate.month.toString().padLeft(2, '0')}/"
-                                "${pickedDate.year}";
-                          });
+                          controller.endDateController.text =
+                              "${pickedDate.day.toString().padLeft(2, '0')}/"
+                              "${pickedDate.month.toString().padLeft(2, '0')}/"
+                              "${pickedDate.year}";
                         }
                       },
                     ),
@@ -562,22 +569,16 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                             onPressed: () {
                               controller.startDateController.clear();
                               controller.endDateController.clear();
-                              final today = DateTime.now();
-                              controller.endDateController.text =
-                                  "${today.day.toString().padLeft(2, '0')}/"
-                                  "${today.month.toString().padLeft(2, '0')}/"
-                                  "${today.year}";
+
                               controller.getTransaction(
                                 search: controller.searchController.text,
                                 page: controller.currentPage.value,
-                                date:
-                                    controller
-                                        .startDateController
-                                        .text, // akan kosong
-                                endDate: controller.endDateController.text,
+                                date: "",
+                                endDate: "",
                                 status: controller.status.value,
                               );
-                              Navigator.pop(context); // tutup bottom sheet
+
+                              Navigator.pop(context);
                             },
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(color: Colors.teal),

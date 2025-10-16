@@ -529,12 +529,14 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                                       padding: EdgeInsets.symmetric(
                                         vertical: 16,
                                       ),
-                                      child: ReusablePagination(
-                                        currentPage: controller.currentPage,
-                                        totalPage: controller.totalPage,
-                                        goToPage: controller.goToPage,
-                                        prevPage: controller.prevPage,
-                                        nextPage: controller.nextPage,
+                                      child: Center(
+                                        child: ReusablePagination(
+                                          currentPage: controller.currentPage,
+                                          totalPage: controller.totalPage,
+                                          goToPage: controller.goToPage,
+                                          prevPage: controller.prevPage,
+                                          nextPage: controller.nextPage,
+                                        ),
                                       ),
                                     ),
                                   ],

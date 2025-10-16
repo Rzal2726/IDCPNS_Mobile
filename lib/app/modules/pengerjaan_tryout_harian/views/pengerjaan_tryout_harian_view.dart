@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/htmlResponsive/responsive_html.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import 'package:idcpns_mobile/app/modules/pengerjaan_tryout_harian/controllers/pengerjaan_tryout_harian_controller.dart';
@@ -1006,35 +1007,39 @@ class PengerjaanTryoutHarianView
                               ),
                             ],
                           ),
-
                           Container(
                             margin: const EdgeInsets.all(8),
-                            child: Html(
-                              data: soal['soal'] ?? "",
-                              extensions: [
-                                TagExtension(
-                                  tagsToExtend: {"img"}, // khusus untuk <img>
-                                  builder: (context) {
-                                    final src = context.attributes['src'] ?? '';
-                                    return SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Image.network(
-                                        src,
-                                        fit: BoxFit.contain,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                const Icon(
-                                                  Icons.broken_image,
-                                                  color: Colors.red,
-                                                ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                            child: buildSmartHtml(soal['soal'] ?? ""),
                           ),
 
+                          //
+                          // Container(
+                          //   margin: const EdgeInsets.all(8),
+                          //   child: Html(
+                          //     data: soal['soal'] ?? "",
+                          //     extensions: [
+                          //       TagExtension(
+                          //         tagsToExtend: {"img"}, // khusus untuk <img>
+                          //         builder: (context) {
+                          //           final src = context.attributes['src'] ?? '';
+                          //           return SingleChildScrollView(
+                          //             scrollDirection: Axis.horizontal,
+                          //             child: Image.network(
+                          //               src,
+                          //               fit: BoxFit.contain,
+                          //               errorBuilder:
+                          //                   (context, error, stackTrace) =>
+                          //                       const Icon(
+                          //                         Icons.broken_image,
+                          //                         color: Colors.red,
+                          //                       ),
+                          //             ),
+                          //           );
+                          //         },
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                           const SizedBox(height: 24),
 
                           // List opsi jawaban
