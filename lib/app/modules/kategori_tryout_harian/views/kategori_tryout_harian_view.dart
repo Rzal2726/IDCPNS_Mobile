@@ -12,126 +12,140 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
   const KategoriTryoutHarianView({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: secondaryAppBar(
-        "Kategori",
-        onBack: () {
+    return PopScope(
+      canPop: false, // <- biar kita kontrol manual
+      onPopInvoked: (didPop) {
+        if (!didPop) {
           Get.offAllNamed("/tryout-harian");
-        },
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Card(
-                  color: const Color.fromARGB(255, 255, 255, 220),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(color: Colors.amber),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        Container(
-                          child: Text(
-                            textAlign: TextAlign.center,
-                            "Untuk melihat peringkat anda silahkan kerjakan tryout terlebih dahulu",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.teal,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.teal),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: const EdgeInsets.all(12),
-                            ),
-                            onPressed: () {
-                              Get.toNamed(
-                                "/peringkat-tryout-harian",
-                                arguments: controller.CategoryUuid,
-                              );
-                            },
-                            child: const Text(
-                              "Lihat Peringkat Keseluruhan",
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(56.0),
+          child: Obx(
+            () =>
+                controller.categories.isNotEmpty
+                    ? secondaryAppBar(
+                      "Kategori ${controller.categories.where((f) => f['uuid'] == controller.CategoryUuid).first['menu']}",
+                    )
+                    : Skeletonizer(child: secondaryAppBar("Kategori asdssa")),
+          ),
+        ),
+
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Card(
+                    color: const Color.fromARGB(255, 255, 255, 220),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: Colors.amber),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Container(
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              "Untuk melihat peringkat anda silahkan kerjakan tryout terlebih dahulu",
                               style: TextStyle(
-                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.teal,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Colors.teal),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.all(12),
+                              ),
+                              onPressed: () {
+                                Get.toNamed(
+                                  "/peringkat-tryout-harian",
+                                  arguments: controller.CategoryUuid,
+                                );
+                              },
+                              child: const Text(
+                                "Lihat Peringkat Keseluruhan",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  textAlign: TextAlign.start,
-                  "Kamis, 4 September",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                SizedBox(height: 16),
-                Obx(() {
-                  if (controller.loading.value == true) {
-                    return Skeletonizer(
-                      child: _dataCard(
-                        category: "Kategori",
-                        judul: "Jusul",
-                        categoryColor: Colors.teal,
-                      ),
-                    );
-                  } else {
-                    if (controller.tryoutList.isEmpty) {
-                      return Center(
-                        child: Column(
-                          spacing: 16,
-                          children: [
-                            SizedBox(height: 64),
-                            SvgPicture.asset(
-                              "assets/learningEmpty.svg",
-                              width: 240,
-                            ),
-                            Text("Tidak Ada Tryout"),
-                          ],
+                  SizedBox(height: 16),
+                  Text(
+                    textAlign: TextAlign.start,
+                    "Kamis, 4 September",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  SizedBox(height: 16),
+                  Obx(() {
+                    if (controller.loading.value == true) {
+                      return Skeletonizer(
+                        child: _dataCard(
+                          category: "Kategori",
+                          judul: "Jusul",
+                          categoryColor: Colors.teal,
                         ),
                       );
                     } else {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: controller.tryoutList.length,
-                        itemBuilder: (context, index) {
-                          final data = controller.tryoutList[index];
-                          return _dataCard(
-                            category: data['menu_category']['menu'],
-                            judul: data['nama'],
-                            categoryColor: Colors.teal,
-                            uuid: data['uuid'],
-                            isDone: data['sudah_mengerjakan_soal'] == 1,
-                          );
-                        },
-                      );
+                      if (controller.tryoutList.isEmpty) {
+                        return Center(
+                          child: Column(
+                            spacing: 16,
+                            children: [
+                              SizedBox(height: 64),
+                              SvgPicture.asset(
+                                "assets/learningEmpty.svg",
+                                width: 240,
+                              ),
+                              Text("Tidak Ada Tryout"),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: controller.tryoutList.length,
+                          itemBuilder: (context, index) {
+                            final data = controller.tryoutList[index];
+                            return _dataCard(
+                              category: data['menu_category']['menu'],
+                              judul: data['nama'],
+                              categoryColor: Colors.teal,
+                              uuid: data['uuid'],
+                              isDone: data['sudah_mengerjakan_soal'] == 1,
+                            );
+                          },
+                        );
+                      }
                     }
-                  }
-                }),
-              ],
+                  }),
+                ],
+              ),
             ),
           ),
         ),

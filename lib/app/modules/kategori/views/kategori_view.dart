@@ -20,7 +20,15 @@ class KategoriView extends GetView<KategoriController> {
     ''';
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: secondaryAppBar("Zona ${controller.categoryData['menu']}"),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(56.0),
+        child: Obx(
+          () =>
+              controller.categoryData.isNotEmpty
+                  ? secondaryAppBar("Zona ${controller.categoryData['menu']}")
+                  : Skeletonizer(child: secondaryAppBar("Zona asdsadsa")),
+        ),
+      ),
       body: SafeArea(
         child: RefreshIndicator(
           backgroundColor: Colors.white,

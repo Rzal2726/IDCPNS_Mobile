@@ -73,30 +73,30 @@ class PengerjaanTryoutHarianController extends GetxController {
       startCountdown(tryoutData['waktu_pengerjaan']);
     }
     uuid.value = tryoutData['uuid'];
-    if (localStorage.getString("soal_uuid") == uuid.value) {
-      final prevJawaban = jsonDecode(
-        localStorage.getString("selected_answer_list")!,
-      );
-      final prevAnswers = jsonDecode(
-        localStorage.getString("selected_answer")!,
-      );
+    // if (localStorage.getString("soal_uuid") == uuid.value) {
+    //   final prevJawaban = jsonDecode(
+    //     localStorage.getString("selected_answer_list")!,
+    //   );
+    //   final prevAnswers = jsonDecode(
+    //     localStorage.getString("selected_answer")!,
+    //   );
 
-      // Convert List<dynamic> → List<Map<String, dynamic>>
-      final parsedList =
-          (prevJawaban as List)
-              .map((item) => Map<String, dynamic>.from(item))
-              .toList();
+    //   // Convert List<dynamic> → List<Map<String, dynamic>>
+    //   final parsedList =
+    //       (prevJawaban as List)
+    //           .map((item) => Map<String, dynamic>.from(item))
+    //           .toList();
 
-      // Assign ke RxList supaya reaktif
-      selectedAnswersList.assignAll(parsedList);
+    //   // Assign ke RxList supaya reaktif
+    //   selectedAnswersList.assignAll(parsedList);
 
-      // Convert Map<String, dynamic> → RxMap<int, dynamic>
-      selectedAnswers.assignAll(
-        (prevAnswers as Map<String, dynamic>).map(
-          (key, value) => MapEntry(int.parse(key), value),
-        ),
-      );
-    }
+    //   // Convert Map<String, dynamic> → RxMap<int, dynamic>
+    //   selectedAnswers.assignAll(
+    //     (prevAnswers as Map<String, dynamic>).map(
+    //       (key, value) => MapEntry(int.parse(key), value),
+    //     ),
+    //   );
+    // }
 
     localStorage.setString("soal_uuid", uuid.value);
     print("Target Instansi: ${localStorage.getString('instansi')}");
@@ -211,8 +211,10 @@ class PengerjaanTryoutHarianController extends GetxController {
     required int waktuPengerjaan,
   }) {
     final index = selectedAnswersList.indexWhere(
-      (answer) => answer['lathar_id'] == questionId,
+      (answer) => answer['lathar_soal_id'] == questionId,
     );
+
+    print("Jawaban terbaru index : $index");
 
     final diff = DateTime.now().difference(initialTimer).inSeconds;
     if (index >= 0) {

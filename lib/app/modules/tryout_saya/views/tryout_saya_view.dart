@@ -652,8 +652,8 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
       onTap: () {
         controller.selectedUuid.value = uuid;
         print("uuidtry: ${uuid}");
-        Get.delete<DetailTryoutSayaController>(force: true);
-        Get.toNamed("/detail-tryout-saya", arguments: uuid);
+        // Get.delete<DetailTryoutSayaController>(force: true);
+        Get.offAllNamed("/detail-tryout-saya", arguments: uuid);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),

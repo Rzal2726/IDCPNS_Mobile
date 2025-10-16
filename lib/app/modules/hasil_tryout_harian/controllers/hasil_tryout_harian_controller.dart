@@ -7,6 +7,7 @@ class HasilTryoutHarianController extends GetxController {
   late String uuid;
   final restClient = RestClient();
   RxMap<String, dynamic> nilaiChart = <String, dynamic>{}.obs;
+  RxMap<String, dynamic> dataTryout = <String, dynamic>{}.obs;
   @override
   void onInit() {
     super.onInit();
@@ -27,6 +28,7 @@ class HasilTryoutHarianController extends GetxController {
   Future<void> initHasil() async {
     uuid = await Get.arguments;
     await getNilai();
+    await getDetail();
   }
 
   Future<void> getNilai() async {
@@ -38,6 +40,16 @@ class HasilTryoutHarianController extends GetxController {
       response['data'],
     );
     nilaiChart.assignAll(data);
+  }
+
+  Future<void> getDetail() async {
+    final response = await restClient.getData(
+      url: baseUrl + apiGetTryoutHarianDetail + uuid,
+    );
+    Map<String, dynamic> data = Map<String, dynamic>.from(response['data']);
+    print("hasi: $dataTryout");
+
+    dataTryout.assignAll(data);
   }
 
   Future<void> checkMaintenance() async {

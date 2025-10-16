@@ -13,6 +13,97 @@ class PeringkatTryoutController extends GetxController {
   RxMap<String, dynamic> tryoutSaya = <String, dynamic>{}.obs;
   RxMap<String, bool> loading = <String, bool>{"filter": false}.obs;
   RxList<Map<String, dynamic>> listPeringkat = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> listPeringkatDummy =
+      <Map<String, dynamic>>[
+        {
+          "no": "1",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "2",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "3",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "4",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "5",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "6",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "7",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "8",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "9",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "10",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "11",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+      ].obs;
   RxList<Map<String, dynamic>> listProvinsi =
       <Map<String, dynamic>>[
         {"id": "", "nama": "Pilih Provinsi"},
@@ -34,7 +125,7 @@ class PeringkatTryoutController extends GetxController {
   RxInt pesertTidakLulus = 0.obs;
   RxInt rank = 0.obs;
   RxInt total = 0.obs;
-  RxInt totalPage = 0.obs;
+  RxInt totalPage = 2.obs;
   RxString selectedInstansi = "".obs;
   RxString selectedJabatan = "".obs;
   RxString selectedPeringkat = "".obs;
@@ -149,8 +240,8 @@ class PeringkatTryoutController extends GetxController {
     rank.value = response['rank'];
     pesertaLulus.value = response['peserta_lulus'];
     pesertTidakLulus.value = response['peserta_tidak_lulus'];
-    totalPage.value =
-        (response['data']['total'] / response['data']['per_page']).floor();
+    // totalPage.value =
+    //     (response['data']['total'] / response['data']['per_page']).floor();
   }
 
   Future<void> checkMaintenance() async {

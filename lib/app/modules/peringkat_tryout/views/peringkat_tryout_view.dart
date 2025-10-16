@@ -192,6 +192,11 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                                       child: Text("data"),
                                                     )
                                                     : DropdownSearch<String>(
+                                                      enabled:
+                                                          controller
+                                                              .selectedProvinsi
+                                                              .value
+                                                              .isNotEmpty,
                                                       popupProps: PopupProps.dialog(
                                                         showSearchBox: true,
                                                         searchFieldProps: TextFieldProps(
@@ -433,28 +438,81 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                               SizedBox(height: 24),
                                               SizedBox(
                                                 width: double.infinity,
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.teal,
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: OutlinedButton(
+                                                        onPressed: () {
+                                                          controller
+                                                              .selectedKota
+                                                              .value = '';
+                                                          controller
+                                                              .selectedProvinsi
+                                                              .value = '';
+                                                          controller
+                                                              .selectedInstansi
+                                                              .value = '';
+                                                          controller
+                                                              .selectedJabatan
+                                                              .value = '';
+                                                          Navigator.pop(
+                                                            context,
+                                                          );
+                                                        },
+                                                        // tutup bottom sheet
+                                                        style: OutlinedButton.styleFrom(
+                                                          side: BorderSide(
+                                                            color: Colors.teal,
                                                           ),
-                                                    ),
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          vertical: 12,
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  8,
+                                                                ),
+                                                          ),
+                                                          padding:
+                                                              EdgeInsets.symmetric(
+                                                                vertical: 12,
+                                                              ),
                                                         ),
-                                                  ),
-                                                  onPressed: () {
-                                                    controller.getRanking();
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text("Filter"),
+                                                        child: Text(
+                                                          "Reset",
+                                                          style: TextStyle(
+                                                            color: Colors.teal,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 12),
+                                                    Expanded(
+                                                      child: ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.teal,
+                                                          foregroundColor:
+                                                              Colors.white,
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  8,
+                                                                ),
+                                                          ),
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                vertical: 12,
+                                                              ),
+                                                        ),
+                                                        onPressed: () {
+                                                          controller
+                                                              .getRanking();
+                                                          Navigator.pop(
+                                                            context,
+                                                          );
+                                                        },
+                                                        child: Text("Filter"),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ],
@@ -604,10 +662,11 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                       scrollDirection: Axis.vertical,
                                       physics: NeverScrollableScrollPhysics(),
                                       itemCount:
-                                          controller.listPeringkat.length,
+                                          controller.listPeringkatDummy.length,
                                       itemBuilder: (context, index) {
                                         final data =
-                                            controller.listPeringkat[index];
+                                            controller
+                                                .listPeringkatDummy[index];
                                         return _cardData(
                                           num: data['no'].toString(),
                                           name: data['user_name'],
@@ -660,9 +719,7 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                             (i) => start + i,
                           );
                           return Row(
-                            spacing: 16,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               IconButton(
                                 onPressed: () {
@@ -694,8 +751,8 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                     child: AnimatedContainer(
                                       duration: Duration(milliseconds: 200),
                                       padding: EdgeInsets.symmetric(
-                                        horizontal: isActive ? 14 : 10,
-                                        vertical: isActive ? 8 : 6,
+                                        horizontal: 10,
+                                        vertical: 6,
                                       ),
                                       decoration: BoxDecoration(
                                         color:
@@ -720,9 +777,7 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                                   ? Colors.teal
                                                   : Colors.black,
                                           fontSize:
-                                              isActive
-                                                  ? 16
-                                                  : 14, // font lebih besar untuk page aktif
+                                              14, // font lebih besar untuk page aktif
                                         ),
                                       ),
                                     ),
@@ -832,9 +887,10 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
             // Badge nomor
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
+              spacing: 4,
               children: [
                 SizedBox(
-                  width: 64,
+                  width: 50,
                   child: _badge(color: Colors.blueAccent, text: num),
                 ),
                 Expanded(
@@ -882,7 +938,7 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
               children: [
                 // Nilai
                 const Text(
-                  "Nilai",
+                  "Nilai : ",
                   style: TextStyle(fontSize: 14, color: Colors.black54),
                 ),
                 Flexible(
@@ -891,10 +947,7 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                     text: score,
                   ),
                 ),
-                const Text(
-                  "Keterangan",
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                ),
+
                 Flexible(
                   child: _badge(
                     color: status == 1 ? Colors.green : Colors.red,

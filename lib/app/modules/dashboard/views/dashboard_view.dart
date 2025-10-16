@@ -949,14 +949,14 @@ class DashboardView extends GetView<DashboardController> {
                         SizedBox(height: 20),
 
                         // Search field
-                        Container(
+                        SizedBox(
                           height: 50,
-
                           child: TextField(
                             controller: controller.tryoutSearch,
                             onChanged: (value) {
                               controller.filterTryout(
                                 query: controller.tryoutSearch.text,
+                                categoryId: controller.selectedKategoriId.value,
                               );
                             },
                             decoration: InputDecoration(
@@ -988,60 +988,50 @@ class DashboardView extends GetView<DashboardController> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 16),
                         // Tombol Filter
                         Align(
                           alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
+                          child: GestureDetector(
+                            onTap: () {
                               showFilterCategoryBottomSheet(context);
                             },
-                            style: TextButton.styleFrom(
-                              foregroundColor:
-                                  Colors.teal, // Mengatur warna teks dan ikon
-                            ),
                             child: Row(
-                              mainAxisSize:
-                                  MainAxisSize
-                                      .min, // Agar Row tidak mengambil lebar penuh
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text('Filter', style: TextStyle(fontSize: 16)),
-                                SizedBox(
-                                  width: 4,
-                                ), // Memberikan jarak antara teks dan ikon
-                                Icon(Icons.keyboard_arrow_down),
+                                Text(
+                                  'Filter',
+                                  style: TextStyle(color: Colors.teal),
+                                ),
+                                Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: Colors.teal,
+                                ),
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 16),
                         controller.tryoutEventLoading.value
                             ? Skeletonizer(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 12,
-                                          ),
-                                          child: SizedBox(
-                                            width: 300,
-                                            child: buildTryoutCard(
-                                              dateRange: 'lorem',
-                                              period: "lorem",
-                                              status: 'lorem',
-                                              title: 'lorem ipsum',
-                                            ),
-                                          ),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: SizedBox(
+                                        width: 300,
+                                        child: buildTryoutCard(
+                                          dateRange: 'lorem',
+                                          period: "lorem",
+                                          status: 'lorem',
+                                          title: 'lorem ipsum',
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             )
                             : controller.tryoutEventFilterData.isEmpty
@@ -1067,97 +1057,86 @@ class DashboardView extends GetView<DashboardController> {
                                 ],
                               ),
                             )
-                            : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Scrollable Row
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: [
-                                      for (var data
-                                          in controller.tryoutEventFilterData)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 12,
-                                          ),
-                                          child: SizedBox(
-                                            width:
-                                                300, // biar card rapi & konsisten
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                final isVerification =
-                                                    parseBoolNullable(
-                                                      data['is_verification'],
-                                                    );
-                                                if (data['is_purchase']) {
-                                                  if (isVerification != null &&
-                                                      isVerification) {
-                                                    Get.toNamed(
-                                                      "/detail-event",
-                                                      arguments: data['uuid'],
-                                                    );
-                                                    return;
-                                                  }
-                                                  Get.delete<
-                                                    DetailTryoutSayaController
-                                                  >(force: true);
-                                                  Get.toNamed(
-                                                    "/detail-tryout-saya",
-                                                    arguments:
-                                                        data['tryout_transaction_id'],
-                                                  );
-                                                } else {
-                                                  Get.toNamed(
-                                                    "/detail-event",
-                                                    arguments: data['uuid'],
-                                                  );
-                                                }
-                                              },
-                                              child: buildTryoutCard(
-                                                status: data['label_text'],
-                                                title: data['name'],
-                                                dateRange:
-                                                    data['range_date_string'],
-                                                period: data['periode_text'],
-                                              ),
-                                            ),
+                            : SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (var data
+                                      in controller.tryoutEventFilterData)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: SizedBox(
+                                        width:
+                                            300, // biar card rapi & konsisten
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            final isVerification =
+                                                parseBoolNullable(
+                                                  data['is_verification'],
+                                                );
+                                            if (data['is_purchase']) {
+                                              if (isVerification != null &&
+                                                  isVerification) {
+                                                Get.toNamed(
+                                                  "/detail-event",
+                                                  arguments: data['uuid'],
+                                                );
+                                                return;
+                                              }
+                                              Get.delete<
+                                                DetailTryoutSayaController
+                                              >(force: true);
+                                              Get.toNamed(
+                                                "/detail-tryout-saya",
+                                                arguments:
+                                                    data['tryout_transaction_id'],
+                                              );
+                                            } else {
+                                              Get.toNamed(
+                                                "/detail-event",
+                                                arguments: data['uuid'],
+                                              );
+                                            }
+                                          },
+                                          child: buildTryoutCard(
+                                            status: data['label_text'],
+                                            title: data['name'],
+                                            dateRange:
+                                                data['range_date_string'],
+                                            period: data['periode_text'],
                                           ),
                                         ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                // Indikasi scroll
-                                Visibility(
-                                  visible:
-                                      (controller
-                                              .tryoutEventFilterData
-                                              ?.length ??
-                                          0) >
-                                      1,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Icon(
-                                        Icons.swipe,
-                                        size: 16,
-                                        color: Colors.black38,
                                       ),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        "Geser untuk lihat lainnya",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.black38,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                                    ),
+                                ],
+                              ),
                             ),
+                        const SizedBox(height: 16),
+                        // Indikasi scroll
+                        Visibility(
+                          visible:
+                              (controller.tryoutEventFilterData?.length ?? 0) >
+                              1,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                Icons.swipe,
+                                size: 16,
+                                color: Colors.black38,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                "Geser untuk lihat lainnya",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black38,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 50),
@@ -1570,6 +1549,7 @@ void showFilterCategoryBottomSheet(BuildContext context) {
                         onPressed: () {
                           Navigator.pop(context);
                           controller.filterTryout(
+                            query: controller.tryoutSearch.text,
                             categoryId: controller.selectedKategoriId.value,
                           );
 

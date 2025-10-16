@@ -55,6 +55,7 @@ class TryoutView extends GetView<TryoutController> {
             child: SingleChildScrollView(
               padding: AppStyle.sreenPaddingHome,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 // 🚀 Hapus Expanded
                 children: [
                   // Tryout Saya box
@@ -159,8 +160,6 @@ class TryoutView extends GetView<TryoutController> {
                                 ),
 
                             decoration: InputDecoration(
-                              labelStyle: TextStyle(color: Colors.grey),
-                              labelText: "Cari",
                               contentPadding: EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 8,
@@ -179,6 +178,9 @@ class TryoutView extends GetView<TryoutController> {
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
+                              hintText: 'Cari',
+                              hintStyle: TextStyle(color: Colors.grey),
+                              border: InputBorder.none,
                               suffixIcon: Icon(
                                 Icons.search,
                                 color: Colors.black,
@@ -367,15 +369,17 @@ class TryoutView extends GetView<TryoutController> {
                     }
 
                     if (controller.eventTryout.isEmpty) {
-                      return Column(
-                        children: [
-                          SvgPicture.string(noDataSvg),
-                          const SizedBox(height: 16),
-                          const Text(
-                            "Belum Ada Event Berlangsung",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
+                      return Center(
+                        child: Column(
+                          children: [
+                            SvgPicture.string(noDataSvg),
+                            const SizedBox(height: 16),
+                            const Text(
+                              "Belum Ada Event Berlangsung",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
                       );
                     }
 
@@ -387,7 +391,7 @@ class TryoutView extends GetView<TryoutController> {
                             Padding(
                               padding: const EdgeInsets.only(right: 12),
                               child: SizedBox(
-                                width: 300, // biar card rapi & konsisten
+                                width: 300,
                                 child: GestureDetector(
                                   onTap: () {
                                     final isVerification = parseBoolNullable(

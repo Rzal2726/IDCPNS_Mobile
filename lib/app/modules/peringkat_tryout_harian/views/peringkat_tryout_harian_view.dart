@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
+import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -171,6 +172,11 @@ class PeringkatTryoutHarianView
                                                 child: Text("data"),
                                               )
                                               : DropdownSearch<String>(
+                                                enabled:
+                                                    controller
+                                                        .selectedProvinsi
+                                                        .value
+                                                        .isNotEmpty,
                                                 popupProps: PopupProps.dialog(
                                                   showSearchBox: true,
                                                   searchFieldProps: TextFieldProps(
@@ -241,24 +247,70 @@ class PeringkatTryoutHarianView
                                         SizedBox(height: 24),
                                         SizedBox(
                                           width: double.infinity,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.teal,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 12,
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: OutlinedButton(
+                                                  onPressed: () {
+                                                    controller
+                                                        .selectedKota
+                                                        .value = '';
+                                                    controller
+                                                        .selectedProvinsi
+                                                        .value = '';
+                                                    Navigator.pop(context);
+                                                  },
+                                                  // tutup bottom sheet
+                                                  style: OutlinedButton.styleFrom(
+                                                    side: BorderSide(
+                                                      color: Colors.teal,
+                                                    ),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          vertical: 12,
+                                                        ),
                                                   ),
-                                            ),
-                                            onPressed: () {
-                                              controller.getUserPoint();
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text("Filter"),
+                                                  child: Text(
+                                                    "Reset",
+                                                    style: TextStyle(
+                                                      color: Colors.teal,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(width: 12),
+                                              Expanded(
+                                                child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.teal,
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          vertical: 12,
+                                                        ),
+                                                  ),
+                                                  onPressed: () {
+                                                    controller.getUserPoint();
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text("Filter"),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
@@ -282,47 +334,17 @@ class PeringkatTryoutHarianView
                   spacing: 16,
                   children: [
                     Expanded(
-                      child: TextField(
+                      child: SearchRowButton(
                         controller: controller.searchController,
-                        decoration: InputDecoration(
-                          labelStyle: TextStyle(color: Colors.grey),
-                          labelText: "Cari",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.teal,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.teal,
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
+                        onSearch: () {
+                          controller.getUserPoint();
+                        },
+                        hintText: 'Cari',
                       ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal, // warna tombol
-                        foregroundColor: Colors.white, // warna teks/icon
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                      ),
-                      onPressed: () {
-                        controller.getUserPoint();
-                      },
-                      child: const Text("Cari"),
                     ),
                   ],
                 ),
+                SizedBox(height: 16),
                 Obx(() {
                   if (controller.loading["init"] == true) {
                     return Skeletonizer(
@@ -411,27 +433,25 @@ class PeringkatTryoutHarianView
                     (i) => start + i,
                   );
                   return Row(
-                    spacing: 6,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      IconButton(
+                      TextButton.icon(
                         onPressed: () {
                           if (controller.currentPage.value > 1) {
                             controller.currentPage.value = 1;
                             controller.getUserPoint();
                           }
                         },
-                        icon: Icon(Icons.first_page),
+                        label: Icon(Icons.first_page),
                       ),
-                      IconButton(
+                      TextButton.icon(
                         onPressed: () {
                           if (controller.currentPage.value > 1) {
                             controller.currentPage.value--;
                             controller.getUserPoint();
                           }
                         },
-                        icon: Icon(Icons.arrow_back_ios),
+                        label: Icon(Icons.arrow_back_ios),
                       ),
                       ...pages.map((page) {
                         final isActive = page == current;
@@ -476,7 +496,7 @@ class PeringkatTryoutHarianView
                           ),
                         );
                       }),
-                      IconButton(
+                      TextButton.icon(
                         onPressed: () {
                           if (controller.currentPage.value <
                               controller.totalPage.value) {
@@ -484,9 +504,9 @@ class PeringkatTryoutHarianView
                             controller.getUserPoint();
                           }
                         },
-                        icon: Icon(Icons.arrow_forward_ios),
+                        label: Icon(Icons.arrow_forward_ios),
                       ),
-                      IconButton(
+                      TextButton.icon(
                         onPressed: () {
                           if (controller.currentPage.value <
                               controller.totalPage.value) {
@@ -495,7 +515,7 @@ class PeringkatTryoutHarianView
                             controller.getUserPoint();
                           }
                         },
-                        icon: Icon(Icons.last_page),
+                        label: Icon(Icons.last_page),
                       ),
                     ],
                   );
