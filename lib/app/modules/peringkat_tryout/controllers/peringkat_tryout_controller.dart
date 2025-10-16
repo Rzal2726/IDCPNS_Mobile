@@ -125,7 +125,7 @@ class PeringkatTryoutController extends GetxController {
   RxInt pesertTidakLulus = 0.obs;
   RxInt rank = 0.obs;
   RxInt total = 0.obs;
-  RxInt totalPage = 2.obs;
+  RxInt totalPage = 0.obs;
   RxString selectedInstansi = "".obs;
   RxString selectedJabatan = "".obs;
   RxString selectedPeringkat = "".obs;
@@ -240,8 +240,8 @@ class PeringkatTryoutController extends GetxController {
     rank.value = response['rank'];
     pesertaLulus.value = response['peserta_lulus'];
     pesertTidakLulus.value = response['peserta_tidak_lulus'];
-    // totalPage.value =
-    //     (response['data']['total'] / response['data']['per_page']).floor();
+    totalPage.value =
+        (response['data']['total'] / response['data']['per_page']).floor();
   }
 
   Future<void> checkMaintenance() async {

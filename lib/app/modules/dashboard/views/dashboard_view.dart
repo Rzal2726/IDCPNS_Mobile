@@ -62,6 +62,7 @@ class DashboardView extends GetView<DashboardController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Highlight Section
+                    SizedBox(height: 8),
                     Text(
                       'Highlight',
                       style: TextStyle(

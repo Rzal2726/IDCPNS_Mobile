@@ -4,6 +4,8 @@ import 'package:flutter_html/flutter_html.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
+import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -28,22 +30,6 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
             padding: EdgeInsets.all(16),
             child: Column(
               children: [
-                Container(
-                  margin: EdgeInsets.all(16),
-                  child: Obx(
-                    () =>
-                        controller.tryoutSaya.isEmpty
-                            ? Skeletonizer(child: Text("Title"))
-                            : Text(
-                              controller.tryoutSaya['tryout']['name']
-                                  .toString(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                  ),
-                ),
                 Card(
                   color: Colors.white,
                   child: Container(
@@ -62,8 +48,11 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                 fontSize: 16,
                               ),
                             ),
-                            IconButton(
-                              tooltip: "Filter",
+                            TextButton.icon(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                              ),
+                              iconAlignment: IconAlignment.end,
                               onPressed: () {
                                 if (controller.loading['filter'] == true) {
                                   return;
@@ -455,6 +444,8 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                                           controller
                                                               .selectedJabatan
                                                               .value = '';
+                                                          controller
+                                                              .getRanking();
                                                           Navigator.pop(
                                                             context,
                                                           );
@@ -523,8 +514,12 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                   },
                                 );
                               },
-                              icon: const Icon(
-                                Icons.filter_list,
+                              label: Text(
+                                "Filter",
+                                style: TextStyle(color: Colors.teal),
+                              ),
+                              icon: Icon(
+                                Icons.keyboard_arrow_down,
                                 color: Colors.teal,
                               ),
                             ),
@@ -586,56 +581,12 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                         Row(
                           children: [
                             Expanded(
-                              child: TextField(
+                              child: SearchRowButton(
                                 controller: controller.searchController,
-                                decoration: InputDecoration(
-                                  labelStyle: const TextStyle(
-                                    color: Colors.grey,
-                                  ),
-                                  labelText: "Cari Disini",
-                                  prefixIcon: const Icon(
-                                    Icons.search,
-                                    color: Colors.teal,
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                      color: Colors.teal,
-                                      width: 1.5,
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                      color: Colors.teal,
-                                      width: 2.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.teal,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 14,
-                                ),
-                              ),
-                              onPressed: () {
-                                controller.getRanking();
-                              },
-                              child: const Text(
-                                "Cari",
-                                style: TextStyle(color: Colors.white),
+                                onSearch: () {
+                                  controller.getRanking();
+                                },
+                                hintText: 'Cari',
                               ),
                             ),
                           ],
@@ -662,11 +613,10 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                                       scrollDirection: Axis.vertical,
                                       physics: NeverScrollableScrollPhysics(),
                                       itemCount:
-                                          controller.listPeringkatDummy.length,
+                                          controller.listPeringkat.length,
                                       itemBuilder: (context, index) {
                                         final data =
-                                            controller
-                                                .listPeringkatDummy[index];
+                                            controller.listPeringkat[index];
                                         return _cardData(
                                           num: data['no'].toString(),
                                           name: data['user_name'],
@@ -681,133 +631,39 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                         ),
 
                         Obx(() {
-                          final current = controller.currentPage.value;
-                          final total = controller.totalPage.value;
-
-                          if (total == 0) {
+                          if (controller.totalPage.value == 0) {
                             return const SizedBox.shrink(); // tidak ada halaman
                           }
 
-                          // Tentukan window
-                          int start = current - 1;
-                          int end = current + 1;
-
-                          // clamp biar tetap di antara 1 dan total
-                          start = start < 1 ? 1 : start;
-                          end = end > total ? total : end;
-
-                          // Kalau total < 3, pakai semua halaman yg ada
-                          if (total <= 3) {
-                            start = 1;
-                            end = total;
-                          } else {
-                            // Kalau current di awal → 1,2,3
-                            if (current == 1) {
-                              start = 1;
-                              end = 3;
-                            }
-                            // Kalau current di akhir → total-2, total-1, total
-                            else if (current == total) {
-                              start = total - 2;
-                              end = total;
-                            }
-                          }
-
-                          // Generate daftar halaman
-                          final pages = List.generate(
-                            end - start + 1,
-                            (i) => start + i,
-                          );
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  if (controller.currentPage.value > 1) {
-                                    controller.currentPage.value = 1;
-                                    controller.getRanking();
-                                  }
+                          return Container(
+                            color: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: Center(
+                              child: ReusablePagination(
+                                currentPage: controller.currentPage,
+                                totalPage: controller.totalPage,
+                                goToPage: (int page) {
+                                  controller.currentPage.value = page;
+                                  controller.getRanking();
                                 },
-                                icon: Icon(Icons.first_page),
-                              ),
-                              IconButton(
-                                onPressed: () {
+                                prevPage: () {
                                   if (controller.currentPage.value > 1) {
                                     controller.currentPage.value--;
                                     controller.getRanking();
                                   }
                                 },
-                                icon: Icon(Icons.arrow_back_ios),
-                              ),
-                              ...pages.map((page) {
-                                final isActive = page == current;
-                                return Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 2),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      controller.currentPage.value = current;
-                                      controller.getRanking();
-                                    },
-                                    child: AnimatedContainer(
-                                      duration: Duration(milliseconds: 200),
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            isActive
-                                                ? Colors.teal.shade100
-                                                : Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color:
-                                              isActive
-                                                  ? Colors.teal
-                                                  : Colors.grey.shade300,
-                                          width: isActive ? 2 : 1,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        '$page',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              isActive
-                                                  ? Colors.teal
-                                                  : Colors.black,
-                                          fontSize:
-                                              14, // font lebih besar untuk page aktif
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                              IconButton(
-                                onPressed: () {
+                                nextPage: () {
                                   if (controller.currentPage.value <
                                       controller.totalPage.value) {
                                     controller.currentPage.value++;
                                     controller.getRanking();
                                   }
                                 },
-                                icon: Icon(Icons.arrow_forward_ios),
                               ),
-                              IconButton(
-                                onPressed: () {
-                                  if (controller.currentPage.value <
-                                      controller.totalPage.value) {
-                                    controller.currentPage.value =
-                                        controller.totalPage.value;
-                                    controller.getRanking();
-                                  }
-                                },
-                                icon: Icon(Icons.last_page),
-                              ),
-                            ],
+                            ),
                           );
                         }),
+                        SizedBox(height: 16),
                         Text(
                           "Catatan",
                           style: TextStyle(

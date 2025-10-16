@@ -77,8 +77,8 @@ class ReusablePagination extends StatelessWidget {
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: EdgeInsets.symmetric(
-                        horizontal: isActive ? 14 : 10,
-                        vertical: isActive ? 8 : 6,
+                        horizontal: 10,
+                        vertical: 6,
                       ),
                       decoration: BoxDecoration(
                         color: isActive ? Colors.teal.shade100 : Colors.white,
@@ -93,7 +93,7 @@ class ReusablePagination extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: isActive ? Colors.teal : Colors.black,
-                          fontSize: isActive ? 16 : 14,
+                          fontSize: 14,
                         ),
                       ),
                     ),
