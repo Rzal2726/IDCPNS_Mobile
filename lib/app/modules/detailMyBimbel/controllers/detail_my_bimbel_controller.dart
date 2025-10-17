@@ -113,6 +113,7 @@ class DetailMyBimbelController extends GetxController {
           await baseUrl + apiGetDetailBimbelSaya + "/" + uuid.toString();
 
       final result = await _restClient.getData(url: url);
+      print(result['data']);
       if (result["status"] == "success") {
         bimbelData.value = result['data'];
         getDetailBimbel(id: result['data']['bimbel']['bimbel_parent']['uuid']);

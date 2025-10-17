@@ -110,9 +110,9 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
 
                                   try {
                                     final createdAt =
-                                        data['bimbel']['bimbel_parent']['startdate'];
+                                        data['created_at'];
                                     final expiredAt =
-                                        data['bimbel']['bimbel_parent']['enddate'];
+                                        data['expireddate'];
                                     print("xxx ${createdAt}");
                                     print("xxxv ${expiredAt}");
 

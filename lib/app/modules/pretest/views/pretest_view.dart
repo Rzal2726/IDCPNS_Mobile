@@ -89,7 +89,8 @@ class PretestView extends GetView<PretestController> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Flexible(
+                                            SizedBox(
+                                              width: 250,
                                               child: Text(
                                                 "Apakah kamu yakin ingin menyelesaikan bimbel?",
                                                 style: const TextStyle(
@@ -97,6 +98,7 @@ class PretestView extends GetView<PretestController> {
                                                 ),
                                                 softWrap: true,
                                                 overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
                                               ),
                                             ),
                                             IconButton(
@@ -567,11 +569,13 @@ class PretestView extends GetView<PretestController> {
                               ],
                             ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            spacing: 2,
+
+                          // Tombol nomor soal (dengan margin dan anti-overflow)
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            spacing: 2, // jarak horizontal antar tombol
+                            // jarak vertikal kalau melipat ke bawah
                             children: [
-                              // Tombol Back
                               IconButton(
                                 onPressed:
                                     controller.currentPage.value > 0
@@ -602,112 +606,95 @@ class PretestView extends GetView<PretestController> {
                                 icon: const Icon(Icons.arrow_back_ios),
                               ),
 
-                              // Tombol nomor soal (dengan margin dan anti-overflow)
-                              Flexible(
-                                child: Wrap(
-                                  alignment: WrapAlignment.center,
-                                  spacing: 8, // jarak horizontal antar tombol
-                                  runSpacing:
-                                      8, // jarak vertikal kalau melipat ke bawah
-                                  children: List.generate(controller.numberPerPage.value, (
-                                    index,
-                                  ) {
-                                    int questionNumber =
-                                        controller.currentPage.value *
-                                            controller.numberPerPage.value +
-                                        (index + 1);
+                              ...List.generate(controller.numberPerPage.value, (
+                                index,
+                              ) {
+                                int questionNumber =
+                                    controller.currentPage.value *
+                                        controller.numberPerPage.value +
+                                    (index + 1);
 
-                                    // Cegah tombol di luar jumlah soal
-                                    if (questionNumber >
-                                        controller.soalList.length) {
-                                      return const SizedBox.shrink();
-                                    }
+                                // Cegah tombol di luar jumlah soal
+                                if (questionNumber >
+                                    controller.soalList.length) {
+                                  return const SizedBox.shrink();
+                                }
 
-                                    return ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            controller.checkMark(
-                                                  controller
-                                                      .soalList[questionNumber -
-                                                      1],
-                                                )
-                                                ? Colors.amber
-                                                : controller.checkAnswer(
-                                                  controller
-                                                      .soalList[questionNumber -
-                                                      1]['id'],
-                                                )
-                                                ? Colors.teal
-                                                : controller
-                                                        .currentQuestion
-                                                        .value ==
-                                                    questionNumber - 1
-                                                ? Colors.teal.shade200
-                                                : controller.isEmptyQuest(
-                                                  controller
-                                                      .soalList[questionNumber -
-                                                      1],
-                                                )
-                                                ? Colors.grey
-                                                : Colors.white,
-                                        foregroundColor:
-                                            controller.checkMark(
-                                                  controller
-                                                      .soalList[questionNumber -
-                                                      1],
-                                                )
-                                                ? Colors.black
-                                                : controller.checkAnswer(
-                                                  controller
-                                                      .soalList[questionNumber -
-                                                      1]['id'],
-                                                )
-                                                ? Colors.white
-                                                : controller
-                                                        .currentQuestion
-                                                        .value ==
-                                                    questionNumber - 1
-                                                ? Colors.white
-                                                : controller.isEmptyQuest(
-                                                  controller
-                                                      .soalList[questionNumber -
-                                                      1],
-                                                )
-                                                ? Colors.white
-                                                : Colors.black,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 6,
-                                          vertical: 6,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        controller.currentQuestion.value =
-                                            questionNumber - 1;
-                                        controller.startQuestion(
-                                          controller.soalList[controller
-                                              .currentQuestion
-                                              .value]['id'],
-                                        );
-
-                                        if (!controller.checkMark(soal) &&
-                                            !controller.checkAnswer(
-                                              questionNumber,
-                                            )) {
-                                          controller.markEmpty(soal);
-                                        }
-                                      },
-                                      child: Text(questionNumber.toString()),
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        controller.checkMark(
+                                              controller
+                                                  .soalList[questionNumber - 1],
+                                            )
+                                            ? Colors.amber
+                                            : controller.checkAnswer(
+                                              controller
+                                                  .soalList[questionNumber -
+                                                  1]['id'],
+                                            )
+                                            ? Colors.teal
+                                            : controller
+                                                    .currentQuestion
+                                                    .value ==
+                                                questionNumber - 1
+                                            ? Colors.teal.shade200
+                                            : controller.isEmptyQuest(
+                                              controller
+                                                  .soalList[questionNumber - 1],
+                                            )
+                                            ? Colors.grey
+                                            : Colors.white,
+                                    foregroundColor:
+                                        controller.checkMark(
+                                              controller
+                                                  .soalList[questionNumber - 1],
+                                            )
+                                            ? Colors.black
+                                            : controller.checkAnswer(
+                                              controller
+                                                  .soalList[questionNumber -
+                                                  1]['id'],
+                                            )
+                                            ? Colors.white
+                                            : controller
+                                                    .currentQuestion
+                                                    .value ==
+                                                questionNumber - 1
+                                            ? Colors.white
+                                            : controller.isEmptyQuest(
+                                              controller
+                                                  .soalList[questionNumber - 1],
+                                            )
+                                            ? Colors.white
+                                            : Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 6,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    controller.currentQuestion.value =
+                                        questionNumber - 1;
+                                    controller.startQuestion(
+                                      controller.soalList[controller
+                                          .currentQuestion
+                                          .value]['id'],
                                     );
-                                  }),
-                                ),
-                              ),
 
-                              // Tombol Next
+                                    if (!controller.checkMark(soal) &&
+                                        !controller.checkAnswer(
+                                          questionNumber,
+                                        )) {
+                                      controller.markEmpty(soal);
+                                    }
+                                  },
+                                  child: Text(questionNumber.toString()),
+                                );
+                              }),
                               IconButton(
                                 onPressed:
                                     controller.currentPage.value <
@@ -740,6 +727,8 @@ class PretestView extends GetView<PretestController> {
                               ),
                             ],
                           ),
+
+                          // Tombol Next
                         ],
                       ),
                     ),

@@ -372,62 +372,30 @@ void showBimbelBottomSheet(BuildContext context) {
                     SizedBox(height: 16),
 
                     // Tombol cari
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () {
-                              controller.selectedKategoriId.value = 0;
-                              controller.selectedEventKategori.value = "Semua";
-                              controller.getData(menuCategoryId: "");
-                              Navigator.pop(context);
-                            },
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: Colors.teal),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
-                              ),
-                            ),
-                            child: Text(
-                              "Reset",
-                              style: TextStyle(color: Colors.teal),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
 
-                                controller.getData(
-                                  menuCategoryId:
-                                      controller.selectedKategoriId.value
-                                          ?.toString(),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.teal,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
-                                ),
-                              ),
-                              child: Text("Cari"),
-                            ),
+                          controller.getData(
+                            menuCategoryId:
+                                controller.selectedKategoriId.value?.toString(),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
                           ),
                         ),
-                      ],
+                        child: Text("Cari"),
+                      ),
                     ),
                   ],
                 ),

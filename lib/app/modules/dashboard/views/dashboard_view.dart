@@ -183,6 +183,10 @@ class DashboardView extends GetView<DashboardController> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'Jangan lupa! Anda memiliki pertemuan kelas hari ini',
+                                  ),
                                   SizedBox(height: 8),
                                   Divider(
                                     thickness: 0.2,
