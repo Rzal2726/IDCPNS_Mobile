@@ -135,7 +135,7 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                     onTap: () {
                       showChoiceBottomSheet(
                         context: context,
-                        title: "Jenis Tryout",
+                        title: "Kategori",
                         options: controller.options,
                         selectedValue: controller.selectedKategoriId,
                         onSelected: (id) {

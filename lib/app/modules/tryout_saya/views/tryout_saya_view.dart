@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
-import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/modules/detail_tryout_saya/controllers/detail_tryout_saya_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -424,10 +423,11 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                           physics: NeverScrollableScrollPhysics(),
                           itemCount:
                               controller.listData.length +
-                              1, // +1 untuk pagination
+                              1, // Add 1 for the pagination widget
                           itemBuilder: (context, index) {
                             if (index == controller.listData.length) {
-                              // 🔹 Ganti pagination lama dengan ReusablePagination
+                              // Render the pagination widget at the end
+                              final current = controller.currentPage.value;
                               final total = controller.totalPage.value;
                               return Visibility(
                                 visible: total != 0,
@@ -466,13 +466,13 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                           width: double.infinity,
                           child: Center(
                             child: Container(
-                              padding: const EdgeInsets.all(32),
+                              padding: EdgeInsets.all(32),
                               child: Column(
                                 children: [
                                   SvgPicture.asset(
                                     "assets/learning-empty-e208cbbc.svg",
                                   ),
-                                  const Text(
+                                  Text(
                                     "Tidak ada tryout",
                                     style: TextStyle(color: Colors.grey),
                                   ),

@@ -13,7 +13,7 @@ class RaporController extends GetxController {
   RxMap<String, dynamic> tryoutSaya = <String, dynamic>{}.obs;
   RxMap<String, dynamic> nilaiChart = <String, dynamic>{}.obs;
   RxList<Statistic> statistics = <Statistic>[].obs;
-  RxString selectedStatistic = ''.obs; // untuk simpan pilihan filter
+  RxString selectedStatistic = ''.obs;
 
   @override
   void onInit() async {
@@ -37,7 +37,7 @@ class RaporController extends GetxController {
     nilaiChart = <String, dynamic>{}.obs;
     statistics = <Statistic>[].obs;
     tryoutSaya = <String, dynamic>{}.obs;
-    selectedStatistic = ''.obs;
+    selectedStatistic = 'Semua'.obs;
     await getDetailTryout();
     await getNilai();
     await getRapor();
@@ -102,7 +102,7 @@ class RaporController extends GetxController {
 
     // Filter statistik sesuai dropdown
     final filteredStats =
-        selectedStatistic.value.isEmpty
+        selectedStatistic.value.isEmpty || selectedStatistic.value == "Semua"
             ? statistics
             : statistics
                 .where((stat) => stat.label == selectedStatistic.value)
@@ -130,7 +130,9 @@ class RaporController extends GetxController {
 
   List<String> get statisticLabels {
     if (statistics.isEmpty) return [];
-    return statistics.map((e) => e.label).toList();
+    List<String> labels = statistics.map((e) => e.label).toList();
+    labels.insert(0, 'Semua');
+    return labels;
   }
 
   Future<void> checkMaintenance() async {

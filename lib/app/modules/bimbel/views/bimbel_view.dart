@@ -396,7 +396,7 @@ void showBimbelBottomSheet(BuildContext context) {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Jenis Bimbel",
+                          "Kategori",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

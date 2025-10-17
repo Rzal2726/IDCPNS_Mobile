@@ -72,7 +72,7 @@ class MyBimbelView extends GetView<MyBimbelController> {
                         hintText: 'Cari',
                       ),
 
-                      SizedBox(height: 30),
+                      SizedBox(height: 16),
 
                       // Filter button
                       Align(
@@ -308,7 +308,7 @@ void showBimbelBottomSheet(BuildContext context) {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Jenis Bimbel",
+                          "Kategori",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
