@@ -13,6 +13,7 @@ class PembayaranBerhasilView extends GetView<PembayaranBerhasilController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
         title: Image.asset(

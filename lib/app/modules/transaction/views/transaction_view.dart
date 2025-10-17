@@ -137,8 +137,16 @@ class TransactionView extends GetView<TransactionController> {
                       hintText: 'Cari',
                       onSearch: () {
                         controller.getTransaction(
-                          page: 1,
                           search: controller.searchController.text,
+                          date: controller.startDateController.text,
+                          endDate: controller.endDateController.text,
+                          status: controller.status.value,
+                        );
+                      },
+                      onReset: () {
+                        controller.searchController.clear();
+                        controller.getTransaction(
+                          search: "",
                           date: controller.startDateController.text,
                           endDate: controller.endDateController.text,
                           status: controller.status.value,

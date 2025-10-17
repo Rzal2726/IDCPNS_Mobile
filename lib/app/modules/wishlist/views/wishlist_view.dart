@@ -55,6 +55,9 @@ class WishlistView extends GetView<WishlistController> {
                         onSearch: () {
                           controller.getWhislist(
                             search: controller.searchController.text,
+                            menuCategoryId:
+                                controller.selectedKategoriId.value?.toString(),
+                            produk: controller.selectedEventProduct.value,
                           );
                         },
                         hintText: 'Apa yang ingin Anda cari?',
@@ -70,7 +73,7 @@ class WishlistView extends GetView<WishlistController> {
                                   controller
                                       .whistlistData['data']!
                                       .isNotEmpty) {
-                                Get.offNamed(Routes.PAYMENT_WHISLIST);
+                                Get.offAllNamed(Routes.PAYMENT_WHISLIST);
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -198,11 +201,17 @@ class WishlistView extends GetView<WishlistController> {
                                     padding: EdgeInsets.only(bottom: 12),
                                     child: GestureDetector(
                                       onTap: () {
-                                        Get.toNamed(
-                                          Routes.DETAIL_BIMBEL,
-                                          arguments:
-                                              item['productDetail']['uuid'],
-                                        );
+                                        item['bimbel_parent'] != null
+                                            ? Get.toNamed(
+                                              Routes.DETAIL_BIMBEL,
+                                              arguments:
+                                                  item['productDetail']['uuid'],
+                                            )
+                                            : Get.toNamed(
+                                              Routes.DETAIL_TRYOUT,
+                                              arguments:
+                                                  item['productDetail']["uuid"],
+                                            );
                                       },
                                       child: _buildWishlistItem(
                                         imageUrl:

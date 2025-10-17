@@ -106,10 +106,10 @@ class ProgramSayaController extends GetxController {
 
   void getData({int page = 1, String search = ""}) {
     if (selectedTab.value == 0) {
-      resetFilter();
+      // resetFilter();
       getTryout(page: page, search: search); // fetch Tryout
     } else if (selectedTab.value == 1) {
-      resetFilter();
+      // resetFilter();
       getBimbel(page: page, search: search); // fetch Bimbel
     }
   }
@@ -124,9 +124,14 @@ class ProgramSayaController extends GetxController {
   }
 
   void nextPage() {
+    print("xbb sebelum ${currentPage.value.toString()}");
+
     if (currentPage.value < totalPage.value) {
       currentPage.value++;
+      print("xbb ${currentPage.value.toString()}");
+
       getData(page: currentPage.value, search: searchController.text);
+
       // panggil API fetch data di sini
     }
   }

@@ -22,7 +22,8 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
       canPop: false,
       onPopInvoked: (didPop) {
         if (!didPop) {
-          Get.back();
+          // Get.back();
+          Get.offNamed(Routes.TRANSACTION);
         }
       },
       child: Scaffold(

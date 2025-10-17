@@ -109,10 +109,8 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                   DateTime? endDate;
 
                                   try {
-                                    final createdAt =
-                                        data['created_at'];
-                                    final expiredAt =
-                                        data['expireddate'];
+                                    final createdAt = data['created_at'];
+                                    final expiredAt = data['expireddate'];
                                     print("xxx ${createdAt}");
                                     print("xxxv ${expiredAt}");
 
@@ -138,9 +136,12 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
 
                                   if (startDate != null && endDate != null) {
                                     totalDays =
-                                        endDate.difference(startDate).inDays;
+                                        endDate!.difference(startDate!).inDays;
                                     remainingDays =
-                                        endDate.difference(now).inDays;
+                                        endDate!.difference(now).inDays;
+                                  } else {
+                                    totalDays = 0;
+                                    remainingDays = 0;
                                   }
 
                                   // Hindari nilai negatif atau NaN
@@ -172,7 +173,7 @@ class DetailMyBimbelView extends GetView<DetailMyBimbelController> {
                                             ),
                                           ),
                                           Text(
-                                            "${remainingDays.clamp(0, totalDays)} Hari Lagi",
+                                            "${((remainingDays ?? 0).isFinite ? (remainingDays ?? 0) : 0).clamp(0, (totalDays ?? 0) > 0 ? (totalDays ?? 0) : 9999)} Hari Lagi",
                                             style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14,

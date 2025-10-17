@@ -20,7 +20,7 @@ class MyAccountView extends GetView<MyAccountController> {
       canPop: false, // biar kita handle manual
       onPopInvoked: (didPop) async {
         if (didPop) return;
-        Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+        Get.offAllNamed(Routes.HOME, arguments: {'initialIndex': 4});
         // (Get.find<HomeController>()).currentIndex.value = 4;
       },
       child: Scaffold(
@@ -28,7 +28,7 @@ class MyAccountView extends GetView<MyAccountController> {
         appBar: secondaryAppBar(
           "Ubah Akun",
           onBack: () {
-            Get.offNamed(Routes.HOME, arguments: {'initialIndex': 4});
+            Get.offAllNamed(Routes.HOME, arguments: {'initialIndex': 4});
             // (Get.find<HomeController>()).currentIndex.value = 4;
           },
         ),

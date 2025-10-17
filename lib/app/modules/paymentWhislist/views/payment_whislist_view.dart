@@ -27,7 +27,7 @@ class PaymentWhislistView extends GetView<PaymentWhislistController> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text("Checkout Wishlist", style: AppStyle.appBarTitle),
+          title: Text("Rincian pembayaran", style: AppStyle.appBarTitle),
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           elevation: 0,
@@ -702,9 +702,80 @@ void showPaymentBottomSheet(BuildContext context) {
     ),
     builder: (context) {
       final screenHeight = MediaQuery.of(context).size.height;
+
+      // Local helper: kartu bergaya seperti _methodCard Anda
+      Widget _styledPaymentCard({
+        required String imageUrl,
+        required String title,
+        required String subtitle,
+        required VoidCallback onTap,
+        double width = 160,
+        double height = 160,
+      }) {
+        return SizedBox(
+          width: width,
+          height: height,
+          child: Card(
+            elevation: 0,
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide(
+                color: const Color.fromARGB(50, 0, 0, 0),
+                width: 1,
+              ),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 8,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      child:
+                          imageUrl.isNotEmpty
+                              ? SvgPicture.network(
+                                imageUrl,
+                                fit: BoxFit.contain,
+                              )
+                              : SizedBox.shrink(),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+
       return SafeArea(
         child: SizedBox(
-          height: screenHeight * 0.5, // 1/2 dari tinggi layar
+          height: screenHeight * 0.5,
           child: Obx(() {
             return controller.paymantListData.isEmpty
                 ? Center(child: CircularProgressIndicator())
@@ -735,10 +806,7 @@ void showPaymentBottomSheet(BuildContext context) {
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 20),
-
-                    // KONTEN (yang bisa discroll)
                     Expanded(
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.all(16),
@@ -759,52 +827,54 @@ void showPaymentBottomSheet(BuildContext context) {
                               const SizedBox(height: 10),
                               SizedBox(
                                 height: 180,
-                                child: ListView(
+                                child: ListView.separated(
                                   scrollDirection: Axis.horizontal,
-                                  children: [
-                                    for (var method
-                                        in data['xendit_payment_method'])
-                                      Container(
-                                        width: 160,
-                                        margin: EdgeInsets.only(right: 12),
-                                        child: paymentItem(
-                                          svgPath: method['image_url'],
-                                          title: method['name'],
-                                          subtitle:
-                                              "Biaya Admin: ${formatRupiah(controller.calculateBiayaAdmin(method['biaya_admin']))}",
-                                          onTap: () {
-                                            Get.back();
-                                            print(
-                                              "xxxv ${method['biaya_admin'].toString()}",
-                                            );
-                                            controller.updateBiayaAdmin(
-                                              method['biaya_admin'],
-                                            );
-                                            controller.biayaAdminRaw.value =
-                                                method['biaya_admin'];
-                                            controller.ovoNumber.value = "";
-                                            controller.ovoController.clear();
-                                            controller.paymentMethod.value =
-                                                method['code'];
-                                            controller.paymentMethodId.value =
-                                                method['id'];
-                                            controller.paymentImage.value =
-                                                method['image_url'];
-                                            controller.paymentType.value =
-                                                data['code'];
-                                            controller
-                                                .metodePembayaran
-                                                .value = (method['code'] ?? '')
-                                                .replaceAll('_', ' ');
-                                            if (method['code'] == "OVO") {
-                                              showPhoneNumberBottomSheet(
-                                                context,
-                                              );
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                  ],
+                                  itemCount:
+                                      (data['xendit_payment_method'] as List)
+                                          .length,
+                                  separatorBuilder:
+                                      (_, __) => const SizedBox(width: 12),
+                                  itemBuilder: (context, idx) {
+                                    final method =
+                                        data['xendit_payment_method'][idx];
+                                    final subtitle =
+                                        "Biaya Admin: ${formatRupiah(controller.calculateBiayaAdmin(method['biaya_admin']))}";
+
+                                    return _styledPaymentCard(
+                                      imageUrl: method['image_url'] ?? '',
+                                      title: method['name'] ?? '',
+                                      subtitle: subtitle,
+                                      onTap: () {
+                                        // meniru tindakan dari implementasi Anda
+                                        Get.back();
+                                        controller.updateBiayaAdmin(
+                                          method['biaya_admin'],
+                                        );
+                                        controller.biayaAdminRaw.value =
+                                            method['biaya_admin'];
+                                        controller.ovoNumber.value = "";
+                                        controller.ovoController.clear();
+                                        controller.paymentMethod.value =
+                                            method['code'] ?? '';
+                                        controller.paymentMethodId.value =
+                                            method['id'];
+                                        controller.paymentImage.value =
+                                            method['image_url'] ?? '';
+                                        controller.paymentType.value =
+                                            data['code'] ?? '';
+                                        controller
+                                            .metodePembayaran
+                                            .value = (method['code'] ?? '')
+                                            .replaceAll('_', ' ');
+
+                                        // khusus OVO: munculkan modal input nomor
+                                        if ((method['code'] ?? '') == "OVO") {
+                                          // panggil fungsi modal nomor yang Anda punya
+                                          showPhoneNumberBottomSheet(context);
+                                        }
+                                      },
+                                    );
+                                  },
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -941,12 +1011,11 @@ void showPromoCodeBottomSheet(BuildContext context) {
               : Padding(
                 padding: EdgeInsets.only(
                   bottom:
-                      MediaQuery.of(context)
-                          .viewInsets
-                          .bottom, // ini bikin konten naik saat keyboard muncul
+                      MediaQuery.of(context).viewInsets.bottom +
+                      16, // kasih jarak dikit bawah
+                  top: 12, // kasih jarak dikit atas
                 ),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.25,
                   child: SingleChildScrollView(
                     padding: AppStyle.contentPadding,
                     child: Column(
@@ -1145,21 +1214,9 @@ void showPhoneNumberBottomSheet(BuildContext context) {
                         onPressed: () {
                           String text = controller.ovoController.text;
                           if (text.isEmpty) {
-                            Get.snackbar(
-                              "Gagal",
-                              "Nomor telepon tidak boleh kosong",
-                              backgroundColor: Colors.pink,
-                              colorText: Colors.white,
-                            );
                             controller.ovoError.value =
                                 "Nomor telepon tidak boleh kosong";
                           } else if (text.length < 10) {
-                            Get.snackbar(
-                              "Gagal",
-                              "Nomor telepon minimal 11 karakter",
-                              backgroundColor: Colors.pink,
-                              colorText: Colors.white,
-                            );
                             controller.ovoError.value =
                                 "Nomor telepon minimal 11 karakter";
                           } else {

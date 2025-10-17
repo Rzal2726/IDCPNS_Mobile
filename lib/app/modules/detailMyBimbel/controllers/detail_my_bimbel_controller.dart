@@ -58,12 +58,15 @@ class DetailMyBimbelController extends GetxController {
   Future<void> getOtherBimbel({required int parentId}) async {
     final url = baseUrl + apiGetBimbelOther;
     print("xxx ${url.toString()}");
+    print("prentts ${parentId.toString()}");
 
     final result = await _restClient.getData(url: url);
 
     if (result["status"] == "success") {
       final List allBimbel = result["data"] ?? [];
-
+      for (var bimbel in allBimbel) {
+        print("Bimbel ID: ${bimbel['id']}");
+      }
       // filter kecuali yang id == parentId.value
       otherBimbelData.value =
           allBimbel.where((bimbel) => bimbel['id'] != parentId).toList();
@@ -93,7 +96,7 @@ class DetailMyBimbelController extends GetxController {
     // cek status dulu, kalau success lanjut
     if (result["status"] == "success") {
       // paketBimbelData.value = result;
-      await getOtherBimbel(parentId: result['data']['id']);
+      await getOtherBimbel(parentId: result['data']['bimbel_parent_id']);
 
       Get.toNamed(
         Routes.PAYMENT_DETAIL,
