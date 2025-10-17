@@ -1368,6 +1368,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
             if (controller.tryOutSaya['ispremium'] != 1)
               Positioned.fill(
                 child: Container(
+                  width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(12),
@@ -1388,8 +1389,11 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                       ElevatedButton(
                         onPressed: () {
                           Get.toNamed(
-                            'tryout-event-payment',
-                            arguments: controller.tryOutSaya['tryout']['uuid'],
+                            '/tryout-event-payment',
+                            arguments: [
+                              controller.tryOutSaya['tryout']['uuid'],
+                              controller.lateUuid.toString(),
+                            ],
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -1457,6 +1461,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
             IntrinsicHeight(
               child: Positioned.fill(
                 child: Container(
+                  width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(12),
@@ -1476,8 +1481,11 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                       ElevatedButton(
                         onPressed: () {
                           Get.toNamed(
-                            'tryout-event-payment',
-                            arguments: controller.tryOutSaya['tryout']['uuid'],
+                            '/tryout-event-payment',
+                            arguments: [
+                              controller.tryOutSaya['tryout']['uuid'],
+                              controller.lateUuid.toString(),
+                            ],
                           );
                         },
                         style: ElevatedButton.styleFrom(
