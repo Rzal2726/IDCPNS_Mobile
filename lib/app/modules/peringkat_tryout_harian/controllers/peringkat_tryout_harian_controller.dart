@@ -50,6 +50,30 @@ class PeringkatTryoutHarianController extends GetxController {
     await getProvinsi();
   }
 
+  void goToPage(int page) {
+    if (page >= 1 && page <= totalPage.value) {
+      currentPage.value = page;
+      getUserPoint();
+      // panggil API fetch data di sini jika perlu
+    }
+  }
+
+  void nextPage() {
+    if (currentPage.value < totalPage.value) {
+      currentPage.value++;
+      getUserPoint();
+      // panggil API fetch data di sini
+    }
+  }
+
+  void prevPage() {
+    if (currentPage.value > 1) {
+      currentPage.value--;
+      getUserPoint();
+      // panggil API fetch data di sini
+    }
+  }
+
   Future<void> getUserPoint() async {
     try {
       loading['init'] = true;

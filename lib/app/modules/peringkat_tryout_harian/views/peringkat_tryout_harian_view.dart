@@ -410,46 +410,21 @@ class PeringkatTryoutHarianView
                       }
                     }
                   }),
-                  Obx(() {
-                    final current = controller.currentPage.value;
-                    final total = controller.totalPage.value;
-
-                    if (total == 0) {
-                      return const SizedBox.shrink(); // tidak ada halaman
-                    }
-
-                    if (controller.dataPoint.isEmpty) {
-                      return const SizedBox.shrink(); // tidak ada halaman
-                    }
-
-                    return Container(
-                      color: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 8),
+                  Visibility(
+                    visible: controller.totalPage.value != 0,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 20),
                       child: Center(
                         child: ReusablePagination(
+                          nextPage: controller.nextPage,
+                          prevPage: controller.prevPage,
                           currentPage: controller.currentPage,
                           totalPage: controller.totalPage,
-                          goToPage: (int page) {
-                            controller.currentPage.value = page;
-                            controller.getUserPoint();
-                          },
-                          prevPage: () {
-                            if (controller.currentPage.value > 1) {
-                              controller.currentPage.value--;
-                              controller.getUserPoint();
-                            }
-                          },
-                          nextPage: () {
-                            if (controller.currentPage.value <
-                                controller.totalPage.value) {
-                              controller.currentPage.value++;
-                              controller.getUserPoint();
-                            }
-                          },
+                          goToPage: controller.goToPage,
                         ),
                       ),
-                    );
-                  }),
+                    ),
+                  ),
                 ],
               ),
             ),
