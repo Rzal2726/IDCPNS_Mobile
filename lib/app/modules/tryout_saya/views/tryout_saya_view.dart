@@ -87,28 +87,8 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    controller.aturUlang();
-                                                  },
-                                                  child: Text(
-                                                    "Atur Ulang",
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.pink,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
                                             const Text(
-                                              "Jenis Tryout",
+                                              "Kategori",
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -338,36 +318,95 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                                             ),
 
                                             const SizedBox(height: 12),
+
                                             SizedBox(
                                               width: double.infinity,
-                                              child: ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Colors
-                                                          .teal, // warna tombol
-                                                  foregroundColor:
-                                                      Colors
-                                                          .white, // warna teks/icon
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: OutlinedButton(
+                                                      onPressed: () {
+                                                        controller
+                                                            .selectedHasil
+                                                            .value = 'Semua';
+                                                        controller
+                                                            .isLulus
+                                                            .value = '';
+                                                        controller
+                                                            .selectedPengerjaan
+                                                            .value = 'Semua';
+                                                        controller
+                                                            .isDone
+                                                            .value = '';
+                                                        controller
+                                                            .selectedPaketKategori
+                                                            .value = 'Semua';
+                                                        controller
+                                                            .kategoriId
+                                                            .value = '';
+                                                        controller
+                                                            .fetchTryoutSaya();
+                                                        Navigator.pop(context);
+                                                      },
+                                                      // tutup bottom sheet
+                                                      style: OutlinedButton.styleFrom(
+                                                        side: BorderSide(
+                                                          color: Colors.teal,
                                                         ),
-                                                  ),
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 24,
-                                                        vertical: 12,
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                              vertical: 12,
+                                                            ),
                                                       ),
-                                                ),
-                                                onPressed: () {
-                                                  controller.currentPage.value =
-                                                      1;
-                                                  controller.fetchTryoutSaya();
-                                                  Navigator.pop(context);
-                                                  // kirim balik pilihan
-                                                },
-                                                child: const Text("Cari"),
+                                                      child: Text(
+                                                        "Reset",
+                                                        style: TextStyle(
+                                                          color: Colors.teal,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 12),
+                                                  Expanded(
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors
+                                                                .teal, // warna tombol
+                                                        foregroundColor:
+                                                            Colors
+                                                                .white, // warna teks/icon
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 24,
+                                                              vertical: 12,
+                                                            ),
+                                                      ),
+                                                      onPressed: () {
+                                                        controller
+                                                            .currentPage
+                                                            .value = 1;
+                                                        controller
+                                                            .fetchTryoutSaya();
+                                                        Navigator.pop(context);
+                                                        // kirim balik pilihan
+                                                      },
+                                                      child: const Text("Cari"),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],

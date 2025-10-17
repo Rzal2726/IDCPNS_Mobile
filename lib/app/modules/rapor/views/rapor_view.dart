@@ -93,6 +93,7 @@ class RaporView extends GetView<RaporController> {
                                         ? controller.selectedStatistic.value
                                         : null,
                                 hint: const Text("Filter"),
+                                icon: Icon(Icons.keyboard_arrow_down),
                                 isExpanded: true,
                                 underline: const SizedBox(),
                                 borderRadius: BorderRadius.circular(12),

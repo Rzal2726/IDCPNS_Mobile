@@ -214,29 +214,8 @@ class TryoutView extends GetView<TryoutController> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        // Row(
-                                        //   mainAxisAlignment:
-                                        //       MainAxisAlignment.end,
-                                        //   children: [
-                                        //     TextButton(
-                                        //       onPressed: () {
-                                        //         controller
-                                        //             .selectedEventKategori
-                                        //             .value = "Semua";
-                                        //       },
-                                        //       child: Text(
-                                        //         "Atur Ulang",
-                                        //         style: TextStyle(
-                                        //           fontSize: 16,
-                                        //           fontWeight: FontWeight.bold,
-                                        //           color: Colors.pink,
-                                        //         ),
-                                        //       ),
-                                        //     ),
-                                        //   ],
-                                        // ),
                                         const Text(
-                                          "Jenis Tryout",
+                                          "Kategori",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -681,7 +660,7 @@ class TryoutView extends GetView<TryoutController> {
                                         //   ],
                                         // ),
                                         const Text(
-                                          "Jenis Tryout",
+                                          "Kategori",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,

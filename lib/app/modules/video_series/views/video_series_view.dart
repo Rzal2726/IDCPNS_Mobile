@@ -51,7 +51,7 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       const Text(
-                                        "Jenis Tryout",
+                                        "Kategori",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -158,7 +158,7 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
                     ),
                   ),
                 ),
-
+                SizedBox(height: 16),
                 Obx(() {
                   if (controller.listVideo.isEmpty) {
                     // Saat data kosong, tampilkan Skeletonizer
