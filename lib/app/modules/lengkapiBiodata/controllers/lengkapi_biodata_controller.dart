@@ -149,6 +149,7 @@ class LengkapiBiodataController extends GetxController {
     }
 
     if (errorMessage != null) {
+      isLoading.value = false;
       notifHelper.show(errorMessage, type: 0);
       return;
     }
