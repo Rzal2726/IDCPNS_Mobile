@@ -23,7 +23,8 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
       onPopInvoked: (didPop) {
         if (!didPop) {
           // Saat tombol back ditekan
-          Get.offAllNamed(Routes.HOME, arguments: {'initialIndex': 2});
+          // Get.offAllNamed(Routes.HOME, arguments: {'initialIndex': 2});
+          Get.back();
           // (Get.find<HomeController>()).currentIndex.value = 4;
         }
       },
@@ -32,7 +33,8 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
         appBar: secondaryAppBar(
           "Detail Bimbel",
           onBack: () {
-            Get.offAllNamed(Routes.HOME, arguments: {'initialIndex': 2});
+            // Get.offAllNamed(Routes.HOME, arguments: {'initialIndex': 2});
+            Get.back();
           },
         ),
         body: SafeArea(
