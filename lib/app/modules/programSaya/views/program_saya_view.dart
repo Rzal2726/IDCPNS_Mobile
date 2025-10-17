@@ -56,11 +56,12 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                               controller.totalPage.value = 0;
                               controller.searchController.clear();
 
-                              // Panggil API sesuai tab
                               if (index == 0) {
-                                controller.getTryout();
+                                controller.getTryout(submenuCategoryId: "0");
+                                controller.selectedKategoriId.value = 0;
                               } else {
-                                controller.getBimbel();
+                                controller.getBimbel(submenuCategoryId: "0");
+                                controller.selectedKategoriId.value = 0;
                               }
                             },
                             child: Container(
