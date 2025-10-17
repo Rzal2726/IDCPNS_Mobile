@@ -69,6 +69,30 @@ class TryoutSayaController extends GetxController {
     super.onClose();
   }
 
+  void goToPage(int page) {
+    if (page >= 1 && page <= totalPage.value) {
+      currentPage.value = page;
+      fetchTryoutSaya();
+      // panggil API fetch data di sini jika perlu
+    }
+  }
+
+  void nextPage() {
+    if (currentPage.value < totalPage.value) {
+      currentPage.value++;
+      fetchTryoutSaya();
+      // panggil API fetch data di sini
+    }
+  }
+
+  void prevPage() {
+    if (currentPage.value > 1) {
+      currentPage.value--;
+      fetchTryoutSaya();
+      // panggil API fetch data di sini
+    }
+  }
+
   Future<void> checkMaintenance() async {
     final response = await restClient.getData(
       url: baseUrl + apiCheckMaintenance,

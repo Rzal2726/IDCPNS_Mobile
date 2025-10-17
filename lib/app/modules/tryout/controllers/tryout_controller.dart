@@ -78,6 +78,41 @@ class TryoutController extends GetxController {
     getRecommendation();
   }
 
+  // ===========================
+  void goToPage(int page) {
+    if (page >= 1 && page <= totalPage.value) {
+      currentPage.value = page;
+      fetchPaketTryout(
+        page: currentPage.value,
+        menuCategory: optionsId[selectedPaketKategori.value].toString(),
+      );
+      // panggil API fetch data di sini jika perlu
+    }
+  }
+
+  void nextPage() {
+    if (currentPage.value < totalPage.value) {
+      currentPage.value++;
+      fetchPaketTryout(
+        page: currentPage.value,
+        menuCategory: optionsId[selectedPaketKategori.value].toString(),
+      );
+      // panggil API fetch data di sini
+    }
+  }
+
+  void prevPage() {
+    if (currentPage.value > 1) {
+      currentPage.value--;
+      fetchPaketTryout(
+        page: currentPage.value,
+        menuCategory: optionsId[selectedPaketKategori.value].toString(),
+      );
+      // panggil API fetch data di sini
+    }
+  }
+
+  //======================================
   Future<void> fetchEventsTryout() async {
     loading['event'] = true;
     final response = await restClient.getData(url: baseUrl + apiGetTryoutEvent);
