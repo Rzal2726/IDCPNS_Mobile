@@ -27,7 +27,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
       canPop: false, // biar kita yang kontrol back nya
       onPopInvoked: (didPop) {
         if (!didPop) {
-          Get.toNamed('/tryout-saya');
+          Get.offAllNamed('/tryout-saya');
         }
       },
       child: Scaffold(
@@ -36,7 +36,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
           preferredSize: Size.fromHeight(400),
           child: secondaryAppBar(
             "Detail Tryout Saya",
-            onBack: () => Get.toNamed('/tryout-saya'),
+            onBack: () => Get.offAllNamed('/tryout-saya'),
           ),
         ),
         body: SafeArea(

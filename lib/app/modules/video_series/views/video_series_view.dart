@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:idcpns_mobile/styles/app_style.dart';
 
 import '../controllers/video_series_controller.dart';
 
@@ -14,20 +15,19 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: secondaryAppBar("Video Series"),
-      body: Container(
-        margin: EdgeInsets.all(8),
-        child: SafeArea(
+      body: SafeArea(
+        child: RefreshIndicator(
+          backgroundColor: Colors.white,
+          color: Colors.teal,
+          onRefresh: () => controller.initVideoSeries(),
           child: SingleChildScrollView(
+            padding: AppStyle.sreenPaddingHome,
             child: Column(
               children: [
                 Align(
                   alignment: Alignment.topRight,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: Colors.white,
-                    ),
-                    onPressed: () {
+                  child: GestureDetector(
+                    onTap: () {
                       showModalBottomSheet(
                         useSafeArea: false,
                         context: context,
@@ -149,8 +149,13 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
                         },
                       );
                     },
-                    label: Text("Filter", style: TextStyle(color: Colors.teal)),
-                    icon: Icon(Icons.arrow_drop_down, color: Colors.teal),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Filter', style: TextStyle(color: Colors.teal)),
+                        Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -176,7 +181,6 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(8),
                     itemCount: controller.listVideo.length,
                     itemBuilder: (context, index) {
                       final data = controller.listVideo[index];
@@ -355,7 +359,7 @@ class VideoSeriesView extends GetView<VideoSeriesController> {
         borderRadius: BorderRadius.circular(16),
       ),
       padding: EdgeInsets.all(8),
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: EdgeInsets.symmetric(vertical: 8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,

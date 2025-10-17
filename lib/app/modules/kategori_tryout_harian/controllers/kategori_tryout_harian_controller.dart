@@ -8,6 +8,7 @@ class KategoriTryoutHarianController extends GetxController {
 
   late String CategoryUuid;
   final restClient = RestClient();
+  RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> tryoutList = <Map<String, dynamic>>[].obs;
   RxBool loading = true.obs;
 
@@ -32,7 +33,16 @@ class KategoriTryoutHarianController extends GetxController {
     loading.value = true;
     CategoryUuid = await Get.arguments;
     await getList();
+    await getKategori();
     loading.value = false;
+  }
+
+  Future<void> getKategori() async {
+    final response = await restClient.getData(url: baseUrl + apiGetKategori);
+    List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
+      response['data'],
+    );
+    categories.assignAll(data);
   }
 
   Future<void> getList() async {
@@ -42,6 +52,8 @@ class KategoriTryoutHarianController extends GetxController {
     List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
       response['data'],
     );
+
+    print("Jawaban terbaru $data");
     // Ambil tanggal hari ini dalam format yyyy-MM-dd
     final String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
     // Filter list berdasarkan field tanggal

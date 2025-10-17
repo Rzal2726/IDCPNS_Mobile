@@ -28,721 +28,735 @@ class DetailVideoView extends GetView<DetailVideoController> {
         backgroundColor: Colors.white,
         appBar: secondaryAppBar("Detail Video"),
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.all(12),
-              child: Column(
-                children: [
-                  Card(
-                    color: Colors.white,
-                    child: Container(
-                      padding: EdgeInsets.all(12),
-                      child: Column(
-                        spacing: 12,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Obx(() {
-                            if (!controller.isReady.value) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            } else {
-                              if (controller.videoData['isyoutube'] == 1) {
-                                return YoutubePlayerScaffold(
-                                  controller: controller.ytController,
-                                  aspectRatio: 16 / 9,
-                                  builder: (context, player) {
-                                    return Column(children: [player]);
-                                  },
+          child: RefreshIndicator(
+            backgroundColor: Colors.white,
+            color: Colors.teal,
+            onRefresh: () => controller.initDetailVideo(),
+            child: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    Card(
+                      color: Colors.white,
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        child: Column(
+                          spacing: 12,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Obx(() {
+                              if (!controller.isReady.value) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
                                 );
                               } else {
-                                return SizedBox(
-                                  width: double.infinity,
-                                  height: 240,
-                                  child: WebViewWidget(
-                                    controller: controller.webViewController,
-                                  ),
-                                );
+                                if (controller.videoData['isyoutube'] == 1) {
+                                  return YoutubePlayerScaffold(
+                                    controller: controller.ytController,
+                                    aspectRatio: 16 / 9,
+                                    builder: (context, player) {
+                                      return Column(children: [player]);
+                                    },
+                                  );
+                                } else {
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    height: 240,
+                                    child: WebViewWidget(
+                                      controller: controller.webViewController,
+                                    ),
+                                  );
+                                }
                               }
-                            }
-                          }),
+                            }),
 
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Obx(
-                                () => ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    elevation: 0,
-                                    backgroundColor:
-                                        controller.prevTopic.value == ""
-                                            ? Colors.grey.shade200
-                                            : Colors.white,
-                                  ),
-                                  onPressed: () {
-                                    controller.goToPrevTopic();
-                                  },
-                                  label: Text(
-                                    "Sebelumnya",
-                                    style: TextStyle(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Obx(
+                                  () => ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      backgroundColor:
+                                          controller.prevTopic.value == ""
+                                              ? Colors.grey.shade200
+                                              : Colors.white,
+                                    ),
+                                    onPressed: () {
+                                      controller.goToPrevTopic();
+                                    },
+                                    label: Text(
+                                      "Sebelumnya",
+                                      style: TextStyle(
+                                        color:
+                                            controller.prevTopic.value == ""
+                                                ? Colors.grey
+                                                : Colors.black,
+                                      ),
+                                    ),
+                                    icon: Icon(
+                                      Icons.arrow_back_ios_rounded,
                                       color:
                                           controller.prevTopic.value == ""
                                               ? Colors.grey
                                               : Colors.black,
                                     ),
                                   ),
-                                  icon: Icon(
-                                    Icons.arrow_back_ios_rounded,
-                                    color:
-                                        controller.prevTopic.value == ""
-                                            ? Colors.grey
-                                            : Colors.black,
-                                  ),
                                 ),
-                              ),
-                              Obx(
-                                () => ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    elevation: 0,
-                                    backgroundColor:
-                                        controller.nextTopic.value == ""
-                                            ? Colors.grey.shade200
-                                            : Colors.white,
-                                  ),
-                                  iconAlignment: IconAlignment.end,
-                                  onPressed: () {
-                                    controller.goToNextTopic();
-                                  },
-                                  label: Text(
-                                    "Selanjutnya",
-                                    style: TextStyle(
+                                Obx(
+                                  () => ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      backgroundColor:
+                                          controller.nextTopic.value == ""
+                                              ? Colors.grey.shade200
+                                              : Colors.white,
+                                    ),
+                                    iconAlignment: IconAlignment.end,
+                                    onPressed: () {
+                                      controller.goToNextTopic();
+                                    },
+                                    label: Text(
+                                      "Selanjutnya",
+                                      style: TextStyle(
+                                        color:
+                                            controller.nextTopic.value == ""
+                                                ? Colors.grey
+                                                : Colors.black,
+                                      ),
+                                    ),
+                                    icon: Icon(
+                                      Icons.arrow_forward_ios_rounded,
                                       color:
                                           controller.nextTopic.value == ""
                                               ? Colors.grey
                                               : Colors.black,
                                     ),
                                   ),
-                                  icon: Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    color:
-                                        controller.nextTopic.value == ""
-                                            ? Colors.grey
-                                            : Colors.black,
-                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-
-                          Obx(() {
-                            if (!controller.isReady.value) {
-                              return Skeletonizer(child: Text("data"));
-                            }
-                            return SizedBox(
-                              width: 100,
-                              child: _badge(
-                                title:
-                                    controller
-                                        .videoData['video_series']['menu_category']?['menu'] ??
-                                    "",
-                                foregroundColor: Colors.white,
-                                backgroundColor:
-                                    controller.categoryColor[controller
-                                        .videoData['video_series']['menu_category']?['menu']]!,
-                              ),
-                            );
-                          }),
-                          Obx(() {
-                            if (!controller.isReady.value) {
-                              return Skeletonizer(child: Text("data"));
-                            }
-                            return Text(
-                              controller.videoData['nama'],
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            );
-                          }),
-                          Obx(() {
-                            if (!controller.isReady.value) {
-                              return Skeletonizer(child: Text("data"));
-                            } else {
-                              if (controller.videoData['attachment'].length >
-                                  0) {
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "${controller.videoData['attachment'].length.toString()} Lampiran",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        showModalBottomSheet(
-                                          backgroundColor: Colors.white,
-                                          context: context,
-                                          builder: (context) {
-                                            return SafeArea(
-                                              child: SingleChildScrollView(
-                                                padding: EdgeInsets.all(16),
-                                                child: Column(
-                                                  spacing: 8,
-                                                  children: [
-                                                    Obx(() {
-                                                      return ListView.builder(
-                                                        shrinkWrap: true,
-                                                        physics:
-                                                            NeverScrollableScrollPhysics(),
-                                                        itemCount:
-                                                            controller
-                                                                .videoData['attachment']
-                                                                .length,
-                                                        itemBuilder: (
-                                                          context,
-                                                          i,
-                                                        ) {
-                                                          final attachment =
-                                                              controller
-                                                                  .videoData['attachment'][i];
-                                                          return Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Text(
-                                                                attachment['judul'],
-                                                              ),
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  controller.download2(
-                                                                    controller
-                                                                        .dio,
-                                                                    attachment['attachment'],
-                                                                    "${attachment['judul']}.pdf",
-                                                                  );
-                                                                },
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .download,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        },
-                                                      );
-                                                    }),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: Text(
-                                        "Unduh Lampiran",
-                                        style: TextStyle(
-                                          color: Colors.teal,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              } else {
-                                return SizedBox();
-                              }
-                            }
-                          }),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                  Card(
-                    color: Colors.white,
-                    child: Container(
-                      padding: EdgeInsets.all(12),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Obx(() {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children:
-                                  controller.option.map((option) {
-                                    final isSelected =
-                                        controller.selectedOption.value ==
-                                        option;
-                                    return GestureDetector(
-                                      onTap: () {
-                                        controller.selectedOption.value =
-                                            option;
-
-                                        Future.delayed(
-                                          const Duration(seconds: 1),
-                                          () {
-                                            controller.keyEditor.currentState
-                                                ?.clear();
-                                            print(
-                                              "RichEditor sudah di-clear setelah 5 detik",
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 8,
-                                        ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              option,
-                                              style: TextStyle(
-                                                color:
-                                                    isSelected
-                                                        ? Colors.teal
-                                                        : Colors.grey[700],
-                                                fontWeight:
-                                                    isSelected
-                                                        ? FontWeight.bold
-                                                        : FontWeight.normal,
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            AnimatedContainer(
-                                              duration: Duration(
-                                                milliseconds: 200,
-                                              ),
-                                              height: 2,
-                                              width: isSelected ? 20 : 0,
-                                              color: Colors.teal,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                            );
-                          }),
-                          SizedBox(
-                            width: double.infinity,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.grey.shade300,
-                                  width: 0.5,
-                                ),
-                              ),
+                              ],
                             ),
-                          ),
-                          SizedBox(height: 12),
 
-                          Obx(() {
-                            if (controller.isReady.value == false) {
-                              return Skeletonizer(child: Text("data"));
-                            }
-                            switch (controller.selectedOption.value) {
-                              case "QnA":
-                                return Column(
-                                  children: [
-                                    TextField(
-                                      controller: controller.questionController,
-                                      maxLines: 3,
-                                      decoration: InputDecoration(
-                                        hintText: "Tulis pertanyaanmu disini",
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        contentPadding: const EdgeInsets.all(
-                                          12,
-                                        ),
+                            Obx(() {
+                              if (!controller.isReady.value) {
+                                return Skeletonizer(child: Text("data"));
+                              }
+                              return SizedBox(
+                                width: 100,
+                                child: _badge(
+                                  title:
+                                      controller
+                                          .videoData['video_series']['menu_category']?['menu'] ??
+                                      "",
+                                  foregroundColor: Colors.white,
+                                  backgroundColor:
+                                      controller.categoryColor[controller
+                                          .videoData['video_series']['menu_category']?['menu']]!,
+                                ),
+                              );
+                            }),
+                            Obx(() {
+                              if (!controller.isReady.value) {
+                                return Skeletonizer(child: Text("data"));
+                              }
+                              return Text(
+                                controller.videoData['nama'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              );
+                            }),
+                            Obx(() {
+                              if (!controller.isReady.value) {
+                                return Skeletonizer(child: Text("data"));
+                              } else {
+                                if (controller.videoData['attachment'].length >
+                                    0) {
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "${controller.videoData['attachment'].length.toString()} Lampiran",
+                                        style: TextStyle(color: Colors.grey),
                                       ),
-                                    ),
-                                    SizedBox(height: 12),
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.teal,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                          ),
-                                        ),
+                                      TextButton(
                                         onPressed: () {
-                                          if (controller
-                                                  .questionController
-                                                  .text ==
-                                              "") {
-                                            Get.snackbar(
-                                              "Gagal",
-                                              "Mohon isi kolom komentar",
-                                              backgroundColor: Colors.pink,
-                                              colorText: Colors.white,
-                                            );
-                                            return;
-                                          }
-                                          controller.addComments(
-                                            payload: {
-                                              "comment":
-                                                  controller
-                                                      .questionController
-                                                      .text,
-                                              "video_topic_id":
-                                                  controller.videoData['id'],
+                                          showModalBottomSheet(
+                                            backgroundColor: Colors.white,
+                                            context: context,
+                                            builder: (context) {
+                                              return SafeArea(
+                                                child: SingleChildScrollView(
+                                                  padding: EdgeInsets.all(16),
+                                                  child: Column(
+                                                    spacing: 8,
+                                                    children: [
+                                                      Obx(() {
+                                                        return ListView.builder(
+                                                          shrinkWrap: true,
+                                                          physics:
+                                                              NeverScrollableScrollPhysics(),
+                                                          itemCount:
+                                                              controller
+                                                                  .videoData['attachment']
+                                                                  .length,
+                                                          itemBuilder: (
+                                                            context,
+                                                            i,
+                                                          ) {
+                                                            final attachment =
+                                                                controller
+                                                                    .videoData['attachment'][i];
+                                                            return Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  attachment['judul'],
+                                                                ),
+                                                                TextButton(
+                                                                  onPressed: () {
+                                                                    controller.download2(
+                                                                      controller
+                                                                          .dio,
+                                                                      attachment['attachment'],
+                                                                      "${attachment['judul']}.pdf",
+                                                                    );
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .download,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+                                                      }),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
                                             },
                                           );
                                         },
-                                        child: const Text(
-                                          "Kirim",
+                                        child: Text(
+                                          "Unduh Lampiran",
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            color: Colors.teal,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(height: 24),
-                                    ListView.builder(
-                                      shrinkWrap:
-                                          true, // ✅ Agar tinggi otomatis menyesuaikan
-                                      physics:
-                                          const NeverScrollableScrollPhysics(), // ✅ Scroll dihandle parent
-                                      itemCount: controller.commentList.length,
-                                      itemBuilder: (context, index) {
-                                        final data =
-                                            controller.commentList[index];
-                                        return _commentData(
-                                          data: data,
-                                          isReply:
-                                              (data['comment_reply'] as List?)
-                                                  ?.isNotEmpty ??
-                                              false,
-                                          context: context,
-                                        );
-                                      },
-                                    ),
-                                    Obx(() {
-                                      final current =
-                                          controller.currentPage.value;
-                                      final total = controller.totalPage.value;
+                                    ],
+                                  );
+                                } else {
+                                  return SizedBox();
+                                }
+                              }
+                            }),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 24),
+                    Card(
+                      color: Colors.white,
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Obx(() {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children:
+                                    controller.option.map((option) {
+                                      final isSelected =
+                                          controller.selectedOption.value ==
+                                          option;
+                                      return GestureDetector(
+                                        onTap: () {
+                                          controller.selectedOption.value =
+                                              option;
 
-                                      if (total <= 1) {
-                                        return const SizedBox.shrink(); // tidak ada halaman
-                                      }
-
-                                      // Tentukan window
-                                      int start = current - 1;
-                                      int end = current + 1;
-
-                                      // clamp biar tetap di antara 1 dan total
-                                      start = start < 1 ? 1 : start;
-                                      end = end > total ? total : end;
-
-                                      // Kalau total < 3, pakai semua halaman yg ada
-                                      if (total <= 3) {
-                                        start = 1;
-                                        end = total;
-                                      } else {
-                                        // Kalau current di awal → 1,2,3
-                                        if (current == 1) {
-                                          start = 1;
-                                          end = 3;
-                                        }
-                                        // Kalau current di akhir → total-2, total-1, total
-                                        else if (current == total) {
-                                          start = total - 2;
-                                          end = total;
-                                        }
-                                      }
-
-                                      // Generate daftar halaman
-                                      final pages = List.generate(
-                                        end - start + 1,
-                                        (i) => start + i,
-                                      );
-
-                                      return Container(
-                                        margin: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                        ),
-                                        height: 40,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            TextButton(
-                                              onPressed: () {
-                                                if (controller
-                                                        .currentPage
-                                                        .value >
-                                                    1) {
-                                                  controller
-                                                      .currentPage
-                                                      .value--;
-                                                  controller.getComments(
-                                                    controller.uuid,
-                                                  );
-                                                }
-                                              },
-                                              child: const Icon(
-                                                Icons.arrow_back_ios,
-                                                size: 16,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-
-                                            ...pages.map((page) {
-                                              final isActive = page == current;
-                                              return Container(
-                                                margin: EdgeInsets.symmetric(
-                                                  horizontal: 2,
+                                          Future.delayed(
+                                            const Duration(seconds: 1),
+                                            () {
+                                              controller.keyEditor.currentState
+                                                  ?.clear();
+                                              print(
+                                                "RichEditor sudah di-clear setelah 5 detik",
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 8,
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                option,
+                                                style: TextStyle(
+                                                  color:
+                                                      isSelected
+                                                          ? Colors.teal
+                                                          : Colors.grey[700],
+                                                  fontWeight:
+                                                      isSelected
+                                                          ? FontWeight.bold
+                                                          : FontWeight.normal,
                                                 ),
-                                                child: GestureDetector(
-                                                  onTap: () {
+                                              ),
+                                              SizedBox(height: 4),
+                                              AnimatedContainer(
+                                                duration: Duration(
+                                                  milliseconds: 200,
+                                                ),
+                                                height: 2,
+                                                width: isSelected ? 20 : 0,
+                                                color: Colors.teal,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                              );
+                            }),
+                            SizedBox(
+                              width: double.infinity,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    width: 0.5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 12),
+
+                            Obx(() {
+                              if (controller.isReady.value == false) {
+                                return Skeletonizer(child: Text("data"));
+                              }
+                              switch (controller.selectedOption.value) {
+                                case "QnA":
+                                  return Column(
+                                    children: [
+                                      TextField(
+                                        controller:
+                                            controller.questionController,
+                                        maxLines: 3,
+                                        decoration: InputDecoration(
+                                          hintText: "Tulis pertanyaanmu disini",
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          contentPadding: const EdgeInsets.all(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 12),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.teal,
+                                            foregroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 12,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            if (controller
+                                                    .questionController
+                                                    .text ==
+                                                "") {
+                                              Get.snackbar(
+                                                "Gagal",
+                                                "Mohon isi kolom komentar",
+                                                backgroundColor: Colors.pink,
+                                                colorText: Colors.white,
+                                              );
+                                              return;
+                                            }
+                                            controller.addComments(
+                                              payload: {
+                                                "comment":
+                                                    controller
+                                                        .questionController
+                                                        .text,
+                                                "video_topic_id":
+                                                    controller.videoData['id'],
+                                              },
+                                            );
+                                          },
+                                          child: const Text(
+                                            "Kirim",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 24),
+                                      ListView.builder(
+                                        shrinkWrap:
+                                            true, // ✅ Agar tinggi otomatis menyesuaikan
+                                        physics:
+                                            const NeverScrollableScrollPhysics(), // ✅ Scroll dihandle parent
+                                        itemCount:
+                                            controller.commentList.length,
+                                        itemBuilder: (context, index) {
+                                          final data =
+                                              controller.commentList[index];
+                                          return _commentData(
+                                            data: data,
+                                            isReply:
+                                                (data['comment_reply'] as List?)
+                                                    ?.isNotEmpty ??
+                                                false,
+                                            context: context,
+                                          );
+                                        },
+                                      ),
+                                      Obx(() {
+                                        final current =
+                                            controller.currentPage.value;
+                                        final total =
+                                            controller.totalPage.value;
+
+                                        if (total <= 1) {
+                                          return const SizedBox.shrink(); // tidak ada halaman
+                                        }
+
+                                        // Tentukan window
+                                        int start = current - 1;
+                                        int end = current + 1;
+
+                                        // clamp biar tetap di antara 1 dan total
+                                        start = start < 1 ? 1 : start;
+                                        end = end > total ? total : end;
+
+                                        // Kalau total < 3, pakai semua halaman yg ada
+                                        if (total <= 3) {
+                                          start = 1;
+                                          end = total;
+                                        } else {
+                                          // Kalau current di awal → 1,2,3
+                                          if (current == 1) {
+                                            start = 1;
+                                            end = 3;
+                                          }
+                                          // Kalau current di akhir → total-2, total-1, total
+                                          else if (current == total) {
+                                            start = total - 2;
+                                            end = total;
+                                          }
+                                        }
+
+                                        // Generate daftar halaman
+                                        final pages = List.generate(
+                                          end - start + 1,
+                                          (i) => start + i,
+                                        );
+
+                                        return Container(
+                                          margin: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
+                                          height: 40,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  if (controller
+                                                          .currentPage
+                                                          .value >
+                                                      1) {
                                                     controller
                                                         .currentPage
-                                                        .value = page;
+                                                        .value--;
                                                     controller.getComments(
                                                       controller.uuid,
                                                     );
-                                                  },
-                                                  child: AnimatedContainer(
-                                                    duration: Duration(
-                                                      milliseconds: 200,
-                                                    ),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 6,
-                                                        ),
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          isActive
-                                                              ? Colors
-                                                                  .teal
-                                                                  .shade100
-                                                              : Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
-                                                      border: Border.all(
-                                                        color:
-                                                            isActive
-                                                                ? Colors.teal
-                                                                : Colors
-                                                                    .grey
-                                                                    .shade300,
-                                                        width: isActive ? 2 : 1,
+                                                  }
+                                                },
+                                                child: const Icon(
+                                                  Icons.arrow_back_ios,
+                                                  size: 16,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 8),
+
+                                              ...pages.map((page) {
+                                                final isActive =
+                                                    page == current;
+                                                return Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                    horizontal: 2,
+                                                  ),
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      controller
+                                                          .currentPage
+                                                          .value = page;
+                                                      controller.getComments(
+                                                        controller.uuid,
+                                                      );
+                                                    },
+                                                    child: AnimatedContainer(
+                                                      duration: Duration(
+                                                        milliseconds: 200,
                                                       ),
-                                                    ),
-                                                    child: Text(
-                                                      '$page',
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 6,
+                                                          ),
+                                                      decoration: BoxDecoration(
                                                         color:
                                                             isActive
-                                                                ? Colors.teal
-                                                                : Colors.black,
-                                                        fontSize:
-                                                            14, // font lebih besar untuk page aktif
+                                                                ? Colors
+                                                                    .teal
+                                                                    .shade100
+                                                                : Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              8,
+                                                            ),
+                                                        border: Border.all(
+                                                          color:
+                                                              isActive
+                                                                  ? Colors.teal
+                                                                  : Colors
+                                                                      .grey
+                                                                      .shade300,
+                                                          width:
+                                                              isActive ? 2 : 1,
+                                                        ),
+                                                      ),
+                                                      child: Text(
+                                                        '$page',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color:
+                                                              isActive
+                                                                  ? Colors.teal
+                                                                  : Colors
+                                                                      .black,
+                                                          fontSize:
+                                                              14, // font lebih besar untuk page aktif
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                              );
-                                            }),
+                                                );
+                                              }),
 
-                                            const SizedBox(width: 8),
-                                            TextButton(
-                                              onPressed: () {
-                                                if (controller
+                                              const SizedBox(width: 8),
+                                              TextButton(
+                                                onPressed: () {
+                                                  if (controller
+                                                          .currentPage
+                                                          .value <
+                                                      total) {
+                                                    controller
                                                         .currentPage
-                                                        .value <
-                                                    total) {
-                                                  controller
-                                                      .currentPage
-                                                      .value++;
-                                                  controller.getComments(
-                                                    controller.uuid,
-                                                  );
-                                                }
-                                              },
-                                              child: const Icon(
-                                                Icons.arrow_forward_ios,
-                                                size: 16,
+                                                        .value++;
+                                                    controller.getComments(
+                                                      controller.uuid,
+                                                    );
+                                                  }
+                                                },
+                                                child: const Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  size: 16,
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                                  ],
-                                );
-                              default:
-                                return Column(
-                                  spacing: 16,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Obx(() {
-                                      return _noteForm(controller.isNote.value);
-                                    }),
-                                    // SizedBox(
-                                    //   width: double.infinity,
-                                    //   height: 300, // ✅ Tentukan tinggi
-                                    //   child: Container(
-                                    //     padding: EdgeInsets.all(16),
-                                    //     decoration: BoxDecoration(
-                                    //       border: Border.all(
-                                    //         width: 0.5,
-                                    //         color: Colors.grey,
-                                    //       ),
-                                    //     ),
-                                    //     child: RichEditor(
-                                    //       key: controller.keyEditor,
-                                    //       editorOptions: RichEditorOptions(
-                                    //         enableVideo: false,
-                                    //         placeholder: 'Buat Catatan',
-                                    //         padding: const EdgeInsets.symmetric(
-                                    //           horizontal: 5.0,
-                                    //         ),
-                                    //         baseFontFamily: 'sans-serif',
-                                    //         barPosition: BarPosition.TOP,
-                                    //       ),
-                                    //     ),
-                                    //   ),
-                                    // ),
-
-                                    // SizedBox(
-                                    //   width: double.infinity,
-                                    //   child: ElevatedButton(
-                                    //     style: ElevatedButton.styleFrom(
-                                    //       backgroundColor: Colors.teal,
-                                    //       foregroundColor: Colors.white,
-                                    //       shape: RoundedRectangleBorder(
-                                    //         borderRadius: BorderRadius.circular(
-                                    //           8,
-                                    //         ),
-                                    //       ),
-                                    //       padding: const EdgeInsets.symmetric(
-                                    //         vertical: 12,
-                                    //       ),
-                                    //     ),
-                                    //     onPressed: () async {
-                                    //       // Ambil HTML dari RichEditor
-                                    //       final String? html =
-                                    //           await controller
-                                    //               .keyEditor
-                                    //               .currentState
-                                    //               ?.getHtml();
-
-                                    //       // Pastikan tidak null
-                                    //       if (html == null) {
-                                    //         Get.snackbar(
-                                    //           "Gagal",
-                                    //           "Catatan tidak boleh kosong",
-                                    //           backgroundColor: Colors.pink,
-                                    //           colorText: Colors.white,
-                                    //         );
-                                    //         return;
-                                    //       }
-
-                                    //       // Bersihkan HTML dari tag kosong, whitespace, dan karakter yang tidak penting
-                                    //       final cleanedHtml =
-                                    //           html
-                                    //               .replaceAll(
-                                    //                 RegExp(r'<[^>]*>'),
-                                    //                 '',
-                                    //               ) // Hapus semua tag HTML
-                                    //               .replaceAll(
-                                    //                 RegExp(r'&nbsp;'),
-                                    //                 '',
-                                    //               ) // Hapus non-breaking space
-                                    //               .trim();
-
-                                    //       // Validasi setelah dibersihkan
-                                    //       if (cleanedHtml.isEmpty) {
-                                    //         Get.snackbar(
-                                    //           "Gagal",
-                                    //           "Catatan tidak boleh kosong",
-                                    //           backgroundColor: Colors.pink,
-                                    //           colorText: Colors.white,
-                                    //         );
-                                    //         return;
-                                    //       }
-
-                                    //       // Jika lolos validasi, kirim ke server
-                                    //       controller.addNote(
-                                    //         payload: {
-                                    //           "durasi": controller.detik.value,
-                                    //           "text":
-                                    //               html, // Tetap kirim HTML aslinya
-                                    //           "topicUuid":
-                                    //               controller.videoData['uuid'],
-                                    //         },
-                                    //       );
-                                    //     },
-
-                                    //     child: const Text(
-                                    //       "Buat",
-                                    //       style: TextStyle(
-                                    //         fontSize: 16,
-                                    //         fontWeight: FontWeight.bold,
-                                    //       ),
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(), // penting jika di dalam SingleChildScrollView
-                                      itemCount: controller.noteList.length,
-                                      itemBuilder: (context, index) {
-                                        final data = controller.noteList[index];
-
-                                        // Pastikan durasi selalu aman
-                                        final durasiRaw = data['durasi'];
-                                        final durasi =
-                                            (durasiRaw is num)
-                                                ? durasiRaw.floor()
-                                                : 0;
-
-                                        return _noteCard(
-                                          data['uuid'],
-                                          data['text'] ??
-                                              '', // fallback kalau text null
-                                          controller.formatDuration(durasi),
-                                          data['durasi'],
-                                          _controller,
-                                          context,
+                                            ],
+                                          ),
                                         );
-                                      },
-                                    ),
-                                  ],
-                                );
-                            }
-                          }),
-                        ],
+                                      }),
+                                    ],
+                                  );
+                                default:
+                                  return Column(
+                                    spacing: 16,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Obx(() {
+                                        return _noteForm(
+                                          controller.isNote.value,
+                                        );
+                                      }),
+                                      // SizedBox(
+                                      //   width: double.infinity,
+                                      //   height: 300, // ✅ Tentukan tinggi
+                                      //   child: Container(
+                                      //     padding: EdgeInsets.all(16),
+                                      //     decoration: BoxDecoration(
+                                      //       border: Border.all(
+                                      //         width: 0.5,
+                                      //         color: Colors.grey,
+                                      //       ),
+                                      //     ),
+                                      //     child: RichEditor(
+                                      //       key: controller.keyEditor,
+                                      //       editorOptions: RichEditorOptions(
+                                      //         enableVideo: false,
+                                      //         placeholder: 'Buat Catatan',
+                                      //         padding: const EdgeInsets.symmetric(
+                                      //           horizontal: 5.0,
+                                      //         ),
+                                      //         baseFontFamily: 'sans-serif',
+                                      //         barPosition: BarPosition.TOP,
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      // ),
+
+                                      // SizedBox(
+                                      //   width: double.infinity,
+                                      //   child: ElevatedButton(
+                                      //     style: ElevatedButton.styleFrom(
+                                      //       backgroundColor: Colors.teal,
+                                      //       foregroundColor: Colors.white,
+                                      //       shape: RoundedRectangleBorder(
+                                      //         borderRadius: BorderRadius.circular(
+                                      //           8,
+                                      //         ),
+                                      //       ),
+                                      //       padding: const EdgeInsets.symmetric(
+                                      //         vertical: 12,
+                                      //       ),
+                                      //     ),
+                                      //     onPressed: () async {
+                                      //       // Ambil HTML dari RichEditor
+                                      //       final String? html =
+                                      //           await controller
+                                      //               .keyEditor
+                                      //               .currentState
+                                      //               ?.getHtml();
+
+                                      //       // Pastikan tidak null
+                                      //       if (html == null) {
+                                      //         Get.snackbar(
+                                      //           "Gagal",
+                                      //           "Catatan tidak boleh kosong",
+                                      //           backgroundColor: Colors.pink,
+                                      //           colorText: Colors.white,
+                                      //         );
+                                      //         return;
+                                      //       }
+
+                                      //       // Bersihkan HTML dari tag kosong, whitespace, dan karakter yang tidak penting
+                                      //       final cleanedHtml =
+                                      //           html
+                                      //               .replaceAll(
+                                      //                 RegExp(r'<[^>]*>'),
+                                      //                 '',
+                                      //               ) // Hapus semua tag HTML
+                                      //               .replaceAll(
+                                      //                 RegExp(r'&nbsp;'),
+                                      //                 '',
+                                      //               ) // Hapus non-breaking space
+                                      //               .trim();
+
+                                      //       // Validasi setelah dibersihkan
+                                      //       if (cleanedHtml.isEmpty) {
+                                      //         Get.snackbar(
+                                      //           "Gagal",
+                                      //           "Catatan tidak boleh kosong",
+                                      //           backgroundColor: Colors.pink,
+                                      //           colorText: Colors.white,
+                                      //         );
+                                      //         return;
+                                      //       }
+
+                                      //       // Jika lolos validasi, kirim ke server
+                                      //       controller.addNote(
+                                      //         payload: {
+                                      //           "durasi": controller.detik.value,
+                                      //           "text":
+                                      //               html, // Tetap kirim HTML aslinya
+                                      //           "topicUuid":
+                                      //               controller.videoData['uuid'],
+                                      //         },
+                                      //       );
+                                      //     },
+
+                                      //     child: const Text(
+                                      //       "Buat",
+                                      //       style: TextStyle(
+                                      //         fontSize: 16,
+                                      //         fontWeight: FontWeight.bold,
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(), // penting jika di dalam SingleChildScrollView
+                                        itemCount: controller.noteList.length,
+                                        itemBuilder: (context, index) {
+                                          final data =
+                                              controller.noteList[index];
+
+                                          // Pastikan durasi selalu aman
+                                          final durasiRaw = data['durasi'];
+                                          final durasi =
+                                              (durasiRaw is num)
+                                                  ? durasiRaw.floor()
+                                                  : 0;
+
+                                          return _noteCard(
+                                            data['uuid'],
+                                            data['text'] ??
+                                                '', // fallback kalau text null
+                                            controller.formatDuration(durasi),
+                                            data['durasi'],
+                                            _controller,
+                                            context,
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  );
+                              }
+                            }),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

@@ -170,7 +170,7 @@ class PengerjaanTryoutHarianView
                                             children: [
                                               Text("Terjawab"),
                                               Text(
-                                                "${controller.selectedAnswersList.where((answer) => answer['tryout_question_option_id'] != 0).length.toString()} Soal",
+                                                "${controller.selectedAnswersList.where((answer) => answer['lathar_soal_option_id'] != 0).length.toString()} Soal",
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -183,7 +183,7 @@ class PengerjaanTryoutHarianView
                                             children: [
                                               Text("Tidak Terjawab"),
                                               Text(
-                                                "${(controller.soalList.length - controller.selectedAnswersList.where((answer) => answer['tryout_question_option_id'] != 0).length).toString()} Soal",
+                                                "${(controller.selectedAnswersList.where((answer) => answer['lathar_soal_option_id'] == 0).length).toString()} Soal",
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                 ),

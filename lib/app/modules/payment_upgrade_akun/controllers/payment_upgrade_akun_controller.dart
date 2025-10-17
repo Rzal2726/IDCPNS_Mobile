@@ -200,6 +200,7 @@ class PaymentUpgradeAkunController extends GetxController {
           backgroundColor: Colors.pink,
           colorText: Colors.white,
         );
+        loadingHarga.value = false;
       } else {
         diskon.value = double.parse(response['data']['nominal'].toString());
         promoCode.value = code;
@@ -212,6 +213,7 @@ class PaymentUpgradeAkunController extends GetxController {
         backgroundColor: Colors.pink,
         colorText: Colors.white,
       );
+      loadingHarga.value = false;
     }
   }
 

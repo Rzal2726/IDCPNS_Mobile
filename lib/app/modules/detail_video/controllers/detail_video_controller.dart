@@ -268,9 +268,10 @@ class DetailVideoController extends GetxController {
         backgroundColor: Colors.teal,
         colorText: Colors.white,
       );
-      getComments(videoData['uuid']);
       questionReplyController.text = "";
       questionController.text = "";
+      currentPage.value = 1;
+      getComments(videoData['uuid']);
     } else {
       Get.snackbar(
         "Gagal",
@@ -405,7 +406,7 @@ class DetailVideoController extends GetxController {
       );
       // Ambil folder writable dari device
       final dir = await getDownloadsDirectory();
-      final savePath = '${dir!.path}/$fileName';
+      final savePath = '/storage/emulated/0/Download/$fileName';
 
       print("Menyimpan file di: $savePath");
 
@@ -427,7 +428,7 @@ class DetailVideoController extends GetxController {
       await raf.close();
       Get.snackbar(
         "Berhasil",
-        "File Bisa dilihat di: $savePath ",
+        "File Bisa dilihat di folder Download",
         colorText: Colors.white,
         backgroundColor: Colors.teal,
       );

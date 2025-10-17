@@ -60,28 +60,25 @@ class DashboardController extends GetxController {
   void filterTryout({String? query, int? categoryId}) {
     final search = query?.toLowerCase() ?? '';
 
-    if (query != null && query.isNotEmpty) {
-      // Filter berdasarkan query saja
-      final filtered =
-          tryoutEventData.where((event) {
-            return event['name'].toString().toLowerCase().contains(search);
-          }).toList();
+    final filtered =
+        tryoutEventData.where((event) {
+          final matchName =
+              search.isEmpty ||
+              (event['name'].toString().toLowerCase().contains(search));
 
-      tryoutEventFilterData.value = filtered;
-    } else if (categoryId != null && categoryId != 0) {
-      // Filter berdasarkan categoryId saja
-      final filtered =
-          tryoutEventData.where((event) {
-            return event['menu_category_id'].toString() ==
-                categoryId.toString();
-          }).toList();
+          final matchCategory =
+              event['menu_category_id'].toString() == categoryId.toString();
 
-      tryoutEventFilterData.value = filtered;
-      print("xx  ${categoryId.toString()} dan ${filtered.toString()}");
-    } else {
-      // Kalau tidak ada filter, tampilkan semua
-      tryoutEventFilterData.value = List.from(tryoutEventData);
-    }
+          print("hasilfilter: $search, $matchName, $matchCategory");
+
+          if (categoryId.toString() == "0") {
+            return matchName;
+          } else {
+            return matchName && matchCategory;
+          }
+        }).toList();
+
+    tryoutEventFilterData.value = filtered;
   }
 
   Future<void> getKategori() async {

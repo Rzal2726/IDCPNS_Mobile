@@ -13,6 +13,97 @@ class PeringkatTryoutController extends GetxController {
   RxMap<String, dynamic> tryoutSaya = <String, dynamic>{}.obs;
   RxMap<String, bool> loading = <String, bool>{"filter": false}.obs;
   RxList<Map<String, dynamic>> listPeringkat = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> listPeringkatDummy =
+      <Map<String, dynamic>>[
+        {
+          "no": "1",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "2",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "3",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "4",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "5",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "6",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "7",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "8",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "9",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "10",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+        {
+          "no": "11",
+          "user_name": "lorem",
+          "provinsi_nama": "ipsum",
+          "kabupaten_nama": "dolor",
+          "total": "0",
+          "islulus": 1,
+        },
+      ].obs;
   RxList<Map<String, dynamic>> listProvinsi =
       <Map<String, dynamic>>[
         {"id": "", "nama": "Pilih Provinsi"},
