@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/modules/detail_tryout_saya/controllers/detail_tryout_saya_controller.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
@@ -501,134 +502,17 @@ class TryoutSayaView extends GetView<TryoutSayaController> {
                                 (i) => start + i,
                               );
 
-                              return Container(
-                                margin: const EdgeInsets.symmetric(
+                              return Padding(
+                                padding: EdgeInsetsGeometry.symmetric(
                                   vertical: 16,
                                 ),
                                 child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      // Tombol pertama
-                                      TextButton.icon(
-                                        onPressed: () async {
-                                          controller.currentPage.value = 1;
-                                          controller.fetchTryoutSaya();
-                                        },
-                                        label: const Icon(
-                                          Icons.first_page,
-                                          size: 16,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-
-                                      // Tombol sebelumnya
-                                      TextButton.icon(
-                                        onPressed: () async {
-                                          if (controller.currentPage.value >
-                                              1) {
-                                            controller.currentPage.value--;
-                                            controller.fetchTryoutSaya();
-                                          }
-                                        },
-                                        label: Icon(
-                                          Icons.arrow_back_ios,
-                                          size: 16,
-                                          color:
-                                              controller.currentPage.value > 1
-                                                  ? Colors.black
-                                                  : Colors.grey,
-                                        ),
-                                      ),
-
-                                      // Nomor halaman
-                                      ...pages.map((page) {
-                                        final isActive = page == current;
-                                        return Container(
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 2,
-                                          ),
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              controller.currentPage.value =
-                                                  page;
-                                              controller.fetchTryoutSaya();
-                                            },
-                                            child: AnimatedContainer(
-                                              duration: Duration(
-                                                milliseconds: 200,
-                                              ),
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: isActive ? 14 : 10,
-                                                vertical: isActive ? 8 : 6,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    isActive
-                                                        ? Colors.teal.shade100
-                                                        : Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                  color:
-                                                      isActive
-                                                          ? Colors.teal
-                                                          : Colors
-                                                              .grey
-                                                              .shade300,
-                                                  width: isActive ? 2 : 1,
-                                                ),
-                                              ),
-                                              child: Text(
-                                                '$page',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color:
-                                                      isActive
-                                                          ? Colors.teal
-                                                          : Colors.black,
-                                                  fontSize: isActive ? 16 : 14,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }),
-
-                                      // Tombol berikutnya
-                                      TextButton.icon(
-                                        onPressed: () {
-                                          if (controller.currentPage.value <
-                                              controller.totalPage.value) {
-                                            controller.currentPage.value++;
-                                            controller.fetchTryoutSaya();
-                                          }
-                                        },
-                                        label: Icon(
-                                          Icons.arrow_forward_ios,
-                                          size: 16,
-                                          color:
-                                              controller.currentPage.value <
-                                                      controller.totalPage.value
-                                                  ? Colors.black
-                                                  : Colors.grey,
-                                        ),
-                                      ),
-
-                                      // Tombol terakhir
-                                      TextButton.icon(
-                                        onPressed: () {
-                                          controller.currentPage.value =
-                                              controller.totalPage.value;
-                                          controller.fetchTryoutSaya();
-                                        },
-                                        label: const Icon(
-                                          Icons.last_page,
-                                          size: 16,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
+                                  child: ReusablePagination(
+                                    currentPage: controller.currentPage,
+                                    totalPage: controller.totalPage,
+                                    goToPage: controller.goToPage,
+                                    nextPage: controller.nextPage,
+                                    prevPage: controller.prevPage,
                                   ),
                                 ),
                               );
