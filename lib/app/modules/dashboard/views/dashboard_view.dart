@@ -11,6 +11,7 @@ import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/exitDialog.dart';
+import 'package:idcpns_mobile/app/Components/widgets/menuCategoryFilter.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/programTryoutGratisCard.dart';
 import 'package:idcpns_mobile/app/Components/widgets/wdigetTryoutEventCard.dart';
@@ -999,7 +1000,26 @@ class DashboardView extends GetView<DashboardController> {
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
                             onTap: () {
-                              showFilterCategoryBottomSheet(context);
+                              showChoiceBottomSheet(
+                                context: context,
+                                title: "Kategori",
+                                options: controller.options,
+                                selectedValue: controller.selectedKategoriId,
+                                onSelected: (id) {
+                                  final selectedOption = controller.options
+                                      .firstWhere((o) => o['id'] == id);
+                                  controller.selectedEventKategori.value =
+                                      selectedOption['menu'];
+                                },
+                                onSubmit: () {
+                                  controller.filterTryout(
+                                    query: controller.tryoutSearch.text,
+                                    categoryId:
+                                        controller.selectedKategoriId.value,
+                                  );
+                                },
+                              );
+                              // showFilterCategoryBottomSheet(context);
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -1456,134 +1476,5 @@ Widget _buildCategoryItem(String title, String icon, String kategoriId) {
         ),
       ),
     ),
-  );
-}
-
-void showFilterCategoryBottomSheet(BuildContext context) {
-  final controller = Get.put(DashboardController());
-
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (ctx) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return SafeArea(
-            child: Padding(
-              padding: MediaQuery.of(ctx).viewInsets,
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Kategori",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.close),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-
-                    // List pilihan dengan ChoiceChip
-                    Obx(
-                      () => Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children:
-                            controller.options.map((option) {
-                              final isSelected =
-                                  controller.selectedKategoriId.value ==
-                                  option['id'];
-
-                              return ChoiceChip(
-                                label: Text(
-                                  option['menu'], // tampilkan name
-                                  style: TextStyle(
-                                    color:
-                                        isSelected
-                                            ? Colors.teal
-                                            : Colors.grey[700],
-                                    fontWeight:
-                                        isSelected
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                  ),
-                                ),
-                                selected: isSelected,
-                                selectedColor: Colors.teal.withOpacity(0.1),
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color:
-                                        isSelected
-                                            ? Colors.teal
-                                            : Colors.grey.shade400,
-                                  ),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                onSelected: (value) {
-                                  print("xxxz ${option['id'].toString()}");
-                                  controller.selectedKategoriId.value =
-                                      option['id'];
-                                  controller.selectedEventKategori.value =
-                                      option['menu'];
-                                },
-                              );
-                            }).toList(),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-
-                    // Tombol cari
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          controller.filterTryout(
-                            query: controller.tryoutSearch.text,
-                            categoryId: controller.selectedKategoriId.value,
-                          );
-
-                          // controller.getBimbel(
-                          //   menuCategoryId:
-                          //       controller.selectedKategoriId.value?.toString(),
-                          // );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: Text("Cari"),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    },
   );
 }

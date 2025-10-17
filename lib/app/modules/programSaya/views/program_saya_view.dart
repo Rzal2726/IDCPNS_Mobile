@@ -163,15 +163,6 @@ class ProgramSayaView extends GetView<ProgramSayaController> {
                             );
                           }
                         },
-                        onReset: () {
-                          if (controller.selectedTab.value == 0) {
-                            controller.getTryout(submenuCategoryId: "0");
-                            controller.selectedKategoriId.value = 0;
-                          } else {
-                            controller.getBimbel(submenuCategoryId: "0");
-                            controller.selectedKategoriId.value = 0;
-                          }
-                        },
                       );
                     },
                     child: Row(

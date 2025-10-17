@@ -12,7 +12,6 @@ void showChoiceBottomSheet<T>({
   required Rx<T?> selectedValue,
   required void Function(T?) onSelected,
   required void Function() onSubmit,
-  required void Function() onReset, // ✅ tambahin callback reset
 }) {
   showModalBottomSheet(
     context: context,
@@ -24,7 +23,10 @@ void showChoiceBottomSheet<T>({
             child: Padding(
               padding: MediaQuery.of(ctx).viewInsets,
               child: Container(
-                color: Colors.white,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 padding: EdgeInsets.all(16),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -100,29 +102,6 @@ void showChoiceBottomSheet<T>({
                     // Row tombol Submit & Reset
                     Row(
                       children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () {
-                              onReset(); // ✅ serahin ke luar
-                              Navigator.pop(context);
-                            },
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: Colors.teal),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
-                              ),
-                            ),
-                            child: Text(
-                              "Reset",
-                              style: TextStyle(color: Colors.teal),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 8),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {

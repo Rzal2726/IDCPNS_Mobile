@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
 import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/menuCategoryFilter.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
@@ -95,7 +96,27 @@ class WishlistView extends GetView<WishlistController> {
                           Spacer(),
                           GestureDetector(
                             onTap: () {
-                              showBimbelBottomSheet(context);
+                              showChoiceBottomSheet(
+                                context: context,
+                                title: "Kategori",
+                                options: controller.options,
+                                selectedValue: controller.selectedKategoriId,
+                                onSelected: (id) {
+                                  final selectedOption = controller.options
+                                      .firstWhere((o) => o['id'] == id);
+                                  controller.selectedEventKategori.value =
+                                      selectedOption['menu'];
+                                },
+                                onSubmit: () {
+                                  controller.getWhislist(
+                                    menuCategoryId:
+                                        controller.selectedKategoriId.value
+                                            ?.toString(),
+                                    produk:
+                                        controller.selectedEventProduct.value,
+                                  );
+                                },
+                              );
                             },
                             child: Row(
                               children: [
@@ -374,228 +395,6 @@ class WishlistView extends GetView<WishlistController> {
           ),
         ],
       ),
-    );
-  }
-
-  void showBimbelBottomSheet(BuildContext context) {
-    final controller = Get.put(WishlistController());
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        return Padding(
-          padding: const EdgeInsets.only(
-            bottom: 12, // kasih space dikit biar gak nempel layar
-          ),
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            padding: const EdgeInsets.all(16),
-            child: SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min, // tinggi auto sesuai konten
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Filter Wishlist",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Kategori
-                  const Text(
-                    "Kategori",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Obx(
-                    () => Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children:
-                          controller.options.map((option) {
-                            final isSelected =
-                                controller.selectedKategoriId.value ==
-                                option['id'];
-
-                            return ChoiceChip(
-                              label: Text(
-                                option['menu'],
-                                style: TextStyle(
-                                  color:
-                                      isSelected
-                                          ? Colors.teal
-                                          : Colors.grey[700],
-                                  fontWeight:
-                                      isSelected
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                ),
-                              ),
-                              selected: isSelected,
-                              selectedColor: Colors.teal.withOpacity(0.1),
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  color:
-                                      isSelected
-                                          ? Colors.teal
-                                          : Colors.grey.shade400,
-                                ),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              onSelected: (value) {
-                                controller.selectedKategoriId.value =
-                                    option['id'];
-                                controller.selectedEventKategori.value =
-                                    option['menu'];
-                              },
-                            );
-                          }).toList(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Produk
-                  const Text(
-                    "Produk",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Obx(
-                    () => Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children:
-                          controller.ProductOptions.map((option) {
-                            final isSelected =
-                                controller.selectedProductiId.value ==
-                                option['id'];
-
-                            return ChoiceChip(
-                              label: Text(
-                                option['menu'],
-                                style: TextStyle(
-                                  color:
-                                      isSelected
-                                          ? Colors.teal
-                                          : Colors.grey[700],
-                                  fontWeight:
-                                      isSelected
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                ),
-                              ),
-                              selected: isSelected,
-                              selectedColor: Colors.teal.withOpacity(0.1),
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  color:
-                                      isSelected
-                                          ? Colors.teal
-                                          : Colors.grey.shade400,
-                                ),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              onSelected: (value) {
-                                controller.selectedProductiId.value =
-                                    option['id'];
-                                controller.selectedEventProduct.value =
-                                    option['menu'];
-                              },
-                            );
-                          }).toList(),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Tombol Bawah
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () async {
-                            Navigator.pop(context);
-                            controller.selectedKategoriId.value = 0;
-                            controller.selectedEventKategori.value = 'Semua';
-                            controller.selectedProductiId.value = 0;
-                            controller.selectedEventProduct.value = 'Semua';
-                            controller.isLoading.value = true;
-
-                            await controller.getWhislist(
-                              menuCategoryId: "0",
-                              produk: "",
-                            );
-                            controller.isLoading.value = false;
-                          },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.teal,
-                            side: const BorderSide(color: Colors.teal),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                          ),
-                          child: const Text("Reset"),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            Navigator.pop(context);
-                            controller.isLoading.value = true;
-                            await controller.getWhislist(
-                              menuCategoryId:
-                                  controller.selectedKategoriId.value
-                                      ?.toString(),
-                              produk: controller.selectedEventProduct.value,
-                            );
-                            controller.isLoading.value = false;
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                          ),
-                          child: const Text("Cari"),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

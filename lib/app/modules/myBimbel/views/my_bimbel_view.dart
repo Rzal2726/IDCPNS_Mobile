@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/emptyDataWidget.dart';
+import 'package:idcpns_mobile/app/Components/widgets/menuCategoryFilter.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
@@ -78,7 +79,26 @@ class MyBimbelView extends GetView<MyBimbelController> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
-                          onTap: () => showBimbelBottomSheet(context),
+                          onTap:
+                              () => showChoiceBottomSheet(
+                                context: context,
+                                title: "Kategori",
+                                options: controller.options,
+                                selectedValue: controller.selectedKategoriId,
+                                onSelected: (id) {
+                                  final selectedOption = controller.options
+                                      .firstWhere((o) => o['id'] == id);
+                                  controller.selectedEventKategori.value =
+                                      selectedOption['menu'];
+                                },
+                                onSubmit: () {
+                                  controller.getData(
+                                    menuCategoryId:
+                                        controller.selectedKategoriId.value
+                                            ?.toString(),
+                                  );
+                                },
+                              ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -281,129 +301,5 @@ void openFilter() {
         ],
       ),
     ),
-  );
-}
-
-void showBimbelBottomSheet(BuildContext context) {
-  final controller = Get.put(MyBimbelController());
-
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (ctx) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return SafeArea(
-            child: Padding(
-              padding: MediaQuery.of(ctx).viewInsets,
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Kategori",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.close),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-
-                    // List pilihan dengan ChoiceChip
-                    Obx(
-                      () => Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children:
-                            controller.options.map((option) {
-                              final isSelected =
-                                  controller.selectedKategoriId.value ==
-                                  option['id'];
-
-                              return ChoiceChip(
-                                label: Text(
-                                  option['menu'], // tampilkan name
-                                  style: TextStyle(
-                                    color:
-                                        isSelected
-                                            ? Colors.teal
-                                            : Colors.grey[700],
-                                    fontWeight:
-                                        isSelected
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                  ),
-                                ),
-                                selected: isSelected,
-                                selectedColor: Colors.teal.withOpacity(0.1),
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color:
-                                        isSelected
-                                            ? Colors.teal
-                                            : Colors.grey.shade400,
-                                  ),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                onSelected: (value) {
-                                  controller.selectedKategoriId.value =
-                                      option['id'];
-                                  controller.selectedEventKategori.value =
-                                      option['menu'];
-                                },
-                              );
-                            }).toList(),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-
-                    // Tombol cari
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-
-                          controller.getData(
-                            menuCategoryId:
-                                controller.selectedKategoriId.value?.toString(),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: Text("Cari"),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    },
   );
 }
