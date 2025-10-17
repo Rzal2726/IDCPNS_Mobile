@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
+import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -235,145 +236,21 @@ class WebinarView extends GetView<WebinarController> {
                     }
                   }),
                   SizedBox(height: 16),
-                  Obx(() {
-                    final current = controller.currentPage.value;
-                    final total = controller.totalPage.value;
-
-                    if (total == 0) {
-                      return const SizedBox.shrink(); // tidak ada halaman
-                    }
-
-                    // Tentukan window
-                    int start = current - 1;
-                    int end = current + 1;
-
-                    // clamp biar tetap di antara 1 dan total
-                    start = start < 1 ? 1 : start;
-                    end = end > total ? total : end;
-
-                    // Kalau total < 3, pakai semua halaman yg ada
-                    if (total <= 3) {
-                      start = 1;
-                      end = total;
-                    } else {
-                      // Kalau current di awal → 1,2,3
-                      if (current == 1) {
-                        start = 1;
-                        end = 3;
-                      }
-                      // Kalau current di akhir → total-2, total-1, total
-                      else if (current == total) {
-                        start = total - 2;
-                        end = total;
-                      }
-                    }
-
-                    // Generate daftar halaman
-                    final pages = List.generate(
-                      end - start + 1,
-                      (i) => start + i,
-                    );
-
-                    return Container(
-                      height: 40,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TextButton.icon(
-                              onPressed: () {
-                                if (current > 1) {
-                                  controller.currentPage.value = 1;
-                                  controller.getWebinar();
-                                }
-                              },
-                              label: const Icon(Icons.first_page, size: 16),
-                            ),
-                            TextButton.icon(
-                              onPressed: () {
-                                if (current > 1) {
-                                  controller.currentPage.value--;
-                                  controller.getWebinar();
-                                }
-                              },
-                              label: const Icon(Icons.arrow_back_ios, size: 16),
-                            ),
-
-                            ...pages.map((page) {
-                              final isActive = page == current;
-                              return Container(
-                                margin: EdgeInsets.symmetric(horizontal: 2),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    controller.currentPage.value = page;
-                                    controller.getWebinar();
-                                  },
-                                  child: AnimatedContainer(
-                                    duration: Duration(milliseconds: 200),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: isActive ? 14 : 10,
-                                      vertical: isActive ? 8 : 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          isActive
-                                              ? Colors.teal.shade100
-                                              : Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color:
-                                            isActive
-                                                ? Colors.teal
-                                                : Colors.grey.shade300,
-                                        width: isActive ? 2 : 1,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      '$page',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            isActive
-                                                ? Colors.teal
-                                                : Colors.black,
-                                        fontSize:
-                                            isActive
-                                                ? 16
-                                                : 14, // font lebih besar untuk page aktif
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }),
-
-                            TextButton.icon(
-                              onPressed: () {
-                                if (current < total) {
-                                  controller.currentPage.value++;
-                                  controller.getWebinar();
-                                }
-                              },
-                              label: const Icon(
-                                Icons.arrow_forward_ios,
-                                size: 16,
-                              ),
-                            ),
-                            TextButton.icon(
-                              onPressed: () {
-                                if (current < total) {
-                                  controller.currentPage.value = total;
-                                  controller.getWebinar();
-                                }
-                              },
-                              label: const Icon(Icons.last_page, size: 16),
-                            ),
-                          ],
+                  Visibility(
+                    visible: controller.totalPage.value != 0,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: Center(
+                        child: ReusablePagination(
+                          nextPage: controller.nextPage,
+                          prevPage: controller.prevPage,
+                          currentPage: controller.currentPage,
+                          totalPage: controller.totalPage,
+                          goToPage: controller.goToPage,
                         ),
                       ),
-                    );
-                  }),
+                    ),
+                  ),
                 ],
               ),
             ),

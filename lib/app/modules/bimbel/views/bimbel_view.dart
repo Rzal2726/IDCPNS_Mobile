@@ -448,10 +448,11 @@ void showBimbelBottomSheet(BuildContext context) {
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 onSelected: (value) {
+                                  print("xcvv ${option['menu'].toString()}");
                                   controller.selectedKategoriId.value =
                                       option['id'];
                                   controller.selectedEventKategori.value =
-                                      option['name'];
+                                      option['menu'];
                                 },
                               );
                             }).toList(),

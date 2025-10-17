@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -340,191 +341,21 @@ class KategoriView extends GetView<KategoriController> {
                     },
                   );
                 }),
-
-                Obx(() {
-                  final current = controller.currentPage.value;
-                  final total = controller.totalPage.value;
-
-                  if (total == 0) {
-                    return const SizedBox.shrink(); // tidak ada halaman
-                  }
-
-                  // Tentukan window
-                  int start = current - 1;
-                  int end = current + 1;
-
-                  // clamp biar tetap di antara 1 dan total
-                  start = start < 1 ? 1 : start;
-                  end = end > total ? total : end;
-
-                  // Kalau total < 3, pakai semua halaman yg ada
-                  if (total <= 3) {
-                    start = 1;
-                    end = total;
-                  } else {
-                    // Kalau current di awal → 1,2,3
-                    if (current == 1) {
-                      start = 1;
-                      end = 3;
-                    }
-                    // Kalau current di akhir → total-2, total-1, total
-                    else if (current == total) {
-                      start = total - 2;
-                      end = total;
-                    }
-                  }
-
-                  // Generate daftar halaman
-                  final pages = List.generate(
-                    end - start + 1,
-                    (i) => start + i,
-                  );
-
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      final screenWidth = MediaQuery.of(context).size.width;
-                      final isSmallScreen = screenWidth < 600;
-                      final fontSize = isSmallScreen ? 12.0 : 14.0;
-                      final padding = isSmallScreen ? 6.0 : 9.0;
-
-                      return Container(
-                        height: 50,
-                        width: double.infinity,
-                        child: Center(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                TextButton.icon(
-                                  onPressed:
-                                      current > 1
-                                          ? () => controller.fetchPaketTryout(
-                                            page: 1,
-                                            search:
-                                                controller
-                                                    .paketTextController
-                                                    .text,
-                                          )
-                                          : null,
-                                  label: Icon(
-                                    Icons.first_page,
-                                    size: isSmallScreen ? 14 : 16,
-                                  ),
-                                ),
-                                TextButton.icon(
-                                  onPressed:
-                                      current > 1
-                                          ? () => controller.fetchPaketTryout(
-                                            page: current - 1,
-                                            search:
-                                                controller
-                                                    .paketTextController
-                                                    .text,
-                                          )
-                                          : null,
-                                  label: Icon(
-                                    Icons.arrow_back_ios,
-                                    size: isSmallScreen ? 14 : 16,
-                                  ),
-                                ),
-
-                                Wrap(
-                                  spacing: 4,
-                                  runSpacing: 4,
-                                  children:
-                                      pages.map((page) {
-                                        final isActive = page == current;
-                                        return GestureDetector(
-                                          onTap:
-                                              () => controller.fetchPaketTryout(
-                                                page: page,
-                                                search:
-                                                    controller
-                                                        .paketTextController
-                                                        .text,
-                                              ),
-                                          child: AnimatedContainer(
-                                            duration: Duration(
-                                              milliseconds: 200,
-                                            ),
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: padding,
-                                              vertical: 8,
-                                            ),
-
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  isActive
-                                                      ? Colors.teal.shade100
-                                                      : Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                color:
-                                                    isActive
-                                                        ? Colors.teal
-                                                        : Colors.grey.shade300,
-                                                width: isActive ? 2 : 1,
-                                              ),
-                                            ),
-                                            child: Text(
-                                              '$page',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color:
-                                                    isActive
-                                                        ? Colors.teal
-                                                        : Colors.black,
-                                                fontSize: fontSize,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                ),
-
-                                TextButton.icon(
-                                  onPressed:
-                                      current < total
-                                          ? () => controller.fetchPaketTryout(
-                                            page: current + 1,
-                                            search:
-                                                controller
-                                                    .paketTextController
-                                                    .text,
-                                          )
-                                          : null,
-                                  label: Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: isSmallScreen ? 14 : 16,
-                                  ),
-                                ),
-                                TextButton.icon(
-                                  onPressed:
-                                      current < total
-                                          ? () => controller.fetchPaketTryout(
-                                            page: controller.totalPage.value,
-                                            search:
-                                                controller
-                                                    .paketTextController
-                                                    .text,
-                                          )
-                                          : null,
-                                  label: Icon(
-                                    Icons.last_page,
-                                    size: isSmallScreen ? 14 : 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }),
-
+                Visibility(
+                  visible: controller.totalPage.value != 0,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Center(
+                      child: ReusablePagination(
+                        nextPage: controller.nextPage,
+                        prevPage: controller.prevPage,
+                        currentPage: controller.currentPage,
+                        totalPage: controller.totalPage,
+                        goToPage: controller.goToPage,
+                      ),
+                    ),
+                  ),
+                ),
                 SizedBox(height: 32),
 
                 // Bimbel section

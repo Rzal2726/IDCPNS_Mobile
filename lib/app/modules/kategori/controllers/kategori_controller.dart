@@ -63,6 +63,39 @@ class KategoriController extends GetxController {
     super.onClose();
   }
 
+  void goToPage(int page) {
+    if (page >= 1 && page <= totalPage.value) {
+      currentPage.value = page;
+      fetchPaketTryout(
+        page: currentPage.value,
+        search: paketTextController.text,
+      );
+      // panggil API fetch data di sini jika perlu
+    }
+  }
+
+  void nextPage() {
+    if (currentPage.value < totalPage.value) {
+      currentPage.value++;
+      fetchPaketTryout(
+        page: currentPage.value,
+        search: paketTextController.text,
+      );
+      // panggil API fetch data di sini
+    }
+  }
+
+  void prevPage() {
+    if (currentPage.value > 1) {
+      currentPage.value--;
+      fetchPaketTryout(
+        page: currentPage.value,
+        search: paketTextController.text,
+      );
+      // panggil API fetch data di sini
+    }
+  }
+
   Future<void> initKategori() async {
     categoryId = await Get.arguments;
     await getKategori();

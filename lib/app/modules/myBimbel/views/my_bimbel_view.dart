@@ -363,7 +363,7 @@ void showBimbelBottomSheet(BuildContext context) {
                                   controller.selectedKategoriId.value =
                                       option['id'];
                                   controller.selectedEventKategori.value =
-                                      option['name'];
+                                      option['menu'];
                                 },
                               );
                             }).toList(),
