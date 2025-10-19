@@ -214,7 +214,7 @@ class DetailEventView extends GetView<DetailEventController> {
                             } else {
                               Get.toNamed(
                                 "/tryout-event-payment",
-                                arguments: controller.uuid,
+                                arguments: [controller.uuid, ''],
                               );
                             }
                           },

@@ -5,7 +5,9 @@ import 'package:get_storage/get_storage.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/data/rest_client_provider.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
+import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TryoutEventPaymentController extends GetxController {
   //TODO: Implement TryoutPaymentController
@@ -13,9 +15,12 @@ class TryoutEventPaymentController extends GetxController {
   final restClient = RestClient();
 
   late String uuid;
+  late String transactionid;
 
   final voucherController = TextEditingController();
   final ovoNumController = TextEditingController();
+  final box = GetStorage();
+
   RxMap<String, dynamic> selectedPaymentMethod = <String, dynamic>{}.obs;
   RxMap<String, dynamic> transactionData = <String, dynamic>{}.obs;
   RxList<int> itemsId = <int>[].obs;
@@ -65,10 +70,13 @@ class TryoutEventPaymentController extends GetxController {
 
   Future<void> startInit() async {
     loading['bayar'] = true;
-    uuid = await Get.arguments;
+    uuid = await Get.arguments[0];
+    transactionid = await Get.arguments[1];
+    print("argumens: ${Get.arguments}");
     await fetchDetailTryout();
     // await fetchDetailTryoutEvent();
     // await fetchDetailTryoutOther();
+    await getPromoCodeFromStorage();
     await fetchListPayment();
     loading['bayar'] = false;
   }
@@ -244,6 +252,7 @@ class TryoutEventPaymentController extends GetxController {
         return;
       }
       final payload = {
+        "uuid": transactionid,
         "type": "tryout",
         "total_amount": totalHarga.value,
         "amount_diskon": diskon.value,
@@ -265,40 +274,67 @@ class TryoutEventPaymentController extends GetxController {
         url: baseUrl + apiCreatePayment,
         payload: payload,
       );
-      print(payload);
+
+      print(transactionid);
 
       final Map<String, dynamic> data = Map<String, dynamic>.from(
         response['data'],
       );
       transactionData.assignAll(data);
-      Get.offNamed("/tryout-checkout", arguments: data['payment_id']);
+
+      try {
+        if (data.containsKey('invoice_url') && data['invoice_url'] != null) {
+          final String url = data['invoice_url'];
+          final uri = Uri.parse(url);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            debugPrint("Tidak bisa buka link: $url");
+          }
+        }
+      } catch (e) {
+        debugPrint("Error saat buka link: $e");
+      }
+
+      Get.offNamed(
+        Routes.PAYMENT_CHECKOUT,
+        arguments: [data['payment_id'], data['tanggal_kadaluarsa']],
+      );
     } catch (e) {
+      print(e);
       Get.snackbar(
         "Gagal",
-        "Mohon periksa kembali produk yang akan dibeli dan metode pembayaran yang dipilih",
+        "Produk ini sudah tidak tersedia",
         backgroundColor: Colors.pink,
         colorText: Colors.white,
       );
     }
   }
 
-  void countAdmin() {
+  Future<void> countAdmin() async {
     try {
       final raw =
           (selectedPaymentMethod['biaya_admin'] ?? "").toString().trim();
       final paymentTypeId = selectedPaymentMethod['xendit_payment_type_id'];
+      final ppnPercent = double.tryParse(box.read("ppn") ?? "0") ?? 0.0;
 
       if (paymentTypeId == 1) {
         final clean = raw.replaceAll(
           RegExp(r'[^0-9]'),
           "",
         ); // buang titik, Rp, dsb.
-        biayaAdmin.value = double.tryParse(clean) ?? 0;
+        final adminAmount = double.tryParse(clean) ?? 0;
+        final adminWithPPN = adminAmount + (adminAmount * (ppnPercent / 100));
+
+        biayaAdmin.value = adminWithPPN;
       } else {
         // percentage (contoh: "2.7%")
         final clean = raw.replaceAll("%", "").trim();
         final persen = double.tryParse(clean) ?? 0;
-        biayaAdmin.value = totalHarga.value.toDouble() * (persen / 100);
+        final adminAmount = totalHarga.value.toDouble() * (persen / 100);
+        final adminWithPPN = adminAmount + (adminAmount * (ppnPercent / 100));
+
+        biayaAdmin.value = adminWithPPN;
       }
     } catch (e, stack) {
       print(e);
@@ -322,5 +358,13 @@ class TryoutEventPaymentController extends GetxController {
 
   void initHarga() {
     totalHarga.value = (biayaAdmin.value + harga.value - diskon.value);
+  }
+
+  Future<void> getPromoCodeFromStorage() async {
+    String storedValue = box.read('userAfi') ?? "";
+
+    if (storedValue.isEmpty) return;
+
+    applyCode(storedValue);
   }
 }

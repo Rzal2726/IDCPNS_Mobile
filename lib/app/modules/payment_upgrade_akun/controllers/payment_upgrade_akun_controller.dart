@@ -6,6 +6,7 @@ import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/providers/rest_client.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PaymentUpgradeAkunController extends GetxController {
   //TODO: Implement PaymentUpgradeAkunController
@@ -253,6 +254,21 @@ class PaymentUpgradeAkunController extends GetxController {
       response['data'],
     );
     transactionData.assignAll(data);
+
+    try {
+      if (data.containsKey('invoice_url') && data['invoice_url'] != null) {
+        final String url = data['invoice_url'];
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          debugPrint("Tidak bisa buka link: $url");
+        }
+      }
+    } catch (e) {
+      debugPrint("Error saat buka link: $e");
+    }
+
     Get.offNamed(
       Routes.PAYMENT_CHECKOUT,
       arguments: [data['payment_id'], data['tanggal_kadaluarsa']],
