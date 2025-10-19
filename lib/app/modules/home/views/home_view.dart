@@ -13,12 +13,7 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Obx(
-        () => IndexedStack(
-          index: controller.tabIndex.value,
-          children: controller.pages,
-        ),
-      ),
+      body: Obx(() => controller.pages[controller.tabIndex.value]),
 
       bottomNavigationBar: Obx(
         () => Container(

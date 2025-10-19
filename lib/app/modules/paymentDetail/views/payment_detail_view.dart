@@ -722,16 +722,16 @@ void showPaymentBottomSheet(BuildContext context) {
                                             .metodePembayaran
                                             .value = (method['code'] ?? '')
                                             .replaceAll('_', ' ');
+                                        controller.paymentSelected(
+                                          id: method['id'],
+                                          methode: method['code'],
+                                          name: method['name'],
+                                          type: data['code'],
+                                          image: method['image_url'],
+                                        );
+
                                         if (method['code'] == "OVO") {
                                           showPhoneNumberBottomSheet(context);
-                                        } else {
-                                          controller.paymentSelected(
-                                            id: method['id'],
-                                            methode: method['code'],
-                                            name: method['name'],
-                                            type: data['code'],
-                                            image: method['image_url'],
-                                          );
                                         }
                                       },
                                     ),

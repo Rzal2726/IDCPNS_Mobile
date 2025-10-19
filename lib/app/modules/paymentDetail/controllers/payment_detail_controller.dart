@@ -271,11 +271,16 @@ class PaymentDetailController extends GetxController {
   }
 
   Future<void> getAddOvoNumber() async {
-    String text = ovoController.text.trim();
+    String text = ovoController.text.trim().replaceAll(' ', '');
+    print("xsad ${text}");
+    if (text.startsWith('+62')) {
+      ovoNumber.value = text;
+      return;
+    }
 
     if (text.startsWith('0')) {
-      text = text.replaceFirst('0', '+62 ');
-    } else if (!text.startsWith('+62')) {
+      text = text.replaceFirst('0', '+62');
+    } else {
       text = '+62 $text';
     }
 
@@ -297,6 +302,7 @@ class PaymentDetailController extends GetxController {
       "type": type,
       "image": image,
     };
+
     paymentMethod.value = methode;
     paymentMethodId.value = id;
     paymentType.value = type;
@@ -319,7 +325,7 @@ class PaymentDetailController extends GetxController {
       "payment_method_id": paymentMethodId.value,
       "payment_method": paymentMethod.value,
       "payment_type": paymentType.value,
-      "mobile_number": "+62${ovoNumber.value}",
+      "mobile_number": ovoNumber.value.replaceAll(' ', ''),
     };
 
     print("xxxds${payload.toString()}");

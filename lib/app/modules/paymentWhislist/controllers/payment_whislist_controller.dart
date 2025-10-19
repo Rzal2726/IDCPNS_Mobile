@@ -292,11 +292,16 @@ class PaymentWhislistController extends GetxController {
   }
 
   Future<void> getAddOvoNumber() async {
-    String text = ovoController.text.trim();
+    String text = ovoController.text.trim().replaceAll(' ', '');
+
+    if (text.startsWith('+62')) {
+      ovoNumber.value = text;
+      return;
+    }
 
     if (text.startsWith('0')) {
-      text = text.replaceFirst('0', '+62 ');
-    } else if (!text.startsWith('+62')) {
+      text = text.replaceFirst('0', '+62');
+    } else {
       text = '+62 $text';
     }
 
@@ -317,7 +322,7 @@ class PaymentWhislistController extends GetxController {
       "payment_method_id": paymentMethodId.value,
       "payment_method": paymentMethod.value,
       "payment_type": paymentType.value,
-      "mobile_number": ovoNumber.value,
+      "mobile_number": ovoNumber.value.replaceAll(' ', ''),
     };
     print("xxx${payload.toString()}");
 

@@ -34,6 +34,7 @@ class DashboardView extends GetView<DashboardController> {
       onPopInvoked: (didPop) async {
         if (!didPop) {
           final homeC = Get.find<HomeController>();
+          print("xvb ${homeC.currentIndex.value.toString()}");
           if (homeC.currentIndex.value == 0) {
             final keluar = await showExitDialog(context);
             if (keluar) {

@@ -94,7 +94,7 @@ class DetailMyBimbelController extends GetxController {
     final result = await _restClient.getData(url: url);
 
     // cek status dulu, kalau success lanjut
-    if (result["status"] == "success") {
+    if (result["status"] == "success") {  
       // paketBimbelData.value = result;
       await getOtherBimbel(parentId: result['data']['bimbel_parent_id']);
 
