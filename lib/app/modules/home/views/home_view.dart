@@ -14,7 +14,6 @@ class HomeView extends GetView<HomeController> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Obx(() => controller.pages[controller.tabIndex.value]),
-
       bottomNavigationBar: Obx(
         () => Container(
           decoration: BoxDecoration(

@@ -117,6 +117,7 @@ class WishlistView extends GetView<WishlistController> {
                                             ?.toString(),
                                     produk:
                                         controller.selectedEventProduct.value,
+                                    search: controller.searchController.text,
                                   );
                                 },
                               );

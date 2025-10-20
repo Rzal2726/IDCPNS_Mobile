@@ -1,14 +1,17 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
 import 'package:idcpns_mobile/app/Components/widgets/converts.dart';
+import 'package:idcpns_mobile/app/Components/widgets/exitDialog.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/Components/widgets/searchWithButton.dart';
 import 'package:idcpns_mobile/app/modules/detail_tryout_saya/controllers/detail_tryout_saya_controller.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -37,9 +40,19 @@ class TryoutView extends GetView<TryoutController> {
     ''';
     return PopScope(
       canPop: false, // biar kita yang kontrol back nya
-      onPopInvoked: (didPop) {
+      onPopInvoked: (didPop) async {
         if (!didPop) {
-          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
+          final homeC = Get.find<HomeController>();
+          print("kkk ${homeC.currentIndex.value.toString()}");
+          if (homeC.currentIndex.value == 0) {
+            final keluar = await showExitDialog(context);
+            if (keluar) {
+              SystemNavigator.pop();
+            }
+          } else {
+            homeC.changeBottomBar(0);
+            homeC.currentIndex.value = 0;
+          }
         }
       },
       child: Scaffold(

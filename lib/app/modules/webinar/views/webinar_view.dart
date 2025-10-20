@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:idcpns_mobile/app/Components/widgets/appBarCotume.dart';
+import 'package:idcpns_mobile/app/Components/widgets/menuCategoryFilter.dart';
 import 'package:idcpns_mobile/app/Components/widgets/paginationWidget.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:intl/intl.dart';
@@ -31,140 +32,169 @@ class WebinarView extends GetView<WebinarController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.white,
-                        ),
-                        iconAlignment: IconAlignment.end,
-                        onPressed: () {
-                          showModalBottomSheet(
-                            useSafeArea: false,
+                      GestureDetector(
+                        onTap: () {
+                          showChoiceBottomSheet(
                             context: context,
-                            builder: (ctx) {
-                              return StatefulBuilder(
-                                builder: (context, setState) {
-                                  return SafeArea(
-                                    child: Container(
-                                      color: Colors.white,
-                                      padding: EdgeInsets.all(16),
-                                      child: Column(
-                                        mainAxisSize:
-                                            MainAxisSize
-                                                .min, // biar bottomsheet menyesuaikan isi
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            "Kategori",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-
-                                          Obx(
-                                            () => Wrap(
-                                              spacing: 8,
-                                              children:
-                                                  controller.categoryList.map((
-                                                    option,
-                                                  ) {
-                                                    final isSelected =
-                                                        controller
-                                                            .selectedKategori
-                                                            .value ==
-                                                        option['id'].toString();
-                                                    return ChoiceChip(
-                                                      label: Text(
-                                                        option['menu'],
-                                                        style: TextStyle(
-                                                          color:
-                                                              isSelected
-                                                                  ? Colors.teal
-                                                                  : Colors
-                                                                      .grey[700],
-                                                          fontWeight:
-                                                              isSelected
-                                                                  ? FontWeight
-                                                                      .bold
-                                                                  : FontWeight
-                                                                      .normal,
-                                                        ),
-                                                      ),
-                                                      selected: isSelected,
-                                                      selectedColor: Colors.teal
-                                                          .withOpacity(0.1),
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      shape: RoundedRectangleBorder(
-                                                        side: BorderSide(
-                                                          color:
-                                                              isSelected
-                                                                  ? Colors.teal
-                                                                  : Colors
-                                                                      .grey
-                                                                      .shade400,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              6,
-                                                            ),
-                                                      ),
-                                                      onSelected: (value) {
-                                                        controller
-                                                            .selectedKategori
-                                                            .value = option['id']
-                                                                .toString();
-                                                      },
-                                                    );
-                                                  }).toList(),
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 12),
-                                          SizedBox(
-                                            width: double.infinity,
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors.teal, // warna tombol
-                                                foregroundColor:
-                                                    Colors
-                                                        .white, // warna teks/icon
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 12,
-                                                    ),
-                                              ),
-                                              onPressed: () {
-                                                controller.getWebinar();
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text("Cari"),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
+                            title: "Kategori",
+                            options: controller.options,
+                            selectedValue: controller.selectedKategoriId,
+                            onSelected: (id) {
+                              final selectedOption = controller.options
+                                  .firstWhere((o) => o['id'] == id);
+                              controller.selectedEventKategori.value =
+                                  selectedOption['menu'];
+                            },
+                            onSubmit: () {
+                              controller.getWebinar();
                             },
                           );
                         },
-                        label: Text(
-                          "Filter",
-                          style: TextStyle(color: Colors.teal),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Filter',
+                              style: TextStyle(color: Colors.teal),
+                            ),
+                            Icon(Icons.keyboard_arrow_down, color: Colors.teal),
+                          ],
                         ),
-                        icon: Icon(Icons.arrow_drop_down, color: Colors.teal),
                       ),
+                      // ElevatedButton.icon(
+                      //   style: ElevatedButton.styleFrom(
+                      //     elevation: 0,
+                      //     backgroundColor: Colors.white,
+                      //   ),
+                      //   iconAlignment: IconAlignment.end,
+                      //   onPressed: () {
+                      //     showModalBottomSheet(
+                      //       useSafeArea: false,
+                      //       context: context,
+                      //       builder: (ctx) {
+                      //         return StatefulBuilder(
+                      //           builder: (context, setState) {
+                      //             return SafeArea(
+                      //               child: Container(
+                      //                 color: Colors.white,
+                      //                 padding: EdgeInsets.all(16),
+                      //                 child: Column(
+                      //                   mainAxisSize:
+                      //                       MainAxisSize
+                      //                           .min, // biar bottomsheet menyesuaikan isi
+                      //                   crossAxisAlignment:
+                      //                       CrossAxisAlignment.start,
+                      //                   children: [
+                      //                     const Text(
+                      //                       "Kategori",
+                      //                       style: TextStyle(
+                      //                         fontSize: 16,
+                      //                         fontWeight: FontWeight.bold,
+                      //                       ),
+                      //                     ),
+                      //                     const SizedBox(height: 8),
+                      //
+                      //                     Obx(
+                      //                       () => Wrap(
+                      //                         spacing: 8,
+                      //                         children:
+                      //                             controller.categoryList.map((
+                      //                               option,
+                      //                             ) {
+                      //                               final isSelected =
+                      //                                   controller
+                      //                                       .selectedKategori
+                      //                                       .value ==
+                      //                                   option['id'].toString();
+                      //                               return ChoiceChip(
+                      //                                 label: Text(
+                      //                                   option['menu'],
+                      //                                   style: TextStyle(
+                      //                                     color:
+                      //                                         isSelected
+                      //                                             ? Colors.teal
+                      //                                             : Colors
+                      //                                                 .grey[700],
+                      //                                     fontWeight:
+                      //                                         isSelected
+                      //                                             ? FontWeight
+                      //                                                 .bold
+                      //                                             : FontWeight
+                      //                                                 .normal,
+                      //                                   ),
+                      //                                 ),
+                      //                                 selected: isSelected,
+                      //                                 selectedColor: Colors.teal
+                      //                                     .withOpacity(0.1),
+                      //                                 backgroundColor:
+                      //                                     Colors.white,
+                      //                                 shape: RoundedRectangleBorder(
+                      //                                   side: BorderSide(
+                      //                                     color:
+                      //                                         isSelected
+                      //                                             ? Colors.teal
+                      //                                             : Colors
+                      //                                                 .grey
+                      //                                                 .shade400,
+                      //                                   ),
+                      //                                   borderRadius:
+                      //                                       BorderRadius.circular(
+                      //                                         6,
+                      //                                       ),
+                      //                                 ),
+                      //                                 onSelected: (value) {
+                      //                                   controller
+                      //                                       .selectedKategori
+                      //                                       .value = option['id']
+                      //                                           .toString();
+                      //                                 },
+                      //                               );
+                      //                             }).toList(),
+                      //                       ),
+                      //                     ),
+                      //
+                      //                     const SizedBox(height: 12),
+                      //                     SizedBox(
+                      //                       width: double.infinity,
+                      //                       child: ElevatedButton(
+                      //                         style: ElevatedButton.styleFrom(
+                      //                           backgroundColor:
+                      //                               Colors.teal, // warna tombol
+                      //                           foregroundColor:
+                      //                               Colors
+                      //                                   .white, // warna teks/icon
+                      //                           shape: RoundedRectangleBorder(
+                      //                             borderRadius:
+                      //                                 BorderRadius.circular(8),
+                      //                           ),
+                      //                           padding:
+                      //                               const EdgeInsets.symmetric(
+                      //                                 horizontal: 24,
+                      //                                 vertical: 12,
+                      //                               ),
+                      //                         ),
+                      //                         onPressed: () {
+                      //                           controller.getWebinar();
+                      //                           Navigator.pop(context);
+                      //                         },
+                      //                         child: const Text("Cari"),
+                      //                       ),
+                      //                     ),
+                      //                   ],
+                      //                 ),
+                      //               ),
+                      //             );
+                      //           },
+                      //         );
+                      //       },
+                      //     );
+                      //   },
+                      //   label: Text(
+                      //     "Filter",
+                      //     style: TextStyle(color: Colors.teal),
+                      //   ),
+                      //   icon: Icon(Icons.arrow_drop_down, color: Colors.teal),
+                      // ),
                     ],
                   ),
                   Obx(() {

@@ -96,6 +96,7 @@ class MyBimbelView extends GetView<MyBimbelController> {
                                     menuCategoryId:
                                         controller.selectedKategoriId.value
                                             ?.toString(),
+                                    search: controller.searchController.text,
                                   );
                                 },
                               ),

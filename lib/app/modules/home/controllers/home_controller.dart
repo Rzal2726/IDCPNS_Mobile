@@ -60,12 +60,31 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
+  Widget _buildPage(int index) {
+    switch (index) {
+      case 0:
+        return DashboardView(key: UniqueKey());
+      case 1:
+        return TryoutView(key: UniqueKey());
+      case 2:
+        return BimbelView(key: UniqueKey());
+      case 3:
+        return PlatinumZoneView(key: UniqueKey());
+      case 4:
+        return AccountView(key: UniqueKey());
+      default:
+        return DashboardView(key: UniqueKey());
+    }
+  }
+
   void changeBottomBar(int index) {
     tabIndex.value = index;
+    pages[index] = _buildPage(index);
   }
 
   void changePage(int index) {
     currentIndex.value = index;
+    pages[index] = _buildPage(index);
   }
 
   /// Fungsi ini dipanggil saat ingin langsung ke tab pertama

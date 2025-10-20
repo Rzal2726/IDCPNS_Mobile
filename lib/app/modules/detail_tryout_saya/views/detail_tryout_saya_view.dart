@@ -764,7 +764,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                                           Navigator.pop(
                                                             context,
                                                           );
-                                                          Get.offNamed(
+                                                          Get.toNamed(
                                                             "/detail-pengerjaan-tryout",
                                                           );
                                                           controller

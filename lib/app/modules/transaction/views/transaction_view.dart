@@ -80,14 +80,7 @@ class TransactionView extends GetView<TransactionController> {
                                     controller.startDateController.clear();
 
                                     // Panggil API hanya dengan status
-                                    controller.getTransaction(
-                                      // page: controller.currentPage.value,
-                                      // search: "",
-                                      status: status,
-                                      // date: controller.startDateController.text,
-                                      // endDate:
-                                      //     controller.endDateController.text,
-                                    );
+                                    controller.getTransaction(status: status);
                                   },
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
@@ -431,11 +424,11 @@ Future<void> _openInvoice(Map<String, dynamic> trx) async {
 void showTransactionFilterBottomSheet(BuildContext context) {
   final controller = Get.put(TransactionController());
 
-  final DateTime today = DateTime.now();
-  controller.endDateController.text =
-      "${today.day.toString().padLeft(2, '0')}/"
-      "${today.month.toString().padLeft(2, '0')}/"
-      "${today.year}";
+  // final DateTime today = DateTime.now();
+  // controller.endDateController.text =
+  //     "${today.day.toString().padLeft(2, '0')}/"
+  //     "${today.month.toString().padLeft(2, '0')}/"
+  //     "${today.year}";
 
   showModalBottomSheet(
     context: context,
@@ -501,13 +494,12 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                                 "${pickedDate.day.toString().padLeft(2, '0')}/"
                                 "${pickedDate.month.toString().padLeft(2, '0')}/"
                                 "${pickedDate.year}";
-
-                            // ⬇️ Reset endDate di sini
-                            controller.endDateController.text =
-                                "${DateTime.now().day.toString().padLeft(2, '0')}/"
-                                "${DateTime.now().month.toString().padLeft(2, '0')}/"
-                                "${DateTime.now().year}";
-                            // atau kalau mau kosong aja:
+                            //
+                            // controller.endDateController.text =
+                            //     "${DateTime.now().day.toString().padLeft(2, '0')}/"
+                            //     "${DateTime.now().month.toString().padLeft(2, '0')}/"
+                            //     "${DateTime.now().year}";
+                            // // atau kalau mau kosong aja:
                             controller.endDateController.clear();
                           });
                         }
@@ -526,7 +518,7 @@ void showTransactionFilterBottomSheet(BuildContext context) {
                       decoration: InputDecoration(
                         hintText:
                             controller.startDateController.text.isEmpty
-                                ? "Pilih tanggal mulai dulu"
+                                ? "Pilih tanggal mulai dahulu"
                                 : "Pilih Tanggal",
                         suffixIcon: Icon(Icons.calendar_today),
                         border: OutlineInputBorder(

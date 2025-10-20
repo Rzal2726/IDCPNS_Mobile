@@ -15,31 +15,179 @@ class PengerjaanTryoutHarianView
   @override
   Widget build(BuildContext context) {
     Future<bool> _onWillPop(BuildContext context) async {
-      bool? exitApp = await showDialog(
+      bool? exitApp = await showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
         context: context,
-        builder:
-            (context) => AlertDialog(
-              backgroundColor: Colors.white,
-              title: const Text('Konfirmasi'),
-              content: const Text(
-                "Apakah kamu yakin ingin kembali?\nProgres tryout yang belum selesai akan hilang.",
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Batal'),
+        builder: (context) {
+          return Obx(
+            () => SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 16,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
                 ),
-                ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
-                  child: const Text(
-                    'Ya',
-                    style: TextStyle(color: Colors.white),
+                child: SingleChildScrollView(
+                  child: Column(
+                    spacing: 12,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: 250,
+                            child: Text(
+                              "Apakah kamu yakin ingin menyelesaikan tryout?",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(Icons.close),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Total Soal"),
+                          Text(
+                            "${controller.soalList.length.toString()} Soal",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Terjawab"),
+                          Text(
+                            "${controller.selectedAnswersList.where((answer) => answer['lathar_soal_option_id'] != 0).length.toString()} Soal",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Tidak Terjawab"),
+                          Text(
+                            "${(controller.selectedAnswersList.where((answer) => answer['lathar_soal_option_id'] == 0).length).toString()} Soal",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Ditandai"),
+                          Text(
+                            "${(controller.markedList.length).toString()} Soal",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor:
+                                    Colors.black, // warna teks/icon
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                "Cek Kembali",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12), // jarak antar tombol
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.teal, // warna tombol kedua
+                                foregroundColor:
+                                    Colors.white, // warna teks/icon
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                              ),
+                              onPressed: () async {
+                                await controller.submitSoal();
+                              },
+                              child: const Text(
+                                "Kirim Jawaban",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
+          );
+        },
       );
+      // showDialog(
+      //   context: context,
+      //   builder:
+      //       (context) => AlertDialog(
+      //         backgroundColor: Colors.white,
+      //         title: const Text('Konfirmasi'),
+      //         content: const Text(
+      //           "Apakah kamu yakin ingin kembali?\nProgres tryout yang belum selesai akan hilang.",
+      //         ),
+      //         actions: [
+      //           TextButton(
+      //             onPressed: () => Navigator.of(context).pop(false),
+      //             child: const Text('Batal'),
+      //           ),
+      //           ElevatedButton(
+      //             onPressed: () => Navigator.of(context).pop(true),
+      //             style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
+      //             child: const Text(
+      //               'Ya',
+      //               style: TextStyle(color: Colors.white),
+      //             ),
+      //           ),
+      //         ],
+      //       ),
+      // );
 
       return exitApp ?? false; // false = jangan keluar
     }

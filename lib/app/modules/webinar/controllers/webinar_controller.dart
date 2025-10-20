@@ -8,6 +8,9 @@ class WebinarController extends GetxController {
 
   final count = 0.obs;
   final restClient = RestClient();
+  final options = <Map<String, dynamic>>[].obs;
+  RxInt selectedKategoriId = 0.obs; // RxnInt karena bisa null
+  RxString selectedEventKategori = "Semua".obs;
   RxMap<String, bool> loading = <String, bool>{}.obs;
   RxMap<String, Color> categoryColor =
       <String, Color>{
@@ -21,7 +24,7 @@ class WebinarController extends GetxController {
         {"menu": "Semua", "id": ""},
       ].obs;
   RxList<Map<String, dynamic>> webinarList = <Map<String, dynamic>>[].obs;
-  RxString selectedKategori = "".obs;
+  // RxString selectedKategori = "".obs;
   RxInt currentPage = 1.obs;
   RxInt totalPage = 1.obs;
   RxInt perPage = 5.obs;
@@ -69,6 +72,7 @@ class WebinarController extends GetxController {
   Future<void> initEbook() async {
     await getWebinar();
     await getCategoryList();
+    await getKategori();
   }
 
   Future<void> checkMaintenance() async {
@@ -84,7 +88,7 @@ class WebinarController extends GetxController {
     loading['webinar'] = true;
     final payload = {
       "perpage": perPage.value,
-      "menu_category_id": selectedKategori.value,
+      "menu_category_id": selectedKategoriId.value,
     };
     final response = await restClient.postData(
       url:
@@ -99,6 +103,29 @@ class WebinarController extends GetxController {
     totalPage.value = (dataPage['total'] / perPage.value as double).ceil();
     webinarList.assignAll(dataList);
     loading['webinar'] = false;
+  }
+
+  Future<void> getKategori() async {
+    try {
+      final url = baseUrl + apiGetKategori;
+      final result = await restClient.getData(url: url);
+
+      if (result["status"] == "success") {
+        final data =
+            (result['data'] as List)
+                .map((e) => {"id": e['id'], "menu": e['menu']})
+                .toList();
+
+        // Tambahin opsi "Semua" di paling atas, id = "0"
+        options.assignAll([
+          {"id": 0, "menu": "Semua"},
+          ...data,
+        ]);
+        print("XXX ${options.toString()}");
+      }
+    } catch (e) {
+      print("Error getKategori: $e");
+    }
   }
 
   Future<void> getCategoryList() async {

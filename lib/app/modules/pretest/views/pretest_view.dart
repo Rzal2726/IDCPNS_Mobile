@@ -19,7 +19,159 @@ class PretestView extends GetView<PretestController> {
       canPop: false, // biar kita handle pop sendiri
       onPopInvoked: (didPop) async {
         if (didPop) return;
-        final confirm = await showExitDialog(context);
+        final confirm = await showModalBottomSheet(
+          isScrollControlled: true,
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          context: context,
+          builder: (context) {
+            return SafeArea(
+              child: RefreshIndicator(
+                color: Colors.teal,
+                backgroundColor: Colors.white,
+                onRefresh: () => controller.refresh(),
+                child: Obx(
+                  () => Padding(
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 16,
+                      bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                    ),
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        spacing: 12,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(
+                                width: 250,
+                                child: Text(
+                                  "Apakah kamu yakin ingin menyelesaikan bimbel?",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  softWrap: true,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: Icon(Icons.close),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Total Soal"),
+                              Text(
+                                "${controller.soalList.length.toString()} Soal",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Terjawab"),
+                              Text(
+                                "${controller.selectedAnswersList.where((answer) => answer['pretest_soal_option_id'] != 0).length.toString()} Soal",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Tidak Terjawab"),
+                              Text(
+                                "${(controller.soalList.length - controller.selectedAnswersList.where((answer) => answer['pretest_soal_option_id'] != 0).length).toString()} Soal",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Ditandai"),
+                              Text(
+                                "${(controller.markedList.length).toString()} Soal",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor:
+                                        Colors.black, // warna teks/icon
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: EdgeInsets.symmetric(vertical: 14),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "Cek Kembali",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 12), // jarak antar tombol
+                              Expanded(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Colors.teal, // warna tombol kedua
+                                    foregroundColor:
+                                        Colors.white, // warna teks/icon
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: EdgeInsets.symmetric(vertical: 14),
+                                  ),
+                                  onPressed: () async {
+                                    await controller.submitSoal();
+                                  },
+                                  child: Text(
+                                    "Kirim Jawaban",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
         if (confirm) {
           Navigator.of(context).pop(); // keluar halaman
         }

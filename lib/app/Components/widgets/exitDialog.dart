@@ -100,3 +100,29 @@ Future<bool> showLogoutDialog(BuildContext context) async {
   );
   return result ?? false;
 }
+
+Future<bool> showExitDialogPretest(BuildContext context) async {
+  final result = await showDialog(
+    context: context,
+    builder:
+        (context) => AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text('Konfirmasi'),
+          content: const Text(
+            "Apakah kamu yakin ingin kembali?\nProgres tryout yang belum selesai akan hilang.",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
+              child: const Text('Ya', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+  );
+  return result ?? false;
+}

@@ -235,7 +235,7 @@ class PretestTourController extends GetxController {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 80.0),
               child: const Text(
-                "Menampilkan sisa durasi pengerjaan tryout.",
+                "Menampilkan sisa durasi pengerjaan Bimbel.",
                 style: TextStyle(color: Colors.white, fontSize: 18),
               ),
             ),

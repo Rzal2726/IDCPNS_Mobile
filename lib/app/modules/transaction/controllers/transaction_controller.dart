@@ -173,13 +173,6 @@ class TransactionController extends GetxController {
     startDateController.clear();
     endDateController.clear();
 
-    // Atur tanggal default (misal hari ini)
-    final today = DateTime.now();
-    endDateController.text =
-        "${today.day.toString().padLeft(2, '0')}/"
-        "${today.month.toString().padLeft(2, '0')}/"
-        "${today.year}";
-
     currentPage.value = 1;
 
     await getTransaction(search: "", page: 1, date: "", status: "");

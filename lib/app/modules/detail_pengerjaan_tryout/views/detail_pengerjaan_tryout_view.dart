@@ -135,7 +135,7 @@ class DetailPengerjaanTryoutView
                                   ),
                                 ),
                                 onPressed: () {
-                                  Get.offNamed(
+                                  Get.toNamed(
                                     "/pengerjaan-tryout",
                                     arguments:
                                         controller.prevController.uuid.value,

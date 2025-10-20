@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:idcpns_mobile/app/Components/widgets/exitDialog.dart';
+import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:idcpns_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -12,138 +15,156 @@ class PlatinumZoneView extends GetView<PlatinumZoneController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(400),
-        child: basicAppBar(),
-      ),
-      backgroundColor: Colors.white,
-      body: RefreshIndicator(
-        backgroundColor: Colors.white,
-        color: Colors.teal,
-        onRefresh: () => controller.init(),
-        child: Obx(() {
-          if (controller.loading.value) {
-            return Skeletonizer(
-              child: Container(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  children: [
-                    SizedBox(width: double.infinity, child: _expireCard()),
-                    const SizedBox(height: 16),
-                    _menuCard(
-                      imageurl: "assets/video_series.png",
-                      title: "Video Series",
-                      routeName: "/video-series",
-                      bgColor: const Color.fromARGB(255, 255, 222, 211),
-                    ),
-                    _menuCard(
-                      imageurl: "assets/video_series.png",
-                      title: "Video Series",
-                      routeName: "/video-series",
-                      bgColor: const Color.fromARGB(255, 255, 182, 246),
-                    ),
-                    _menuCard(
-                      imageurl: "assets/video_series.png",
-                      title: "Video Series",
-                      routeName: "/video-series",
-                      bgColor: const Color.fromARGB(255, 177, 220, 255),
-                    ),
-                    _menuCard(
-                      imageurl: "assets/video_series.png",
-                      title: "Video Series",
-                      routeName: "/video-series",
-                      bgColor: const Color.fromARGB(255, 205, 255, 236),
-                    ),
-                  ],
-                ),
-              ),
-            );
+    return PopScope(
+      canPop: false, // biar kita yang kontrol back nya
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          final homeC = Get.find<HomeController>();
+          print("kkk ${homeC.currentIndex.value.toString()}");
+          if (homeC.currentIndex.value == 0) {
+            final keluar = await showExitDialog(context);
+            if (keluar) {
+              SystemNavigator.pop();
+            }
+          } else {
+            homeC.changeBottomBar(0);
+            homeC.currentIndex.value = 0;
           }
-
-          return Stack(
-            children: [
-              // Menu utama yang bisa di-scroll
-              IgnorePointer(
-                ignoring: controller.userData['level_name'] == "Basic",
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  children: [
-                    SizedBox(width: double.infinity, child: _expireCard()),
-                    _menuCard(
-                      imageurl: "assets/video_series.png",
-                      title: "Video Series",
-                      routeName: "/video-series",
-                      bgColor: const Color.fromARGB(255, 255, 222, 211),
-                    ),
-                    _menuCard(
-                      imageurl: "assets/ebook.png",
-                      title: "E-Book",
-                      routeName: "/e-book",
-                      bgColor: const Color.fromARGB(255, 255, 182, 246),
-                    ),
-                    _menuCard(
-                      imageurl: "assets/tryout_harian.png",
-                      title: "Tryout Harian",
-                      routeName: "/tryout-harian",
-                      bgColor: const Color.fromARGB(255, 177, 220, 255),
-                    ),
-                    _menuCard(
-                      imageurl: "assets/webinar.png",
-                      title: "Webinar",
-                      routeName: "/webinar",
-                      bgColor: const Color.fromARGB(255, 205, 255, 236),
-                    ),
-                  ],
+        }
+      },
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(400),
+          child: basicAppBar(),
+        ),
+        backgroundColor: Colors.white,
+        body: RefreshIndicator(
+          backgroundColor: Colors.white,
+          color: Colors.teal,
+          onRefresh: () => controller.init(),
+          child: Obx(() {
+            if (controller.loading.value) {
+              return Skeletonizer(
+                child: Container(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    children: [
+                      SizedBox(width: double.infinity, child: _expireCard()),
+                      const SizedBox(height: 16),
+                      _menuCard(
+                        imageurl: "assets/video_series.png",
+                        title: "Video Series",
+                        routeName: "/video-series",
+                        bgColor: const Color.fromARGB(255, 255, 222, 211),
+                      ),
+                      _menuCard(
+                        imageurl: "assets/video_series.png",
+                        title: "Video Series",
+                        routeName: "/video-series",
+                        bgColor: const Color.fromARGB(255, 255, 182, 246),
+                      ),
+                      _menuCard(
+                        imageurl: "assets/video_series.png",
+                        title: "Video Series",
+                        routeName: "/video-series",
+                        bgColor: const Color.fromARGB(255, 177, 220, 255),
+                      ),
+                      _menuCard(
+                        imageurl: "assets/video_series.png",
+                        title: "Video Series",
+                        routeName: "/video-series",
+                        bgColor: const Color.fromARGB(255, 205, 255, 236),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              );
+            }
 
-              // Overlay untuk user Basic
-              if (controller.userData['level_name'] == "Basic")
-                Positioned.fill(
-                  child: Container(
-                    color: Colors.black.withOpacity(0.5),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Upgrade akun untuk mengakses platinum zone",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.amber,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
-                              ),
-                            ),
-                            onPressed: () {
-                              Get.toNamed('/upgrade-akun');
-                            },
-                            child: const Text(
-                              "Upgrade Akun",
+            return Stack(
+              children: [
+                // Menu utama yang bisa di-scroll
+                IgnorePointer(
+                  ignoring: controller.userData['level_name'] == "Basic",
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    children: [
+                      SizedBox(width: double.infinity, child: _expireCard()),
+                      _menuCard(
+                        imageurl: "assets/video_series.png",
+                        title: "Video Series",
+                        routeName: "/video-series",
+                        bgColor: const Color.fromARGB(255, 255, 222, 211),
+                      ),
+                      _menuCard(
+                        imageurl: "assets/ebook.png",
+                        title: "E-Book",
+                        routeName: "/e-book",
+                        bgColor: const Color.fromARGB(255, 255, 182, 246),
+                      ),
+                      _menuCard(
+                        imageurl: "assets/tryout_harian.png",
+                        title: "Tryout Harian",
+                        routeName: "/tryout-harian",
+                        bgColor: const Color.fromARGB(255, 177, 220, 255),
+                      ),
+                      _menuCard(
+                        imageurl: "assets/webinar.png",
+                        title: "Webinar",
+                        routeName: "/webinar",
+                        bgColor: const Color.fromARGB(255, 205, 255, 236),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Overlay untuk user Basic
+                if (controller.userData['level_name'] == "Basic")
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Upgrade akun untuk mengakses platinum zone",
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 20),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.amber,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
+                              ),
+                              onPressed: () {
+                                Get.toNamed('/upgrade-akun');
+                              },
+                              child: const Text(
+                                "Upgrade Akun",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
-          );
-        }),
+              ],
+            );
+          }),
+        ),
       ),
     );
   }
