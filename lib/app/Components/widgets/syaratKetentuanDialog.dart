@@ -25,7 +25,8 @@ void showSyaratKetentuanDialog({
             children: [
               OutlinedButton(
                 onPressed: () {
-                  Get.back();
+                  Get.offAllNamed(Routes.HOME, arguments: {'initialIndex': 4});
+                  print("gak setuju");
                   if (onDisagree != null) {
                     onDisagree();
                   }

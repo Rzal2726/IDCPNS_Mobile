@@ -58,13 +58,74 @@ class DashboardView extends GetView<DashboardController> {
             child: Obx(() {
               var data = controller.tryoutRecomHomeData;
               var recoData = controller.recomenData;
+              var dataBanner = controller.noticeBoardData;
               return SingleChildScrollView(
                 padding: AppStyle.sreenPaddingHome,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Highlight Section
-                    SizedBox(height: 8),
+                    Visibility(
+                      visible: dataBanner.isNotEmpty,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.cyan.shade50,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.cyanAccent,
+                            width: 1,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children:
+                              dataBanner.map((item) {
+                                final name = item['name'] ?? '';
+                                final uuid = item['uuid'] ?? '';
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Get.toNamed(
+                                        Routes.DETAIL_BIMBEL,
+                                        arguments: uuid,
+                                      );
+                                    },
+                                    child: Text.rich(
+                                      TextSpan(
+                                        style: const TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 14,
+                                        ),
+                                        children: [
+                                          const TextSpan(text: 'Pendaftaran '),
+                                          TextSpan(
+                                            text: name,
+                                            style: const TextStyle(
+                                              color: Colors.teal,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const TextSpan(
+                                            text: ' Telah Dibuka!',
+                                          ),
+                                        ],
+                                      ),
+                                      softWrap:
+                                          true, // biar teks turun ke baris berikutnya
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15),
                     Text(
                       'Highlight',
                       style: TextStyle(
