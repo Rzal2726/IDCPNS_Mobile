@@ -73,7 +73,7 @@ class DetailBimbelController extends GetxController
     // cek status dulu, kalau success lanjut
     if (result["status"] == "success") {
       paketBimbelData.value = result;
-      await getOtherBimbel(parentId: result['data']['id']);
+      await getOtherBimbel(parentId: result['data']['bimbel_parent_id']);
 
       Get.toNamed(
         Routes.PAYMENT_DETAIL,

@@ -18,7 +18,6 @@ class HomeController extends GetxController {
   RxInt currentIndex = 0.obs;
   RxInt tabIndex = 0.obs;
 
-  // List halaman yang ingin ditampilkan
   final List<Widget> pages = [
     DashboardView(),
     TryoutView(),
@@ -28,31 +27,41 @@ class HomeController extends GetxController {
   ];
 
   @override
-  @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
 
-    // register controller yang dibutuhkan
-    Get.lazyPut(() => AccountController());
-    Get.lazyPut(() => TryoutController());
-    Get.lazyPut(() => BimbelController());
-    Get.lazyPut(() => PlatinumZoneController());
-    Get.lazyPut(() => DashboardController());
+    // Daftarkan controller secara sinkron biar langsung siap sebelum view di-build
+    _registerControllers();
 
-    print("ssada");
+    // Tunggu satu microtask biar register selesai sebelum akses View
+    await Future.delayed(Duration.zero);
 
-    // cek jika ada argument dari route
+    // Ambil argument awal (misal dari route)
     final initialIndex = Get.arguments?['initialIndex'] ?? 0;
-
     tabIndex.value = initialIndex;
     currentIndex.value = initialIndex;
 
-    checkMaintenance();
+    // Cek maintenance status
+    await checkMaintenance();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  void _registerControllers() {
+    // Pake 'fenom' pattern GetX: periksa dulu apakah udah ada baru register
+    if (!Get.isRegistered<DashboardController>()) {
+      Get.lazyPut(() => DashboardController(), fenix: true);
+    }
+    if (!Get.isRegistered<TryoutController>()) {
+      Get.lazyPut(() => TryoutController(), fenix: true);
+    }
+    if (!Get.isRegistered<BimbelController>()) {
+      Get.lazyPut(() => BimbelController(), fenix: true);
+    }
+    if (!Get.isRegistered<PlatinumZoneController>()) {
+      Get.lazyPut(() => PlatinumZoneController(), fenix: true);
+    }
+    if (!Get.isRegistered<AccountController>()) {
+      Get.lazyPut(() => AccountController(), fenix: true);
+    }
   }
 
   @override
@@ -87,18 +96,21 @@ class HomeController extends GetxController {
     pages[index] = _buildPage(index);
   }
 
-  /// Fungsi ini dipanggil saat ingin langsung ke tab pertama
   void goToFirstTab() {
     tabIndex.value = 0;
     currentIndex.value = 0;
   }
 
   Future<void> checkMaintenance() async {
-    final response = await restClient.getData(
-      url: baseUrl + apiCheckMaintenance,
-    );
-    if (response['is_maintenance']) {
-      Get.offAllNamed("/maintenance");
+    try {
+      final response = await restClient.getData(
+        url: baseUrl + apiCheckMaintenance,
+      );
+      if (response['is_maintenance'] == true) {
+        Get.offAllNamed("/maintenance");
+      }
+    } catch (e) {
+      print("Error checking maintenance: $e");
     }
   }
 }

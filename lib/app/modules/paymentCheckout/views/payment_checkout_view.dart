@@ -54,12 +54,27 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
                               fontSize: 20,
                             ),
                           ),
-                          Obx(
-                            () =>
-                                controller.paymentDetails.isEmpty
-                                    ? Skeletonizer(child: Text("00:00:00"))
-                                    : buildCountdown(86400),
-                          ),
+                          Obx(() {
+                            if (controller.paymentDetails.isEmpty) {
+                              return Skeletonizer(child: Text("00:00:00"));
+                            }
+
+                            final expiryString =
+                                controller.paymentDetails['tanggal_kadaluarsa'];
+                            if (expiryString == null) {
+                              return Text("00:00:00");
+                            }
+
+                            final expiryDate =
+                                DateTime.parse(expiryString).toLocal();
+                            final now = DateTime.now();
+                            final remainingSeconds =
+                                expiryDate.difference(now).inSeconds;
+                            final countdownSeconds =
+                                remainingSeconds > 0 ? remainingSeconds : 0;
+
+                            return buildCountdown(countdownSeconds);
+                          }),
                         ],
                       ),
                     ),

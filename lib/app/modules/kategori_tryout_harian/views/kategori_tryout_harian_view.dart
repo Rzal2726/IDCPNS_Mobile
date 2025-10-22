@@ -28,6 +28,9 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
                 controller.categories.isNotEmpty
                     ? secondaryAppBar(
                       "Kategori ${controller.categories.where((f) => f['uuid'] == controller.CategoryUuid).first['menu']}",
+                      onBack: () {
+                        Get.offAllNamed("/tryout-harian");
+                      },
                     )
                     : Skeletonizer(child: secondaryAppBar("Kategori asdssa")),
           ),

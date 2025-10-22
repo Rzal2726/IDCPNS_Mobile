@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:idcpns_mobile/app/Components/widgets/exitDialog.dart';
 import 'package:idcpns_mobile/app/routes/app_pages.dart';
 
 import '../controllers/lengkapi_biodata_controller.dart';
@@ -503,71 +504,7 @@ class LengkapiBiodataView extends GetView<LengkapiBiodataController> {
                                 controller.isLoading.value
                                     ? null // tombol disable kalau loading
                                     : () {
-                                      Get.defaultDialog(
-                                        title: "Konfirmasi Logout",
-                                        middleText:
-                                            "Apakah kamu yakin ingin keluar dari akun?",
-                                        backgroundColor: Colors.white,
-                                        radius: 16,
-                                        titleStyle: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        middleTextStyle: TextStyle(
-                                          color: Colors.grey[800],
-                                          fontSize: 14,
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Get.back();
-                                            },
-                                            child: Text(
-                                              "Batal",
-                                              style: TextStyle(
-                                                color: Colors.grey[600],
-                                                fontSize: 15,
-                                              ),
-                                            ),
-                                          ),
-                                          ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.red,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 18,
-                                                    vertical: 10,
-                                                  ),
-                                            ),
-                                            onPressed: () {
-                                              final box = GetStorage();
-                                              final GoogleSignIn googleSignIn =
-                                                  GoogleSignIn(
-                                                    scopes: ['email'],
-                                                  );
-                                              googleSignIn
-                                                  .disconnect(); // reset session
-                                              googleSignIn.signOut(); // logout
-                                              box.erase();
-                                              Get.offAllNamed(Routes.LOGIN);
-                                              Get.back();
-                                            },
-                                            child: const Text(
-                                              "Keluar",
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
+                                      showLogoutDialogLengkapiBiodata(context);
                                     },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
