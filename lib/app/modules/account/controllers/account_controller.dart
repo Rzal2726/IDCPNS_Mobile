@@ -44,9 +44,9 @@ class AccountController extends GetxController {
   Future<void> logoutAkun() async {
     isLoggingOut.value = true;
     try {
+      print("xvv");
       await box.erase();
 
-      // Coba logout Google tanpa peduli user login pake apa
       try {
         await _googleSignIn.disconnect();
         await _googleSignIn.signOut();

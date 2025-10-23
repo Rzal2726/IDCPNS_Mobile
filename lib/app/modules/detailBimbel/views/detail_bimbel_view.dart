@@ -503,7 +503,9 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                           Widget currentChild;
                           switch (currentIndex) {
                             case 0:
-                              currentChild = Html(data: data['deskripsi_pc']);
+                              currentChild = Html(
+                                data: data['deskripsi_mobile'],
+                              );
                               break;
                             case 1:
                               currentChild = SizedBox(
@@ -546,7 +548,7 @@ class DetailBimbelView extends GetView<DetailBimbelController> {
                               );
                               break;
                             case 2:
-                              currentChild = Html(data: data['faq_pc']);
+                              currentChild = Html(data: data['faq_mobile']);
                               break;
                             default:
                               currentChild = SizedBox();
