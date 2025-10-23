@@ -190,8 +190,7 @@ class DashboardView extends GetView<DashboardController> {
                                     builder: (context, constraints) {
                                       return Image.network(
                                         banner['gambar']!,
-                                        // opsional, agar image sesuai height
-                                        fit: BoxFit.cover, // biar menutupi area
+                                        fit: BoxFit.contain,
                                         loadingBuilder: (
                                           context,
                                           child,

@@ -19,9 +19,9 @@ class LoginController extends GetxController {
   final isLoading = false.obs;
   final isEmailVerified = false.obs;
   GoogleSignInAccount? currentUser;
-  final isPasswordVisible = false.obs;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final isPasswordVisible = false.obs;
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
@@ -144,18 +144,19 @@ class LoginController extends GetxController {
     final result = await _restClient.postData(url: url, payload: payload);
 
     if (result["error"] == false) {
-      final data = result["data"];
-      final user = data["user"];
-      box.write("token", data["access_token"]);
+      final user = result['data']["user"];
+
+      box.write("token", result['data']["access_token"]);
       box.write("levelName", user["level_name"]);
-      box.write("userAfi", user["user_afiliator"]);
       box.write("name", user["name"]);
-      box.write("afiCode", user["kode_afiliasi"] ?? "");
+      box.write("userAfi", user["user_afiliator"]);
+      box.write("afiCode", user["kode_afiliasi"]);
       box.write("afiAgree", user["is_afiliasi_agree"]);
       box.write("idUser", user["id"]);
       box.write("email", user["email"]);
-      box.write("photoProfile", user['profile_image_url'] ?? "");
-      final ppnConfig = (data["sysconf"] as List).firstWhere(
+      box.write("photoProfile", user['profile_image_url']);
+      box.write("isEmailVerified", user["is_email_verified"] ?? false);
+      final ppnConfig = (result["data"]["sysconf"] as List).firstWhere(
         (item) => item["sysconf"] == "PPN",
         orElse: () => {"valueconf": null},
       );
@@ -164,6 +165,8 @@ class LoginController extends GetxController {
         box.write("ppn", ppnConfig["valueconf"]);
         print("PPN disimpan: ${ppnConfig["valueconf"]}");
       }
+      emailController.clear();
+      passwordController.clear();
       // notifHelper.show("Login berhasil!", type: 1);
 
       if (user["is_email_verified"] == true) {

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:idcpns_mobile/app/Components/widgets/notifCostume.dart';
 import 'package:idcpns_mobile/app/constant/api_url.dart';
 import 'package:idcpns_mobile/app/modules/home/controllers/home_controller.dart';
@@ -10,7 +11,9 @@ import 'package:idcpns_mobile/app/routes/app_pages.dart';
 class SplashController extends GetxController {
   final box = GetStorage();
   final _restClient = RestClient(); // pastikan RestClient sudah didefinisikan
+  GoogleSignInAccount? currentUser;
 
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   // final LoginController loginController = Get.put(LoginController());
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -26,14 +29,15 @@ class SplashController extends GetxController {
 
     final email = box.read("email");
     final password = box.read("password");
-
+    print("xcc ${email} ${password}");
     // Kalau email/password kosong atau null, langsung ke LOGIN
-    if (email == null ||
-        password == null ||
-        email.isEmpty ||
-        password.isEmpty) {
-      print("masuk1 ${email} dan ${password}");
+    if (email == null && password == null) {
+      print("Keduanya null: $email dan $password");
       Get.offAllNamed(Routes.LOGIN);
+      return;
+    } else if (password == null && email != null) {
+      print("Password null tapi email ada: $email");
+      handleSignIn();
       return;
     }
 
@@ -43,6 +47,88 @@ class SplashController extends GetxController {
       print("masuk2 ${email} dan ${password}");
       Get.offAllNamed(Routes.LOGIN);
     }
+  }
+
+  Future<void> handleSignIn() async {
+    currentUser = await _googleSignIn.signIn();
+    try {
+      if (currentUser != null) {
+        box.write('name', currentUser!.displayName);
+        box.write('email', currentUser!.email);
+        box.write('id', currentUser!.id);
+        box.write('photo', currentUser!.photoUrl);
+        loginSocmed(currentUser: currentUser!, provider: 1);
+      } else {
+        handleSignOut();
+        Get.offAllNamed(Routes.LOGIN);
+      }
+    } catch (error) {
+      notifHelper.show("Login Google gagal: $error", type: 0);
+    }
+  }
+
+  Future<void> loginSocmed({
+    required GoogleSignInAccount currentUser,
+    required int provider,
+  }) async {
+    final url = baseUrl + apiLogin;
+    final payload = {
+      "username": currentUser.displayName,
+      "email": currentUser.email,
+      "password": currentUser.id,
+      "password_confirmation": currentUser.id,
+      "foto": currentUser.photoUrl,
+      "no_hp": "",
+      "type": "google",
+    };
+
+    final result = await _restClient.postData(url: url, payload: payload);
+
+    if (result["error"] == false) {
+      final user = result['data']["user"];
+
+      box.write("token", result['data']["access_token"]);
+      box.write("levelName", user["level_name"]);
+      box.write("name", user["name"]);
+      box.write("userAfi", user["user_afiliator"]);
+      box.write("afiCode", user["kode_afiliasi"]);
+      box.write("afiAgree", user["is_afiliasi_agree"]);
+      box.write("idUser", user["id"]);
+      box.write("email", user["email"]);
+      box.write("photoProfile", user['profile_image_url']);
+      box.write("isEmailVerified", user["is_email_verified"] ?? false);
+      final ppnConfig = (result["data"]["sysconf"] as List).firstWhere(
+        (item) => item["sysconf"] == "PPN",
+        orElse: () => {"valueconf": null},
+      );
+
+      if (ppnConfig["valueconf"] != null) {
+        box.write("ppn", ppnConfig["valueconf"]);
+        print("PPN disimpan: ${ppnConfig["valueconf"]}");
+      }
+      emailController.clear();
+      passwordController.clear();
+      // notifHelper.show("Login berhasil!", type: 1);
+
+      if (user["is_email_verified"] == true) {
+        if (user['user_status_id'] == 2) {
+          Get.toNamed(Routes.LENGKAPI_BIODATA);
+        } else {
+          Get.toNamed(Routes.HOME, arguments: {'initialIndex': 0});
+        }
+      } else {
+        Get.toNamed(Routes.EMAIL_VERIFICATION);
+      }
+    } else {
+      final message = result["message"] ?? "Login sosial media gagal.";
+      notifHelper.show(message, type: 0);
+      _googleSignIn.disconnect();
+      _googleSignIn.signOut();
+    }
+  }
+
+  Future<void> handleSignOut() async {
+    _googleSignIn.disconnect();
   }
 
   Future<bool> login() async {
