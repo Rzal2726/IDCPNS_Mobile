@@ -46,7 +46,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                             "Bayar Sebelum",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 18,
                             ),
                           ),
                           Obx(
@@ -127,7 +127,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                                               "",
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                                            fontSize: 18,
                                             color: Colors.teal,
                                           ),
                                         ),
@@ -164,7 +164,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                                     )
                                     : Text(
                                       controller.paymentDetails['user_name'],
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(fontSize: 18),
                                     ),
                           ),
                           SizedBox(height: 16),
@@ -180,7 +180,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
                                       controller.formatCurrency(
                                         controller.paymentDetails['amount'],
                                       ),
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(fontSize: 18),
                                     ),
                           ),
                         ],
@@ -635,7 +635,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
 
           return Text(
             "$hours:$minutes:$secs",
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           );
         },
       );
@@ -661,7 +661,7 @@ class TryoutCheckoutView extends GetView<TryoutCheckoutController> {
 
           return Text(
             "$hours:$minutes:$secs",
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           );
         },
       );

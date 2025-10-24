@@ -51,7 +51,7 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
                             "Bayar Sebelum",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 18,
                             ),
                           ),
                           Obx(() {
@@ -147,7 +147,7 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
                                               "",
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                                            fontSize: 18,
                                             color: Colors.teal,
                                           ),
                                         ),
@@ -184,7 +184,7 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
                                     )
                                     : Text(
                                       controller.paymentDetails['user_name'],
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(fontSize: 18),
                                     ),
                           ),
                           SizedBox(height: 16),
@@ -200,7 +200,7 @@ class PaymentCheckoutView extends GetView<PaymentCheckoutController> {
                                       formatRupiah(
                                         controller.paymentDetails['amount'],
                                       ),
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(fontSize: 18),
                                     ),
                           ),
                         ],
@@ -634,7 +634,7 @@ Widget buildCountdown(int seconds) {
       String secs = value.inSeconds.remainder(60).toString().padLeft(2, '0');
       return Text(
         "$minutes:$secs",
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       );
     },
   );

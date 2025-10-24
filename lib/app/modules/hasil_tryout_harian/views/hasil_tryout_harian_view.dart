@@ -38,7 +38,7 @@ class HasilTryoutHarianView extends GetView<HasilTryoutHarianController> {
                 SvgPicture.asset("assets/trophy-78dfa836.svg", width: 160),
                 const Text(
                   "Selamat Pejuang!",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(height: 4),
                 const Text(

@@ -50,7 +50,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                         ? Text(
                           controller.bimbelData['bimbel_parent']['name'],
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         )
@@ -59,7 +59,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                           child: Text(
                             "Judul Bimbel",
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -87,7 +87,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                     Text(
                       "Bimbel Lainnya",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -652,7 +652,7 @@ void showPaymentBottomSheet(BuildContext context) {
                       const Text(
                         "Metode Pembayaran",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -678,7 +678,7 @@ void showPaymentBottomSheet(BuildContext context) {
                             "${data['name']}",
                             style: const TextStyle(
                               fontWeight: FontWeight.w600,
-                              fontSize: 20,
+                              fontSize: 18,
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -868,7 +868,7 @@ void showPromoCodeBottomSheet(BuildContext context) {
                             Text(
                               "Kode Promo",
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -976,7 +976,7 @@ void showPhoneNumberBottomSheet(BuildContext context) {
                             Text(
                               "Nomor Telepon",
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

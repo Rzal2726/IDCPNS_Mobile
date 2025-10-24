@@ -71,7 +71,7 @@ class DetailEventView extends GetView<DetailEventController> {
                           controller.dataEvent['name'],
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                            fontSize: 18,
                           ),
                         );
                       }

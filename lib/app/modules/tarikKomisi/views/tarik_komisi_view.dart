@@ -65,7 +65,7 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                                       Expanded(
                                         child: Text(
                                           point,
-                                          style: TextStyle(fontSize: 15),
+                                          style: TextStyle(fontSize: 14),
                                         ),
                                       ),
                                     ],
@@ -189,7 +189,7 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                                   'Batal',
                                   style: TextStyle(
                                     color: Colors.teal,
-                                    fontSize: 15,
+                                    fontSize: 14,
                                   ),
                                 ),
                               ),
@@ -217,7 +217,7 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                                     'Submit',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 15,
+                                      fontSize: 14,
                                     ),
                                   ),
                                 );
@@ -247,7 +247,7 @@ class TarikKomisiView extends GetView<TarikKomisiController> {
                           children: [
                             Text(
                               'Lihat riwayat penarikan komisi',
-                              style: TextStyle(fontSize: 15),
+                              style: TextStyle(fontSize: 14),
                             ),
 
                             IconButton(

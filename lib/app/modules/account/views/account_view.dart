@@ -166,7 +166,7 @@ class AccountView extends GetView<AccountController> {
                                       "${controller.nameUser}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w900,
-                                        fontSize: 20,
+                                        fontSize: 18,
                                       ),
                                     )
                                     : Skeletonizer(
@@ -391,7 +391,7 @@ class AccountView extends GetView<AccountController> {
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     color: Colors.black87,
                     fontWeight: FontWeight.normal,
                   ),

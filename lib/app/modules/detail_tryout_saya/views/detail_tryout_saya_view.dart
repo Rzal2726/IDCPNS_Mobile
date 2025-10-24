@@ -96,7 +96,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                   child: Text(
                                     "Judul Tryout",
                                     style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -105,7 +105,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                   controller.tryOutSaya['tryout']['name'],
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 20,
+                                    fontSize: 18,
                                   ),
                                 ),
                             SizedBox(height: 8), // ✅ ADDED: Spacing
@@ -891,7 +891,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                         ? Colors.teal
                         : Colors.red,
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 18,
               ),
             ),
             SizedBox(height: 12),
@@ -1200,7 +1200,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                               item['label'], // e.g., "TWK"
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 20,
+                                                fontSize: 18,
                                               ),
                                             ),
                                             const SizedBox(height: 8),

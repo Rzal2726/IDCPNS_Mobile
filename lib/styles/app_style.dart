@@ -15,7 +15,7 @@ class AppStyle {
   static const SizedBox w16 = SizedBox(width: 16);
   static const TextStyle appBarTitle = TextStyle(
     color: Colors.black,
-    fontSize: 20,
+    fontSize: 18,
   );
   static const TextStyle styleW900 = TextStyle(
     fontWeight: FontWeight.w900,
@@ -23,7 +23,7 @@ class AppStyle {
   );
   static const TextStyle style20Bold = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 20,
+    fontSize: 18,
   );
   static const TextStyle style15Bold = TextStyle(
     fontWeight: FontWeight.bold,

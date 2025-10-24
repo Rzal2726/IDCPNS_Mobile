@@ -129,7 +129,7 @@ class DashboardView extends GetView<DashboardController> {
                     Text(
                       'Highlight',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -241,7 +241,7 @@ class DashboardView extends GetView<DashboardController> {
                                   Text(
                                     "Pengingat Bimbel",
                                     style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -283,7 +283,7 @@ class DashboardView extends GetView<DashboardController> {
                                           data['judul'] ?? '-',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                                            fontSize: 18,
                                           ),
                                         ),
                                         SizedBox(height: 12),
@@ -547,7 +547,7 @@ class DashboardView extends GetView<DashboardController> {
                     Text(
                       'Pilih Layanan',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -620,7 +620,7 @@ class DashboardView extends GetView<DashboardController> {
                     Text(
                       'Pilih Kategori',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -695,7 +695,7 @@ class DashboardView extends GetView<DashboardController> {
                             child: Text(
                               'Rekomendasi Penunjang Program lorem',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -703,7 +703,7 @@ class DashboardView extends GetView<DashboardController> {
                           : Text(
                             'Rekomendasi Penunjang Program ${recoData['menu']}',
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           );
@@ -763,7 +763,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       '${recoData['tryout_formasi']['formasi']}',
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -800,7 +800,7 @@ class DashboardView extends GetView<DashboardController> {
                                             .recomenData['tryout_formasi']['harga_fix'],
                                       ),
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),
@@ -858,7 +858,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       '${recoData['bimbel_parent']['name']}',
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -889,7 +889,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       "${formatRupiah(recoData['bimbel_parent']['price_list']['harga_fix_terendah'])} - ${formatRupiah(recoData['bimbel_parent']['price_list']['harga_fix_tertinggi'])}",
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),
@@ -948,7 +948,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       '${recoData['upgrade']['name']}',
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -976,7 +976,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       "${formatRupiah(recoData['upgrade']['price_list']['harga_fix_terendah'])} - ${formatRupiah(recoData['upgrade']['price_list']['harga_fix_tertinggi'])}",
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),
@@ -999,7 +999,7 @@ class DashboardView extends GetView<DashboardController> {
                         Text(
                           'Event Tryout Gratis',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -1235,7 +1235,7 @@ class DashboardView extends GetView<DashboardController> {
                         Text(
                           'Rekomendasi Tryout',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -1283,7 +1283,7 @@ class DashboardView extends GetView<DashboardController> {
                     Text(
                       'Program Afiliasi',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -1317,7 +1317,7 @@ class DashboardView extends GetView<DashboardController> {
                         Text(
                           'Bantuan Cepat',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
                           ),

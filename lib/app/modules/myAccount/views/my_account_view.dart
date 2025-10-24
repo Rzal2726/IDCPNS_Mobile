@@ -57,7 +57,7 @@ class MyAccountView extends GetView<MyAccountController> {
                       child: Text(
                         "Data Diri",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
