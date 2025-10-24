@@ -69,6 +69,7 @@ class DashboardView extends GetView<DashboardController> {
                       visible: dataBanner.isNotEmpty,
                       child: Container(
                         width: double.infinity,
+                        margin: EdgeInsets.symmetric(vertical: 16),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Colors.cyan.shade50,
@@ -102,16 +103,21 @@ class DashboardView extends GetView<DashboardController> {
                                           fontSize: 14,
                                         ),
                                         children: [
-                                          const TextSpan(text: 'Pendaftaran '),
+                                          const TextSpan(
+                                            text: 'Pendaftaran ',
+                                            style: TextStyle(fontSize: 14),
+                                          ),
                                           TextSpan(
                                             text: name,
                                             style: const TextStyle(
                                               color: Colors.teal,
                                               fontWeight: FontWeight.bold,
+                                              fontSize: 14,
                                             ),
                                           ),
                                           const TextSpan(
                                             text: ' Telah Dibuka!',
+                                            style: TextStyle(fontSize: 14),
                                           ),
                                         ],
                                       ),
@@ -129,7 +135,7 @@ class DashboardView extends GetView<DashboardController> {
                     Text(
                       'Highlight',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -248,6 +254,10 @@ class DashboardView extends GetView<DashboardController> {
                                   SizedBox(height: 4),
                                   Text(
                                     'Jangan lupa! Anda memiliki pertemuan kelas hari ini',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                                   SizedBox(height: 8),
                                   Divider(
@@ -547,12 +557,15 @@ class DashboardView extends GetView<DashboardController> {
                     Text(
                       'Pilih Layanan',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 4),
-                    Text('Pilih layanan yang cocok sebagai teman belajar kamu'),
+                    Text(
+                      'Pilih layanan yang cocok sebagai teman belajar kamu',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
                     SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
                     Divider(
                       thickness: 0.2,
@@ -617,14 +630,14 @@ class DashboardView extends GetView<DashboardController> {
                     Text(
                       'Pilih Kategori',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
-                      style: TextStyle(color: Colors.grey),
                       'Pilih kategori yang cocok sebagai teman belajar kamu',
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
                     ),
                     SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
                     Divider(
@@ -692,7 +705,7 @@ class DashboardView extends GetView<DashboardController> {
                             child: Text(
                               'Rekomendasi Penunjang Program lorem',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -700,7 +713,7 @@ class DashboardView extends GetView<DashboardController> {
                           : Text(
                             'Rekomendasi Penunjang Program ${recoData['menu']}',
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           );
@@ -760,7 +773,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       '${recoData['tryout_formasi']['formasi']}',
                                       style: TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -770,7 +783,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       'Siap bersaing bersama ribuan peserta seleksi Rekrutmen Bersama ${recoData['menu']} lainnya! Ayo persiapkan diri kamu untuk seleksi ${recoData['menu']} selanjutnya dari sekarang dengan mengikuti ${recoData['tryout_formasi']['formasi']} dari ${recoData['menu']} ini.',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: Colors.black54,
                                       ),
                                     ),
@@ -783,7 +796,7 @@ class DashboardView extends GetView<DashboardController> {
                                             .recomenData['tryout_formasi']['harga'],
                                       ),
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: Colors.grey,
                                         decoration: TextDecoration.lineThrough,
                                         decorationColor: Colors.grey,
@@ -797,7 +810,7 @@ class DashboardView extends GetView<DashboardController> {
                                             .recomenData['tryout_formasi']['harga_fix'],
                                       ),
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),
@@ -855,7 +868,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       '${recoData['bimbel_parent']['name']}',
                                       style: TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -865,7 +878,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       'Siap bersaing bersama ribuan peserta seleksi Rekrutmen Bersama ${recoData['menu']} lainnya! Ayo persiapkan diri kamu untuk seleksi ${recoData['menu']} selanjutnya dari sekarang dengan mengikuti ${recoData['bimbel_parent']['formasi']} dari ${recoData['menu']} ini.',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: Colors.black54,
                                       ),
                                     ),
@@ -875,7 +888,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       "${formatRupiah(recoData['bimbel_parent']['price_list']['harga_terendah'])} - ${formatRupiah(recoData['bimbel_parent']['price_list']['harga_tertinggi'])}",
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: Colors.grey,
                                         decoration: TextDecoration.lineThrough,
                                         decorationColor: Colors.grey,
@@ -886,7 +899,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       "${formatRupiah(recoData['bimbel_parent']['price_list']['harga_fix_terendah'])} - ${formatRupiah(recoData['bimbel_parent']['price_list']['harga_fix_tertinggi'])}",
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),
@@ -945,7 +958,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       '${recoData['upgrade']['name']}',
                                       style: TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -954,7 +967,7 @@ class DashboardView extends GetView<DashboardController> {
                                     // Deskripsi
                                     Text(
                                       'Upgrade jenis akun Anda menjadi Platinum dan dapatkan berbagai macam fitur unggulan seperti Video Series, E-book, Tryout Harian, dan Webinar yang dapat meningkatkan persiapan kamu lebih optimal lagi.',
-                                      style: TextStyle(fontSize: 16),
+                                      style: TextStyle(fontSize: 14),
                                     ),
                                     SizedBox(height: 16),
 
@@ -962,7 +975,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       "${formatRupiah(recoData['upgrade']['price_list']['harga_terendah'])} - ${formatRupiah(recoData['upgrade']['price_list']['harga_tertinggi'])}",
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: Colors.grey,
                                         decoration: TextDecoration.lineThrough,
                                         decorationColor: Colors.grey,
@@ -973,7 +986,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       "${formatRupiah(recoData['upgrade']['price_list']['harga_fix_terendah'])} - ${formatRupiah(recoData['upgrade']['price_list']['harga_fix_tertinggi'])}",
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),
@@ -996,14 +1009,14 @@ class DashboardView extends GetView<DashboardController> {
                         Text(
                           'Event Tryout Gratis',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         SizedBox(height: 4),
                         Text(
-                          style: TextStyle(color: Colors.grey),
                           'Ikuti tryout akbar gratis bersama ribuan peserta lainnya.',
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
                         ),
                         SizedBox(
                           height: 8,
@@ -1128,18 +1141,17 @@ class DashboardView extends GetView<DashboardController> {
                                   SvgPicture.asset(
                                     "assets/emptyArchiveIcon.svg",
                                     width: 140, // atur lebar
-                                    height: 140, // atur tinggi
+                                    height: 120, // atur tinggi
                                   ),
                                   const SizedBox(height: 16),
                                   const Text(
                                     'Belum Ada Event Berlangsung',
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                       color: Colors.black54,
                                     ),
                                   ),
-                                  const SizedBox(height: 50),
                                 ],
                               ),
                             )
@@ -1232,13 +1244,13 @@ class DashboardView extends GetView<DashboardController> {
                         Text(
                           'Rekomendasi Tryout',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
                           'Ikuti event tryout dari rekomendasi kita untuk anda!',
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
                         ),
                         SizedBox(
                           height: 8,
@@ -1273,14 +1285,17 @@ class DashboardView extends GetView<DashboardController> {
                             type: "lorem",
                           ),
                         )
-                        : EmptyStateWidget(message: "Belum ada event"),
+                        : EmptyStateWidget(
+                          svgHeight: 120,
+                          message: "Belum ada event",
+                        ),
 
                     SizedBox(height: 50),
 
                     Text(
                       'Program Afiliasi',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -1314,7 +1329,7 @@ class DashboardView extends GetView<DashboardController> {
                         Text(
                           'Bantuan Cepat',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
                           ),
@@ -1411,11 +1426,13 @@ Widget _buildHelpContainer({
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
+              SizedBox(height: 8),
               Text(
                 description,
                 style: TextStyle(fontSize: 14, color: Colors.black54),
                 softWrap: true,
               ),
+              SizedBox(height: 8),
             ],
           ),
           SizedBox(height: 10),
@@ -1436,10 +1453,7 @@ Widget _buildHelpContainer({
                 ),
                 child: Text(
                   buttonText,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
                 ),
               ),
             ),
@@ -1470,15 +1484,15 @@ Widget _buildServiceCard(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(12), // biar ada ruang di sekitar icon
+              padding: EdgeInsets.all(20), // biar ada ruang di sekitar icon
               decoration: BoxDecoration(
                 color: color, // warna background teal
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: SvgPicture.asset(icon),
+              child: SvgPicture.asset(icon, width: 35, height: 35),
             ),
             SizedBox(height: 8),
-            Text(title, style: TextStyle(color: Colors.grey, fontSize: 16)),
+            Text(title, style: TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       ),
@@ -1487,7 +1501,6 @@ Widget _buildServiceCard(
           right: 0,
           top: 30,
           child: Container(
-            width: 50,
             height: 25,
             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
@@ -1500,7 +1513,7 @@ Widget _buildServiceCard(
             child: Center(
               child: Text(
                 badge,
-                style: TextStyle(color: Colors.white, fontSize: 15),
+                style: TextStyle(color: Colors.white, fontSize: 12),
               ),
             ),
           ),
@@ -1530,7 +1543,7 @@ Widget _buildCategoryItem(String title, String icon, String kategoriId) {
             SizedBox(height: 8),
             Text(
               title,
-              style: TextStyle(color: Colors.grey, fontSize: 14),
+              style: TextStyle(color: Colors.black, fontSize: 14),
               textAlign: TextAlign.center,
             ),
           ],

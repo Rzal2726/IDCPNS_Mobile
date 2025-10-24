@@ -26,7 +26,7 @@ class EmptyStateWidget extends StatelessWidget {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.grey, fontSize: 18),
+            style: const TextStyle(color: Colors.grey, fontSize: 14),
           ),
         ],
       ),
