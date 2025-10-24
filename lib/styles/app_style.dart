@@ -21,9 +21,9 @@ class AppStyle {
     fontWeight: FontWeight.w900,
     fontSize: 19,
   );
-  static const TextStyle style17Bold = TextStyle(
+  static const TextStyle style20Bold = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 17,
+    fontSize: 20,
   );
   static const TextStyle style15Bold = TextStyle(
     fontWeight: FontWeight.bold,

@@ -46,12 +46,12 @@ class PretestDetailView extends GetView<PretestDetailController> {
                       children: [
                         Text(
                           isLoading ? " " : "Informasi Pretest",
-                          style: AppStyle.style17Bold,
+                          style: AppStyle.style20Bold,
                         ),
                         SizedBox(height: 20),
                         Text(
                           isLoading ? " " : "${controller.item['judul']}",
-                          style: AppStyle.style17Bold,
+                          style: AppStyle.style20Bold,
                         ),
                         SizedBox(height: 10),
                         Row(

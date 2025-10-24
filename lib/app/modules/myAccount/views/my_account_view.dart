@@ -235,7 +235,7 @@ class MyAccountView extends GetView<MyAccountController> {
                                   child: Text(
                                     "Simpan",
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -691,7 +691,7 @@ class MyAccountView extends GetView<MyAccountController> {
                                 child: Text(
                                   "Simpan",
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     color: Colors.white,
                                   ),
                                 ),

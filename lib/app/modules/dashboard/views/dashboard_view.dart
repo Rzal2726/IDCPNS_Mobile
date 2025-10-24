@@ -274,7 +274,7 @@ class DashboardView extends GetView<DashboardController> {
                                           data['bimbel_parent_name'] ?? '-',
                                           style: TextStyle(
                                             color: Colors.grey,
-                                            fontSize: 10,
+                                            fontSize: 14,
                                           ),
                                         ),
                                         SizedBox(height: 5),
@@ -283,7 +283,7 @@ class DashboardView extends GetView<DashboardController> {
                                           data['judul'] ?? '-',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                                            fontSize: 20,
                                           ),
                                         ),
                                         SizedBox(height: 12),
@@ -552,7 +552,10 @@ class DashboardView extends GetView<DashboardController> {
                       ),
                     ),
                     SizedBox(height: 4),
-                    Text('Pilih layanan yang cocok sebagai teman belajar kamu'),
+                    Text(
+                      'Pilih layanan yang cocok sebagai teman belajar kamu',
+                      style: TextStyle(color: Colors.grey),
+                    ),
                     SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
                     Divider(
                       thickness: 0.2,
@@ -760,7 +763,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       '${recoData['tryout_formasi']['formasi']}',
                                       style: TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -770,7 +773,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       'Siap bersaing bersama ribuan peserta seleksi Rekrutmen Bersama ${recoData['menu']} lainnya! Ayo persiapkan diri kamu untuk seleksi ${recoData['menu']} selanjutnya dari sekarang dengan mengikuti ${recoData['tryout_formasi']['formasi']} dari ${recoData['menu']} ini.',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: Colors.black54,
                                       ),
                                     ),
@@ -783,7 +786,7 @@ class DashboardView extends GetView<DashboardController> {
                                             .recomenData['tryout_formasi']['harga'],
                                       ),
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: Colors.grey,
                                         decoration: TextDecoration.lineThrough,
                                         decorationColor: Colors.grey,
@@ -855,7 +858,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       '${recoData['bimbel_parent']['name']}',
                                       style: TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -865,7 +868,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       'Siap bersaing bersama ribuan peserta seleksi Rekrutmen Bersama ${recoData['menu']} lainnya! Ayo persiapkan diri kamu untuk seleksi ${recoData['menu']} selanjutnya dari sekarang dengan mengikuti ${recoData['bimbel_parent']['formasi']} dari ${recoData['menu']} ini.',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: Colors.black54,
                                       ),
                                     ),
@@ -875,7 +878,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       "${formatRupiah(recoData['bimbel_parent']['price_list']['harga_terendah'])} - ${formatRupiah(recoData['bimbel_parent']['price_list']['harga_tertinggi'])}",
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: Colors.grey,
                                         decoration: TextDecoration.lineThrough,
                                         decorationColor: Colors.grey,
@@ -945,7 +948,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       '${recoData['upgrade']['name']}',
                                       style: TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -954,7 +957,7 @@ class DashboardView extends GetView<DashboardController> {
                                     // Deskripsi
                                     Text(
                                       'Upgrade jenis akun Anda menjadi Platinum dan dapatkan berbagai macam fitur unggulan seperti Video Series, E-book, Tryout Harian, dan Webinar yang dapat meningkatkan persiapan kamu lebih optimal lagi.',
-                                      style: TextStyle(fontSize: 16),
+                                      style: TextStyle(fontSize: 14),
                                     ),
                                     SizedBox(height: 16),
 
@@ -962,7 +965,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Text(
                                       "${formatRupiah(recoData['upgrade']['price_list']['harga_terendah'])} - ${formatRupiah(recoData['upgrade']['price_list']['harga_tertinggi'])}",
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: Colors.grey,
                                         decoration: TextDecoration.lineThrough,
                                         decorationColor: Colors.grey,

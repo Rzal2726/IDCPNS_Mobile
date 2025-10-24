@@ -112,7 +112,7 @@ class ForgetPasswordView extends GetView<ForgetPasswordController> {
                                 'Masuk',
                                 style: TextStyle(
                                   color: Colors.teal,
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -139,7 +139,7 @@ class ForgetPasswordView extends GetView<ForgetPasswordController> {
                                 'Kirim',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
