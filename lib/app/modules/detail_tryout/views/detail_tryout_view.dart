@@ -111,7 +111,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                               controller.detailData['formasi'],
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 24,
+                                fontSize: 18,
                               ),
                             ),
                   ),
@@ -129,7 +129,10 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                       SizedBox(width: 4),
                       controller.detailData['review'] == null
                           ? Skeletonizer(child: Text("5"))
-                          : Text("${controller.detailData['review']}"),
+                          : Text(
+                            "${controller.detailData['review']}",
+                            style: TextStyle(fontSize: 14),
+                          ),
                       SizedBox(width: 4),
                       Icon(Icons.circle, size: 8),
                       SizedBox(width: 4),
@@ -139,6 +142,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                           ? Skeletonizer(child: Text("500+ Sudah Bergabung"))
                           : Text(
                             "${controller.detailData['jumlah_dibeli']} Sudah Bergabung",
+                            style: TextStyle(fontSize: 14),
                           ),
                     ],
                   ),
@@ -155,7 +159,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                       "Jenis Paket",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 14,
                       ),
                     ),
                   ],
@@ -168,7 +172,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("Bundling"),
+                    Text("Bundling", style: TextStyle(fontSize: 14)),
                     Obx(
                       () =>
                           controller.detailData['harga_fix'] == null
@@ -182,7 +186,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                 ),
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 14,
                                 ),
                               ),
                     ),
@@ -265,7 +269,10 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                             vertical: 12,
                                           ),
                                         ),
-                                        child: Text("Tryout Saya"),
+                                        child: Text(
+                                          "Tryout Saya",
+                                          style: TextStyle(fontSize: 14),
+                                        ),
                                       ),
                                     )
                                     : Row(
@@ -285,30 +292,18 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                                           success =
                                                               await controller
                                                                   .addToWishList();
-                                                          _showSnackBar(
-                                                            context,
-                                                            success,
-                                                            "Wishlist berhasil disimpan!",
-                                                            "Gagal menyimpan wishlist!",
+                                                          notifHelper.show(
+                                                            "Tryout berhasil di tambahkan ke wishlist",
+                                                            type: 1,
                                                           );
-                                                          if (success)
-                                                            controller
-                                                                .isOnWishlist
-                                                                .value = true;
                                                         } else {
                                                           success =
                                                               await controller
                                                                   .removeFromWishList();
-                                                          _showSnackBar(
-                                                            context,
-                                                            success,
-                                                            "Wishlist berhasil dihapus!",
-                                                            "Gagal menghapus wishlist!",
+                                                          notifHelper.show(
+                                                            "Tryout berhasil di hapus dari wishlist",
+                                                            type: 1,
                                                           );
-                                                          if (success)
-                                                            controller
-                                                                .isOnWishlist
-                                                                .value = false;
                                                         }
                                                       },
                                               style: OutlinedButton.styleFrom(
@@ -375,14 +370,14 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                                                         .shade300,
                                                           ),
                                                           const SizedBox(
-                                                            width: 8,
+                                                            width: 4,
                                                           ),
                                                           Text(
                                                             controller
                                                                     .isOnWishlist
                                                                     .value
                                                                 ? 'Hapus Wishlist'
-                                                                : 'Tambah Wishlist',
+                                                                : 'Wishlist',
                                                             style: TextStyle(
                                                               fontSize: 14,
                                                               fontWeight:
@@ -433,7 +428,10 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                                     vertical: 12,
                                                   ),
                                             ),
-                                            child: Text("Daftar"),
+                                            child: Text(
+                                              "Daftar",
+                                              style: TextStyle(fontSize: 14),
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -472,6 +470,7 @@ class DetailTryoutView extends GetView<DetailTryoutController> {
                                         isSelected
                                             ? FontWeight.bold
                                             : FontWeight.normal,
+                                    fontSize: 14,
                                   ),
                                 ),
                                 SizedBox(height: 4),
@@ -583,12 +582,9 @@ Widget _cardBundling(String num, String Judul, String soal, String durasi) {
           mainAxisAlignment: MainAxisAlignment.start,
           spacing: 16,
           children: [
-            Card(
-              elevation: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(num),
-              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Text("$num.", style: TextStyle(fontSize: 14)),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -599,7 +595,7 @@ Widget _cardBundling(String num, String Judul, String soal, String durasi) {
                     Judul,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 14),
                   ),
                 ),
                 SizedBox(height: 8),
@@ -609,9 +605,9 @@ Widget _cardBundling(String num, String Judul, String soal, String durasi) {
                     spacing: 8,
                     children: [
                       Icon(Icons.list, color: Colors.blueAccent),
-                      Text("${soal} Soal"),
+                      Text("${soal} Soal", style: TextStyle(fontSize: 14)),
                       Icon(Icons.timer, color: Colors.teal),
-                      Text("${durasi} Menit"),
+                      Text("${durasi} Menit", style: TextStyle(fontSize: 14)),
                     ],
                   ),
                 ),
@@ -639,19 +635,4 @@ Widget _htmlCard(String isi) {
       },
     ),
   );
-}
-
-void _showSnackBar(
-  BuildContext context,
-  bool success,
-  String successMessage,
-  String failureMessage,
-) {
-  notifHelper.show((success ? "Berhasil" : "Gagal"), type: (success ? 1 : 0));
-  // Get.snackbar(
-  //   success ? "Berhasil" : "Gagal",
-  //   success ? successMessage : failureMessage,
-  //   backgroundColor: success ? Colors.teal : Colors.pink,
-  //   colorText: Colors.white,
-  // );
 }

@@ -101,7 +101,7 @@ class TryoutView extends GetView<TryoutController> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 13),
+                              SizedBox(width: 16),
                               Text(
                                 'Tryout Saya',
                                 style: TextStyle(
@@ -155,15 +155,15 @@ class TryoutView extends GetView<TryoutController> {
                           Text(
                             "Event Tryout Gratis",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
                             "Ikuti tryout akbar gratis bersama ribuan peserta lainnya.",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
-                          SizedBox(height: 8),
+                          SizedBox(height: 16),
                           TextField(
                             controller: eventTextController,
                             onChanged:
@@ -386,12 +386,20 @@ class TryoutView extends GetView<TryoutController> {
                       return Center(
                         child: Column(
                           children: [
-                            SvgPicture.string(noDataSvg),
+                            SvgPicture.string(
+                              noDataSvg,
+                              width: 140, // atur lebar
+                              height: 120,
+                            ),
                             const SizedBox(height: 16),
                             const Text(
                               "Belum Ada Event Berlangsung",
-                              style: TextStyle(color: Colors.grey),
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
                             ),
+                            SizedBox(height: 16),
                           ],
                         ),
                       );
@@ -507,13 +515,13 @@ class TryoutView extends GetView<TryoutController> {
                             child: Row(
                               spacing: 8,
                               crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 const Text(
                                   "Rekomendasi Khusus Buat Kamu",
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -611,7 +619,7 @@ class TryoutView extends GetView<TryoutController> {
                             Text(
                               "Paket Tryout",
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -619,7 +627,7 @@ class TryoutView extends GetView<TryoutController> {
                             Text(
                               "Pilih paket tryout sesuai kebutuhanmu.",
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 14,
                                 color: Colors.grey,
                               ),
                             ),
@@ -998,7 +1006,7 @@ class TryoutView extends GetView<TryoutController> {
                                 hargaFull,
                                 style: TextStyle(
                                   color: Colors.grey,
-                                  fontSize: 10,
+                                  fontSize: 12,
                                   decoration: TextDecoration.lineThrough,
                                 ),
                               ),
@@ -1007,7 +1015,7 @@ class TryoutView extends GetView<TryoutController> {
                                 hargaDiskon,
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -1128,7 +1136,7 @@ class TryoutView extends GetView<TryoutController> {
                                 hargaFull,
                                 style: const TextStyle(
                                   color: Colors.grey,
-                                  fontSize: 10,
+                                  fontSize: 12,
                                   decoration: TextDecoration.lineThrough,
                                 ),
                               ),
@@ -1136,7 +1144,7 @@ class TryoutView extends GetView<TryoutController> {
                                 hargaDiskon,
                                 style: const TextStyle(
                                   color: Colors.black,
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

@@ -562,7 +562,10 @@ class DashboardView extends GetView<DashboardController> {
                       ),
                     ),
                     SizedBox(height: 4),
-                    Text('Pilih layanan yang cocok sebagai teman belajar kamu'),
+                    Text(
+                      'Pilih layanan yang cocok sebagai teman belajar kamu',
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                    ),
                     SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
                     Divider(
                       thickness: 0.2,

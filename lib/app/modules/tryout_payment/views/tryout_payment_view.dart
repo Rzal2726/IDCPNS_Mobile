@@ -34,12 +34,12 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                     const Text(
                       "Checkout Paket Tryout",
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Row(
-                      spacing: 4,
+                      spacing: 8,
                       children: [
                         Icon(Icons.check_box, color: Colors.teal),
                         Container(
@@ -47,7 +47,10 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                           child: Obx(
                             () =>
                                 controller.dataTryout['formasi'] != null
-                                    ? Text(controller.dataTryout['formasi'])
+                                    ? Text(
+                                      controller.dataTryout['formasi'],
+                                      style: TextStyle(fontSize: 14),
+                                    )
                                     : Skeletonizer(
                                       enabled: true,
                                       child: Text("Judul Tryout"),
@@ -56,10 +59,11 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                         ),
                       ],
                     ),
+                    SizedBox(height: 12),
                     const Text(
                       "Tryout Lainnya",
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -75,7 +79,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                             ),
                           )
                           : SizedBox(
-                            height: 140,
+                            height: 120,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: controller.otherTryout.length,
@@ -234,7 +238,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                     ),
                     Row(
                       children: [
-                        Text("Harga"),
+                        Text("Harga", style: TextStyle(fontSize: 14)),
                         Spacer(),
 
                         Obx(() {
@@ -251,7 +255,10 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                       controller.harga.value.toString(),
                                     )
                                     .toString(),
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
                               );
                         }),
                       ],
@@ -261,7 +268,10 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                       return controller.biayaAdmin.value > 0.0
                           ? Row(
                             children: [
-                              Text("Biaya Admin"),
+                              Text(
+                                "Biaya Admin",
+                                style: TextStyle(fontSize: 14),
+                              ),
                               Spacer(),
                               Obx(() {
                                 return controller.otherTryoutLoading.value
@@ -279,6 +289,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                       ),
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
+                                        fontSize: 14,
                                       ),
                                     );
                               }),
@@ -295,6 +306,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                 style: TextStyle(
                                   color: Colors.teal,
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 14,
                                 ),
                               ),
                               Spacer(),
@@ -313,6 +325,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.teal,
+                                        fontSize: 14,
                                       ),
                                     );
                               }),
@@ -373,7 +386,10 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                           },
                           child:
                               controller.loading['bayar'] == false
-                                  ? Text("Bayar Sekarang")
+                                  ? Text(
+                                    "Bayar Sekarang",
+                                    style: TextStyle(fontSize: 14),
+                                  )
                                   : Center(
                                     child: CircularProgressIndicator(
                                       color: Colors.white,
@@ -425,26 +441,20 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
               ),
             ),
 
-            const SizedBox(
-              height: 12,
-            ), // Increased spacing for visual separation
-            // Harga and action button
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   harga,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 14,
                     color: Colors.teal, // Use a brand color for the price
                   ),
                 ),
 
                 // Use IconButton for a cleaner, more direct action
                 IconButton(
-                  padding: EdgeInsets.zero, // Remove default padding
                   constraints:
                       const BoxConstraints(), // Removes size constraints
                   icon: Icon(
@@ -455,7 +465,6 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                         value['is_purchase'] != true
                             ? Colors.teal
                             : Colors.pink,
-                    size: 30, // Slightly smaller icon for better balance
                   ),
                   onPressed: () {
                     final idx = controller.otherTryout.indexOf(value);
@@ -506,7 +515,12 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
               const SizedBox(width: 16),
               SizedBox(
                 width: 150,
-                child: Text(text, maxLines: 2, overflow: TextOverflow.ellipsis),
+                child: Text(
+                  text,
+                  style: TextStyle(fontSize: 14),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),
@@ -543,7 +557,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
               children: [
                 leading, // 👈 langsung pakai widget
                 const SizedBox(width: 16),
-                Text(text),
+                Text(text, style: TextStyle(fontSize: 14)),
               ],
             ),
             controller.promoCode.isEmpty
@@ -592,11 +606,9 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
               ),
             ),
 
-            const SizedBox(height: 8),
-
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -604,7 +616,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                       "Virtual Account",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -648,7 +660,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                       "E-Wallet",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -696,7 +708,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                       "QR Payments",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -826,7 +838,7 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                   overflow: TextOverflow.ellipsis, // biar nggak overflow
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 13,
+                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -835,14 +847,14 @@ class TryoutPaymentView extends GetView<TryoutPaymentController> {
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 Text(
                   formatRupiah(admin) ?? "Rp. 0",
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
             ),
