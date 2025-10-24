@@ -48,7 +48,7 @@ class CheckoutUpgradeAkunView extends GetView<CheckoutUpgradeAkunController> {
                             "Bayar Sebelum",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 18,
                             ),
                           ),
                           Obx(
@@ -123,7 +123,7 @@ class CheckoutUpgradeAkunView extends GetView<CheckoutUpgradeAkunController> {
                                               "",
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                                            fontSize: 18,
                                             color: Colors.teal,
                                           ),
                                         ),
@@ -160,7 +160,7 @@ class CheckoutUpgradeAkunView extends GetView<CheckoutUpgradeAkunController> {
                                     )
                                     : Text(
                                       controller.paymentDetails['user_name'],
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(fontSize: 18),
                                     ),
                           ),
                           SizedBox(height: 16),
@@ -176,7 +176,7 @@ class CheckoutUpgradeAkunView extends GetView<CheckoutUpgradeAkunController> {
                                       controller.formatCurrency(
                                         controller.paymentDetails['amount'],
                                       ),
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(fontSize: 18),
                                     ),
                           ),
                         ],
@@ -631,7 +631,7 @@ class CheckoutUpgradeAkunView extends GetView<CheckoutUpgradeAkunController> {
 
           return Text(
             "$hours:$minutes:$secs",
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           );
         },
       );
@@ -657,7 +657,7 @@ class CheckoutUpgradeAkunView extends GetView<CheckoutUpgradeAkunController> {
 
           return Text(
             "$hours:$minutes:$secs",
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           );
         },
       );

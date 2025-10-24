@@ -107,7 +107,7 @@ class KategoriTryoutHarianView extends GetView<KategoriTryoutHarianController> {
                       "Kamis, 4 September",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: 18,
                       ),
                     ),
                     SizedBox(height: 16),

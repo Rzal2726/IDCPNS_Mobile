@@ -113,11 +113,11 @@ class BimbelView extends GetView<BimbelController> {
                       SizedBox(height: 32),
 
                       // Header Paket Bimbel
-                      Text('Paket Bimbel', style: AppStyle.style17Bold),
+                      Text('Paket Bimbel', style: AppStyle.style20Bold),
                       SizedBox(height: 4),
                       Text(
                         'Belajar lebih intensif bersama mentor ahli di bidangnya.',
-                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                       SizedBox(height: 20),
 
@@ -352,7 +352,7 @@ class BimbelView extends GetView<BimbelController> {
                       title,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        fontSize: 15,
+                        fontSize: 14,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -365,7 +365,7 @@ class BimbelView extends GetView<BimbelController> {
                         "${formatRupiah(hargaTerendah)} - ${formatRupiah(hargaTertinggi)}",
                         style: TextStyle(
                           color: Colors.grey,
-                          fontSize: 12,
+                          fontSize: 14,
                           decoration: TextDecoration.lineThrough,
                         ),
                       ),
@@ -399,7 +399,7 @@ class BimbelView extends GetView<BimbelController> {
                             kategori,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
                             overflow: TextOverflow.ellipsis,

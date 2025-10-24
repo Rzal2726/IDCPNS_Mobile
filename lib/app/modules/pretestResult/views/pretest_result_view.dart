@@ -73,7 +73,7 @@ class PretestResultView extends GetView<PretestResultController> {
                             'Pretest',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 18,
                             ),
                           ),
                           SizedBox(height: 12),
@@ -82,14 +82,14 @@ class PretestResultView extends GetView<PretestResultController> {
                             children: [
                               Text(
                                 'Jawaban Benar',
-                                style: TextStyle(fontSize: 15),
+                                style: TextStyle(fontSize: 14),
                               ),
                               Text(
                                 controller.nilaiData['total_benar']
                                         ?.toString() ??
                                     '',
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -101,14 +101,14 @@ class PretestResultView extends GetView<PretestResultController> {
                             children: [
                               Text(
                                 'Total Point',
-                                style: TextStyle(fontSize: 15),
+                                style: TextStyle(fontSize: 14),
                               ),
                               Text(
                                 controller.nilaiData['total_point']
                                         ?.toString() ??
                                     '',
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -122,7 +122,7 @@ class PretestResultView extends GetView<PretestResultController> {
                                 'Total point kamu',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 20,
+                                  fontSize: 18,
                                 ),
                               ),
                               Text(
@@ -160,7 +160,7 @@ class PretestResultView extends GetView<PretestResultController> {
                         'Kembali',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 15,
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

@@ -47,7 +47,7 @@ class PretestRankingView extends GetView<PretestRankingController> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Hasil Peringkat Pretest Bimbel",
-                        style: AppStyle.style17Bold,
+                        style: AppStyle.style20Bold,
                       ),
                     ),
                     SizedBox(height: 20),

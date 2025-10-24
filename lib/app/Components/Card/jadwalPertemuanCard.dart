@@ -15,11 +15,11 @@ Widget pertemuanCardBuilder({
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+        Text(title, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
         SizedBox(height: 4),
         Text(
           "${value}",
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -37,9 +37,9 @@ Widget pertemuanCardBuilder({
         if ((subtitle ?? "").isNotEmpty || (desc ?? "").isNotEmpty) ...[
           Text(subtitle ?? "", style: TextStyle(fontSize: 14)),
           if (desc != null && desc.isNotEmpty)
-            Text(desc, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+            Text(desc, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
         ] else
-          Text("-", style: TextStyle(fontSize: 13)),
+          Text("-", style: TextStyle(fontSize: 14)),
         SizedBox(height: 16),
       ],
     );
@@ -65,7 +65,7 @@ Widget pertemuanCardBuilder({
       children: [
         Text(
           "Pertemuan",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         SizedBox(height: 12),
         Row(

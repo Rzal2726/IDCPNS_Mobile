@@ -31,7 +31,7 @@ class HasilTryoutView extends GetView<HasilTryoutController> {
               children: [
                 const Text(
                   "Terima Kasih Atas Partisipasi Anda",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(height: 4),
                 const Text(

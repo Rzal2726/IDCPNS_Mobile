@@ -165,7 +165,7 @@ class DetailVideoView extends GetView<DetailVideoController> {
                                 controller.videoData['nama'],
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 20,
+                                  fontSize: 18,
                                 ),
                               );
                             }),

@@ -48,7 +48,7 @@ class DetailTryoutHarianView extends GetView<DetailTryoutHarianController> {
                               controller.dataTryout['nama'],
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                                fontSize: 18,
                               ),
                             );
                           }
@@ -151,7 +151,7 @@ class DetailTryoutHarianView extends GetView<DetailTryoutHarianController> {
                             "Peraturan Tryout",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 18,
                             ),
                           ),
                         ),

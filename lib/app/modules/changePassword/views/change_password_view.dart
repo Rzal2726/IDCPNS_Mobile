@@ -49,7 +49,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                         "Ubah kata sandi",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                          fontSize: 18,
                         ),
                       ),
                       SizedBox(height: 16),

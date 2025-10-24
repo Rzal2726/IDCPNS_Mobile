@@ -43,14 +43,14 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Judul
-                    Text("Checkout Paket Bimbel", style: AppStyle.style17Bold),
+                    Text("Checkout Paket Bimbel", style: AppStyle.style20Bold),
                     SizedBox(height: 16),
                     // Bimbel Section
                     controller.bimbelData.isNotEmpty
                         ? Text(
                           controller.bimbelData['bimbel_parent']['name'],
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         )
@@ -59,7 +59,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                           child: Text(
                             "Judul Bimbel",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -87,7 +87,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                     Text(
                       "Bimbel Lainnya",
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -605,7 +605,7 @@ Widget _buildRadioOption(
               ),
             ),
             SizedBox(width: 4),
-            Text(title, style: TextStyle(fontSize: 12)),
+            Text(title, style: TextStyle(fontSize: 14)),
           ],
         ),
 
@@ -678,7 +678,7 @@ void showPaymentBottomSheet(BuildContext context) {
                             "${data['name']}",
                             style: const TextStyle(
                               fontWeight: FontWeight.w600,
-                              fontSize: 16,
+                              fontSize: 18,
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -814,7 +814,7 @@ Widget paymentItem({
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -822,7 +822,7 @@ Widget paymentItem({
                 const SizedBox(height: 4),
                 Text(
                   adminPrice,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -1007,7 +1007,7 @@ void showPhoneNumberBottomSheet(BuildContext context) {
                                 child: Text(
                                   "+62",
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

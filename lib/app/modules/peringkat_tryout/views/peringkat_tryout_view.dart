@@ -45,7 +45,7 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
                               "Hasil Peringkat Tryout",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: 14,
                               ),
                             ),
                             TextButton.icon(
@@ -710,7 +710,7 @@ class PeringkatTryoutView extends GetView<PeringkatTryoutController> {
           children: [
             Text(
               title,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
             Text(subTitle),
           ],

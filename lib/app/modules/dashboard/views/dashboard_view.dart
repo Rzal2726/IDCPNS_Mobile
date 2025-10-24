@@ -247,7 +247,7 @@ class DashboardView extends GetView<DashboardController> {
                                   Text(
                                     "Pengingat Bimbel",
                                     style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -284,7 +284,7 @@ class DashboardView extends GetView<DashboardController> {
                                           data['bimbel_parent_name'] ?? '-',
                                           style: TextStyle(
                                             color: Colors.grey,
-                                            fontSize: 10,
+                                            fontSize: 14,
                                           ),
                                         ),
                                         SizedBox(height: 5),
@@ -293,7 +293,7 @@ class DashboardView extends GetView<DashboardController> {
                                           data['judul'] ?? '-',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                                            fontSize: 18,
                                           ),
                                         ),
                                         SizedBox(height: 12),
@@ -562,10 +562,7 @@ class DashboardView extends GetView<DashboardController> {
                       ),
                     ),
                     SizedBox(height: 4),
-                    Text(
-                      'Pilih layanan yang cocok sebagai teman belajar kamu',
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
+                    Text('Pilih layanan yang cocok sebagai teman belajar kamu'),
                     SizedBox(height: 8), // kasih jarak biar gak terlalu nempel
                     Divider(
                       thickness: 0.2,

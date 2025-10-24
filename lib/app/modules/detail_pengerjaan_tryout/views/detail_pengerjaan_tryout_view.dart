@@ -66,7 +66,7 @@ class DetailPengerjaanTryoutView
                                     "Judul Tryout",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 20,
+                                      fontSize: 18,
                                     ),
                                   ),
                                 )
@@ -74,7 +74,7 @@ class DetailPengerjaanTryoutView
                                   controller.tryOutSaya['tryout']['name'],
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 20,
+                                    fontSize: 18,
                                   ),
                                 ),
                             Row(
@@ -87,7 +87,7 @@ class DetailPengerjaanTryoutView
                                         "Judul Tryout",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 20,
+                                          fontSize: 18,
                                         ),
                                       ),
                                     )
@@ -109,7 +109,7 @@ class DetailPengerjaanTryoutView
                                         "Judul Tryout",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 20,
+                                          fontSize: 18,
                                         ),
                                       ),
                                     )
@@ -186,7 +186,7 @@ class DetailPengerjaanTryoutView
                               "Peraturan Tryout",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                                fontSize: 18,
                               ),
                             ),
                           ),

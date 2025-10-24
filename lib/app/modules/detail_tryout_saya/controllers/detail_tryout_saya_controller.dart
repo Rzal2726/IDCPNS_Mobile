@@ -455,7 +455,7 @@ class _Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Text(icon, style: const TextStyle(fontSize: 20)),
+      leading: Text(icon, style: const TextStyle(fontSize: 18)),
       title: Text(label),
       onTap: () async {
         Get.back(); // close sheet

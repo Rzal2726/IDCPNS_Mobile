@@ -423,7 +423,7 @@ class RekeningView extends GetView<RekeningController> {
                                         children: [
                                           Text(
                                             data['bank_name'] ?? '',
-                                            style: AppStyle.style17Bold,
+                                            style: AppStyle.style20Bold,
                                           ),
                                           SizedBox(height: 4),
                                           Text(

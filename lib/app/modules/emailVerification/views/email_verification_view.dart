@@ -19,7 +19,7 @@ class EmailVerificationView extends GetView<EmailVerificationController> {
       width: 56,
       height: 56,
       textStyle: TextStyle(
-        fontSize: 20,
+        fontSize: 18,
         color: Color.fromRGBO(30, 60, 87, 1),
         fontWeight: FontWeight.w600,
       ),

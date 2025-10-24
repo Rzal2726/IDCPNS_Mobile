@@ -96,7 +96,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                   child: Text(
                                     "Judul Tryout",
                                     style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -105,7 +105,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                   controller.tryOutSaya['tryout']['name'],
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 20,
+                                    fontSize: 18,
                                   ),
                                 ),
                             SizedBox(height: 8), // ✅ ADDED: Spacing
@@ -860,7 +860,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
         child: Text(
           message,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+          style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
         ),
       ),
     );
@@ -891,7 +891,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                         ? Colors.teal
                         : Colors.red,
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 18,
               ),
             ),
             SizedBox(height: 12),
@@ -926,7 +926,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                             ? Colors.teal
                             : Colors.red,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
                 ),
               ],
@@ -1264,7 +1264,7 @@ class DetailTryoutSayaView extends GetView<DetailTryoutSayaController> {
                                                     "Statistik Jawaban", // Update title to be more general
                                                 textStyle: const TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                               legend: Legend(
